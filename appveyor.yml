@@ -9,4 +9,4 @@ test:
 
 assembly_info:
   patch: true
-  file: Source/Version.cs
+  file: Source\Version.cs
