@@ -6,3 +6,7 @@ build:
 test:
   categories:
     - Unit
+
+assembly_info:
+  patch: true
+  file: Source/Version.cs
