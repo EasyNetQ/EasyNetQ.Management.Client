@@ -1,11 +1,7 @@
 build:
-  parallel: true
-  project: Build\EasyNetQ.proj
+  project: Source\EasyNetQ.sln
   verbosity: minimal
 
 test:
   categories:
     - Unit
-
-artifacts:
-  - path: 'Package\EasyNetQ.Management.Client\*.nupkg'
