@@ -110,6 +110,7 @@
     <Compile Include="UnexpectedHttpStatusCodeException.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="EasyNetQ.Management.Client.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

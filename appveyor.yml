@@ -1,6 +1,7 @@
 build:
   project: Source\EasyNetQ.sln
   verbosity: minimal
+  publish_nuget: true  
 
 test:
   categories:
