@@ -1,5 +1,5 @@
 build:
-  parallel: true                
+  parallel: true
   project: Build\EasyNetQ.proj
   verbosity: minimal
 
