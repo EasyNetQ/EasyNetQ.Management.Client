@@ -5,7 +5,7 @@
     using Newtonsoft.Json;
     using NUnit.Framework;
 
-    [TestFixture]
+    [TestFixture(Category = "Unit")]
     class HaParamsConverterTests
     {
         [Test]

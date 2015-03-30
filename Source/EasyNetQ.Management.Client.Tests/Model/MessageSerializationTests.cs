@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture]
+    [TestFixture(Category = "Unit")]
     public class MessageSerializationTests
     {
         [SetUp]

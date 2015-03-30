@@ -5,7 +5,7 @@
     using Newtonsoft.Json.Linq;
     using NUnit.Framework;
 
-    [TestFixture]
+    [TestFixture(Category = "Unit")]
     public class ParameterSerializationTests
     {
         [Test]

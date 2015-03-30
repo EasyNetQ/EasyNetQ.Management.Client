@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EasyNetQ.Management.Client.Tests
+namespace EasyNetQ.Management.Client.IntegrationTests
 {
-    [TestFixture]
+    [TestFixture(Category = "Integration")]
     [Explicit ("requires a rabbitMQ instance on localhost to run")]
     public class ManagementClientTests
     {

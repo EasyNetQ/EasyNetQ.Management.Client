@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture]
+    [TestFixture(Category = "Unit")]
     public class PublishInfoTests
     {
         [SetUp]

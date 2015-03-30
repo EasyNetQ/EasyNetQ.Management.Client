@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace EasyNetQ.Management.Client.Tests
 {
-    [TestFixture]
+    [TestFixture(Category = "Unit")]
     public class ManagementClientInternalsTests
     {
         /// <summary>

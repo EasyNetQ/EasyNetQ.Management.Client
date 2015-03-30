@@ -6,7 +6,7 @@
     using Newtonsoft.Json;
     using NUnit.Framework;
 
-    [TestFixture]
+    [TestFixture(Category = "Unit")]
     public class PolicySerializationTests
     {
         private Policy[] _policy;

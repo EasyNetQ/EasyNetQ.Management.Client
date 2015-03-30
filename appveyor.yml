@@ -3,5 +3,9 @@ build:
   project: Build\EasyNetQ.proj
   verbosity: minimal
 
+test:
+  categories:
+    only: Unit
+
 artifacts:
   - path: 'Package\EasyNetQ.Management.Client\*.nupkg'
