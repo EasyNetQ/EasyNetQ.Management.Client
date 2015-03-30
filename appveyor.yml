@@ -5,7 +5,7 @@ build:
 
 test:
   categories:
-    only: Unit
+    - Unit
 
 artifacts:
   - path: 'Package\EasyNetQ.Management.Client\*.nupkg'
