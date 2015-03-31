@@ -1,0 +1,12 @@
+build:
+  project: Source\EasyNetQ.sln
+  verbosity: minimal
+  publish_nuget: true  
+
+test:
+  categories:
+    - Unit
+
+assembly_info:
+  patch: true
+  file: Source\Version.cs

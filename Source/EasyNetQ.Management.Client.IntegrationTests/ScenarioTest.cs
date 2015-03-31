@@ -4,9 +4,9 @@ using System;
 using EasyNetQ.Management.Client.Model;
 using NUnit.Framework;
 
-namespace EasyNetQ.Management.Client.Tests
+namespace EasyNetQ.Management.Client.IntegrationTests
 {
-    [TestFixture]
+    [TestFixture(Category = "Integration")]
     [Explicit("Requires a RabbitMQ server on localhost to work")]
     public class ScenarioTest
     {

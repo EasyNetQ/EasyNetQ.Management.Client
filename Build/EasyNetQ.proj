@@ -17,7 +17,7 @@
 
     <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets"/>
 
-    <Target Name="Default" DependsOnTargets="Version; Build; Test; PackageManagementClient" />
+    <Target Name="Default" DependsOnTargets="Version; Build; Test; MergeManagementClient; PackageManagementClient" />
 
     <Target Name="Version">
         <FileUpdate Files="$(Source)\Version.cs"
@@ -42,7 +42,7 @@
         <NUnit ToolPath="$(Nunit)" DisableShadowCopy="true" Assemblies="@(TestAssembly)" Framework="4.0.30319" Force32Bit="true" />
     </Target>
 
-  <Target Name="MergeManagementClient" DependsOnTargets="Build">
+  <Target Name="MergeManagementClient">
     <Exec
         WorkingDirectory="$(OutputDir)"
         Command="$(ILRepack) /internalize /targetplatform:v4 /out:$(OutputDir)\EasyNetQ.Management.Client.dll $(OutputDir)\EasyNetQ.Management.Client.dll $(OutputDir)\Newtonsoft.Json.dll" />
@@ -51,7 +51,7 @@
     <!-- Packaging -->
   
 
-    <Target Name="PackageManagementClient" DependsOnTargets="MergeManagementClient">
+    <Target Name="PackageManagementClient">
 
         <ItemGroup>
             <FilesToDelete Include="$(Package)\EasyNetQ.Management.Client\*.nupkg"  />
