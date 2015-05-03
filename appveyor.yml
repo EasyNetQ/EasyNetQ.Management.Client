@@ -1,12 +1,19 @@
 build:
-  project: Source\EasyNetQ.sln
+  project: Build\EasyNetQ.proj
   verbosity: minimal
-  publish_nuget: true  
+  publish_nuget: false  
 
-test:
-  categories:
-    - Unit
+test: off              
 
-assembly_info:
-  patch: true
-  file: Source\Version.cs
+artifacts:
+  - path: Package\**\*.nupkg
+ 
+deploy:
+  - provider: NuGet
+    artifact: /.*\.nupkg/
+    server:
+    api_key:
+      secure: PutEncryptedApiKeyHere
+    on:
+      branch: master
+                      
