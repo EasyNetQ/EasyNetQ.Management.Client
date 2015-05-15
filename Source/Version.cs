@@ -2,11 +2,12 @@
 using System.Reflection;
 
 // EasyNetQ.Management.Client version number: <major>.<minor>.<non-breaking-feature>.<build>
-[assembly: AssemblyVersion("0.47.11.0")]
+[assembly: AssemblyVersion("0.47.12.0")]
 [assembly: CLSCompliant(true)]
 
 // Note: until version 1.0 expect breaking changes on 0.X versions.
 
+// 0.47.12.0 adding Partition model and Node.Partitions prop
 // 0.47.11.0 Now Management.Client has separate from EasyNetQ version
 // 0.47.10.0 RabbitHutch.CreateBus overloads
 // 0.47.9.0 TypeNameSerializer now uses a ConcurrentDictionary to store se/deserialization results.
