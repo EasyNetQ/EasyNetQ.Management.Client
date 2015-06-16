@@ -31,5 +31,16 @@ namespace EasyNetQ.Management.Client.Model
 		public bool Exclusive { get; set; }
 		public bool AckRequired { get; set; }
 		public Arguments Arguments { get; set; }
+        public ChannelDetail ChannelDetails { get; set; }
 	}
+
+    public class ChannelDetail
+    {
+        public string Name { get; set; }
+        public int Number { get; set; }
+        public string User { get; set; }
+        public string ConnectionName { get; set; }
+        public int PeerPort { get; set; }
+        public string PeerHost { get; set; }
+    }
 }
