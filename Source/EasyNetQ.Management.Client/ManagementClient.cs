@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Security;
 using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
@@ -15,7 +16,7 @@ namespace EasyNetQ.Management.Client
     {
         private readonly string hostUrl;
         private readonly string username;
-        private readonly string password;
+        private readonly SecureString password;
         private readonly int portNumber;
         public static readonly JsonSerializerSettings Settings;
 
@@ -62,6 +63,18 @@ namespace EasyNetQ.Management.Client
             TimeSpan? timeout = null,
             Action<HttpWebRequest> configureRequest = null,
             bool ssl = false)
+            : this(hostUrl, username, password.Secure(), portNumber, runningOnMono, timeout, configureRequest)
+        { }
+
+        public ManagementClient(
+            string hostUrl,
+            string username,
+            SecureString password,
+            int portNumber = 15672,
+            bool runningOnMono = false,
+            TimeSpan? timeout = null,
+            Action<HttpWebRequest> configureRequest = null,
+            bool ssl = false)
         {
             var urlRegex = new Regex(@"^(http|https):\/\/.+\w$");
             Uri urlUri = null;
@@ -93,7 +106,7 @@ namespace EasyNetQ.Management.Client
             {
                 throw new ArgumentException("username is null or empty");
             }
-            if (string.IsNullOrEmpty(password))
+            if (password == null || password.Length == 0)
             {
                 throw new ArgumentException("password is null or empty");
             }
