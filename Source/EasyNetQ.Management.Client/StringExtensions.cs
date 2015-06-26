@@ -8,6 +8,7 @@ namespace EasyNetQ.Management.Client
         {
             var result = new SecureString();
             foreach (var c in input) result.AppendChar(c);
+            result.MakeReadOnly();
             return result;
         }
     }
