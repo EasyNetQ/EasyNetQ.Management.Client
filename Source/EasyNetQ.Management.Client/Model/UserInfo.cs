@@ -12,10 +12,7 @@ namespace EasyNetQ.Management.Client.Model
         {
             get
             {
-                return tagList.Any()
-                    ? string.Join(",", tagList)
-                    : allowedTags.First();
-
+                return string.Join(",", tagList);
             }
         }
         private readonly ISet<string> allowedTags = new HashSet<string>
