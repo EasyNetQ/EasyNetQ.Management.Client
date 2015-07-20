@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+using System;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Serialization;
 
 namespace EasyNetQ.Management.Client
