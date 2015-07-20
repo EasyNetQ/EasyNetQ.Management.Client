@@ -10,10 +10,10 @@ namespace EasyNetQ.Management.Client
             return Regex.Replace(propertyName, "([a-z])([A-Z])", "$1_$2").ToLower();
         }
         protected override JsonDictionaryContract CreateDictionaryContract(Type objectType)
-		{
-			var c = base.CreateDictionaryContract(objectType);
-			c.PropertyNameResolver = null;
-			return c;
-		}
+        {
+            var c = base.CreateDictionaryContract(objectType);
+            c.PropertyNameResolver = null;
+            return c;
+        }
     }
 }
