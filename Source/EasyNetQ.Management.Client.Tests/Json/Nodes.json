@@ -3,6 +3,7 @@
       "name":"rabbit@THOMAS",
       "type":"disc",
       "running":true,
+	  "partitions": ["rabbit@NODE-NAME"],
       "os_pid":"2528",
       "mem_ets":1682104,
       "mem_binary":46784,
