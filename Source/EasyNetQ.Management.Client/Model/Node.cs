@@ -36,6 +36,6 @@ namespace EasyNetQ.Management.Client.Model
         public List<ExchangeType> ExchangeTypes { get; set; }
         public List<AuthMechanism> AuthMechanisms { get; set; }
         public List<Application> Applications { get; set; }
-        public List<Partition> Partitions { get; set; }
+        public List<string> Partitions { get; set; }
     }
 }
