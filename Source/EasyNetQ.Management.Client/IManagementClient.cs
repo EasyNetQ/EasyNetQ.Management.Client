@@ -205,6 +205,14 @@ namespace EasyNetQ.Management.Client
         IEnumerable<Binding> GetBindings(Exchange exchange, Queue queue);
 
         /// <summary>
+        /// A list of all bindings between an exchange and an exchange. 
+        /// </summary>
+        /// <param name="fromExchange"></param>
+        /// <param name="toExchange"></param>
+        /// <returns></returns>
+        IEnumerable<Binding> GetBindings(Exchange fromExchange, Exchange toExchange);
+
+        /// <summary>
         /// Delete the given binding
         /// </summary>
         /// <param name="binding"></param>

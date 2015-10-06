@@ -358,6 +358,21 @@ namespace EasyNetQ.Management.Client
                 string.Format("bindings/{0}/e/{1}/q/{2}", SanitiseVhostName(queue.Vhost),
                     exchange.Name, SanitiseName(queue.Name)));
         }
+        public IEnumerable<Binding> GetBindings(Exchange fromExchange, Exchange toExchange)
+        {
+            if (fromExchange == null)
+            {
+                throw new ArgumentNullException("fromExchange");
+            }
+            if (toExchange == null)
+            {
+                throw new ArgumentNullException("toExchange");
+            }
+
+            return Get<IEnumerable<Binding>>(
+                string.Format("bindings/{0}/e/{1}/e/{2}", SanitiseVhostName(toExchange.Vhost),
+                    fromExchange.Name, SanitiseName(toExchange.Name)));
+        }
 
         public void DeleteBinding(Binding binding)
         {

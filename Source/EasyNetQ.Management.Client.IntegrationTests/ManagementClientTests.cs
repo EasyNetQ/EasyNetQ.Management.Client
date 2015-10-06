@@ -3,6 +3,7 @@
 using EasyNetQ.Management.Client.Model;
 using NUnit.Framework;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,6 +18,13 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         private const string hostUrl = "http://localhost";
         private const string username = "guest";
         private const string password = "guest";
+        private const string vhostName = "/";
+        private const string testExchange = "management_api_test_exchange";
+        private const string testExchange2 = "management_api_test_exchange2";
+        private const string testExchangetestQueueWithPlusChar = "management_api_test_exchange+plus+test";
+        private const string testQueue = "management_api_test_queue";
+        private const string testQueueWithPlusChar = "management_api_test_queue+plus+test";
+        private const string testUser = "mikey";
 
         [SetUp]
         public void SetUp()
@@ -70,7 +78,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             var definitions = managementClient.GetDefinitions();
 
-            definitions.RabbitVersion.ShouldEqual("3.0.0");
+            definitions.RabbitVersion[0].ShouldEqual('3');
         }
 
         [Test]
@@ -138,13 +146,10 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        private const string testExchange = "management_api_test_exchange";
-        private const string testExchangetestQueueWithPlusChar = "management_api_test_exchange+plus+test";
-
         [Test]
         public void Should_be_able_to_get_an_individual_exchange_by_name()
         {
-            var vhost = new Vhost { Name = "/" };
+            var vhost = new Vhost { Name = vhostName };
             var exchange = managementClient.GetExchange(testExchange, vhost);
 
             exchange.Name.ShouldEqual(testExchange);
@@ -153,17 +158,22 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Test]
         public void Should_be_able_to_create_an_exchange()
         {
-            var vhost = new Vhost {Name = "/"};
-
-            var exchangeInfo = new ExchangeInfo(testExchange, "direct");
-            var exchange = managementClient.CreateExchange(exchangeInfo, vhost);
+            var exchange = CreateExchange(testExchange);
             exchange.Name.ShouldEqual(testExchange);
+        }
+
+        private Exchange CreateExchange(string exchangeName)
+        {
+            var vhost = new Vhost {Name = vhostName};
+            var exchangeInfo = new ExchangeInfo(exchangeName, "direct");
+            var exchange = managementClient.CreateExchange(exchangeInfo, vhost);
+            return exchange;
         }
 
         [Test]
         public void Should_be_able_to_create_an_exchange_with_plus_char_in_the_name()
         {
-            var vhost = managementClient.GetVhost("/");
+            var vhost = managementClient.GetVhost(vhostName);
             var exhangeInfo = new ExchangeInfo(testExchangetestQueueWithPlusChar, "direct");
             var queue = managementClient.CreateExchange(exhangeInfo, vhost);
             queue.Name.ShouldEqual(testExchangetestQueueWithPlusChar);
@@ -248,9 +258,6 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             result.Routed.ShouldBeFalse();
         }
 
-        private const string testQueue = "management_api_test_queue";
-        private const string testQueueWithPlusChar = "management_api_test_queue+plus+test";
-
         [Test]
         public void Should_get_queues()
         {
@@ -265,7 +272,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Test]
         public void Should_be_able_to_get_a_queue_by_name()
         {
-            var vhost = new Vhost { Name = "/" };
+            var vhost = new Vhost { Name = vhostName };
             var queue = managementClient.GetQueue(testQueue, vhost);
             queue.Name.ShouldEqual(testQueue);
         }
@@ -273,7 +280,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Test]
         public void Should_be_able_to_get_a_queue_by_name_with_plus_char()
         {
-            var vhost = new Vhost { Name = "/" };
+            var vhost = new Vhost { Name = vhostName };
             var queue = managementClient.GetQueue(testQueueWithPlusChar, vhost);
             queue.Name.ShouldEqual(testQueueWithPlusChar);
         }
@@ -281,16 +288,17 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Test]
         public void Should_be_able_to_create_a_queue()
         {
-            var vhost = managementClient.GetVhost("/");
+            var vhost = managementClient.GetVhost(vhostName);
             var queueInfo = new QueueInfo(testQueue);
             var queue = managementClient.CreateQueue(queueInfo, vhost);
+            queue = managementClient.GetQueue(testQueue, vhost);
             queue.Name.ShouldEqual(testQueue);
         }
 
         [Test]
         public void Should_be_able_to_create_a_queue_with_plus_char_in_the_name()
         {
-            var vhost = managementClient.GetVhost("/");
+            var vhost = managementClient.GetVhost(vhostName);
             var queueInfo = new QueueInfo(testQueueWithPlusChar);
             var queue = managementClient.CreateQueue(queueInfo, vhost);
             queue.Name.ShouldEqual(testQueueWithPlusChar);
@@ -301,7 +309,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             var exchangeName = "test-dead-letter-exchange";
             var argumentKey = "x-dead-letter-exchange";
-            var vhost = managementClient.GetVhost("/");
+            var vhost = managementClient.GetVhost(vhostName);
             var queueInfo = new QueueInfo(testQueue);
             queueInfo.Arguments.Add(argumentKey, exchangeName);
             var queue = managementClient.CreateQueue(queueInfo, vhost);
@@ -359,7 +367,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                 throw new ApplicationException("Test queue has not been created");
             }
 
-            var defaultExchange = new Exchange { Name = "amq.default", Vhost = "/" };
+            var defaultExchange = new Exchange { Name = "amq.default", Vhost = vhostName };
 
             var properties = new Dictionary<string, string>
             {
@@ -399,19 +407,13 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Test]
         public void Should_be_able_to_get_a_list_of_bindings_between_an_exchange_and_a_queue()
         {
-            var queue = managementClient.GetQueues().SingleOrDefault(x => x.Name == testQueue);
-            if (queue == null)
-            {
-                throw new ApplicationException("Test queue has not been created");
-            }
-            var exchange = managementClient.GetExchanges().SingleOrDefault(x => x.Name == testExchange);
-            if (exchange == null)
-            {
-                throw new ApplicationException(
-                    string.Format("Test exchange '{0}' hasn't been created", testExchange));
-            }
+            var queue = EnsureQueueExists(testQueue);
 
-            var bindings = managementClient.GetBindings(exchange, queue);
+            var exchange = EnsureExchangeExists(testExchange);
+
+            var bindings = managementClient.GetBindings(exchange, queue).ToArray();
+
+            bindings.ShouldNotEqual(0);
 
             foreach (var binding in bindings)
             {
@@ -420,10 +422,51 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
+        private Queue EnsureQueueExists(string managementApiTestQueue)
+        {
+            return managementClient
+                    .GetQueues()
+                    .SingleOrDefault(x => x.Name == managementApiTestQueue) 
+                    ?? CreateTestQueue(managementApiTestQueue);
+        }
+
+        private Queue CreateTestQueue(string queueName)
+        {
+            var vhost = managementClient.GetVhost(vhostName);
+            var queueInfo = new QueueInfo(queueName);
+            managementClient.CreateQueue(queueInfo, vhost);
+            return managementClient.GetQueue(queueName, vhost);
+        }
+
+        [Test]
+        public void Should_be_able_to_get_a_list_of_bindings_between_an_exchange_and_an_exchange()
+        {
+            var exchange1 = EnsureExchangeExists(testExchange);
+            var exchange2 = EnsureExchangeExists(testExchange2);
+
+            var bindings = managementClient.GetBindings(exchange1, exchange2).ToArray();
+
+            bindings.ShouldNotEqual(0);
+            
+            foreach (var binding in bindings)
+            {
+                Console.Out.WriteLine("binding.RoutingKey = {0}", binding.RoutingKey);
+                Console.Out.WriteLine("binding.PropertiesKey = {0}", binding.PropertiesKey);
+            }
+        }
+
+        private Exchange EnsureExchangeExists(string exchangeName)
+        {
+            return managementClient
+                    .GetExchanges()
+                    .SingleOrDefault(x => x.Name == exchangeName) 
+                    ?? CreateExchange(exchangeName);
+        }
+
         [Test]
         public void Should_create_binding()
         {
-            var vhost = managementClient.GetVhost("/");
+            var vhost = managementClient.GetVhost(vhostName);
             var queue = managementClient.GetQueue(testQueue, vhost);
             var exchange = managementClient.GetExchange(testExchange, vhost);
 
@@ -438,7 +481,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             const string sourceExchangeName = "management_api_test_source_exchange";
             const string destinationExchangeName = "management_api_test_destination_exchange";
 
-            var vhost = managementClient.GetVhost("/");
+            var vhost = managementClient.GetVhost(vhostName);
             var sourceExchangeInfo = new ExchangeInfo(sourceExchangeName, "direct");
             var destinationExchangeInfo = new ExchangeInfo(destinationExchangeName, "direct");
 
@@ -460,7 +503,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Test]
         public void Should_delete_binding()
         {
-            var vhost = managementClient.GetVhost("/");
+            var vhost = managementClient.GetVhost(vhostName);
             var queue = managementClient.GetQueue(testQueue, vhost);
             var exchange = managementClient.GetExchange(testExchange, vhost);
 
@@ -516,8 +559,6 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                 Console.Out.WriteLine("user.Name = {0}", user.Name);
             }
         }
-
-        private const string testUser = "mikey";
 
         [Test]
         public void Should_be_able_to_get_a_user_by_name()
@@ -594,7 +635,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                 var userInfo = new UserInfo(testUser, "topSecret").AddTag("administrator");
                 user = managementClient.CreateUser(userInfo);
             }
-            var vhost = managementClient.GetVHosts().SingleOrDefault(x => x.Name == "/");
+            var vhost = managementClient.GetVHosts().SingleOrDefault(x => x.Name == vhostName);
             if (vhost == null)
             {
                 throw new ApplicationException(string.Format("Default vhost: '{0}' has not been created", testVHost));
@@ -661,7 +702,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = "/",
+                Vhost = vhostName,
                 Definition = new PolicyDefinition
                 {
                     HaMode = haMode,
@@ -670,7 +711,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             });
             Assert.AreEqual(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
-                     && p.Vhost == "/"
+                     && p.Vhost == vhostName
                      && p.Definition.HaMode == haMode
                      && p.Definition.HaSyncMode == haSyncMode));
         }
@@ -684,7 +725,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = "/",
+                Vhost = vhostName,
                 Definition = new PolicyDefinition
                 {
                     AlternateExchange = alternateExchange
@@ -692,7 +733,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             });
             Assert.AreEqual(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
-                     && p.Vhost == "/"
+                     && p.Vhost == vhostName
                      && p.Definition.AlternateExchange == alternateExchange));
         }
 
@@ -706,7 +747,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = "/",
+                Vhost = vhostName,
                 Definition = new PolicyDefinition
                 {
                     DeadLetterExchange = deadLetterExchange,
@@ -715,7 +756,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             });
             Assert.AreEqual(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
-                     && p.Vhost == "/"
+                     && p.Vhost == vhostName
                      && p.Definition.DeadLetterExchange == deadLetterExchange
                      && p.Definition.DeadLetterRoutingKey == deadLetterRoutingKey));
         }
@@ -729,7 +770,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = "/",
+                Vhost = vhostName,
                 Definition = new PolicyDefinition
                 {
                     MessageTtl = messageTtl
@@ -737,7 +778,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             });
             Assert.AreEqual(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
-                     && p.Vhost == "/"
+                     && p.Vhost == vhostName
                      && p.Definition.MessageTtl == messageTtl));
         }
 
@@ -750,7 +791,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = "/",
+                Vhost = vhostName,
                 Definition = new PolicyDefinition
                 {
                     Expires = expires
@@ -758,7 +799,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             });
             Assert.AreEqual(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
-                     && p.Vhost == "/"
+                     && p.Vhost == vhostName
                      && p.Definition.Expires == expires));
         }
 
@@ -771,7 +812,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = "/",
+                Vhost = vhostName,
                 Definition = new PolicyDefinition
                 {
                     MaxLength = maxLength
@@ -779,7 +820,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             });
             Assert.AreEqual(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
-                     && p.Vhost == "/"
+                     && p.Vhost == vhostName
                      && p.Definition.MaxLength == maxLength));
         }
 
@@ -800,7 +841,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = "/",
+                Vhost = vhostName,
                 Definition = new PolicyDefinition
                 {
                     HaMode = haMode,
@@ -816,7 +857,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             });
             Assert.AreEqual(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
-                     && p.Vhost == "/"
+                     && p.Vhost == vhostName
                      && p.Priority == priority
                      && p.Definition.HaMode == haMode
                      && p.Definition.HaSyncMode == haSyncMode
@@ -836,16 +877,16 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = "/",
+                Vhost = vhostName,
                 Definition = new PolicyDefinition
                 {
                     HaMode = HaMode.All,
                     HaSyncMode = HaSyncMode.Automatic
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(p => p.Name == policyName && p.Vhost == "/"));
-            managementClient.DeletePolicy(policyName, new Vhost{Name = "/"});
-            Assert.AreEqual(0, managementClient.GetPolicies().Count(p => p.Name == policyName && p.Vhost == "/"));
+            Assert.AreEqual(1, managementClient.GetPolicies().Count(p => p.Name == policyName && p.Vhost == vhostName));
+            managementClient.DeletePolicy(policyName, new Vhost{Name = vhostName});
+            Assert.AreEqual(0, managementClient.GetPolicies().Count(p => p.Name == policyName && p.Vhost == vhostName));
         }
 
         [Test]
@@ -861,7 +902,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             try
             {
-                managementClient.DeleteParameter("federation-upstream", "/", "myfakefederationupstream");
+                managementClient.DeleteParameter("federation-upstream", vhostName, "myfakefederationupstream");
             }
             catch (UnexpectedHttpStatusCodeException ex)
             {
@@ -875,7 +916,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Component = "federation-upstream",
                 Name = "myfakefederationupstream",
-                Vhost = "/",
+                Vhost = vhostName,
                 Value = new {uri = "amqp://guest:guest@localhost"}
             });
             Assert.True(managementClient.GetParameters().Where(p=>p.Name == "myfakefederationupstream").Any());
