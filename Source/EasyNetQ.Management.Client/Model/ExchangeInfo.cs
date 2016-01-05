@@ -15,7 +15,7 @@ namespace EasyNetQ.Management.Client.Model
 
         private readonly ISet<string> exchangeTypes = new HashSet<string>
         {
-            "direct", "topic", "fanout", "headers"
+            "direct", "topic", "fanout", "headers", "x-delayed-message"
         }; 
 
         public ExchangeInfo(string name, string type) : this(name, type, false, true, false, new Arguments())

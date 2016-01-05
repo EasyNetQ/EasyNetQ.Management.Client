@@ -2,11 +2,12 @@
 using System.Reflection;
 
 // EasyNetQ.Management.Client version number: <major>.<minor>.<non-breaking-feature>.<build>
-[assembly: AssemblyVersion("0.47.16.0")]
+[assembly: AssemblyVersion("0.47.17.0")]
 [assembly: CLSCompliant(true)]
 
 // Note: until version 1.0 expect breaking changes on 0.X versions.
 
+// 0.47.17.0 Added "x-delayed-message" as valid exchange type
 // 0.47.16.0 Added an overload for GetBindings(Exchange, Exchange)
 // 0.47.15.0 Updated to newtonsoft.json 7.0.1
 // 0.47.14.0 Modified long for DiskFreeLimit/MemUsed type
