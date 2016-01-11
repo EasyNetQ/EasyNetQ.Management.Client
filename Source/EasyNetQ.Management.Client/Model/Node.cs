@@ -20,10 +20,10 @@ namespace EasyNetQ.Management.Client.Model
         public int FdTotal { get; set; }
         public int SocketsUsed { get; set; }
         public int SocketsTotal { get; set; }
-        public int MemUsed { get; set; }
+        public long MemUsed { get; set; }
         public long MemLimit { get; set; }
         public bool MemAlarm { get; set; }
-        public int DiskFreeLimit { get; set; }
+        public long DiskFreeLimit { get; set; }
         public long DiskFree { get; set; }
         public bool DiskFreeAlarm { get; set; }
         public int ProcUsed { get; set; }
@@ -36,6 +36,6 @@ namespace EasyNetQ.Management.Client.Model
         public List<ExchangeType> ExchangeTypes { get; set; }
         public List<AuthMechanism> AuthMechanisms { get; set; }
         public List<Application> Applications { get; set; }
-        public List<Partition> Partitions { get; set; }
+        public List<string> Partitions { get; set; }
     }
 }
