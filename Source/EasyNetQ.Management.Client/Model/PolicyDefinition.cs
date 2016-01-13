@@ -10,6 +10,8 @@
         public HaParams HaParams;
         [JsonProperty("ha-sync-mode", NullValueHandling = NullValueHandling.Ignore)]
         public HaSyncMode? HaSyncMode;
+        [JsonProperty("federation-upstream", NullValueHandling = NullValueHandling.Ignore)]
+        public string FederationUpstream { get; set; }
         [JsonProperty("federation-upstream-set", NullValueHandling = NullValueHandling.Ignore)]
         public string FederationUpstreamSet { get; set; }
         [JsonProperty("alternate-exchange", NullValueHandling = NullValueHandling.Ignore)]

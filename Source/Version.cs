@@ -2,10 +2,11 @@
 using System.Reflection;
 
 // EasyNetQ.Management.Client version number: <major>.<minor>.<non-breaking-feature>.<build>
-[assembly: AssemblyVersion("0.47.18.0")]
+[assembly: AssemblyVersion("0.47.19.0")]
 [assembly: CLSCompliant(true)]
 
 // Note: until version 1.0 expect breaking changes on 0.X versions.
+// 0.47.19.0 Implemented support of 'apply-to' property for Policy object and 'federation-upstream' property for PolicyDefinition object
 // 0.47.18.0 Modified ConsumerDetails and Queue classes to deserialize channel_detail when running GetQueue()
 // 0.47.17.0 Added "x-delayed-message" as valid exchange type
 // 0.47.16.0 Added an overload for GetBindings(Exchange, Exchange)
