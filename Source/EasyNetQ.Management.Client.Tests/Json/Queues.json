@@ -114,5 +114,233 @@
 
     },
     "node": "rabbit@THOMAS"
+  },
+  {
+    "memory": 35096,
+    "message_stats": {
+      "ack": 2,
+      "ack_details": {
+        "rate": 0
+      },
+      "deliver": 2,
+      "deliver_details": {
+        "rate": 0
+      },
+      "deliver_get": 2,
+      "deliver_get_details": {
+        "rate": 0
+      },
+      "disk_reads": 1,
+      "disk_reads_details": {
+        "rate": 0
+      },
+      "disk_writes": 1,
+      "disk_writes_details": {
+        "rate": 0
+      },
+      "publish": 1,
+      "publish_details": {
+        "rate": 0
+      },
+      "redeliver": 1,
+      "redeliver_details": {
+        "rate": 0
+      }
+    },
+    "messages": 0,
+    "messages_details": {
+      "rate": 0
+    },
+    "messages_ready": 0,
+    "messages_ready_details": {
+      "rate": 0
+    },
+    "messages_unacknowledged": 0,
+    "messages_unacknowledged_details": {
+      "rate": 0
+    },
+    "idle_since": "2016-01-18 7:30:19",
+    "consumer_utilisation": null,
+    "policy": null,
+    "exclusive_consumer_tag": null,
+    "consumers": 1,
+    "recoverable_slaves": null,
+    "state": "running",
+    "messages_ram": 0,
+    "messages_ready_ram": 0,
+    "messages_unacknowledged_ram": 0,
+    "messages_persistent": 0,
+    "message_bytes": 0,
+    "message_bytes_ready": 0,
+    "message_bytes_unacknowledged": 0,
+    "message_bytes_ram": 0,
+    "message_bytes_persistent": 0,
+    "head_message_timestamp": null,
+    "disk_reads": 1,
+    "disk_writes": 1,
+    "backing_queue_status": {
+      "mode": "default",
+      "q1": 0,
+      "q2": 0,
+      "delta": [
+        "delta",
+        "undefined",
+        0,
+        "undefined"
+      ],
+      "q3": 0,
+      "q4": 0,
+      "len": 0,
+      "target_ram_count": "infinity",
+      "next_seq_id": 16385,
+      "avg_ingress_rate": 0.018381011963607533,
+      "avg_egress_rate": 0,
+      "avg_ack_ingress_rate": 0,
+      "avg_ack_egress_rate": 0
+    },
+    "incoming": [ ],
+    "deliveries": [ ],
+    "consumer_details": [
+      {
+        "channel_details": {
+          "name": "channel_details_name",
+          "number": 1,
+          "user": "none",
+          "connection_name": "channel_details_connection_name",
+          "peer_port": "unknown",
+          "peer_host": "unknown"
+        },
+        "queue": {
+          "name": "queue_name",
+          "vhost": "/"
+        },
+        "consumer_tag": "amq.ctag-_Zd2dXucXk__XmzXwdCppg",
+        "exclusive": false,
+        "ack_required": true,
+        "prefetch_count": 1000,
+        "arguments": { }
+      }
+    ],
+    "name": "queue_name",
+    "vhost": "/",
+    "durable": true,
+    "auto_delete": false,
+    "exclusive": false,
+    "arguments": { },
+    "node": "node_name"
+  },
+  {
+    "memory": 35096,
+    "message_stats": {
+      "ack": 2,
+      "ack_details": {
+        "rate": 0
+      },
+      "deliver": 2,
+      "deliver_details": {
+        "rate": 0
+      },
+      "deliver_get": 2,
+      "deliver_get_details": {
+        "rate": 0
+      },
+      "disk_reads": 1,
+      "disk_reads_details": {
+        "rate": 0
+      },
+      "disk_writes": 1,
+      "disk_writes_details": {
+        "rate": 0
+      },
+      "publish": 1,
+      "publish_details": {
+        "rate": 0
+      },
+      "redeliver": 1,
+      "redeliver_details": {
+        "rate": 0
+      }
+    },
+    "messages": 0,
+    "messages_details": {
+      "rate": 0
+    },
+    "messages_ready": 0,
+    "messages_ready_details": {
+      "rate": 0
+    },
+    "messages_unacknowledged": 0,
+    "messages_unacknowledged_details": {
+      "rate": 0
+    },
+    "idle_since": "2016-01-18 7:30:19",
+    "consumer_utilisation": null,
+    "policy": null,
+    "exclusive_consumer_tag": null,
+    "consumers": 1,
+    "recoverable_slaves": null,
+    "state": "running",
+    "messages_ram": 0,
+    "messages_ready_ram": 0,
+    "messages_unacknowledged_ram": 0,
+    "messages_persistent": 0,
+    "message_bytes": 0,
+    "message_bytes_ready": 0,
+    "message_bytes_unacknowledged": 0,
+    "message_bytes_ram": 0,
+    "message_bytes_persistent": 0,
+    "head_message_timestamp": null,
+    "disk_reads": 1,
+    "disk_writes": 1,
+    "backing_queue_status": {
+      "mode": "default",
+      "q1": 0,
+      "q2": 0,
+      "delta": [
+        "delta",
+        "undefined",
+        0,
+        "undefined"
+      ],
+      "q3": 0,
+      "q4": 0,
+      "len": 0,
+      "target_ram_count": "infinity",
+      "next_seq_id": 16385,
+      "avg_ingress_rate": 0.018381011963607533,
+      "avg_egress_rate": 0,
+      "avg_ack_ingress_rate": 0,
+      "avg_ack_egress_rate": 0
+    },
+    "incoming": [ ],
+    "deliveries": [ ],
+    "consumer_details": [
+      {
+        "channel_details": {
+          "name": "channel_details_name",
+          "number": 1,
+          "user": "none",
+          "connection_name": "channel_details_connection_name",
+          "peer_port": 9861,
+          "peer_host": "unknown"
+        },
+        "queue": {
+          "name": "queue_name",
+          "vhost": "/"
+        },
+        "consumer_tag": "amq.ctag-_Zd2dXucXk__XmzXwdCppg",
+        "exclusive": false,
+        "ack_required": true,
+        "prefetch_count": 1000,
+        "arguments": { }
+      }
+    ],
+    "name": "queue_name",
+    "vhost": "/",
+    "durable": true,
+    "auto_delete": false,
+    "exclusive": false,
+    "arguments": { },
+    "node": "node_name"
   }
 ]
