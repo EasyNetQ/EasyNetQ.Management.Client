@@ -106,6 +106,7 @@
     <Compile Include="Serialization\HaParamsConverter.cs" />
     <Compile Include="Serialization\ObjectOrEmptyArrayConverter.cs" />
     <Compile Include="Serialization\PropertyConverter.cs" />
+    <Compile Include="Serialization\TolerantInt32Converter.cs" />
     <Compile Include="Serialization\UnixDateTimeConverter.cs" />
     <Compile Include="Serialization\UnixDateTimeHelper.cs" />
     <Compile Include="Serialization\UnixMsDateTimeConverter.cs" />

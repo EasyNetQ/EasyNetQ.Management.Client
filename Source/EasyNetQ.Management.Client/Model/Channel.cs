@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using EasyNetQ.Management.Client.Serialization;
+using Newtonsoft.Json;
 
 namespace EasyNetQ.Management.Client.Model
 {
@@ -40,6 +42,7 @@ namespace EasyNetQ.Management.Client.Model
         public int Number { get; set; }
         public string User { get; set; }
         public string ConnectionName { get; set; }
+        [JsonConverter(typeof(TolerantInt32Converter))]
         public int PeerPort { get; set; }
         public string PeerHost { get; set; }
     }
