@@ -2,10 +2,11 @@
 using System.Reflection;
 
 // EasyNetQ.Management.Client version number: <major>.<minor>.<non-breaking-feature>.<build>
-[assembly: AssemblyVersion("0.48.20.0")]
+[assembly: AssemblyVersion("0.48.21.0")]
 [assembly: CLSCompliant(true)]
 
 // Note: until version 1.0 expect breaking changes on 0.X versions.
+// 0.48.21.0 Fixed error on create a parameter
 // 0.48.20.0 Escape # with %23 for a queue name
 // 0.47.20.0 Fixed serialization exception for cases when queue.consumer_details[0].channel_details.peer_port="unknown"
 // 0.47.19.0 Implemented support of 'apply-to' property for Policy object and 'federation-upstream' property for PolicyDefinition object
