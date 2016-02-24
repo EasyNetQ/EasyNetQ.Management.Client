@@ -473,7 +473,7 @@ namespace EasyNetQ.Management.Client
             var componentName = parameter.Component;
             var vhostName = parameter.Vhost;
             var parameterName = parameter.Name;
-            Put(GetParameterUrl(componentName, vhostName, parameterName), parameter);
+            Put(GetParameterUrl(componentName, vhostName, parameterName), parameter.Value);
         }
 
         private string GetParameterUrl(string componentName, string vhost, string parameterName)
