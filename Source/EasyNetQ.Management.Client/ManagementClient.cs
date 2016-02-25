@@ -29,6 +29,7 @@ namespace EasyNetQ.Management.Client
             Settings = new JsonSerializerSettings
             {
                 ContractResolver = new RabbitContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore,
             };
 
             Settings.Converters.Add(new PropertyConverter());
