@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Model
 {
@@ -12,10 +13,7 @@ namespace EasyNetQ.Management.Client.Model
         {
             get
             {
-                return tagList.Any()
-                    ? string.Join(",", tagList)
-                    : allowedTags.First();
-
+                return string.Join(",", tagList);
             }
         }
         private readonly ISet<string> allowedTags = new HashSet<string>
