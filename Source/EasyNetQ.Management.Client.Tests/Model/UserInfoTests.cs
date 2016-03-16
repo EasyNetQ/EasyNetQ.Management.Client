@@ -46,9 +46,9 @@ namespace EasyNetQ.Management.Client.Tests.Model
         }
 
         [Test]
-        public void Should_have_a_default_tag_of_administrator()
+        public void Should_have_a_default_tag_of_empty_string()
         {
-            userInfo.Tags.ShouldEqual("administrator");
+            userInfo.Tags.ShouldEqual("");
         }
     }
 }
