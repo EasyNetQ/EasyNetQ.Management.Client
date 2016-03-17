@@ -14,7 +14,7 @@ namespace EasyNetQ.Management.Client.Model
             {
                 return tagList.Any()
                     ? string.Join(",", tagList)
-                    : allowedTags.First();
+                    : string.Empty;
 
             }
         }
