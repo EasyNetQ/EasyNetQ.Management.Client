@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -618,9 +619,24 @@ namespace EasyNetQ.Management.Client
 
             using (var response = request.GetHttpResponse())
             {
-                if (response.StatusCode != HttpStatusCode.NoContent)
+                // This is "Cowboy" in 3.7.0 and "MochiWeb/1.1 WebMachine/1.10.0 (never breaks eye contact)" in 3.6.1
+                // PUT responses use 201 Created (under Cowboy) instead of 204 No Content (WebMachine - pre 3.7.0)
+                var serverHeaderValue = response.GetResponseHeader("Server");
+                if (serverHeaderValue == null) //Don't believe resharper, this can return null!
+                    serverHeaderValue = string.Empty;
+                if (serverHeaderValue.IndexOf("cowboy", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    throw new UnexpectedHttpStatusCodeException(response.StatusCode);
+                    if (response.StatusCode != HttpStatusCode.Created)
+                    {
+                        throw new UnexpectedHttpStatusCodeException(response.StatusCode);
+                    }
+                }
+                else
+                {
+                    if (response.StatusCode != HttpStatusCode.NoContent)
+                    {
+                        throw new UnexpectedHttpStatusCodeException(response.StatusCode);
+                    }
                 }
             }
         }
@@ -634,9 +650,24 @@ namespace EasyNetQ.Management.Client
 
             using (var response = request.GetHttpResponse())
             {
-                if (response.StatusCode != HttpStatusCode.NoContent)
+                // This is "Cowboy" in 3.7.0 and "MochiWeb/1.1 WebMachine/1.10.0 (never breaks eye contact)" in 3.6.1
+                // PUT responses use 201 Created (under Cowboy) instead of 204 No Content (WebMachine - pre 3.7.0)
+                var serverHeaderValue = response.GetResponseHeader("Server");
+                if (serverHeaderValue == null) //Don't believe resharper, this can return null!
+                    serverHeaderValue = string.Empty;
+                if (serverHeaderValue.IndexOf("cowboy", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    throw new UnexpectedHttpStatusCodeException(response.StatusCode);
+                    if (response.StatusCode != HttpStatusCode.Created)
+                    {
+                        throw new UnexpectedHttpStatusCodeException(response.StatusCode);
+                    }
+                }
+                else
+                {
+                    if (response.StatusCode != HttpStatusCode.NoContent)
+                    {
+                        throw new UnexpectedHttpStatusCodeException(response.StatusCode);
+                    }
                 }
             }
         }
