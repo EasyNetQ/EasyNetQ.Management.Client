@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -618,7 +619,13 @@ namespace EasyNetQ.Management.Client
 
             using (var response = request.GetHttpResponse())
             {
-                if (response.StatusCode != HttpStatusCode.NoContent)
+                // The "Cowboy" server in 3.7.0's Management Client returns 201 Created. 
+                // "MochiWeb/1.1 WebMachine/1.10.0 (never breaks eye contact)" in 3.6.1 and previous return 204 No Content
+                // Also acceptable for a PUT response is 200 OK
+                // See also http://stackoverflow.com/questions/797834/should-a-restful-put-operation-return-something
+                if (!(response.StatusCode == HttpStatusCode.OK || 
+                      response.StatusCode == HttpStatusCode.Created || 
+                      response.StatusCode == HttpStatusCode.NoContent))
                 {
                     throw new UnexpectedHttpStatusCodeException(response.StatusCode);
                 }
@@ -634,7 +641,13 @@ namespace EasyNetQ.Management.Client
 
             using (var response = request.GetHttpResponse())
             {
-                if (response.StatusCode != HttpStatusCode.NoContent)
+                // The "Cowboy" server in 3.7.0's Management Client returns 201 Created. 
+                // "MochiWeb/1.1 WebMachine/1.10.0 (never breaks eye contact)" in 3.6.1 and previous return 204 No Content
+                // Also acceptable for a PUT response is 200 OK
+                // See also http://stackoverflow.com/questions/797834/should-a-restful-put-operation-return-something
+                if (!(response.StatusCode == HttpStatusCode.OK ||
+                      response.StatusCode == HttpStatusCode.Created ||
+                      response.StatusCode == HttpStatusCode.NoContent))
                 {
                     throw new UnexpectedHttpStatusCodeException(response.StatusCode);
                 }
