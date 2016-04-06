@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace EasyNetQ.Management.Client.Model
 {
-    public class MessagesDetails
+    public class LengthsDetails
     {
         public double Rate { get; set; }
 
@@ -15,6 +15,6 @@ namespace EasyNetQ.Management.Client.Model
         public double AvgRate { get; set; }
         public double Avg { get; set; }
 
-        public List<MessagesDetailSample> Samples { get; set; }
+        public List<LengthsSample> Samples { get; set; }
     }
 }

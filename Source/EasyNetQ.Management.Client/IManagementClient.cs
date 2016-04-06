@@ -282,18 +282,10 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="queueName">The name of the queue</param>
         /// <param name="vhost">The virtual host that contains the queue</param>
+        /// <param name="lengthsCriteria">Criteria for getting samples of queue length data</param>
+        /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
         /// <returns>The Queue</returns>
-        Queue GetQueue(string queueName, Vhost vhost);
-
-        /// <summary>
-        /// Get details for an individual queue by name
-        /// </summary>
-        /// <param name="queueName">The name of the queue</param>
-        /// <param name="vhost">The virtual host that contains the queue</param>
-        /// <param name="lengthsAge">Age (in seconds) of the oldest detail sample</param>
-        /// <param name="lengthsIncrement">Interval (in seconds) between detail samples</param>
-        /// <returns>Detailed information about the Queue</returns>
-        QueueEx GetQueueDetails(string queueName, Vhost vhost, int lengthsAge, int lengthsIncrement);
+        Queue GetQueue(string queueName, Vhost vhost, GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null);
 
         /// <summary>
         /// Get an individual vhost by name

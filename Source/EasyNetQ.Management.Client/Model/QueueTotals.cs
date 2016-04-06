@@ -5,8 +5,8 @@ namespace EasyNetQ.Management.Client.Model
         public int Messages { get; set; }
         public int MessagesReady { get; set; }
         public int MessagesUnacknowledged { get; set; }
-        public MessagesDetails MessagesDetails { get; set; }
-        public MessagesDetails MessagesReadyDetails { get; set; }
-        public MessagesDetails MessagesUnacknowledgedDetails { get; set; }
+        public LengthsDetails MessagesDetails { get; set; }
+        public LengthsDetails MessagesReadyDetails { get; set; }
+        public LengthsDetails MessagesUnacknowledgedDetails { get; set; }
     }
 }
