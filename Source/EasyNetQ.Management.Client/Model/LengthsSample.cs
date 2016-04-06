@@ -1,15 +1,14 @@
-﻿using System;
+using System;
 using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
 
 namespace EasyNetQ.Management.Client.Model
 {
-    public class PublishDetails
+    public class LengthsSample
     {
-        public Double Rate { get; set; }
-        public Int64 Interval { get; set; }
+        public long Sample { get; set; }
 
         [JsonConverter(typeof(UnixMsDateTimeConverter))]
-        public DateTime LastEvent { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }

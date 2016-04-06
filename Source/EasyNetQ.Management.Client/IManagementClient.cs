@@ -24,8 +24,10 @@ namespace EasyNetQ.Management.Client
         /// <summary>
         /// Various random bits of information that describe the whole system.
         /// </summary>
+        /// <param name="lengthsCriteria">Criteria for getting samples of queue length data</param>
+        /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
         /// <returns></returns>
-        Overview GetOverview();
+        Overview GetOverview(GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null);
 
         /// <summary>
         /// A list of nodes in the RabbitMQ cluster.
@@ -52,12 +54,13 @@ namespace EasyNetQ.Management.Client
         /// <returns></returns>
         IEnumerable<Channel> GetChannels();
 
-		/// <summary>
-		/// Gets the channel. This returns more detail, including consumers than the GetChannels method.
-		/// </summary>
-		/// <returns>The channel.</returns>
-		/// <param name="channelName">Channel name.</param>
-		Channel GetChannel (string channelName);
+        /// <summary>
+        /// Gets the channel. This returns more detail, including consumers than the GetChannels method.
+        /// </summary>
+        /// <returns>The channel.</returns>
+        /// <param name="channelName">Channel name.</param>
+        /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
+        Channel GetChannel (string channelName, GetRatesCriteria ratesCriteria = null);
 
         /// <summary>
         /// A list of all exchanges.
@@ -274,16 +277,19 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="exchangeName">The name of the exchange</param>
         /// <param name="vhost">The virtual host that contains the exchange</param>
+        /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
         /// <returns>The exchange</returns>
-        Exchange GetExchange(string exchangeName, Vhost vhost);
+        Exchange GetExchange(string exchangeName, Vhost vhost, GetRatesCriteria ratesCriteria = null);
 
         /// <summary>
         /// Get an individual queue by name
         /// </summary>
         /// <param name="queueName">The name of the queue</param>
         /// <param name="vhost">The virtual host that contains the queue</param>
+        /// <param name="lengthsCriteria">Criteria for getting samples of queue length data</param>
+        /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
         /// <returns>The Queue</returns>
-        Queue GetQueue(string queueName, Vhost vhost);
+        Queue GetQueue(string queueName, Vhost vhost, GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null);
 
         /// <summary>
         /// Get an individual vhost by name
@@ -335,5 +341,6 @@ namespace EasyNetQ.Management.Client
         /// <param name="vhost"></param>
         /// <param name="name"></param>
         void DeleteParameter(string componentName, string vhost, string name);
+
     }
 }

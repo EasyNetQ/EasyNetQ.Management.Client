@@ -2,10 +2,11 @@
 using System.Reflection;
 
 // EasyNetQ.Management.Client version number: <major>.<minor>.<non-breaking-feature>.<build>
-[assembly: AssemblyVersion("0.50.2.0")]
+[assembly: AssemblyVersion("0.51.0.0")]
 [assembly: CLSCompliant(true)]
 
 // Note: until version 1.0 expect breaking changes on 0.X versions.
+// 0.51.0.0 Consolidated the way queue lengths and message rates are being returned. Updated to the post 3.1.0 api format.
 // 0.50.2.0 Escape / with %2f for exchange and queue names
 // 0.50.1.0 RabbitMq 3.7.0 Forward Compatibility Fix.  PUT responses now use 201 Created (under Cowboy) instead of 204 No Content (WebMachine - pre 3.7.0)
 // 0.50.0.0 Added ParameterShovelValue to create dynamic shovels as a parameter
