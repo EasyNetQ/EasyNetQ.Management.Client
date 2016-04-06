@@ -286,6 +286,19 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         }
 
         [Test]
+        public void Should_be_able_to_get_a_queue_by_name_with_detailed_information()
+        {
+            var lengthsAge = 3600;
+            var lengthsIncrement = 60;
+            var vhost = new Vhost { Name = vhostName };
+            var queue = managementClient.GetQueueDetails(testQueue, vhost, lengthsAge, lengthsIncrement);
+            queue.Name.ShouldEqual(testQueue);
+            queue.MessagesDetails.Samples.Count.ShouldEqual(61);
+            queue.MessagesReadyDetails.Samples.Count.ShouldEqual(61);
+            queue.MessagesUnacknowledgedDetails.Samples.Count.ShouldEqual(61);
+        }
+
+        [Test]
         public void Should_be_able_to_create_a_queue()
         {
             var vhost = managementClient.GetVhost(vhostName);

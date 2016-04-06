@@ -286,6 +286,16 @@ namespace EasyNetQ.Management.Client
         Queue GetQueue(string queueName, Vhost vhost);
 
         /// <summary>
+        /// Get details for an individual queue by name
+        /// </summary>
+        /// <param name="queueName">The name of the queue</param>
+        /// <param name="vhost">The virtual host that contains the queue</param>
+        /// <param name="lengthsAge">Age (in seconds) of the oldest detail sample</param>
+        /// <param name="lengthsIncrement">Interval (in seconds) between detail samples</param>
+        /// <returns>Detailed information about the Queue</returns>
+        QueueEx GetQueueDetails(string queueName, Vhost vhost, int lengthsAge, int lengthsIncrement);
+
+        /// <summary>
         /// Get an individual vhost by name
         /// </summary>
         /// <param name="vhostName">The VHost</param>
@@ -335,5 +345,6 @@ namespace EasyNetQ.Management.Client
         /// <param name="vhost"></param>
         /// <param name="name"></param>
         void DeleteParameter(string componentName, string vhost, string name);
+
     }
 }

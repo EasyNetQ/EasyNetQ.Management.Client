@@ -174,6 +174,12 @@ namespace EasyNetQ.Management.Client
                 SanitiseVhostName(vhost.Name), SanitiseName(queueName)));
         }
 
+        public QueueEx GetQueueDetails(string queueName, Vhost vhost, int lengthsAge, int lengthsIncrement)
+        {
+            return Get<QueueEx>(string.Format("queues/{0}/{1}?lengths_age={2}&lengths_incr={3}",
+                SanitiseVhostName(vhost.Name), SanitiseName(queueName), lengthsAge, lengthsIncrement));
+        }
+
         public Exchange CreateExchange(ExchangeInfo exchangeInfo, Vhost vhost)
         {
             if (exchangeInfo == null)
