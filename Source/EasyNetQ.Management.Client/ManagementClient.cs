@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
@@ -117,9 +118,9 @@ namespace EasyNetQ.Management.Client
             }
         }
 
-        public Overview GetOverview()
+        public Overview GetOverview(GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null)
         {
-            return Get<Overview>("overview");
+            return Get<Overview>("overview", lengthsCriteria, ratesCriteria);
         }
 
         public IEnumerable<Node> GetNodes()
@@ -152,9 +153,9 @@ namespace EasyNetQ.Management.Client
             return Get<IEnumerable<Channel>>("channels");
         }
 
-		public Channel GetChannel (string channelName)
+		public Channel GetChannel (string channelName, GetRatesCriteria ratesCriteria = null)
 		{
-			return Get<Channel> (string.Format("channels/{0}", channelName));
+			return Get<Channel> (string.Format("channels/{0}", channelName), ratesCriteria);
 		}
 
         public IEnumerable<Exchange> GetExchanges()
@@ -162,16 +163,16 @@ namespace EasyNetQ.Management.Client
             return Get<IEnumerable<Exchange>>("exchanges");
         }
 
-        public Exchange GetExchange(string exchangeName, Vhost vhost)
+        public Exchange GetExchange(string exchangeName, Vhost vhost, GetRatesCriteria ratesCriteria = null)
         {
             return Get<Exchange>(string.Format("exchanges/{0}/{1}",
-                SanitiseVhostName(vhost.Name), exchangeName));
+                SanitiseVhostName(vhost.Name), exchangeName), ratesCriteria);
         }
 
-        public Queue GetQueue(string queueName, Vhost vhost)
+        public Queue GetQueue(string queueName, Vhost vhost, GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null)
         {
             return Get<Queue>(string.Format("queues/{0}/{1}",
-                SanitiseVhostName(vhost.Name), SanitiseName(queueName)));
+                SanitiseVhostName(vhost.Name), SanitiseName(queueName)), lengthsCriteria, ratesCriteria);
         }
 
         public Exchange CreateExchange(ExchangeInfo exchangeInfo, Vhost vhost)
@@ -565,9 +566,9 @@ namespace EasyNetQ.Management.Client
             return result.Status == "ok";
         }
 
-        private T Get<T>(string path)
+        private T Get<T>(string path, params object[] queryObjects)
         {
-            var request = CreateRequestForPath(path);
+            var request = CreateRequestForPath(path, queryObjects);
 
             using (var response = request.GetHttpResponse())
             {
@@ -689,11 +690,12 @@ namespace EasyNetQ.Management.Client
             return responseBody;
         }
 
-        private HttpWebRequest CreateRequestForPath(string path)
+        private HttpWebRequest CreateRequestForPath(string path, object[] queryObjects = null)
         {
 			var endpointAddress = BuildEndpointAddress (path);
+            var queryString = BuildQueryString(queryObjects);
 
-			var uri = new Uri (endpointAddress);
+			var uri = new Uri (endpointAddress + queryString);
 
 			if (runningOnMono) {
 				// unsightly hack to fix path. 
@@ -726,6 +728,36 @@ namespace EasyNetQ.Management.Client
         private string BuildEndpointAddress(string path)
         {
             return string.Format("{0}:{1}/api/{2}", hostUrl, portNumber, path);
+        }
+
+        // Very simple query-string builder. 
+        private string BuildQueryString(object[] queryObjects)
+        {
+            if (queryObjects == null || queryObjects.Length == 0)
+                return string.Empty;
+
+            StringBuilder queryStringBuilder = new StringBuilder("?");
+            var first = true;
+            // One or more query objects can be used to build the query
+            foreach (var query in queryObjects)
+            {
+                if (query == null)
+                    continue;
+                // All public properties are added to the query on the format property_name=value
+                var type = query.GetType();
+                foreach (var prop in type.GetProperties())
+                {
+                    var name = Regex.Replace(prop.Name, "([a-z])([A-Z])", "$1_$2").ToLower();
+                    var value = prop.GetValue(query, null);
+                    if (!first)
+                    {
+                        queryStringBuilder.Append("&");
+                    }
+                    queryStringBuilder.AppendFormat("{0}={1}", name, value ?? string.Empty);
+                    first = false;
+                }
+            }
+            return queryStringBuilder.ToString();
         }
 
         private string SanitiseVhostName(string vhostName)

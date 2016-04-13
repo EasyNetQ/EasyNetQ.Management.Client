@@ -286,6 +286,50 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         }
 
         [Test]
+        public void Should_be_able_to_get_a_queue_by_name_with_detailed_length_information()
+        {
+            var age = 60;
+            var increment = 10;
+            var vhost = new Vhost { Name = vhostName };
+            var queue = managementClient.GetQueue(testQueue, vhost, lengthsCriteria: new GetLengthsCriteria(age, increment));
+            queue.Name.ShouldEqual(testQueue);
+            queue.MessagesDetails.Samples.Count.ShouldEqual(7);
+            queue.MessagesReadyDetails.Samples.Count.ShouldEqual(7);
+            queue.MessagesUnacknowledgedDetails.Samples.Count.ShouldEqual(7);
+        }
+
+        [Test]
+        public void Should_be_able_to_get_a_queue_by_name_with_detailed_rates_information()
+        {
+            var age = 60;
+            var increment = 10;
+            var vhost = new Vhost { Name = vhostName };
+            var queue = managementClient.GetQueue(testQueue, vhost, ratesCriteria: new GetRatesCriteria(age, increment));
+            queue.Name.ShouldEqual(testQueue);
+            // All MessageStats are not always available, so tricky to test
+            //queue.MessageStats.DeliverGetDetails.Samples.Count.ShouldEqual(7);
+            //queue.MessageStats.GetNoAckDetails.Samples.Count.ShouldEqual(7);
+            //queue.MessageStats.PublishDetails.Samples.Count.ShouldEqual(7);
+        }
+
+        [Test]
+        public void Should_be_able_to_get_a_queue_by_name_with_all_detailed_information()
+        {
+            var age = 60;
+            var increment = 10;
+            var vhost = new Vhost { Name = vhostName };
+            var queue = managementClient.GetQueue(testQueue, vhost, lengthsCriteria: new GetLengthsCriteria(age, increment), ratesCriteria: new GetRatesCriteria(age, increment));
+            queue.Name.ShouldEqual(testQueue);
+            queue.MessagesDetails.Samples.Count.ShouldEqual(7);
+            queue.MessagesReadyDetails.Samples.Count.ShouldEqual(7);
+            queue.MessagesUnacknowledgedDetails.Samples.Count.ShouldEqual(7);
+            // All MessageStats are not always available, so tricky to test
+            //queue.MessageStats.DeliverGetDetails.Samples.Count.ShouldEqual(7);
+            //queue.MessageStats.GetNoAckDetails.Samples.Count.ShouldEqual(7);
+            //queue.MessageStats.PublishDetails.Samples.Count.ShouldEqual(7);
+        }
+
+        [Test]
         public void Should_be_able_to_create_a_queue()
         {
             var vhost = managementClient.GetVhost(vhostName);

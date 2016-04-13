@@ -23,5 +23,9 @@ namespace EasyNetQ.Management.Client.Model
         public string Node { get; set; }
         public IEnumerable<string> SlaveNodes { get; set; }
         public IEnumerable<string> SynchronisedSlaveNodes { get; set; }
+        public LengthsDetails MessagesDetails { get; set; }
+        public LengthsDetails MessagesReadyDetails { get; set; }
+        public LengthsDetails MessagesUnacknowledgedDetails { get; set; }
+        public MessageStats MessageStats { get; set; }
     }
 }
