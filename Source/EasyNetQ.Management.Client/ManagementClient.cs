@@ -118,9 +118,9 @@ namespace EasyNetQ.Management.Client
             }
         }
 
-        public Overview GetOverview()
+        public Overview GetOverview(GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null)
         {
-            return Get<Overview>("overview");
+            return Get<Overview>("overview", lengthsCriteria, ratesCriteria);
         }
 
         public IEnumerable<Node> GetNodes()
@@ -153,9 +153,9 @@ namespace EasyNetQ.Management.Client
             return Get<IEnumerable<Channel>>("channels");
         }
 
-		public Channel GetChannel (string channelName)
+		public Channel GetChannel (string channelName, GetRatesCriteria ratesCriteria = null)
 		{
-			return Get<Channel> (string.Format("channels/{0}", channelName));
+			return Get<Channel> (string.Format("channels/{0}", channelName), ratesCriteria);
 		}
 
         public IEnumerable<Exchange> GetExchanges()
@@ -163,10 +163,10 @@ namespace EasyNetQ.Management.Client
             return Get<IEnumerable<Exchange>>("exchanges");
         }
 
-        public Exchange GetExchange(string exchangeName, Vhost vhost)
+        public Exchange GetExchange(string exchangeName, Vhost vhost, GetRatesCriteria ratesCriteria = null)
         {
             return Get<Exchange>(string.Format("exchanges/{0}/{1}",
-                SanitiseVhostName(vhost.Name), exchangeName));
+                SanitiseVhostName(vhost.Name), exchangeName), ratesCriteria);
         }
 
         public Queue GetQueue(string queueName, Vhost vhost, GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null)
