@@ -2,10 +2,11 @@
 using System.Reflection;
 
 // EasyNetQ.Management.Client version number: <major>.<minor>.<non-breaking-feature>.<build>
-[assembly: AssemblyVersion("0.50.1.0")]
+[assembly: AssemblyVersion("0.50.2.0")]
 [assembly: CLSCompliant(true)]
 
 // Note: until version 1.0 expect breaking changes on 0.X versions.
+// 0.50.2.0 Escape / with %2f for exchange and queue names
 // 0.50.1.0 RabbitMq 3.7.0 Forward Compatibility Fix.  PUT responses now use 201 Created (under Cowboy) instead of 204 No Content (WebMachine - pre 3.7.0)
 // 0.50.0.0 Added ParameterShovelValue to create dynamic shovels as a parameter
 // 0.49.0.0 Removed the default user tag "administrator" when creating new users via the management api
