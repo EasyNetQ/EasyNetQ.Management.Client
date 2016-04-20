@@ -735,7 +735,7 @@ namespace EasyNetQ.Management.Client
 
         private string SanitiseName(string queueName)
         {
-            return queueName.Replace("+", "%2B").Replace("#", "%23");
+            return queueName.Replace("+", "%2B").Replace("#", "%23").Replace("/", "%2f");
         }
 
         private string RecodeBindingPropertiesKey(string propertiesKey)
