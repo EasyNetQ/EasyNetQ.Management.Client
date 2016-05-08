@@ -9,13 +9,13 @@ namespace EasyNetQ.Management.Client.Model
         public string Type { get; set; }
         public bool Running { get; set; }
         public string OsPid { get; set; }
-        public int MemEts { get; set; }
-        public int MemBinary { get; set; }
-        public int MemProc { get; set; }
-        public int MemProcUsed { get; set; }
-        public int MemAtom { get; set; }
-        public int MemAtomUsed { get; set; }
-        public int MemCode { get; set; }
+        public long MemEts { get; set; }
+        public long MemBinary { get; set; }
+        public long MemProc { get; set; }
+        public long MemProcUsed { get; set; }
+        public long MemAtom { get; set; }
+        public long MemAtomUsed { get; set; }
+        public long MemCode { get; set; }
         public string FdUsed { get; set; }
         public int FdTotal { get; set; }
         public int SocketsUsed { get; set; }
