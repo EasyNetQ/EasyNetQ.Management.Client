@@ -4,7 +4,7 @@ namespace EasyNetQ.Management.Client.Model
 {
     public class Queue
     {
-        public int Memory { get; set; }
+        public long Memory { get; set; }
         public string IdleSince { get; set; }
         public string Policy { get; set; }
         public string ExclusiveConsumerTag { get; set; }
