@@ -1,3 +1,7 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/s3a158jwtxgwco90?svg=true)](https://ci.appveyor.com/project/EasyNetQ/easynetq-management-client)
+
+--
+
 ![EasyNetQ Logo](https://github.com/EasyNetQ/EasyNetQ/wiki/images/logo_design_150.png)
 
 A Nice .NET API for RabbitMQ
