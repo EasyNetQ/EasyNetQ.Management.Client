@@ -1,7 +1,10 @@
 build:
   project: Build\EasyNetQ.proj
   verbosity: minimal
-  publish_nuget: false  
+  publish_nuget: false
+  
+pull_requests:
+  do_not_increment_build_number: true
 
 test: off              
 
@@ -16,4 +19,3 @@ deploy:
       secure: 1zhszvbiMAqXYJa05TKn8sOvODYXW+xCJa3/NLNmyD7yFyqGeRqne/+H0k+CoVso
     on:
       branch: master
-                      
