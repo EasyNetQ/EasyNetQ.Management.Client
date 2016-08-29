@@ -32,3 +32,7 @@ packages
 
 # Ignore NuGet binary
 Source/.nuget/NuGet.exe
+
+# Visual studio files
+Source/.vs
+*.lock.json
