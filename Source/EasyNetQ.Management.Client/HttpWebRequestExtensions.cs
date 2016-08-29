@@ -10,7 +10,7 @@ namespace EasyNetQ.Management.Client
 
             try
             {
-                response = (HttpWebResponse)request.GetResponse();
+                response = (HttpWebResponse)request.GetResponseAsync().Result;
             }
             catch (WebException exception)
             {

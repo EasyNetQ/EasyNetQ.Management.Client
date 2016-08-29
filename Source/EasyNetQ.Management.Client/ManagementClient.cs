@@ -153,10 +153,10 @@ namespace EasyNetQ.Management.Client
             return Get<IEnumerable<Channel>>("channels");
         }
 
-		public Channel GetChannel (string channelName, GetRatesCriteria ratesCriteria = null)
-		{
-			return Get<Channel> (string.Format("channels/{0}", channelName), ratesCriteria);
-		}
+        public Channel GetChannel (string channelName, GetRatesCriteria ratesCriteria = null)
+        {
+            return Get<Channel> (string.Format("channels/{0}", channelName), ratesCriteria);
+        }
 
         public IEnumerable<Exchange> GetExchanges()
         {
@@ -660,7 +660,7 @@ namespace EasyNetQ.Management.Client
             request.ContentType = "application/json";
 
             var body = JsonConvert.SerializeObject(item, Settings);
-            using (var requestStream = request.GetRequestStream())
+            using (var requestStream = request.GetRequestStreamAsync().Result)
             using (var writer = new StreamWriter(requestStream))
             {
                 writer.Write(body);
@@ -692,32 +692,37 @@ namespace EasyNetQ.Management.Client
 
         private HttpWebRequest CreateRequestForPath(string path, object[] queryObjects = null)
         {
-			var endpointAddress = BuildEndpointAddress (path);
+            var endpointAddress = BuildEndpointAddress (path);
             var queryString = BuildQueryString(queryObjects);
 
-			var uri = new Uri (endpointAddress + queryString);
+            var uri = new Uri (endpointAddress + queryString);
 
-			if (runningOnMono) {
-				// unsightly hack to fix path. 
-				// The default vHost in RabbitMQ is named '/' which causes all sorts of problems :(
-				// We need to escape it to %2f, but System.Uri then unescapes it back to '/'
-				// The horrible fix is to reset the path field to the original path value, after it's
-				// been set.
-				var pathField = typeof(Uri).GetField ("path", BindingFlags.Instance | BindingFlags.NonPublic);
-				if (pathField == null) {
-					throw new ApplicationException ("Could not resolve path field");
-				}
-				var alteredPath = (string)pathField.GetValue (uri);
-				alteredPath = alteredPath.Replace (@"///", @"/%2f/");
-				alteredPath = alteredPath.Replace (@"//", @"/%2f");
-				alteredPath = alteredPath.Replace ("+", "%2b");
-				pathField.SetValue (uri, alteredPath);
-			}
+            if (runningOnMono) {
+                // unsightly hack to fix path. 
+                // The default vHost in RabbitMQ is named '/' which causes all sorts of problems :(
+                // We need to escape it to %2f, but System.Uri then unescapes it back to '/'
+                // The horrible fix is to reset the path field to the original path value, after it's
+                // been set.
+                var pathField = typeof(Uri).GetField ("path", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (pathField == null) {
+                    throw new Exception("Could not resolve path field");
+                }
+                var alteredPath = (string)pathField.GetValue (uri);
+                alteredPath = alteredPath.Replace (@"///", @"/%2f/");
+                alteredPath = alteredPath.Replace (@"//", @"/%2f");
+                alteredPath = alteredPath.Replace ("+", "%2b");
+                pathField.SetValue (uri, alteredPath);
+            }
 
-			var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Credentials = new NetworkCredential(username, password); 
+            var request = (HttpWebRequest)WebRequest.Create(uri);
+            request.Credentials = new NetworkCredential(username, password);
+
+            // TODO: we need to manage this in another way since net core does support these props
+
+#if NETFX
             request.Timeout = request.ReadWriteTimeout = (int)timeout.TotalMilliseconds;
             request.KeepAlive = false; //default WebRequest.KeepAlive to false to resolve spurious 'the request was aborted: the request was canceled' exceptions
+#endif
 
             configureRequest(request);
 
@@ -781,11 +786,14 @@ namespace EasyNetQ.Management.Client
         /// <param name="useSsl">   true if using SSL.</param>
         private void LeaveDotsAndSlashesEscaped(bool useSsl)
         {
+            // TODO: need to figure out what to do in net core about this, first of all does the problem persist?
+
+#if NETFX
             var getSyntaxMethod =
                 typeof(UriParser).GetMethod("GetSyntax", BindingFlags.Static | BindingFlags.NonPublic);
             if (getSyntaxMethod == null)
             {
-                throw new MissingMethodException("UriParser", "GetSyntax");
+                throw new MissingMethodException("UriParser.GetSyntax()");
             }
 
             var uriParser = getSyntaxMethod.Invoke(null, new object[] { useSsl ? "https" : "http" });
@@ -794,10 +802,11 @@ namespace EasyNetQ.Management.Client
                 uriParser.GetType().GetMethod("SetUpdatableFlags", BindingFlags.Instance | BindingFlags.NonPublic);
             if (setUpdatableFlagsMethod == null)
             {
-                throw new MissingMethodException("UriParser", "SetUpdatableFlags");
+                throw new MissingMethodException("UriParser.SetUpdatableFlags");
             }
 
             setUpdatableFlagsMethod.Invoke(uriParser, new object[] { 0 });
+#endif
         }
     }
 }
