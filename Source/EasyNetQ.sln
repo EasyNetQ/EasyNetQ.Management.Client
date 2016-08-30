@@ -9,19 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\Build\EasyNetQ.proj = ..\Build\EasyNetQ.proj
 		..\hall_of_fame.md = ..\hall_of_fame.md
 		..\licence.txt = ..\licence.txt
+		NuGet.Config = NuGet.Config
 		Version.cs = Version.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyNetQ.Management.Client.Tests", "EasyNetQ.Management.Client.Tests\EasyNetQ.Management.Client.Tests.csproj", "{F411090D-1CAB-4726-9F2B-582E9D9D80D7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8D267E14-E6F4-43E0-AB3B-F346F7D8B89B} = {8D267E14-E6F4-43E0-AB3B-F346F7D8B89B}
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8B9F313C-2A3A-45D6-944A-DCB2F92C8227}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyNetQ.Management.Client.IntegrationTests", "EasyNetQ.Management.Client.IntegrationTests\EasyNetQ.Management.Client.IntegrationTests.csproj", "{92F61BE0-9035-476E-BD2E-E8ACD67A03C5}"
