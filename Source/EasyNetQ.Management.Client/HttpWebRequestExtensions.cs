@@ -1,11 +1,11 @@
-﻿using System.Net;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace EasyNetQ.Management.Client
 {
     public static class HttpWebRequestExtensions
     {
-        public static HttpWebResponse GetHttpResponse(this HttpWebRequest request)
+        public static HttpResponseMessage GetHttpResponse(this HttpRequestMessage request)
         {
             return GetHttpResponseAsync(request).Result;
         }
@@ -13,27 +13,12 @@ namespace EasyNetQ.Management.Client
         /// <summary>
         /// https://blogs.msdn.microsoft.com/pfxteam/2012/04/13/should-i-expose-synchronous-wrappers-for-asynchronous-methods/
         /// </summary>
-        public static async Task<HttpWebResponse> GetHttpResponseAsync(this HttpWebRequest request)
+        public static async Task<HttpResponseMessage> GetHttpResponseAsync(this HttpRequestMessage request)
         {
-            HttpWebResponse response = null;
-
-            try
+            using (var client = new HttpClient())
             {
-                response = (HttpWebResponse)await request.GetResponseAsync().ConfigureAwait(false);
+                return await client.SendAsync(request).ConfigureAwait(false);
             }
-            catch (WebException exception)
-            {
-                if (exception.Status == WebExceptionStatus.ProtocolError)
-                {
-                    response = (HttpWebResponse) exception.Response;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return response;
         }
     }
 }

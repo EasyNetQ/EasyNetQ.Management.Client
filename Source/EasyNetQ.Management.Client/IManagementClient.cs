@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using EasyNetQ.Management.Client.Model;
 using Queue = EasyNetQ.Management.Client.Model.Queue;
 
 namespace EasyNetQ.Management.Client
 {
-    public interface IManagementClient
+    public interface IManagementClient : IDisposable
     {
         /// <summary>
         /// The host URL that this instance is using.
