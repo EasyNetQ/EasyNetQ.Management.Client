@@ -4,6 +4,12 @@
     "Newtonsoft.Json": "9.0.1",
     "NUnit": "2.6.4"
   },
+  "buildOptions": {
+    "embed": [ "Json/*" ],
+    "compile": {
+      "includeFiles": "..\\Version.cs"
+    }
+  },
   "frameworks": {
     "net451": {
       "frameworkAssemblies": {
