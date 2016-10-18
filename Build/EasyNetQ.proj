@@ -42,11 +42,18 @@
         <MSBuild Projects="@(ProjectToBuild)" Targets="Clean;Rebuild"/>
     </Target>
 
+    <!-- Running xUnit tests using dotnet test. Running tests that are not
+        Integration tests. Continuing on error so that all of the test binaries
+        can run. This allows us to see all of the test results in AppVeyor if
+        there are multiple test suites failing. -->
     <Target Name="Test" DependsOnTargets="Build">
         <ItemGroup>
-            <TestAssembly Include="$(OutputDir)\**\net451\*.Tests.dll" />
+            <TestProjects Include="$(Source)\*Tests\project.json" />
         </ItemGroup>
-        <NUnit ToolPath="$(Nunit)" DisableShadowCopy="true" Assemblies="@(TestAssembly)" Framework="4.0.30319" Force32Bit="true" />
+
+        <Exec WorkingDirectory="%(TestProjects.RootDir)\%(TestProjects.Directory)"
+              Command='dotnet test -notrait "Category=Integration"'
+              ContinueOnError="ErrorAndContinue" />
     </Target>
 
     <Target Name="MergeManagementClient" DependsOnTargets="Test">
