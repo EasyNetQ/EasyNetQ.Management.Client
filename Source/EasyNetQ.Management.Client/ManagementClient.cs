@@ -10,6 +10,7 @@ using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace EasyNetQ.Management.Client
 {
@@ -650,18 +651,21 @@ namespace EasyNetQ.Management.Client
             }
         }
 
+        /// <summary>
+        /// https://blogs.msdn.microsoft.com/pfxteam/2012/04/13/should-i-expose-synchronous-wrappers-for-asynchronous-methods/
+        /// </summary>
         private void InsertRequestBody<T>(HttpWebRequest request, T item)
         {
             request.ContentType = "application/json";
 
             var body = JsonConvert.SerializeObject(item, Settings);
-            using (var requestStream = request.GetRequestStreamAsync().Result)
+            using (var requestStream = Task.Run(() => request.GetRequestStreamAsync()).Result)
             using (var writer = new StreamWriter(requestStream))
             {
                 writer.Write(body);
             }
         }
-        
+
         private T DeserializeResponse<T>(HttpWebResponse response)
         {
             var responseBody = GetBodyFromResponse(response);
