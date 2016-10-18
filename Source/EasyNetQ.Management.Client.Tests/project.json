@@ -1,0 +1,13 @@
+﻿{
+  "dependencies": {
+    "Newtonsoft.Json": "9.0.1",
+    "NUnit": "2.6.4",
+    "System.Net.Http": "4.1.0"
+  },
+  "frameworks": {
+    "net451": {}
+  },
+  "runtimes": {
+    "win": {}
+  }
+}
