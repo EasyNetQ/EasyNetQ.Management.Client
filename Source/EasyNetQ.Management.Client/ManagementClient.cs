@@ -111,11 +111,6 @@ namespace EasyNetQ.Management.Client
             this.timeout = timeout ?? defaultTimeout;
             this.runningOnMono = runningOnMono;
             this.configureRequest = configureRequest;
-
-            if (!runningOnMono)
-            {
-                LeaveDotsAndSlashesEscaped(ssl);
-            }
         }
 
         public Overview GetOverview(GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null)
@@ -778,35 +773,6 @@ namespace EasyNetQ.Management.Client
         private string RecodeBindingPropertiesKey(string propertiesKey)
         {
             return propertiesKey.Replace("%5F", "%255F");
-        }
-
-        /// <summary>
-        /// See http://mikehadlow.blogspot.co.uk/2011/08/how-to-stop-systemuri-un-escaping.html.
-        /// </summary>
-        /// <param name="useSsl">   true if using SSL.</param>
-        private void LeaveDotsAndSlashesEscaped(bool useSsl)
-        {
-            // TODO: need to figure out what to do in net core about this, first of all does the problem persist?
-
-#if NETFX
-            var getSyntaxMethod =
-                typeof(UriParser).GetMethod("GetSyntax", BindingFlags.Static | BindingFlags.NonPublic);
-            if (getSyntaxMethod == null)
-            {
-                throw new MissingMethodException("UriParser.GetSyntax()");
-            }
-
-            var uriParser = getSyntaxMethod.Invoke(null, new object[] { useSsl ? "https" : "http" });
-
-            var setUpdatableFlagsMethod =
-                uriParser.GetType().GetMethod("SetUpdatableFlags", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (setUpdatableFlagsMethod == null)
-            {
-                throw new MissingMethodException("UriParser.SetUpdatableFlags");
-            }
-
-            setUpdatableFlagsMethod.Invoke(uriParser, new object[] { 0 });
-#endif
         }
     }
 }
