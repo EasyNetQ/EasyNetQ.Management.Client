@@ -1,11 +1,16 @@
 ﻿{
   "dependencies": {
+    "EasyNetQ.Management.Client": "2.0.0-netcore0001",
     "Newtonsoft.Json": "9.0.1",
-    "NUnit": "2.6.4",
-    "System.Net.Http": "4.1.0"
+    "NUnit": "2.6.4"
   },
   "frameworks": {
-    "net451": {}
+    "net451": {
+      "frameworkAssemblies": {
+        "Microsoft.CSharp": "4.0.0.0",
+        "System.Net.Http": "4.0.0.0"
+      }
+    }
   },
   "runtimes": {
     "win": {}
