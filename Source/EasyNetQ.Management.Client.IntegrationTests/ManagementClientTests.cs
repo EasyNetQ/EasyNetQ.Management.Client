@@ -114,11 +114,11 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.CloseConnection(connections.First());
         }
 
-        [Test, ExpectedException(typeof(UnexpectedHttpStatusCodeException))]
+        [Fact]
         public void Should_throw_when_trying_to_close_unknown_connection()
         {
             var connection = new Connection {Name = "unknown"};
-            managementClient.CloseConnection(connection);
+            Assert.Throws<UnexpectedHttpStatusCodeException>(() => managementClient.CloseConnection(connection));
         }
 
         [Fact]
