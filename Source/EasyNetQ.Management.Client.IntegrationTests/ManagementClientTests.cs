@@ -538,9 +538,9 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.DeleteExchange(sourceExchange);
             managementClient.DeleteExchange(destinationExchange);
 
-            Assert.AreEqual("exchange", binding.DestinationType);
-            Assert.AreEqual(destinationExchangeName, binding.Destination);
-            Assert.AreEqual("#", binding.RoutingKey);
+            Assert.Equal("exchange", binding.DestinationType);
+            Assert.Equal(destinationExchangeName, binding.Destination);
+            Assert.Equal("#", binding.RoutingKey);
         }
 
         [Fact]
@@ -732,7 +732,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         public void Should_be_able_to_get_policies_list()
         {
             var policies = managementClient.GetPolicies();
-            Assert.IsNotNull(policies);
+            Assert.NotNull(policies);
         }
 
         [Fact]
@@ -752,7 +752,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     HaSyncMode = haSyncMode
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(
+            Assert.Equal(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
                      && p.Vhost == vhostName
                      && p.ApplyTo == ApplyMode.All
@@ -778,7 +778,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     HaSyncMode = haSyncMode
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(
+            Assert.Equal(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
                      && p.Vhost == vhostName
                      && p.ApplyTo == ApplyMode.Queues
@@ -804,7 +804,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     HaSyncMode = haSyncMode
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(
+            Assert.Equal(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
                      && p.Vhost == vhostName
                      && p.ApplyTo == ApplyMode.Exchanges
@@ -827,7 +827,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     AlternateExchange = alternateExchange
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(
+            Assert.Equal(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
                      && p.Vhost == vhostName
                      && p.Definition.AlternateExchange == alternateExchange));
@@ -850,7 +850,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     DeadLetterRoutingKey = deadLetterRoutingKey
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(
+            Assert.Equal(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
                      && p.Vhost == vhostName
                      && p.Definition.DeadLetterExchange == deadLetterExchange
@@ -872,7 +872,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     MessageTtl = messageTtl
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(
+            Assert.Equal(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
                      && p.Vhost == vhostName
                      && p.Definition.MessageTtl == messageTtl));
@@ -893,7 +893,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     Expires = expires
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(
+            Assert.Equal(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
                      && p.Vhost == vhostName
                      && p.Definition.Expires == expires));
@@ -914,7 +914,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     MaxLength = maxLength
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(
+            Assert.Equal(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
                      && p.Vhost == vhostName
                      && p.Definition.MaxLength == maxLength));
@@ -951,7 +951,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                 },
                 Priority = priority
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(
+            Assert.Equal(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
                      && p.Vhost == vhostName
                      && p.Priority == priority
@@ -982,7 +982,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     FederationUpstream = "my-upstream"
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(
+            Assert.Equal(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
                      && p.Vhost == vhostName
                      && p.Definition.FederationUpstream == "my-upstream"));
@@ -1004,7 +1004,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     FederationUpstreamSet = "my-upstream-set"
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(
+            Assert.Equal(1, managementClient.GetPolicies().Count(
                 p => p.Name == policyName
                      && p.Vhost == vhostName
                      && p.Definition.FederationUpstreamSet == "my-upstream-set"));
@@ -1025,9 +1025,9 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     HaSyncMode = HaSyncMode.Automatic
                 }
             });
-            Assert.AreEqual(1, managementClient.GetPolicies().Count(p => p.Name == policyName && p.Vhost == vhostName));
+            Assert.Equal(1, managementClient.GetPolicies().Count(p => p.Name == policyName && p.Vhost == vhostName));
             managementClient.DeletePolicy(policyName, new Vhost{Name = vhostName});
-            Assert.AreEqual(0, managementClient.GetPolicies().Count(p => p.Name == policyName && p.Vhost == vhostName));
+            Assert.Equal(0, managementClient.GetPolicies().Count(p => p.Name == policyName && p.Vhost == vhostName));
         }
 
         [Fact]
@@ -1037,8 +1037,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             Assert.NotNull(parameters);
         }
 
-        [Fact]
-        [Ignore("Requires the federation plugin to work")]
+        [Fact(Skip = "Requires the federation plugin to work")]
         public void Should_be_able_to_create_parameter()
         {
             try
