@@ -13,7 +13,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
         {
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_name()
         {
             const string expectedName = "the_name";

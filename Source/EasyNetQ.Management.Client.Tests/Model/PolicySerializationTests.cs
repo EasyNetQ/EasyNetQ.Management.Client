@@ -4,7 +4,7 @@
     using System.Linq;
     using Client.Model;
     using Newtonsoft.Json;
-    using NUnit.Framework;
+    using Xunit;
 
     [TestFixture(Category = "Unit")]
     public class PolicySerializationTests
@@ -17,7 +17,7 @@
             _policy = ResourceLoader.LoadObjectFromJson<Policy[]>("Policies_ha.json", ManagementClient.Settings);
         }
 
-        [Test]
+        [Fact]
         public void Should_read_apply_to_properly()
         {
             var exactlyPolicies = _policy.Where(p => p.Name == "ha-duplicate").ToList();
@@ -36,7 +36,7 @@
             Assert.AreEqual(ApplyMode.All, policy.ApplyTo);   
         }
 
-           [Test]
+           [Fact]
         public void Should_read_federation_upstream_properly()
         {
             var exactlyPolicies = _policy.Where(p => p.Name == "mirror_test").ToList();
@@ -45,7 +45,7 @@
             Assert.AreEqual("test", policy.Definition.FederationUpstream);
         }
 
-        [Test]
+        [Fact]
         public void Should_read_exactly_ha_properly()
         {
             _policy.Count().ShouldEqual(3);
@@ -60,7 +60,7 @@
             Assert.AreEqual(1, policy.Priority);
         }
 
-        [Test]
+        [Fact]
         public void Should_read_nodes_ha_properly()
         {
             _policy.Count().ShouldEqual(3);
@@ -75,7 +75,7 @@
             Assert.AreEqual(0, policy.Priority);
         }
 
-        [Test]
+        [Fact]
         public void Should_write_apply_to_properly()
         {
             var serializedMessage = JsonConvert.SerializeObject(new Policy
@@ -104,7 +104,7 @@
             Assert.IsTrue(serializedMessage.Contains("\"apply-to\":\"queues\""));
         }
 
-        [Test]
+        [Fact]
         public void Should_write_federation_upstream_properly()
         {
             var serializedMessage = JsonConvert.SerializeObject(new Policy
@@ -117,7 +117,7 @@
             Assert.IsTrue(serializedMessage.Contains("\"federation-upstream\":\"my-upstream\""));
         }
 
-        [Test]
+        [Fact]
         public void Should_write_all_ha_policy_without_param()
         {
             var serializedMessage = JsonConvert.SerializeObject(new Policy

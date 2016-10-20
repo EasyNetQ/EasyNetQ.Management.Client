@@ -1,7 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using EasyNetQ.Management.Client.Model;
-using NUnit.Framework;
+using Xunit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +31,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient = new ManagementClient(hostUrl, username, password);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_configure_request()
         {
             var client = new ManagementClient(hostUrl, username, password, configureRequest: 
@@ -40,7 +40,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             client.GetOverview();
         }
 
-        [Test]
+        [Fact]
         public void Should_get_overview()
         {
             var overview = managementClient.GetOverview();
@@ -63,7 +63,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_get_nodes()
         {
             var nodes = managementClient.GetNodes();
@@ -72,7 +72,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             nodes.First().Name.ShouldEqual("rabbit@" + Environment.MachineName);
         }
 
-        [Test]
+        [Fact]
         public void Should_get_definitions()
         {
             var definitions = managementClient.GetDefinitions();
@@ -80,7 +80,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             definitions.RabbitVersion[0].ShouldEqual('3');
         }
 
-        [Test]
+        [Fact]
         public void Should_get_connections()
         {
             var connections = managementClient.GetConnections();
@@ -104,7 +104,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_close_connection()
         {
             // first get a connection
@@ -121,7 +121,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.CloseConnection(connection);
         }
 
-        [Test]
+        [Fact]
         public void Should_get_channels()
         {
             var channels = managementClient.GetChannels();
@@ -134,7 +134,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_get_exchanges()
         {
             var exchanges = managementClient.GetExchanges();
@@ -145,7 +145,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_an_individual_exchange_by_name()
         {
             var vhost = new Vhost { Name = vhostName };
@@ -154,7 +154,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             exchange.Name.ShouldEqual(testExchange);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_an_exchange()
         {
             var exchange = CreateExchange(testExchange);
@@ -169,7 +169,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             return exchange;
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_an_exchange_with_plus_char_in_the_name()
         {
             var vhost = managementClient.GetVhost(vhostName);
@@ -178,7 +178,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             queue.Name.ShouldEqual(testExchangetestQueueWithPlusChar);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_delete_an_exchange()
         {
             var exchange = managementClient.GetExchanges().SingleOrDefault(x => x.Name == testExchange);
@@ -191,7 +191,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.DeleteExchange(exchange);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_delete_an_exchange_with_pluses()
         {
             var exchange = managementClient.GetExchanges().SingleOrDefault(x => x.Name == testExchangetestQueueWithPlusChar);
@@ -204,7 +204,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.DeleteExchange(exchange);
         }
 
-        [Test]
+        [Fact]
         public void Should_get_all_bindings_for_which_the_exchange_is_the_source()
         {
             var exchange = managementClient.GetExchanges().SingleOrDefault(x => x.Name == testExchange);
@@ -222,7 +222,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_get_all_bindings_for_which_the_exchange_is_the_destination()
         {
             var exchange = managementClient.GetExchanges().SingleOrDefault(x => x.Name == testExchange);
@@ -240,7 +240,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_publish_to_an_exchange()
         {
             var exchange = managementClient.GetExchanges().SingleOrDefault(x => x.Name == testExchange);
@@ -257,7 +257,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             result.Routed.ShouldBeFalse();
         }
 
-        [Test]
+        [Fact]
         public void Should_get_queues()
         {
             var queues = managementClient.GetQueues();
@@ -268,7 +268,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_a_queue_by_name()
         {
             var vhost = new Vhost { Name = vhostName };
@@ -276,7 +276,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             queue.Name.ShouldEqual(testQueue);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_a_queue_by_name_with_plus_char()
         {
             var vhost = new Vhost { Name = vhostName };
@@ -284,7 +284,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             queue.Name.ShouldEqual(testQueueWithPlusChar);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_a_queue_by_name_with_detailed_length_information()
         {
             var age = 60;
@@ -297,7 +297,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             queue.MessagesUnacknowledgedDetails.Samples.Count.ShouldEqual(7);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_a_queue_by_name_with_detailed_rates_information()
         {
             var age = 60;
@@ -311,7 +311,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             //queue.MessageStats.PublishDetails.Samples.Count.ShouldEqual(7);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_a_queue_by_name_with_all_detailed_information()
         {
             var age = 60;
@@ -328,7 +328,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             //queue.MessageStats.PublishDetails.Samples.Count.ShouldEqual(7);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_a_queue()
         {
             var vhost = managementClient.GetVhost(vhostName);
@@ -338,7 +338,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             queue.Name.ShouldEqual(testQueue);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_a_queue_with_plus_char_in_the_name()
         {
             var vhost = managementClient.GetVhost(vhostName);
@@ -347,7 +347,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             queue.Name.ShouldEqual(testQueueWithPlusChar);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_a_queue_with_arguments()
         {
             var exchangeName = "test-dead-letter-exchange";
@@ -360,7 +360,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             queue.Arguments[argumentKey].ShouldEqual(exchangeName);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_delete_a_queue()
         {
             var queue = managementClient.GetQueues().SingleOrDefault(x => x.Name == testQueue);
@@ -372,7 +372,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.DeleteQueue(queue);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_all_the_bindings_for_a_queue()
         {
             var queue = managementClient.GetQueues().SingleOrDefault(x => x.Name == testQueue);
@@ -389,7 +389,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_purge_a_queue()
         {
             var queue = managementClient.GetQueues().SingleOrDefault(x => x.Name == testQueue);
@@ -401,7 +401,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.Purge(queue);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_messages_from_a_queue()
         {
             var queue = managementClient.GetQueues().SingleOrDefault(x => x.Name == testQueue);
@@ -434,7 +434,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_get_bindings()
         {
             var bindings = managementClient.GetBindings();
@@ -447,7 +447,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_a_list_of_bindings_between_an_exchange_and_a_queue()
         {
             var queue = EnsureQueueExists(testQueue);
@@ -481,7 +481,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             return managementClient.GetQueue(queueName, vhost);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_a_list_of_bindings_between_an_exchange_and_an_exchange()
         {
             var exchange1 = EnsureExchangeExists(testExchange);
@@ -506,7 +506,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                     ?? CreateExchange(exchangeName);
         }
 
-        [Test]
+        [Fact]
         public void Should_create_binding()
         {
             var vhost = managementClient.GetVhost(vhostName);
@@ -518,7 +518,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.CreateBinding(exchange, queue, bindingInfo);
         }
 
-        [Test]
+        [Fact]
         public void Should_create_exchange_to_exchange_binding()
         {
             const string sourceExchangeName = "management_api_test_source_exchange";
@@ -543,7 +543,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             Assert.AreEqual("#", binding.RoutingKey);
         }
 
-        [Test]
+        [Fact]
         public void Should_delete_binding()
         {
             var vhost = managementClient.GetVhost(vhostName);
@@ -558,7 +558,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_get_vhosts()
         {
             var vhosts = managementClient.GetVHosts();
@@ -571,28 +571,28 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
         private const string testVHost = "management_test_virtual_host";
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_an_individual_vhost()
         {
             var vhost = managementClient.GetVhost(testVHost);
             vhost.Name.ShouldEqual(testVHost);
         }
 
-        [Test]
+        [Fact]
         public void Should_create_a_virtual_host()
         {
             var vhost = managementClient.CreateVirtualHost(testVHost);
             vhost.Name.ShouldEqual(testVHost);
         }
 
-        [Test]
+        [Fact]
         public void Should_delete_a_virtual_host()
         {
             var vhost = managementClient.GetVhost(testVHost);
             managementClient.DeleteVirtualHost(vhost);
         }
 
-        [Test]
+        [Fact]
         public void Should_get_users()
         {
             var users = managementClient.GetUsers();
@@ -603,14 +603,14 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_a_user_by_name()
         {
             var user = managementClient.GetUser(testUser);
             user.Name.ShouldEqual(testUser);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_a_user()
         {
             var userInfo = new UserInfo(testUser, "topSecret").AddTag("administrator");
@@ -619,7 +619,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             user.Name.ShouldEqual(testUser);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_a_user_with_the_policymaker_tag()
         {
             var userInfo = new UserInfo(testUser, "topSecret").AddTag("policymaker");
@@ -628,14 +628,14 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             user.Name.ShouldEqual(testUser);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_delete_a_user()
         {
             var user = managementClient.GetUser(testUser);
             managementClient.DeleteUser(user);
         }
 
-        [Test]
+        [Fact]
         public void Should_get_permissions()
         {
             var permissions = managementClient.GetPermissions();
@@ -650,7 +650,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_permissions()
         {
             var user = managementClient.GetUsers().SingleOrDefault(x => x.Name == testUser);
@@ -668,7 +668,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.CreatePermission(permissionInfo);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_permissions_in_default_Vhost()
         {
             var user = managementClient.GetUsers().SingleOrDefault(x => x.Name == testUser);
@@ -689,7 +689,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.CreatePermission(permissionInfo);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_delete_permissions()
         {
             var permission = managementClient.GetPermissions()
@@ -704,7 +704,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.DeletePermission(permission);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_change_the_password_of_a_user()
         {
             var userInfo = new UserInfo(testUser, "topSecret").AddTag("monitoring").AddTag("management");
@@ -717,7 +717,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             updatedUser.PasswordHash.ShouldNotEqual(user.PasswordHash);
         }
 
-        [Test]
+        [Fact]
         public void Should_check_that_the_broker_is_alive()
         {
             var vhost = managementClient.GetVHosts().SingleOrDefault(x => x.Name == testVHost);
@@ -728,14 +728,14 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             managementClient.IsAlive(vhost).ShouldBeTrue();
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_get_policies_list()
         {
             var policies = managementClient.GetPolicies();
             Assert.IsNotNull(policies);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_policies()
         {
             var policyName = "asamplepolicy";
@@ -760,7 +760,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                      && p.Definition.HaSyncMode == haSyncMode));
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_queues_only_policies()
         {
             var policyName = "asamplepolicy-queue-only";
@@ -786,7 +786,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                      && p.Definition.HaSyncMode == haSyncMode));
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_exchanges_only_policies()
         {
             var policyName = "asamplepolicy-exchange-only";
@@ -812,7 +812,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                      && p.Definition.HaSyncMode == haSyncMode));
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_alternate_exchange_policy()
         {
             var policyName = "a-sample-alternate-exchange-policy";
@@ -833,7 +833,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                      && p.Definition.AlternateExchange == alternateExchange));
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_dead_letter_exchange_policy()
         {
             var policyName = "a-sample-dead-letter-exchange";
@@ -857,7 +857,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                      && p.Definition.DeadLetterRoutingKey == deadLetterRoutingKey));
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_message_ttl_policy()
         {
             var policyName = "a-sample-message-ttl";
@@ -878,7 +878,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                      && p.Definition.MessageTtl == messageTtl));
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_expires_policy()
         {
             var policyName = "a-sample-expires";
@@ -899,7 +899,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                      && p.Definition.Expires == expires));
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_max_length_policy()
         {
             var policyName = "a-sample-max-length";
@@ -920,7 +920,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                      && p.Definition.MaxLength == maxLength));
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_create_all_the_defitions_in_a_policy()
         {
             var policyName = "a-sample-all-definitions-in-a-policy";
@@ -966,7 +966,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         }
 
 
-        [Test]
+        [Fact]
         [Explicit]
         public void Should_be_able_to_create_federation_upstream_policy()
         {
@@ -988,7 +988,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                      && p.Definition.FederationUpstream == "my-upstream"));
         }
 
-        [Test]
+        [Fact]
         [Explicit]
         public void Should_be_able_to_create_federation_upstream_set_policy()
         {
@@ -1010,7 +1010,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                      && p.Definition.FederationUpstreamSet == "my-upstream-set"));
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_delete_policies()
         {
             var policyName = "asamplepolicy";
@@ -1030,14 +1030,14 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             Assert.AreEqual(0, managementClient.GetPolicies().Count(p => p.Name == policyName && p.Vhost == vhostName));
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_list_parameters()
         {
             var parameters = managementClient.GetParameters();
             Assert.NotNull(parameters);
         }
 
-        [Test]
+        [Fact]
         [Ignore("Requires the federation plugin to work")]
         public void Should_be_able_to_create_parameter()
         {

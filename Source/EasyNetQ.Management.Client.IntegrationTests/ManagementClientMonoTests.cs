@@ -1,5 +1,5 @@
 ﻿using System;
-using NUnit.Framework;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests
 {
@@ -12,7 +12,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         private const string password = "guest";
         private const int port = 15672;
 
-        [Test]
+        [Fact]
         public void Should_get_overview_on_mono()
         {
             var managementClient2 = new ManagementClient(hostUrl, username, password, port, true);
@@ -37,7 +37,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
-		[Test]
+		[Fact]
 		public void Should_get_vHost_OK()
 		{
 			var client = new ManagementClient (hostUrl, username, password, port, true);
@@ -47,7 +47,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			Console.WriteLine ("Got vHost with name '{0}'.", vHost.Name);
 		}
 
-		[Test]
+		[Fact]
 		public void Should_get_queue_OK()
 		{
 			var client = new ManagementClient (hostUrl, username, password, port, true);
@@ -55,7 +55,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			Console.WriteLine ("Got queue: {0}", queue.Name);
 		}
 
-		[Test]
+		[Fact]
 		public void Should_get_Channel_OK()
 		{
             var managementClient2 = new ManagementClient(hostUrl, username, password, port, true);

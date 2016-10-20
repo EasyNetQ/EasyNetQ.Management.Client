@@ -19,14 +19,14 @@ namespace EasyNetQ.Management.Client.Tests.Model
             userInfo = new UserInfo(userName, password);
         }
 
-        [Test]
+        [Fact]
         public void Should_have_correct_name_and_password()
         {
             userInfo.GetName().ShouldEqual(userName);
             userInfo.Password.ShouldEqual(password);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_add_tags()
         {
             userInfo.AddTag("administrator").AddTag("management");
@@ -45,7 +45,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
             userInfo.AddTag("blah");
         }
 
-        [Test]
+        [Fact]
         public void Should_have_a_default_tag_of_empty_string()
         {
             userInfo.Tags.ShouldEqual("");

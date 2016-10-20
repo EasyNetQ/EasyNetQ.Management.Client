@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 using EasyNetQ.Management.Client.Model;
-using NUnit.Framework;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
@@ -17,13 +17,13 @@ namespace EasyNetQ.Management.Client.Tests.Model
             nodes = ResourceLoader.LoadObjectFromJson<List<Node>>("Nodes.json");
         }
 
-        [Test]
+        [Fact]
         public void Should_load_one_node()
         {
             nodes.Count.ShouldEqual(1);
         }
 
-        [Test]
+        [Fact]
         public void Should_have_node_properties()
         {
             var node = nodes[0];

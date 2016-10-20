@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Serialization;
-using NUnit.Framework;
 using Newtonsoft.Json;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests
 {
-    [TestFixture(Category = "Unit")]
     public class ManagementClientInternalsTests
     {
         /// <summary>
         /// Checks for regression from using Int32 instead of Int64 for RecvOct and so on
         /// </summary>
-        [Test]
+        [Fact]
         public void GetConnections_CheckDeserializeLargeNumbers()
         {
             //TODO: redesign the ManagementClient by factoring out some of it's responsibilities and use dependency injection
@@ -33,7 +31,7 @@ namespace EasyNetQ.Management.Client.Tests
             var connections = JsonConvert.DeserializeObject<IEnumerable<Connection>>(responseBody, settings);
         }
 
-        [Test]
+        [Fact]
         public void GetChannels()
         {
             JsonSerializerSettings settings = new JsonSerializerSettings
