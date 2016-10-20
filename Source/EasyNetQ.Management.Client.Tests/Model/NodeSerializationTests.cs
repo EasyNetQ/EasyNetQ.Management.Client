@@ -6,13 +6,11 @@ using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture(Category = "Unit")]
     public class NodeSerializationTests
     {
-        private List<Node> nodes;
+        private readonly List<Node> nodes;
 
-        [SetUp]
-        public void SetUp()
+        public NodeSerializationTests()
         {
             nodes = ResourceLoader.LoadObjectFromJson<List<Node>>("Nodes.json");
         }

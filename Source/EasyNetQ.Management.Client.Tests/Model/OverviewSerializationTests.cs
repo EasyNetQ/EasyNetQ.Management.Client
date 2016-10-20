@@ -5,13 +5,11 @@ using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture(Category = "Unit")]
     public class OverviewSerializationTests
     {
-        private Overview overview;
+        private readonly Overview overview;
 
-        [SetUp]
-        public void SetUp()
+        public OverviewSerializationTests()
         {
             overview = ResourceLoader.LoadObjectFromJson<Overview>("Overview.json", ManagementClient.Settings);
         }

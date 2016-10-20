@@ -5,15 +5,13 @@ using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture(Category = "Unit")]
     public class PermissionInfoTests
     {
         private PermissionInfo permissionInfo;
         private User user;
         private Vhost vhost;
 
-        [SetUp]
-        public void SetUp()
+        public PermissionInfoTests()
         {
             user = new User { Name = "mikey" };
             vhost = new Vhost { Name = "theVHostName" };

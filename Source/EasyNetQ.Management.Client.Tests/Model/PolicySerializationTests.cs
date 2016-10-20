@@ -6,13 +6,11 @@
     using Newtonsoft.Json;
     using Xunit;
 
-    [TestFixture(Category = "Unit")]
     public class PolicySerializationTests
     {
-        private Policy[] _policy;
+        private readonly Policy[] _policy;
 
-        [SetUp]
-        public void SetUp()
+        public PolicySerializationTests()
         {
             _policy = ResourceLoader.LoadObjectFromJson<Policy[]>("Policies_ha.json", ManagementClient.Settings);
         }

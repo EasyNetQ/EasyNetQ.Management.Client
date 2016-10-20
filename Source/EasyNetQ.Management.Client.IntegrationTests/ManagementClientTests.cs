@@ -12,7 +12,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
     [Explicit ("requires a rabbitMQ instance on localhost to run")]
     public class ManagementClientTests
     {
-        private IManagementClient managementClient;
+        private readonly IManagementClient managementClient;
 
         private const string hostUrl = "http://localhost";
         private const string username = "guest";
@@ -25,8 +25,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         private const string testQueueWithPlusChar = "management_api_test_queue+plus+test";
         private const string testUser = "mikey";
 
-        [SetUp]
-        public void SetUp()
+        public ManagementClientTests()
         {
             managementClient = new ManagementClient(hostUrl, username, password);
         }
