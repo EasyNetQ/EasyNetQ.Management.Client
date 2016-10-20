@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
@@ -23,11 +22,12 @@ namespace EasyNetQ.Management.Client.Tests
             settings.Converters.Add(new PropertyConverter());
             return LoadObjectFromJson<T>(fileToLoad, settings);
         }
+
         public static T LoadObjectFromJson<T>(string fileToLoad, JsonSerializerSettings settings)
         {
             const string namespaceFormat = "EasyNetQ.Management.Client.Tests.Json.{0}";
             var resourceName = string.Format(namespaceFormat, fileToLoad);
-            var assembly = Assembly.GetExecutingAssembly();
+            var assembly = typeof(ResourceLoader).GetTypeInfo().Assembly;
             string contents;
             using(var resourceStream = assembly.GetManifestResourceStream(resourceName))
             {
