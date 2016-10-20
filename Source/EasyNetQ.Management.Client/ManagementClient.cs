@@ -10,21 +10,26 @@ using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace EasyNetQ.Management.Client
 {
     public class ManagementClient : IManagementClient
     {
+        private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new MediaTypeWithQualityHeaderValue("application/json");
+        public static readonly JsonSerializerSettings Settings;
+
         private readonly string hostUrl;
         private readonly string username;
         private readonly string password;
         private readonly int portNumber;
-        public static readonly JsonSerializerSettings Settings;
-
         private readonly bool runningOnMono;
-        private readonly Action<HttpWebRequest> configureRequest;
+        private readonly Action<HttpRequestMessage> configureRequest;
         private readonly TimeSpan defaultTimeout = TimeSpan.FromSeconds(20);
         private readonly TimeSpan timeout;
+        private readonly HttpClient httpClient;
 
         static ManagementClient()
         {
@@ -63,7 +68,7 @@ namespace EasyNetQ.Management.Client
             int portNumber = 15672,
             bool runningOnMono = false,
             TimeSpan? timeout = null,
-            Action<HttpWebRequest> configureRequest = null,
+            Action<HttpRequestMessage> configureRequest = null,
             bool ssl = false)
         {
             var urlRegex = new Regex(@"^(http|https):\/\/.+\w$");
@@ -112,10 +117,11 @@ namespace EasyNetQ.Management.Client
             this.runningOnMono = runningOnMono;
             this.configureRequest = configureRequest;
 
-            if (!runningOnMono)
-            {
-                LeaveDotsAndSlashesEscaped(ssl);
-            }
+            var messageHandler = new HttpClientHandler {
+                Credentials = new NetworkCredential(username, password),
+            };
+
+            this.httpClient = new HttpClient(messageHandler) { Timeout = this.timeout };
         }
 
         public Overview GetOverview(GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null)
@@ -573,7 +579,7 @@ namespace EasyNetQ.Management.Client
 
         private T Get<T>(string path, params object[] queryObjects)
         {
-            var request = CreateRequestForPath(path, queryObjects);
+            var request = CreateRequestForPath(path, HttpMethod.Get, queryObjects);
 
             using (var response = request.GetHttpResponse())
             {
@@ -581,14 +587,13 @@ namespace EasyNetQ.Management.Client
                 {
                     throw new UnexpectedHttpStatusCodeException(response.StatusCode);
                 }
-                return DeserializeResponse<T>(response);   
+                return DeserializeResponse<T>(response);
             }
         }
 
         private TResult Post<TItem, TResult>(string path, TItem item)
         {
-            var request = CreateRequestForPath(path);
-            request.Method = "POST";
+            var request = CreateRequestForPath(path, HttpMethod.Post);
 
             InsertRequestBody(request, item);
 
@@ -605,8 +610,7 @@ namespace EasyNetQ.Management.Client
 
         private void Delete(string path)
         {
-            var request = CreateRequestForPath(path);
-            request.Method = "DELETE";
+            var request = CreateRequestForPath(path, HttpMethod.Delete);
 
             using (var response = request.GetHttpResponse())
             {
@@ -619,9 +623,12 @@ namespace EasyNetQ.Management.Client
 
         private void Put(string path)
         {
-            var request = CreateRequestForPath(path);
-            request.Method = "PUT";
-            request.ContentType = "application/json";
+            var request = CreateRequestForPath(path, HttpMethod.Put);
+
+            if (!request.Headers.Accept.Contains(JsonMediaTypeHeaderValue))
+            {
+                request.Headers.Accept.Add(JsonMediaTypeHeaderValue);
+            }
 
             using (var response = request.GetHttpResponse())
             {
@@ -640,8 +647,7 @@ namespace EasyNetQ.Management.Client
 
         private void Put<T>(string path, T item)
         {
-            var request = CreateRequestForPath(path);
-            request.Method = "PUT";
+            var request = CreateRequestForPath(path, HttpMethod.Put);
 
             InsertRequestBody(request, item);
 
@@ -660,42 +666,38 @@ namespace EasyNetQ.Management.Client
             }
         }
 
-        private void InsertRequestBody<T>(HttpWebRequest request, T item)
+        /// <summary>
+        /// https://blogs.msdn.microsoft.com/pfxteam/2012/04/13/should-i-expose-synchronous-wrappers-for-asynchronous-methods/
+        /// </summary>
+        private void InsertRequestBody<T>(HttpRequestMessage request, T item)
         {
-            request.ContentType = "application/json";
+            if (!request.Headers.Accept.Contains(JsonMediaTypeHeaderValue))
+            {
+                request.Headers.Accept.Add(JsonMediaTypeHeaderValue);
+            }
 
             var body = JsonConvert.SerializeObject(item, Settings);
-            using (var requestStream = request.GetRequestStreamAsync().Result)
-            using (var writer = new StreamWriter(requestStream))
-            {
-                writer.Write(body);
-            }
+
+            request.Content = new StringContent(body);
         }
-        
-        private T DeserializeResponse<T>(HttpWebResponse response)
+
+        private T DeserializeResponse<T>(HttpResponseMessage response)
         {
             var responseBody = GetBodyFromResponse(response);
             return JsonConvert.DeserializeObject<T>(responseBody, Settings);
         }
 
-        private static string GetBodyFromResponse(HttpWebResponse response)
+        private static string GetBodyFromResponse(HttpResponseMessage response)
         {
-            string responseBody;
-            using (var responseStream = response.GetResponseStream())
+            if (response == null)
             {
-                if (responseStream == null)
-                {
-                    throw new EasyNetQManagementException("Response stream was null");
-                }
-                using (var reader = new StreamReader(responseStream))
-                {
-                    responseBody = reader.ReadToEnd();
-                }
+                throw new EasyNetQManagementException("Response stream was null");
             }
-            return responseBody;
+
+            return Task.Run(() => response.Content.ReadAsStringAsync()).Result;
         }
 
-        private HttpWebRequest CreateRequestForPath(string path, object[] queryObjects = null)
+        private HttpRequestMessage CreateRequestForPath(string path, HttpMethod httpMethod, object[] queryObjects = null)
         {
             var endpointAddress = BuildEndpointAddress (path);
             var queryString = BuildQueryString(queryObjects);
@@ -719,21 +721,12 @@ namespace EasyNetQ.Management.Client
                 pathField.SetValue (uri, alteredPath);
             }
 
-            var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Credentials = new NetworkCredential(username, password);
-
-            // TODO: we need to manage this in another way since net core does support these props
-
-#if NETFX
-            request.Timeout = request.ReadWriteTimeout = (int)timeout.TotalMilliseconds;
-            request.KeepAlive = false; //default WebRequest.KeepAlive to false to resolve spurious 'the request was aborted: the request was canceled' exceptions
-#endif
+            var request = new HttpRequestMessage(httpMethod, uri);
 
             configureRequest(request);
 
             return request;
         }
-
 
         private string BuildEndpointAddress(string path)
         {
@@ -785,33 +778,12 @@ namespace EasyNetQ.Management.Client
             return propertiesKey.Replace("%5F", "%255F");
         }
 
-        /// <summary>
-        /// See http://mikehadlow.blogspot.co.uk/2011/08/how-to-stop-systemuri-un-escaping.html.
-        /// </summary>
-        /// <param name="useSsl">   true if using SSL.</param>
-        private void LeaveDotsAndSlashesEscaped(bool useSsl)
+        public void Dispose()
         {
-            // TODO: need to figure out what to do in net core about this, first of all does the problem persist?
-
-#if NETFX
-            var getSyntaxMethod =
-                typeof(UriParser).GetMethod("GetSyntax", BindingFlags.Static | BindingFlags.NonPublic);
-            if (getSyntaxMethod == null)
+            if (httpClient != null)
             {
-                throw new MissingMethodException("UriParser.GetSyntax()");
+                httpClient.Dispose();
             }
-
-            var uriParser = getSyntaxMethod.Invoke(null, new object[] { useSsl ? "https" : "http" });
-
-            var setUpdatableFlagsMethod =
-                uriParser.GetType().GetMethod("SetUpdatableFlags", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (setUpdatableFlagsMethod == null)
-            {
-                throw new MissingMethodException("UriParser.SetUpdatableFlags");
-            }
-
-            setUpdatableFlagsMethod.Invoke(uriParser, new object[] { 0 });
-#endif
         }
     }
 }

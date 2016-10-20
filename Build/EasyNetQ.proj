@@ -14,6 +14,13 @@
         <BuildNumber Condition=" '$(BUILD_NUMBER)' != '' ">$(BUILD_NUMBER)</BuildNumber>
         <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
     </PropertyGroup>
+    
+    <!-- Properties that are set during build to find test/merge binaries -->
+    <PropertyGroup>
+        <Configuration>Release</Configuration>
+        <DesktopFrameworkVersion>net451</DesktopFrameworkVersion>
+        <BinaryDesktopFolder>bin\$(Configuration)\$(DesktopFrameworkVersion)</BinaryDesktopFolder>
+    </PropertyGroup>
 
     <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets"/>
 
@@ -27,7 +34,7 @@
 
     <ItemGroup>
         <ProjectToBuild Include="$(Source)\EasyNetQ.sln">
-            <Properties>OutputPath=$(OutputDir);Configuration=Release</Properties>
+            <Properties>OutputPath=$(OutputDir);Configuration=$(Configuration)</Properties>
         </ProjectToBuild>
     </ItemGroup>
 
@@ -36,16 +43,20 @@
     </Target>
 
     <Target Name="Test" DependsOnTargets="Build">
-        <CreateItem Include="$(OutputDir)\*.Tests.dll">  
-            <Output TaskParameter="Include" ItemName="TestAssembly" />  
-        </CreateItem>
+        <ItemGroup>
+            <TestAssembly Include="$(OutputDir)\**\net451\*.Tests.dll" />
+        </ItemGroup>
         <NUnit ToolPath="$(Nunit)" DisableShadowCopy="true" Assemblies="@(TestAssembly)" Framework="4.0.30319" Force32Bit="true" />
     </Target>
 
     <Target Name="MergeManagementClient" DependsOnTargets="Test">
+        <ItemGroup>
+            <MergeAssemblies Include="$(OutputDir)\EasyNetQ.Management.Client\$(BinaryDesktopFolder)\EasyNetQ.Management.Client.dll" />
+            <MergeAssemblies Include="$(OutputDir)\EasyNetQ.Management.Client\$(BinaryDesktopFolder)\Newtonsoft.Json.dll" />
+        </ItemGroup>
         <Exec
             WorkingDirectory="$(OutputDir)"
-            Command="$(ILRepack) /internalize /targetplatform:v4 /out:$(OutputDir)\EasyNetQ.Management.Client.dll $(OutputDir)\EasyNetQ.Management.Client.dll $(OutputDir)\Newtonsoft.Json.dll" />
+            Command="$(ILRepack) /internalize /targetplatform:v4 /out:$(OutputDir)\EasyNetQ.Management.Client.dll @(MergeAssemblies->'%(Fullpath)', ' ')" />
     </Target>
 
     <Target Name="PackageManagementClient" DependsOnTargets="MergeManagementClient">

@@ -1,3 +1,6 @@
+before_build:
+  - ps: dotnet restore
+
 build:
   project: Build\EasyNetQ.proj
   verbosity: minimal
