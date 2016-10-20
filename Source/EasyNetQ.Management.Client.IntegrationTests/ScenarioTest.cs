@@ -1,12 +1,13 @@
 ﻿// ReSharper disable InconsistentNaming
 
-using System;
 using EasyNetQ.Management.Client.Model;
+using EasyNetQ.Management.Client.Tests;
+using System;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests
 {
-    [TestFixture(Category = "Integration")]
+    [Integration]
     [Explicit("Requires a RabbitMQ server on localhost to work")]
     public class ScenarioTest
     {

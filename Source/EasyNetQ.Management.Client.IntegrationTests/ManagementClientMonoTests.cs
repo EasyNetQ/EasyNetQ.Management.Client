@@ -1,9 +1,10 @@
-﻿using System;
+﻿using EasyNetQ.Management.Client.Tests;
+using System;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests
 {
-    [TestFixture(Category = "Integration")]
+    [Integration]
     [Explicit("Requires a broker on localhost, and to be running on the Mono CLR")]
     public class ManagementClientMonoTests
     {
