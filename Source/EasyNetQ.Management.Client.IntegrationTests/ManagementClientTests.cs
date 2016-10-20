@@ -184,7 +184,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var exchange = managementClient.GetExchanges().SingleOrDefault(x => x.Name == testExchange);
             if (exchange == null)
             {
-                throw new ApplicationException(
+                throw new EasyNetQTestException(
                     string.Format("Test exchange '{0}' hasn't been created", testExchange));
             }
 
@@ -197,7 +197,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var exchange = managementClient.GetExchanges().SingleOrDefault(x => x.Name == testExchangetestQueueWithPlusChar);
             if (exchange == null)
             {
-                throw new ApplicationException(
+                throw new EasyNetQTestException(
                     string.Format("Test exchange '{0}' hasn't been created", testExchange));
             }
 
@@ -210,7 +210,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var exchange = managementClient.GetExchanges().SingleOrDefault(x => x.Name == testExchange);
             if (exchange == null)
             {
-                throw new ApplicationException(
+                throw new EasyNetQTestException(
                     string.Format("Test exchange '{0}' hasn't been created", testExchange));
             }
 
@@ -228,7 +228,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var exchange = managementClient.GetExchanges().SingleOrDefault(x => x.Name == testExchange);
             if (exchange == null)
             {
-                throw new ApplicationException(
+                throw new EasyNetQTestException(
                     string.Format("Test exchange '{0}' hasn't been created", testExchange));
             }
 
@@ -246,7 +246,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var exchange = managementClient.GetExchanges().SingleOrDefault(x => x.Name == testExchange);
             if (exchange == null)
             {
-                throw new ApplicationException(
+                throw new EasyNetQTestException(
                     string.Format("Test exchange '{0}' hasn't been created", testExchange));
             }
 
@@ -366,7 +366,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var queue = managementClient.GetQueues().SingleOrDefault(x => x.Name == testQueue);
             if (queue == null)
             {
-                throw new ApplicationException("Test queue has not been created");
+                throw new EasyNetQTestException("Test queue has not been created");
             }
 
             managementClient.DeleteQueue(queue);
@@ -378,7 +378,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var queue = managementClient.GetQueues().SingleOrDefault(x => x.Name == testQueue);
             if (queue == null)
             {
-                throw new ApplicationException("Test queue has not been created");
+                throw new EasyNetQTestException("Test queue has not been created");
             }
 
             var bindings = managementClient.GetBindingsForQueue(queue);
@@ -395,7 +395,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var queue = managementClient.GetQueues().SingleOrDefault(x => x.Name == testQueue);
             if (queue == null)
             {
-                throw new ApplicationException("Test queue has not been created");
+                throw new EasyNetQTestException("Test queue has not been created");
             }
 
             managementClient.Purge(queue);
@@ -407,7 +407,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var queue = managementClient.GetQueues().SingleOrDefault(x => x.Name == testQueue);
             if (queue == null)
             {
-                throw new ApplicationException("Test queue has not been created");
+                throw new EasyNetQTestException("Test queue has not been created");
             }
 
             var defaultExchange = new Exchange { Name = "amq.default", Vhost = vhostName };
@@ -656,12 +656,12 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var user = managementClient.GetUsers().SingleOrDefault(x => x.Name == testUser);
             if (user == null)
             {
-                throw new ApplicationException(string.Format("user '{0}' hasn't been created", testUser));
+                throw new EasyNetQTestException(string.Format("user '{0}' hasn't been created", testUser));
             }
             var vhost = managementClient.GetVHosts().SingleOrDefault(x => x.Name == testVHost);
             if (vhost == null)
             {
-                throw new ApplicationException(string.Format("Test vhost: '{0}' has not been created", testVHost));
+                throw new EasyNetQTestException(string.Format("Test vhost: '{0}' has not been created", testVHost));
             }
 
             var permissionInfo = new PermissionInfo(user, vhost);
@@ -681,7 +681,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var vhost = managementClient.GetVHosts().SingleOrDefault(x => x.Name == vhostName);
             if (vhost == null)
             {
-                throw new ApplicationException(string.Format("Default vhost: '{0}' has not been created", testVHost));
+                throw new EasyNetQTestException(string.Format("Default vhost: '{0}' has not been created", testVHost));
 
             }
 
@@ -697,7 +697,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
             if (permission == null)
             {
-                throw new ApplicationException(string.Format("No permission for vhost: {0} and user: {1}",
+                throw new EasyNetQTestException(string.Format("No permission for vhost: {0} and user: {1}",
                     testVHost, testUser));
             }
 
@@ -723,7 +723,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var vhost = managementClient.GetVHosts().SingleOrDefault(x => x.Name == testVHost);
             if (vhost == null)
             {
-                throw new ApplicationException(string.Format("Test vhost: '{0}' has not been created", testVHost));
+                throw new EasyNetQTestException(string.Format("Test vhost: '{0}' has not been created", testVHost));
             }
             managementClient.IsAlive(vhost).ShouldBeTrue();
         }

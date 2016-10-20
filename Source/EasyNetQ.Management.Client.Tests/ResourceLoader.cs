@@ -33,7 +33,7 @@ namespace EasyNetQ.Management.Client.Tests
             {
                 if (resourceStream == null)
                 {
-                    throw new ApplicationException("Couldn't load resource stream: " + resourceName);
+                    throw new EasyNetQTestException("Couldn't load resource stream: " + resourceName);
                 }
                 using (var reader = new StreamReader(resourceStream))
                 {
