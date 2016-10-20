@@ -12,12 +12,6 @@ namespace EasyNetQ.Management.Client.Tests
             return obj;
         }
 
-        public static T ShouldNotBeNull<T>(this T obj, string message)
-        {
-            Assert.NotNull(obj, message);
-            return obj;
-        }
-
         public static T ShouldEqual<T>(this T actual, object expected)
         {
             Assert.Equal(expected, actual);
@@ -27,13 +21,6 @@ namespace EasyNetQ.Management.Client.Tests
         public static T ShouldNotEqual<T>(this T actual, object expected)
         {
             Assert.NotEqual(expected, actual);
-            return actual;
-        }
-
-
-        public static T ShouldEqual<T>(this T actual, object expected, string message)
-        {
-            Assert.Equal(expected, actual, message);
             return actual;
         }
 
