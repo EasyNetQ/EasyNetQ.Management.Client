@@ -19,7 +19,7 @@
                     Value = new Policy {Pattern = "testvalue"}
                 }, ManagementClient.Settings);
             var parsedValue = JObject.Parse(serializedvalue);
-            Assert.AreEqual("testvalue", parsedValue["value"]["pattern"].Value<string>());
+            Assert.Equal("testvalue", parsedValue["value"]["pattern"].Value<string>());
         }
     }
 }

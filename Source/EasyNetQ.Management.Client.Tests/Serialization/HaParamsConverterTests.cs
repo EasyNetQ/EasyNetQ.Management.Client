@@ -11,8 +11,8 @@
         [Fact]
         public void Should_only_handle_HaParams()
         {
-            Assert.IsTrue(new HaParamsConverter().CanConvert(typeof(HaParams)));
-            Assert.IsFalse(new HaParamsConverter().CanConvert(typeof(HaMode)));
+            Assert.True(new HaParamsConverter().CanConvert(typeof(HaParams)));
+            Assert.False(new HaParamsConverter().CanConvert(typeof(HaMode)));
         }
 
         [Fact]
@@ -20,8 +20,8 @@
         {
             var deserializedObject = JsonConvert.DeserializeObject<HaParams>("5", new HaParamsConverter());
             Assert.NotNull(deserializedObject);
-            Assert.AreEqual(HaMode.Exactly, deserializedObject.AssociatedHaMode);
-            Assert.AreEqual(5L, deserializedObject.ExactlyCount);
+            Assert.Equal(HaMode.Exactly, deserializedObject.AssociatedHaMode);
+            Assert.Equal(5L, deserializedObject.ExactlyCount);
         }
 
         [Fact]
@@ -29,9 +29,9 @@
         {
             var deserializedObject = JsonConvert.DeserializeObject<HaParams>("[\"a\", \"b\"]", new HaParamsConverter());
             Assert.NotNull(deserializedObject);
-            Assert.AreEqual(HaMode.Nodes, deserializedObject.AssociatedHaMode);
+            Assert.Equal(HaMode.Nodes, deserializedObject.AssociatedHaMode);
             Assert.NotNull(deserializedObject.Nodes);
-            Assert.AreEqual(2, deserializedObject.Nodes.Length);
+            Assert.Equal(2, deserializedObject.Nodes.Length);
             Assert.Contains("a", deserializedObject.Nodes);
             Assert.Contains("b", deserializedObject.Nodes);
         }
@@ -46,13 +46,13 @@
         [Fact]
         public void Should_be_able_to_serialize_count()
         {
-            Assert.AreEqual("2", JsonConvert.SerializeObject(new HaParams{AssociatedHaMode = HaMode.Exactly, ExactlyCount = 2}, new HaParamsConverter()));
+            Assert.Equal("2", JsonConvert.SerializeObject(new HaParams{AssociatedHaMode = HaMode.Exactly, ExactlyCount = 2}, new HaParamsConverter()));
         }
 
         [Fact]
         public void Should_be_able_to_serialize_list()
         {
-            Assert.AreEqual(JsonConvert.SerializeObject(new[] { "a", "b" }), JsonConvert.SerializeObject(new HaParams { AssociatedHaMode = HaMode.Nodes, Nodes = new[] { "a", "b" } }, new HaParamsConverter()));
+            Assert.Equal(JsonConvert.SerializeObject(new[] { "a", "b" }), JsonConvert.SerializeObject(new HaParams { AssociatedHaMode = HaMode.Nodes, Nodes = new[] { "a", "b" } }, new HaParamsConverter()));
         }
 
         [Fact]

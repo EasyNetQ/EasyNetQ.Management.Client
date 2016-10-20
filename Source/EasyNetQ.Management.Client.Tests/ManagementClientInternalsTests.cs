@@ -45,15 +45,15 @@ namespace EasyNetQ.Management.Client.Tests
 
             var channels = JsonConvert.DeserializeObject<IEnumerable<Channel>>(responseBody, settings).ToList();
 
-            Assert.AreEqual(2,channels.Count);
+            Assert.Equal(2,channels.Count);
 
-            Assert.AreEqual(48538, channels[0].MessageStats.DeliverGet);
-            Assert.AreEqual(48538, channels[0].MessageStats.DeliverNoAck);
-            Assert.AreEqual(0, channels[0].MessageStats.Publish);
+            Assert.Equal(48538, channels[0].MessageStats.DeliverGet);
+            Assert.Equal(48538, channels[0].MessageStats.DeliverNoAck);
+            Assert.Equal(0, channels[0].MessageStats.Publish);
 
-            Assert.AreEqual(0, channels[1].MessageStats.DeliverGet);
-            Assert.AreEqual(0, channels[1].MessageStats.DeliverNoAck);
-            Assert.AreEqual(48538, channels[1].MessageStats.Publish);
+            Assert.Equal(0, channels[1].MessageStats.DeliverGet);
+            Assert.Equal(0, channels[1].MessageStats.DeliverNoAck);
+            Assert.Equal(48538, channels[1].MessageStats.Publish);
 
         }
 
