@@ -576,7 +576,7 @@ namespace EasyNetQ.Management.Client
         {
             var request = CreateRequestForPath(path, HttpMethod.Get, queryObjects);
 
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
@@ -592,7 +592,7 @@ namespace EasyNetQ.Management.Client
 
             InsertRequestBody(request, item);
 
-            using(var response = request.GetHttpResponse())
+            using(var response = httpClient.GetHttpResponse(request))
             {
                 if (!(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created))
                 {
@@ -607,7 +607,7 @@ namespace EasyNetQ.Management.Client
         {
             var request = CreateRequestForPath(path, HttpMethod.Delete);
 
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 if (response.StatusCode != HttpStatusCode.NoContent)
                 {
@@ -625,7 +625,7 @@ namespace EasyNetQ.Management.Client
                 request.Headers.Accept.Add(JsonMediaTypeHeaderValue);
             }
 
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 // The "Cowboy" server in 3.7.0's Management Client returns 201 Created. 
                 // "MochiWeb/1.1 WebMachine/1.10.0 (never breaks eye contact)" in 3.6.1 and previous return 204 No Content
@@ -646,7 +646,7 @@ namespace EasyNetQ.Management.Client
 
             InsertRequestBody(request, item);
 
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 // The "Cowboy" server in 3.7.0's Management Client returns 201 Created. 
                 // "MochiWeb/1.1 WebMachine/1.10.0 (never breaks eye contact)" in 3.6.1 and previous return 204 No Content
