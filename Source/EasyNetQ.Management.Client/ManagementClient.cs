@@ -122,6 +122,9 @@ namespace EasyNetQ.Management.Client
             };
 
             this.httpClient = new HttpClient(messageHandler) { Timeout = this.timeout };
+
+            //default WebRequest.KeepAlive to false to resolve spurious 'the request was aborted: the request was canceled' exceptions
+            httpClient.DefaultRequestHeaders.Add("Connection", "close");
         }
 
         public Overview GetOverview(GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null)
@@ -576,7 +579,7 @@ namespace EasyNetQ.Management.Client
         {
             var request = CreateRequestForPath(path, HttpMethod.Get, queryObjects);
 
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
@@ -592,7 +595,7 @@ namespace EasyNetQ.Management.Client
 
             InsertRequestBody(request, item);
 
-            using(var response = request.GetHttpResponse())
+            using(var response = httpClient.GetHttpResponse(request))
             {
                 if (!(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created))
                 {
@@ -607,7 +610,7 @@ namespace EasyNetQ.Management.Client
         {
             var request = CreateRequestForPath(path, HttpMethod.Delete);
 
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 if (response.StatusCode != HttpStatusCode.NoContent)
                 {
@@ -620,12 +623,7 @@ namespace EasyNetQ.Management.Client
         {
             var request = CreateRequestForPath(path, HttpMethod.Put);
 
-            if (!request.Headers.Accept.Contains(JsonMediaTypeHeaderValue))
-            {
-                request.Headers.Accept.Add(JsonMediaTypeHeaderValue);
-            }
-
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 // The "Cowboy" server in 3.7.0's Management Client returns 201 Created. 
                 // "MochiWeb/1.1 WebMachine/1.10.0 (never breaks eye contact)" in 3.6.1 and previous return 204 No Content
@@ -646,7 +644,7 @@ namespace EasyNetQ.Management.Client
 
             InsertRequestBody(request, item);
 
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 // The "Cowboy" server in 3.7.0's Management Client returns 201 Created. 
                 // "MochiWeb/1.1 WebMachine/1.10.0 (never breaks eye contact)" in 3.6.1 and previous return 204 No Content
@@ -672,8 +670,10 @@ namespace EasyNetQ.Management.Client
             }
 
             var body = JsonConvert.SerializeObject(item, Settings);
+            var content = new StringContent(body);
 
-            request.Content = new StringContent(body);
+            content.Headers.ContentType = JsonMediaTypeHeaderValue;
+            request.Content = content;
         }
 
         private T DeserializeResponse<T>(HttpResponseMessage response)
