@@ -22,3 +22,10 @@ deploy:
       secure: ejD7WLs3aqlXgHLyWq444QK6pnMT6g/QiRxptqIGaOgKvGM7SJ17r/QH6e1jEJ9M
     on:
       branch: master
+  - provider: NuGet
+    artifact: /.*\.nupkg/
+    server: https://www.myget.org/F/easynetq-tester/api/v2/package
+    api_key:
+      secure: jiBAbYZSHi76cAM1tNJg5XITF8bh9R02iBYExLt1bdlYtPtcnhV2B6+sB3W5Zvda
+    on:
+      branch: feature/netcore
