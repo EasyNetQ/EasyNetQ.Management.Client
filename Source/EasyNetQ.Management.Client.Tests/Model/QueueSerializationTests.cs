@@ -2,16 +2,15 @@
 
 using System.Collections.Generic;
 using EasyNetQ.Management.Client.Model;
-using NUnit.Framework;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture(Category = "Unit")]
     public class QueueSerializationTests
     {
         private List<Queue> queues;
 
-        [Test]
+        [Fact]
         public void BackingQueueStatus_With_NextSeqId_Exceeding_IntMaxLength_Can_Be_Deserialized()
         {
             queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json");
@@ -21,7 +20,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
             queue.BackingQueueStatus.NextSeqId.ShouldEqual(((long)int.MaxValue) + 1);
         }
 
-        [Test]
+        [Fact]
         public void NonInt_Consumer_Details_Channel_Details_Peer_Port_Can_Be_Deserialize()
         {
             queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json");
@@ -31,7 +30,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
             queue.ConsumerDetails[0].ChannelDetails.PeerPort.ShouldEqual(0);
         }
 
-        [Test]
+        [Fact]
         public void Int_Consumer_Details_Channel_Details_Peer_Port_Can_Be_Deserialize()
         {
             queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json");

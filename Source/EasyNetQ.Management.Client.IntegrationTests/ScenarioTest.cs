@@ -1,25 +1,21 @@
 ﻿// ReSharper disable InconsistentNaming
 
-using System;
 using EasyNetQ.Management.Client.Model;
-using NUnit.Framework;
+using EasyNetQ.Management.Client.Tests;
+using System;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests
 {
-    [TestFixture(Category = "Integration")]
+    [Integration]
     [Explicit("Requires a RabbitMQ server on localhost to work")]
     public class ScenarioTest
     {
-        [SetUp]
-        public void SetUp()
-        {
-        }
-
         /// <summary>
         /// Demonstrate how to create a virtual host, add some users, set permissions
         /// and create exchanges, queues and bindings.
         /// </summary>
-        [Test]
+        [Fact]
         public void Should_be_able_to_provision_a_virtual_host()
         {
             var initial = new ManagementClient("http://localhost", "guest", "guest");

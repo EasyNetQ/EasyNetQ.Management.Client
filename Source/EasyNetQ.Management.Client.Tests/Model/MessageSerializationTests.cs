@@ -2,20 +2,14 @@
 
 using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Serialization;
-using NUnit.Framework;
 using Newtonsoft.Json;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture(Category = "Unit")]
     public class MessageSerializationTests
     {
-        [SetUp]
-        public void SetUp()
-        {
-        }
-
-        [Test]
+        [Fact]
         public void Should_be_able_to_deserialize_message_with_properties()
         {
             const string json = @"{""payload_bytes"":11,""redelivered"":true,""exchange"":""""," + 
@@ -31,7 +25,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
             message.Properties.Headers["key"].ShouldEqual("value");
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_deserialize_message_without_properties()
         {
             const string json = @"{""payload_bytes"":11,""redelivered"":true,""exchange"":""""," +
