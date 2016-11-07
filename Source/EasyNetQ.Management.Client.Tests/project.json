@@ -1,9 +1,12 @@
 ﻿{
   "dependencies": {
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "EasyNetQ.Management.Client": "2.0.0-netcore0001",
     "Newtonsoft.Json": "9.0.1",
-    "NUnit": "2.6.4"
+    "xunit": "2.2.0-beta2-build3300",
+    "xunit.runner.visualstudio": "2.2.0-beta2-build1149"
   },
+  "testRunner": "xunit",
   "buildOptions": {
     "embed": [ "Json/*" ],
     "compile": {
@@ -11,14 +14,17 @@
     }
   },
   "frameworks": {
-    "net451": {
-      "frameworkAssemblies": {
-        "Microsoft.CSharp": "4.0.0.0",
-        "System.Net.Http": "4.0.0.0"
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        }
       }
     }
   },
   "runtimes": {
-    "win": {}
+    "win7-x86": {},
+    "win7-x64": {}
   }
 }

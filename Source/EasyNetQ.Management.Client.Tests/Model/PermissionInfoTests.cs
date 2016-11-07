@@ -1,38 +1,36 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using EasyNetQ.Management.Client.Model;
-using NUnit.Framework;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture(Category = "Unit")]
     public class PermissionInfoTests
     {
         private PermissionInfo permissionInfo;
         private User user;
         private Vhost vhost;
 
-        [SetUp]
-        public void SetUp()
+        public PermissionInfoTests()
         {
             user = new User { Name = "mikey" };
             vhost = new Vhost { Name = "theVHostName" };
             permissionInfo = new PermissionInfo(user, vhost);
         }
 
-        [Test]
+        [Fact]
         public void Should_return_the_correct_user_name()
         {
             permissionInfo.GetUserName().ShouldEqual(user.Name);
         }
 
-        [Test]
+        [Fact]
         public void Should_return_the_correct_vhost_name()
         {
             permissionInfo.GetVirtualHostName().ShouldEqual(vhost.Name);
         }
 
-        [Test]
+        [Fact]
         public void Should_set_default_permissions_to_allow_all()
         {
             permissionInfo.Configure.ShouldEqual(".*");
@@ -40,7 +38,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
             permissionInfo.Read.ShouldEqual(".*");
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_set_deny_permissions()
         {
             var permissions = permissionInfo.DenyAllConfigure().DenyAllRead().DenyAllWrite();
@@ -50,7 +48,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
             permissions.Read.ShouldEqual("^$");
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_set_arbitrary_permissions()
         {
             var permissions = permissionInfo.SetConfigure("abc").SetRead("def").SetWrite("xyz");
