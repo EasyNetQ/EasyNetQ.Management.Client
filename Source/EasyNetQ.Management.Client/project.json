@@ -3,6 +3,7 @@
   "description": "EasyNetQ.Management.Client is a .NET client for the RabbitMQ RESTful management API",
   "title": "EasyNetQ.Management.Client",
   "name": "EasyNetQ.Management.Client",
+  "copyright": "Copyright Mike Hadlow 2012",
   "buildOptions": {
     "compile": {
       "includeFiles": "..\\Version.cs"
@@ -11,6 +12,7 @@
   "packOptions": {
     "licenseUrl": "https://raw.githubusercontent.com/EasyNetQ/EasyNetQ.Management.Client/master/licence.txt",
     "projectUrl": "https://github.com/EasyNetQ/EasyNetQ.Management.Client",
+    "iconUrl": "https://raw.github.com/mikehadlow/EasyNetQ/gh-pages/design/logo_design.png",
     "owners": [
       "mikehadlow",
       "micdenny",
