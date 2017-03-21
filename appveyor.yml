@@ -5,6 +5,12 @@ build:
   project: Build\EasyNetQ.proj
   verbosity: minimal
   publish_nuget: false
+
+branches:
+  only:
+  - master
+  - develop
+  - feature/*
   
 pull_requests:
   do_not_increment_build_number: true
@@ -22,3 +28,19 @@ deploy:
       secure: ejD7WLs3aqlXgHLyWq444QK6pnMT6g/QiRxptqIGaOgKvGM7SJ17r/QH6e1jEJ9M
     on:
       branch: master
+  - provider: NuGet
+    artifact: /.*\.nupkg/
+    server:
+    api_key:
+      secure: ejD7WLs3aqlXgHLyWq444QK6pnMT6g/QiRxptqIGaOgKvGM7SJ17r/QH6e1jEJ9M
+    skip_symbols: true
+    on:
+      branch: develop
+  - provider: NuGet
+    artifact: /.*\.nupkg/
+    server: https://www.myget.org/F/easynetq-unstable/api/v2/package
+    api_key:
+       secure: +0aKxcCHqWvvdJxA4dh1ToRqwA6x8yqhfrYDIeOjQu6Skpg/UrwxAPBik8z6be99
+    skip_symbols: true
+    on:
+      branch: feature/*
