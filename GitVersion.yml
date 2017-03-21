@@ -1,0 +1,9 @@
+next-version: 2.0.0
+mode: ContinuousDelivery
+branches:
+  master:
+    mode: ContinuousDelivery
+  features?[/-]:
+    mode: ContinuousDeployment
+ignore:
+  sha: []
