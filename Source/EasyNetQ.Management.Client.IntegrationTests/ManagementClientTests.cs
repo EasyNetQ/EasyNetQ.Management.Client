@@ -1080,8 +1080,6 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             Assert.NotNull(parameters);
         }
 
-
-
         [Test]
         [Ignore("Requires the federation plugin to work")]
         public void Should_be_able_to_create_parameter()
