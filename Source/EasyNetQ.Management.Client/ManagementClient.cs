@@ -348,9 +348,27 @@ namespace EasyNetQ.Management.Client
         {
             Ensure.ArgumentNotNull(binding, nameof(binding));
 
-            await DeleteAsync(
-                $"bindings/{SanitiseVhostName(binding.Vhost)}/e/{binding.Source}/q/{binding.Destination}/{RecodeBindingPropertiesKey(binding.PropertiesKey)}",
-                cancellationToken).ConfigureAwait(false);
+            if (string.IsNullOrEmpty(binding.Source))
+            {
+                throw new ArgumentException("Empty binding source isn't supported.");
+            }
+            
+            if (string.IsNullOrEmpty(binding.Destination))
+            {
+                throw new ArgumentException("Empty binding destination isn't supported.");
+            }
+            
+            if (string.IsNullOrEmpty(binding.DestinationType))
+            {
+                throw new ArgumentException("Empty binding destination type isn't supported.");
+            }
+
+            await DeleteAsync(string.Format("bindings/{0}/e/{1}/{2}/{3}/{4}",
+                SanitiseVhostName(binding.Vhost),
+                binding.Source,
+                binding.DestinationType[0], // e for exchange or q for queue
+                binding.Destination,
+                RecodeBindingPropertiesKey(binding.PropertiesKey)), cancellationToken).ConfigureAwait(false);
         }
 
         public Task<IEnumerable<Vhost>> GetVHostsAsync(CancellationToken cancellationToken = default(CancellationToken))
