@@ -393,9 +393,25 @@ namespace EasyNetQ.Management.Client
                 throw new ArgumentNullException("binding");
             }
 
-            Delete(string.Format("bindings/{0}/e/{1}/q/{2}/{3}",
+            if (string.IsNullOrEmpty(binding.Source))
+            {
+                throw new ArgumentException("Empty binding source isn't supported.");
+            }
+
+            if (string.IsNullOrEmpty(binding.Destination))
+            {
+                throw new ArgumentException("Empty binding destination isn't supported.");
+            }
+
+            if (string.IsNullOrEmpty(binding.DestinationType))
+            {
+                throw new ArgumentException("Empty binding destination type isn't supported.");
+            }
+
+            Delete(string.Format("bindings/{0}/e/{1}/{2}/{3}/{4}",
                 SanitiseVhostName(binding.Vhost),
                 binding.Source,
+                binding.DestinationType[0], // e for exchange or q for queue
                 binding.Destination,
                 RecodeBindingPropertiesKey(binding.PropertiesKey)));
         }
