@@ -2,10 +2,11 @@
 using System.Reflection;
 
 // EasyNetQ.Management.Client version number: <major>.<minor>.<non-breaking-feature>.<build>
-[assembly: AssemblyVersion("0.51.1.0")]
+[assembly: AssemblyVersion("0.51.2.0")]
 [assembly: CLSCompliant(true)]
 
 // Note: until version 1.0 expect breaking changes on 0.X versions.
+// 0.51.2.0 Adding queue-mode parameter to policy definition
 // 0.51.1.0 Modified long for Queue.Memory/Node.Mem* type
 // 0.51.0.0 Consolidated the way queue lengths and message rates are being returned. Updated to the post 3.1.0 api format.
 // 0.50.2.0 Escape / with %2f for exchange and queue names
