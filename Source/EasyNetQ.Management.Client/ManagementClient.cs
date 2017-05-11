@@ -10,21 +10,26 @@ using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace EasyNetQ.Management.Client
 {
     public class ManagementClient : IManagementClient
     {
+        private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new MediaTypeWithQualityHeaderValue("application/json");
+        public static readonly JsonSerializerSettings Settings;
+
         private readonly string hostUrl;
         private readonly string username;
         private readonly string password;
         private readonly int portNumber;
-        public static readonly JsonSerializerSettings Settings;
-
         private readonly bool runningOnMono;
-        private readonly Action<HttpWebRequest> configureRequest;
+        private readonly Action<HttpRequestMessage> configureRequest;
         private readonly TimeSpan defaultTimeout = TimeSpan.FromSeconds(20);
         private readonly TimeSpan timeout;
+        private readonly HttpClient httpClient;
 
         static ManagementClient()
         {
@@ -63,7 +68,7 @@ namespace EasyNetQ.Management.Client
             int portNumber = 15672,
             bool runningOnMono = false,
             TimeSpan? timeout = null,
-            Action<HttpWebRequest> configureRequest = null,
+            Action<HttpRequestMessage> configureRequest = null,
             bool ssl = false)
         {
             var urlRegex = new Regex(@"^(http|https):\/\/.+\w$");
@@ -112,10 +117,14 @@ namespace EasyNetQ.Management.Client
             this.runningOnMono = runningOnMono;
             this.configureRequest = configureRequest;
 
-            if (!runningOnMono)
-            {
-                LeaveDotsAndSlashesEscaped(ssl);
-            }
+            var messageHandler = new HttpClientHandler {
+                Credentials = new NetworkCredential(username, password),
+            };
+
+            this.httpClient = new HttpClient(messageHandler) { Timeout = this.timeout };
+
+            //default WebRequest.KeepAlive to false to resolve spurious 'the request was aborted: the request was canceled' exceptions
+            httpClient.DefaultRequestHeaders.Add("Connection", "close");
         }
 
         public Overview GetOverview(GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null)
@@ -153,10 +162,10 @@ namespace EasyNetQ.Management.Client
             return Get<IEnumerable<Channel>>("channels");
         }
 
-		public Channel GetChannel (string channelName, GetRatesCriteria ratesCriteria = null)
-		{
-			return Get<Channel> (string.Format("channels/{0}", channelName), ratesCriteria);
-		}
+        public Channel GetChannel (string channelName, GetRatesCriteria ratesCriteria = null)
+        {
+            return Get<Channel> (string.Format("channels/{0}", channelName), ratesCriteria);
+        }
 
         public IEnumerable<Exchange> GetExchanges()
         {
@@ -568,26 +577,25 @@ namespace EasyNetQ.Management.Client
 
         private T Get<T>(string path, params object[] queryObjects)
         {
-            var request = CreateRequestForPath(path, queryObjects);
+            var request = CreateRequestForPath(path, HttpMethod.Get, queryObjects);
 
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     throw new UnexpectedHttpStatusCodeException(response.StatusCode);
                 }
-                return DeserializeResponse<T>(response);   
+                return DeserializeResponse<T>(response);
             }
         }
 
         private TResult Post<TItem, TResult>(string path, TItem item)
         {
-            var request = CreateRequestForPath(path);
-            request.Method = "POST";
+            var request = CreateRequestForPath(path, HttpMethod.Post);
 
             InsertRequestBody(request, item);
 
-            using(var response = request.GetHttpResponse())
+            using(var response = httpClient.GetHttpResponse(request))
             {
                 if (!(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created))
                 {
@@ -600,10 +608,9 @@ namespace EasyNetQ.Management.Client
 
         private void Delete(string path)
         {
-            var request = CreateRequestForPath(path);
-            request.Method = "DELETE";
+            var request = CreateRequestForPath(path, HttpMethod.Delete);
 
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 if (response.StatusCode != HttpStatusCode.NoContent)
                 {
@@ -614,11 +621,9 @@ namespace EasyNetQ.Management.Client
 
         private void Put(string path)
         {
-            var request = CreateRequestForPath(path);
-            request.Method = "PUT";
-            request.ContentType = "application/json";
+            var request = CreateRequestForPath(path, HttpMethod.Put);
 
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 // The "Cowboy" server in 3.7.0's Management Client returns 201 Created. 
                 // "MochiWeb/1.1 WebMachine/1.10.0 (never breaks eye contact)" in 3.6.1 and previous return 204 No Content
@@ -635,12 +640,11 @@ namespace EasyNetQ.Management.Client
 
         private void Put<T>(string path, T item)
         {
-            var request = CreateRequestForPath(path);
-            request.Method = "PUT";
+            var request = CreateRequestForPath(path, HttpMethod.Put);
 
             InsertRequestBody(request, item);
 
-            using (var response = request.GetHttpResponse())
+            using (var response = httpClient.GetHttpResponse(request))
             {
                 // The "Cowboy" server in 3.7.0's Management Client returns 201 Created. 
                 // "MochiWeb/1.1 WebMachine/1.10.0 (never breaks eye contact)" in 3.6.1 and previous return 204 No Content
@@ -655,75 +659,69 @@ namespace EasyNetQ.Management.Client
             }
         }
 
-        private void InsertRequestBody<T>(HttpWebRequest request, T item)
+        /// <summary>
+        /// https://blogs.msdn.microsoft.com/pfxteam/2012/04/13/should-i-expose-synchronous-wrappers-for-asynchronous-methods/
+        /// </summary>
+        private void InsertRequestBody<T>(HttpRequestMessage request, T item)
         {
-            request.ContentType = "application/json";
+            if (!request.Headers.Accept.Contains(JsonMediaTypeHeaderValue))
+            {
+                request.Headers.Accept.Add(JsonMediaTypeHeaderValue);
+            }
 
             var body = JsonConvert.SerializeObject(item, Settings);
-            using (var requestStream = request.GetRequestStream())
-            using (var writer = new StreamWriter(requestStream))
-            {
-                writer.Write(body);
-            }
+            var content = new StringContent(body);
+
+            content.Headers.ContentType = JsonMediaTypeHeaderValue;
+            request.Content = content;
         }
-        
-        private T DeserializeResponse<T>(HttpWebResponse response)
+
+        private T DeserializeResponse<T>(HttpResponseMessage response)
         {
             var responseBody = GetBodyFromResponse(response);
             return JsonConvert.DeserializeObject<T>(responseBody, Settings);
         }
 
-        private static string GetBodyFromResponse(HttpWebResponse response)
+        private static string GetBodyFromResponse(HttpResponseMessage response)
         {
-            string responseBody;
-            using (var responseStream = response.GetResponseStream())
+            if (response == null)
             {
-                if (responseStream == null)
-                {
-                    throw new EasyNetQManagementException("Response stream was null");
-                }
-                using (var reader = new StreamReader(responseStream))
-                {
-                    responseBody = reader.ReadToEnd();
-                }
+                throw new EasyNetQManagementException("Response stream was null");
             }
-            return responseBody;
+
+            return Task.Run(() => response.Content.ReadAsStringAsync()).Result;
         }
 
-        private HttpWebRequest CreateRequestForPath(string path, object[] queryObjects = null)
+        private HttpRequestMessage CreateRequestForPath(string path, HttpMethod httpMethod, object[] queryObjects = null)
         {
-			var endpointAddress = BuildEndpointAddress (path);
+            var endpointAddress = BuildEndpointAddress (path);
             var queryString = BuildQueryString(queryObjects);
 
-			var uri = new Uri (endpointAddress + queryString);
+            var uri = new Uri (endpointAddress + queryString);
 
-			if (runningOnMono) {
-				// unsightly hack to fix path. 
-				// The default vHost in RabbitMQ is named '/' which causes all sorts of problems :(
-				// We need to escape it to %2f, but System.Uri then unescapes it back to '/'
-				// The horrible fix is to reset the path field to the original path value, after it's
-				// been set.
-				var pathField = typeof(Uri).GetField ("path", BindingFlags.Instance | BindingFlags.NonPublic);
-				if (pathField == null) {
-					throw new ApplicationException ("Could not resolve path field");
-				}
-				var alteredPath = (string)pathField.GetValue (uri);
-				alteredPath = alteredPath.Replace (@"///", @"/%2f/");
-				alteredPath = alteredPath.Replace (@"//", @"/%2f");
-				alteredPath = alteredPath.Replace ("+", "%2b");
-				pathField.SetValue (uri, alteredPath);
-			}
+            if (runningOnMono) {
+                // unsightly hack to fix path. 
+                // The default vHost in RabbitMQ is named '/' which causes all sorts of problems :(
+                // We need to escape it to %2f, but System.Uri then unescapes it back to '/'
+                // The horrible fix is to reset the path field to the original path value, after it's
+                // been set.
+                var pathField = typeof(Uri).GetField ("path", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (pathField == null) {
+                    throw new Exception("Could not resolve path field");
+                }
+                var alteredPath = (string)pathField.GetValue (uri);
+                alteredPath = alteredPath.Replace (@"///", @"/%2f/");
+                alteredPath = alteredPath.Replace (@"//", @"/%2f");
+                alteredPath = alteredPath.Replace ("+", "%2b");
+                pathField.SetValue (uri, alteredPath);
+            }
 
-			var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Credentials = new NetworkCredential(username, password); 
-            request.Timeout = request.ReadWriteTimeout = (int)timeout.TotalMilliseconds;
-            request.KeepAlive = false; //default WebRequest.KeepAlive to false to resolve spurious 'the request was aborted: the request was canceled' exceptions
+            var request = new HttpRequestMessage(httpMethod, uri);
 
             configureRequest(request);
 
             return request;
         }
-
 
         private string BuildEndpointAddress(string path)
         {
@@ -775,29 +773,12 @@ namespace EasyNetQ.Management.Client
             return propertiesKey.Replace("%5F", "%255F");
         }
 
-        /// <summary>
-        /// See http://mikehadlow.blogspot.co.uk/2011/08/how-to-stop-systemuri-un-escaping.html.
-        /// </summary>
-        /// <param name="useSsl">   true if using SSL.</param>
-        private void LeaveDotsAndSlashesEscaped(bool useSsl)
+        public void Dispose()
         {
-            var getSyntaxMethod =
-                typeof(UriParser).GetMethod("GetSyntax", BindingFlags.Static | BindingFlags.NonPublic);
-            if (getSyntaxMethod == null)
+            if (httpClient != null)
             {
-                throw new MissingMethodException("UriParser", "GetSyntax");
+                httpClient.Dispose();
             }
-
-            var uriParser = getSyntaxMethod.Invoke(null, new object[] { useSsl ? "https" : "http" });
-
-            var setUpdatableFlagsMethod =
-                uriParser.GetType().GetMethod("SetUpdatableFlags", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (setUpdatableFlagsMethod == null)
-            {
-                throw new MissingMethodException("UriParser", "SetUpdatableFlags");
-            }
-
-            setUpdatableFlagsMethod.Invoke(uriParser, new object[] { 0 });
         }
     }
 }

@@ -14,10 +14,17 @@
         <BuildNumber Condition=" '$(BUILD_NUMBER)' != '' ">$(BUILD_NUMBER)</BuildNumber>
         <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
     </PropertyGroup>
+    
+    <!-- Properties that are set during build to find test/merge binaries -->
+    <PropertyGroup>
+        <Configuration>Release</Configuration>
+        <DesktopFrameworkVersion>net451</DesktopFrameworkVersion>
+        <BinaryDesktopFolder>bin\$(Configuration)\$(DesktopFrameworkVersion)</BinaryDesktopFolder>
+    </PropertyGroup>
 
     <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets"/>
 
-    <Target Name="Default" DependsOnTargets="Version; Build; Test; MergeManagementClient; PackageManagementClient" />
+    <Target Name="Default" DependsOnTargets="Version; Build; Test; PackageManagementClient" />
 
     <Target Name="Version">
         <FileUpdate Files="$(Source)\Version.cs"
@@ -27,7 +34,7 @@
 
     <ItemGroup>
         <ProjectToBuild Include="$(Source)\EasyNetQ.sln">
-            <Properties>OutputPath=$(OutputDir);Configuration=Release</Properties>
+            <Properties>OutputPath=$(OutputDir);Configuration=$(Configuration)</Properties>
         </ProjectToBuild>
     </ItemGroup>
 
@@ -35,33 +42,32 @@
         <MSBuild Projects="@(ProjectToBuild)" Targets="Clean;Rebuild"/>
     </Target>
 
+    <!-- Running xUnit tests using dotnet test. Running tests that are not
+        Integration tests. Continuing on error so that all of the test binaries
+        can run. This allows us to see all of the test results in AppVeyor if
+        there are multiple test suites failing. -->
     <Target Name="Test" DependsOnTargets="Build">
-        <CreateItem Include="$(OutputDir)\*.Tests.dll">  
-            <Output TaskParameter="Include" ItemName="TestAssembly" />  
-        </CreateItem>
-        <NUnit ToolPath="$(Nunit)" DisableShadowCopy="true" Assemblies="@(TestAssembly)" Framework="4.0.30319" Force32Bit="true" />
-    </Target>
-
-    <Target Name="MergeManagementClient" DependsOnTargets="Test">
-        <Exec
-            WorkingDirectory="$(OutputDir)"
-            Command="$(ILRepack) /internalize /targetplatform:v4 /out:$(OutputDir)\EasyNetQ.Management.Client.dll $(OutputDir)\EasyNetQ.Management.Client.dll $(OutputDir)\Newtonsoft.Json.dll" />
-    </Target>
-
-    <Target Name="PackageManagementClient" DependsOnTargets="MergeManagementClient">
         <ItemGroup>
-            <FilesToDelete Include="$(Package)\EasyNetQ.Management.Client\*.nupkg"  />
+            <TestProjects Include="$(Source)\*Tests\project.json" />
         </ItemGroup>
+
+        <Exec WorkingDirectory="%(TestProjects.RootDir)\%(TestProjects.Directory)"
+              Command='dotnet test -notrait "Category=Integration"'
+              ContinueOnError="ErrorAndContinue" />
+    </Target>
+
+    <Target Name="PackageManagementClient" DependsOnTargets="Test">
+        <PropertyGroup>
+            <NuGetPackageDirectory>$(Package)\EasyNetQ.Management.Client</NuGetPackageDirectory>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <ClientLibraries Include="$(Source)\**\project.json" Exclude="$(Source)\*Tests\project.json" />
+            <FilesToDelete Include="$(NuGetPackageDirectory)\*.nupkg" />
+        </ItemGroup>
+
+        <MakeDir Directories="$(NuGetPackageDirectory)" Condition="!Exists('$(NuGetPackageDirectory)')" />
         <Delete Files="@(FilesToDelete)" />
-        <Copy SourceFiles="$(OutputDir)\EasyNetQ.Management.Client.dll" DestinationFolder="$(Package)\EasyNetQ.Management.Client\lib\net40" />
-        <GetAssemblyIdentity AssemblyFiles="$(OutputDir)\EasyNetQ.Management.Client.dll">
-            <Output TaskParameter="Assemblies" ItemName="AsmInfo" />
-        </GetAssemblyIdentity>        
-        <XmlUpdate
-            Namespace="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd"
-            XmlFileName="$(Package)\EasyNetQ.Management.Client\EasyNetQ.Management.Client.nuspec"
-            XPath="/package/metadata/version"
-            Value="%(AsmInfo.Version)" />
-        <Exec WorkingDirectory="$(Package)\EasyNetQ.Management.Client" Command="$(NuGet)\NuGet.exe pack $(Package)\EasyNetQ.Management.Client\EasyNetQ.Management.Client.nuspec" />
+        <Exec Command='dotnet pack %(ClientLibraries.FullPath) --output $(NuGetPackageDirectory)' />
     </Target>
 </Project>

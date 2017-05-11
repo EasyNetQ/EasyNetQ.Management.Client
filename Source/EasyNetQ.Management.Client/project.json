@@ -1,0 +1,75 @@
+{
+  "version": "2.0.0-netcore0001",
+  "description": "EasyNetQ.Management.Client is a .NET client for the RabbitMQ RESTful management API",
+  "title": "EasyNetQ.Management.Client",
+  "name": "EasyNetQ.Management.Client",
+  "copyright": "Copyright Mike Hadlow 2012",
+  "buildOptions": {
+    "compile": {
+      "includeFiles": "..\\Version.cs"
+    }
+  },
+  "packOptions": {
+    "licenseUrl": "https://raw.githubusercontent.com/EasyNetQ/EasyNetQ.Management.Client/master/licence.txt",
+    "projectUrl": "https://github.com/EasyNetQ/EasyNetQ.Management.Client",
+    "iconUrl": "https://raw.github.com/mikehadlow/EasyNetQ/gh-pages/design/logo_design.png",
+    "owners": [
+      "mikehadlow",
+      "micdenny",
+      "pliner",
+      "zidad"
+    ],
+    "tags": [
+      "RabbitMQ",
+      "Messaging",
+      "AMQP",
+      "C#"
+    ]
+  },
+  "authors": [
+    "Mike Hadlow",
+    "Michael Denny",
+    "Yury Pliner",
+    "Wiebe Tijsma",
+    "Contributors (see GitHub repo) "
+  ],
+  "dependencies": {
+    "Newtonsoft.Json": "9.0.1"
+  },
+  "tools": {
+    "dotnet-gitversion": {
+      "version": "1.0.0",
+      "imports": [
+        "dotnet"
+      ]
+    }
+  },
+  "commands": {
+    "dn-version": "dotnet gitversion"
+  },
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50",
+      "buildOptions": {
+        "define": [
+          "NET_STANDARD"
+        ]
+      },
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "Microsoft.Extensions.Logging.TraceSource": "1.0.0",
+        "System.Reflection.TypeExtensions": "4.1.0"
+      }
+    },
+    "net451": {
+      "buildOptions": {
+        "define": [
+          "NETFX"
+        ]
+      },
+      "frameworkAssemblies": {
+        "System.Net.Http": "4.0.0.0"
+      }
+    }
+  }
+}

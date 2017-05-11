@@ -2,50 +2,48 @@
 
 using System;
 using EasyNetQ.Management.Client.Model;
-using NUnit.Framework;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture(Category = "Unit")]
     public class UserInfoTests
     {
-        private UserInfo userInfo;
+        private readonly UserInfo userInfo;
         private const string userName = "mike";
         private const string password = "topSecret";
 
-        [SetUp]
-        public void SetUp()
+        public UserInfoTests()
         {
             userInfo = new UserInfo(userName, password);
         }
 
-        [Test]
+        [Fact]
         public void Should_have_correct_name_and_password()
         {
             userInfo.GetName().ShouldEqual(userName);
             userInfo.Password.ShouldEqual(password);
         }
 
-        [Test]
+        [Fact]
         public void Should_be_able_to_add_tags()
         {
             userInfo.AddTag("administrator").AddTag("management");
             userInfo.Tags.ShouldEqual("administrator,management");
         }
 
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Fact]
         public void Should_not_be_able_to_add_the_same_tag_twice()
         {
-            userInfo.AddTag("management").AddTag("management");
+            Assert.Throws<ArgumentException>(() => userInfo.AddTag("management").AddTag("management"));
         }
 
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Fact]
         public void Should_not_be_able_to_add_incorrect_tags()
         {
-            userInfo.AddTag("blah");
+            Assert.Throws<ArgumentException>(() => userInfo.AddTag("blah"));
         }
 
-        [Test]
+        [Fact]
         public void Should_have_a_default_tag_of_empty_string()
         {
             userInfo.Tags.ShouldEqual("");

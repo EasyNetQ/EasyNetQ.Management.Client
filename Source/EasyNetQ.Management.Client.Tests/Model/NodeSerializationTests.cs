@@ -2,28 +2,26 @@
 
 using System.Collections.Generic;
 using EasyNetQ.Management.Client.Model;
-using NUnit.Framework;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture(Category = "Unit")]
     public class NodeSerializationTests
     {
-        private List<Node> nodes;
+        private readonly List<Node> nodes;
 
-        [SetUp]
-        public void SetUp()
+        public NodeSerializationTests()
         {
             nodes = ResourceLoader.LoadObjectFromJson<List<Node>>("Nodes.json");
         }
 
-        [Test]
+        [Fact]
         public void Should_load_one_node()
         {
             nodes.Count.ShouldEqual(1);
         }
 
-        [Test]
+        [Fact]
         public void Should_have_node_properties()
         {
             var node = nodes[0];
