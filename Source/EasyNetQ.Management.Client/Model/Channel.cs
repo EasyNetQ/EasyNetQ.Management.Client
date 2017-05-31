@@ -39,7 +39,8 @@ namespace EasyNetQ.Management.Client.Model
     public class ChannelDetail
     {
         public string Name { get; set; }
-        public int Number { get; set; }
+	[JsonConverter(typeof(TolerantInt32Converter))]
+        public int Number { get; set; }	    
         public string User { get; set; }
         public string ConnectionName { get; set; }
         [JsonConverter(typeof(TolerantInt32Converter))]
