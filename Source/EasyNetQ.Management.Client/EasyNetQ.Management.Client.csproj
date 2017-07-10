@@ -69,6 +69,8 @@
     <Compile Include="Model\Exchange.cs" />
     <Compile Include="Model\ExchangeInfo.cs" />
     <Compile Include="Model\ExchangeType.cs" />
+    <Compile Include="Model\Federation.cs" />
+    <Compile Include="Model\FederationStatus.cs" />
     <Compile Include="Model\GetRatesCriteria.cs" />
     <Compile Include="Model\GetLengthsCriteria.cs" />
     <Compile Include="Model\GetMessagesCriteria.cs" />
