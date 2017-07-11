@@ -1032,6 +1032,48 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         }
 
         [Test]
+        public void Should_be_able_to_delete_binding_between_exchange_and_queue()
+        {
+            var exchangeSourceName = "management_api_test_exchange_source";
+            var queueName = "management_api_test_queue_destination";
+            var vhost = new Vhost { Name = vhostName };
+            var exchangeSource = CreateExchange(exchangeSourceName);
+            var queue = CreateTestQueue(queueName);
+            managementClient.CreateBinding(exchangeSource, queue, new BindingInfo(null));
+            var binding = managementClient.GetBindings(exchangeSource, queue).First();
+
+            try
+            {
+                managementClient.DeleteBinding(binding);
+            }
+            finally
+            {
+                managementClient.DeleteExchange(exchangeSource);
+                managementClient.DeleteQueue(queue);
+            }
+        }
+
+        [Test]
+        public void Should_be_able_to_delete_binding_between_exchange_and_exchange()
+        {
+            var exchangeSourceName = "management_api_test_exchange_source";
+            var exchangeDestinationName = "management_api_test_exchange_destination";
+            var exchangeSource = CreateExchange(exchangeSourceName);
+            var exchangeDestination = CreateExchange(exchangeDestinationName);
+            managementClient.CreateBinding(exchangeSource, exchangeDestination, new BindingInfo("#"));
+            var binding = managementClient.GetBindings(exchangeSource, exchangeDestination).First();
+            try
+            {
+                managementClient.DeleteBinding(binding);
+            }
+            finally
+            {
+                managementClient.DeleteExchange(exchangeSource);
+                managementClient.DeleteExchange(exchangeDestination);
+            }
+        }
+
+        [Test]
         public void Should_be_able_to_list_parameters()
         {
             var parameters = managementClient.GetParameters();
