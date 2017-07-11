@@ -553,6 +553,11 @@ namespace EasyNetQ.Management.Client
             return CreateUser(userInfo);
         }
 
+        public List<Federation> GetFederation()
+        {
+            return Get<List<Federation>>("federation-links");
+        }
+
         public bool IsAlive(Vhost vhost)
         {
             if (vhost == null)

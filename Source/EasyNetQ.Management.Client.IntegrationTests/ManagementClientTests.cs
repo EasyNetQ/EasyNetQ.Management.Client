@@ -1063,6 +1063,16 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             });
             Assert.True(managementClient.GetParameters().Where(p=>p.Name == "myfakefederationupstream").Any());
         }
+
+        [Test]
+        [Ignore("Requires the federation plugin to work")]
+        public void Should_get_federations()
+        {
+            var federations = managementClient.GetFederation();
+
+            federations.Count().ShouldNotEqual(0);
+            federations.First().Node.ShouldEqual("rabbit@" + Environment.MachineName);
+        }
     }
 }
 

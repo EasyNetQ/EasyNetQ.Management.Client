@@ -52,6 +52,7 @@
     <Compile Include="ManagementClientInternalsTests.cs" />
     <Compile Include="Model\ExchangeInfoTests.cs" />
     <Compile Include="Model\MessageSerializationTests.cs" />
+    <Compile Include="Model\FederationSerializationTests.cs" />
     <Compile Include="Model\NodeSerializationTests.cs" />
     <Compile Include="Model\ParameterSerializationTests.cs" />
     <Compile Include="Model\PermissionInfoTests.cs" />
@@ -88,6 +89,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <EmbeddedResource Include="Json\Policies_ha.json" />
+    <EmbeddedResource Include="Json\Federations.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

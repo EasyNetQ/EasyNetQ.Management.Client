@@ -342,5 +342,11 @@ namespace EasyNetQ.Management.Client
         /// <param name="name"></param>
         void DeleteParameter(string componentName, string vhost, string name);
 
+        /// <summary>
+        /// Get list of federations
+        /// </summary>
+        /// <returns></returns>
+        List<Federation> GetFederation();
+
     }
 }

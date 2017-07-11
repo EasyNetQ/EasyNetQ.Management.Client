@@ -1,0 +1,180 @@
+﻿[{
+    "node": "rabbit@oms-rabbitmq-03",
+    "exchange": "Exchange.OrderProcessing.Checkout",
+    "upstream_exchange": "Exchange.OrderProcessing.Checkout",
+    "type": "exchange",
+    "vhost": "/",
+    "upstream": "Checkout_Fedaration",
+    "id": "05f33ec723c375e398f6a2f3154cc1f83a763ec8",
+    "status": "running",
+    "local_connection": "<rabbit@oms-rabbitmq-03.3.22172.542>",
+    "uri": "amqp://192.168.44.110:5672",
+    "timestamp": "2017-07-07 12:55:15",
+    "local_channel": {
+      "reductions_details": {
+        "rate": 508.2
+      },
+      "reductions": 36864633,
+      "message_stats": {
+        "return_unroutable_details": {
+          "rate": 0.0
+        },
+        "return_unroutable": 0,
+        "confirm_details": {
+          "rate": 0.2
+        },
+        "confirm": 66151,
+        "publish_details": {
+          "rate": 0.2
+        },
+        "publish": 66151
+      },
+      "vhost": "/",
+      "user": "none",
+      "number": 1,
+      "name": "<rabbit@oms-rabbitmq-03.3.22172.542> (1)",
+      "node": "rabbit@oms-rabbitmq-03",
+      "connection_details": {
+        "peer_host": "undefined",
+        "peer_port": "undefined",
+        "name": "<rabbit@oms-rabbitmq-03.3.22172.542>"
+      },
+      "garbage_collection": {
+        "minor_gcs": 35,
+        "fullsweep_after": 65535,
+        "min_heap_size": 233,
+        "min_bin_vheap_size": 46422
+      },
+      "state": "running",
+      "global_prefetch_count": 0,
+      "prefetch_count": 0,
+      "acks_uncommitted": 0,
+      "messages_uncommitted": 0,
+      "messages_unconfirmed": 0,
+      "messages_unacknowledged": 0,
+      "consumer_count": 0,
+      "confirm": true,
+      "transactional": false,
+      "node": "rabbit@oms-rabbitmq-03"
+    }
+  },
+  {
+    "node": "rabbit@oms-rabbitmq-03",
+    "exchange": "Exchange.OrderProcessing.Marketplace",
+    "upstream_exchange": "Exchange.OrderProcessing.Marketplace",
+    "type": "exchange",
+    "vhost": "/",
+    "upstream": "MP_Federation",
+    "id": "2f5ab30d39d27494256ce3c277325869006f4c9b",
+    "status": "running",
+    "local_connection": "<rabbit@oms-rabbitmq-03.3.15174.0>",
+    "uri": "amqp://192.168.66.184:5672",
+    "timestamp": "2017-06-28 17:42:31",
+    "local_channel": {
+      "reductions_details": {
+        "rate": 2267.6
+      },
+      "reductions": 418320626,
+      "message_stats": {
+        "return_unroutable_details": {
+          "rate": 0.0
+        },
+        "return_unroutable": 0,
+        "confirm_details": {
+          "rate": 5.0
+        },
+        "confirm": 812332,
+        "publish_details": {
+          "rate": 5.0
+        },
+        "publish": 812332
+      },
+      "vhost": "/",
+      "user": "none",
+      "number": 1,
+      "name": "<rabbit@oms-rabbitmq-03.3.15174.0> (1)",
+      "node": "rabbit@oms-rabbitmq-03",
+      "connection_details": {
+        "peer_host": "undefined",
+        "peer_port": "undefined",
+        "name": "<rabbit@oms-rabbitmq-03.3.15174.0>"
+      },
+      "garbage_collection": {
+        "minor_gcs": 85,
+        "fullsweep_after": 65535,
+        "min_heap_size": 233,
+        "min_bin_vheap_size": 46422
+      },
+      "state": "running",
+      "global_prefetch_count": 0,
+      "prefetch_count": 0,
+      "acks_uncommitted": 0,
+      "messages_uncommitted": 0,
+      "messages_unconfirmed": 0,
+      "messages_unacknowledged": 0,
+      "consumer_count": 0,
+      "confirm": true,
+      "transactional": false,
+      "node": "rabbit@oms-rabbitmq-03"
+    }
+  },
+  {
+    "node": "rabbit@oms-rabbitmq-03",
+    "exchange": "Exchange.OrderProcessing.ShippingAndDelivery",
+    "upstream_exchange": "Exchange.OrderProcessing.ShippingAndDelivery",
+    "type": "exchange",
+    "vhost": "/",
+    "upstream": "SD_Federation",
+    "id": "1d4146286f279af318dc6e13b26c5aa36052a23e",
+    "status": "running",
+    "local_connection": "<rabbit@oms-rabbitmq-03.3.13097.555>",
+    "uri": "amqp://192.168.20.179:5672",
+    "timestamp": "2017-07-07 19:02:16",
+    "local_channel": {
+      "reductions_details": {
+        "rate": 421.6
+      },
+      "reductions": 16591407,
+      "message_stats": {
+        "return_unroutable_details": {
+          "rate": 0.0
+        },
+        "return_unroutable": 0,
+        "confirm_details": {
+          "rate": 2.0
+        },
+        "confirm": 29622,
+        "publish_details": {
+          "rate": 2.0
+        },
+        "publish": 29622
+      },
+      "vhost": "/",
+      "user": "none",
+      "number": 1,
+      "name": "<rabbit@oms-rabbitmq-03.3.13097.555> (1)",
+      "node": "rabbit@oms-rabbitmq-03",
+      "connection_details": {
+        "peer_host": "undefined",
+        "peer_port": "undefined",
+        "name": "<rabbit@oms-rabbitmq-03.3.13097.555>"
+      },
+      "garbage_collection": {
+        "minor_gcs": 3,
+        "fullsweep_after": 65535,
+        "min_heap_size": 233,
+        "min_bin_vheap_size": 46422
+      },
+      "state": "running",
+      "global_prefetch_count": 0,
+      "prefetch_count": 0,
+      "acks_uncommitted": 0,
+      "messages_uncommitted": 0,
+      "messages_unconfirmed": 0,
+      "messages_unacknowledged": 0,
+      "consumer_count": 0,
+      "confirm": true,
+      "transactional": false,
+      "node": "rabbit@oms-rabbitmq-03"
+    }
+  }]
