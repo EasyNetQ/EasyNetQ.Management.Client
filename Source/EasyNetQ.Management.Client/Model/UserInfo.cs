@@ -8,6 +8,7 @@ namespace EasyNetQ.Management.Client.Model
     {
         private readonly string name;
         public string Password { get; private set; }
+        public string PasswordHash { get; private set; }
         public string Tags
         {
             get
@@ -25,19 +26,36 @@ namespace EasyNetQ.Management.Client.Model
 
         private readonly ISet<string> tagList = new HashSet<string>();
 
-        public UserInfo(string name, string password)
+        /// <summary>
+        /// Creates <see cref="UserInfo"/> instance.
+        /// </summary>
+        /// <param name="name">User name</param>
+        /// <param name="password">Password or password hash value.</param>
+        /// <param name="isHashed">Flag shows if <param name="password">password</param> value is raw password or password hash.</param>
+        /// <remarks>Hash should be calculated using RabbitMq hash computing algorithm.
+        /// See https://www.rabbitmq.com/passwords.html.</remarks>
+        /// <exception cref="ArgumentException"></exception>
+        public UserInfo(string name, string password, bool isHashed = false)
         {
             if (string.IsNullOrEmpty(name))
             {
                 throw new ArgumentException("name is null or empty");
             }
-            if (string.IsNullOrEmpty(password))
+            //Setting password_hash to "" will ensure the user cannot use a password to log in. 
+            //(From HTTP API documentation: https://cdn.rawgit.com/rabbitmq/rabbitmq-management/rabbitmq_v3_6_12/priv/www/api/index.html)
+            if (string.IsNullOrEmpty(password) && !isHashed)
             {
-                throw new ArgumentException("password is null or empty");
+                throw new ArgumentException("password is null or empty.");
             }
-
             this.name = name;
-            this.Password = password;
+            if (isHashed)
+            {
+                this.PasswordHash = password;
+            }
+            else
+            {
+                this.Password = password;
+            }
         }
 
         /// <summary>
