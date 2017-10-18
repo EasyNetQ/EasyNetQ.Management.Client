@@ -555,6 +555,29 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			user.Name.ShouldEqual(testUser);
 		}
 
+        [Fact]
+        public async Task Should_be_able_to_create_a_user_with_password_hash()
+        {
+            var testUser = "hash_user";
+            // Hash calculated using RabbitMq hash computing algorithm using Sha256
+            // See https://www.rabbitmq.com/passwords.html
+            var passwordHash = "Qlp9Dgrqvx1S1VkuYsoWwgUD2XW2gZLuqQwreE+PAsPZETgo"; //"topSecret"
+            var userInfo = new UserInfo(testUser, passwordHash, isHashed: true).AddTag("administrator");
+
+            var user = await managementClient.CreateUserAsync(userInfo).ConfigureAwait(false);
+            user.Name.ShouldEqual(testUser);
+        }
+
+        [Fact]
+        public async Task Should_be_able_to_create_a_user_without_password()
+        {
+            var testUser = "empty";
+            var userInfo = new UserInfo(testUser, "", isHashed: true).AddTag("administrator");
+
+            var user = await managementClient.CreateUserAsync(userInfo).ConfigureAwait(false);
+            user.Name.ShouldEqual(testUser);
+        }
+
 		[Fact]
 		public async Task Should_be_able_to_create_a_user_with_the_policymaker_tag()
 		{
