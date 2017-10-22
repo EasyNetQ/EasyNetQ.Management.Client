@@ -234,6 +234,18 @@ namespace EasyNetQ.Management.Client
         void DeleteVirtualHost(Vhost vhost);
 
         /// <summary>
+        /// Enable tracing on given virtual host.
+        /// </summary>
+        /// <param name="vhost"></param>
+        void EnableTracing(Vhost vhost);
+
+        /// <summary>
+        /// Disables tracing on given virtual host.
+        /// </summary>
+        /// <param name="vhost"></param>
+        void DisableTracing(Vhost vhost);
+
+        /// <summary>
         /// Create a new user
         /// </summary>
         /// <param name="userInfo">The user to create</param>

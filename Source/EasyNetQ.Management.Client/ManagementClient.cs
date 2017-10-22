@@ -423,6 +423,26 @@ namespace EasyNetQ.Management.Client
             Delete(string.Format("vhosts/{0}", vhost.Name));
         }
 
+        public void EnableTracing(Vhost vhost)
+        {
+            if (vhost == null)
+            {
+                throw new ArgumentNullException("vhost");
+            }
+            vhost.Tracing = true;
+            Put<Vhost>(string.Format("vhosts/{0}", SanitiseVhostName(vhost.Name)), vhost);
+        }
+
+        public void DisableTracing(Vhost vhost)
+        {
+            if (vhost == null)
+            {
+                throw new ArgumentNullException("vhost");
+            }
+            vhost.Tracing = false;
+            Put<Vhost>(string.Format("vhosts/{0}", SanitiseVhostName(vhost.Name)), vhost);
+        }
+
         public IEnumerable<User> GetUsers()
         {
             return Get<IEnumerable<User>>("users");
