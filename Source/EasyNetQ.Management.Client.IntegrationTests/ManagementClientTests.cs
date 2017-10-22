@@ -1085,6 +1085,25 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             });
             Assert.True(managementClient.GetParameters().Where(p=>p.Name == "myfakefederationupstream").Any());
         }
+
+        [Test]
+        public void Should_enable_tracing()
+        {
+            var vhost = managementClient.GetVhost(vhostName);
+            managementClient.EnableTracing(vhost);
+
+            var vhostAfterUpdate = managementClient.GetVhost(vhostName);
+            Assert.True(vhostAfterUpdate.Tracing);
+        }
+        
+        [Test]
+        public void Should_disable_tracing()
+        {
+            var vhost = managementClient.GetVhost(vhostName);
+            managementClient.DisableTracing(vhost);
+            var vhostAfterUpdate = managementClient.GetVhost(vhostName);
+            Assert.False(vhostAfterUpdate.Tracing);
+        }
     }
 }
 
