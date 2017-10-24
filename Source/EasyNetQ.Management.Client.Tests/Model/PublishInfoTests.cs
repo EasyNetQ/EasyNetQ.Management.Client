@@ -19,7 +19,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
         [ExpectedException(typeof(ArgumentException), ExpectedMessage = "payloadEncoding must be one of: 'string, base64'")]
         public void Should_throw_when_payload_encoding_is_incorrect()
         {
-            new PublishInfo(new Dictionary<string, string>(), "routing_key", "payload", "unknown_payload_encoding");
+            new PublishInfo(new Dictionary<string, object>(), "routing_key", "payload", "unknown_payload_encoding");
         }
     }
 }

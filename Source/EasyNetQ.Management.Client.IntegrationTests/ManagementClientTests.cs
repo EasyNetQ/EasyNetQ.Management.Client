@@ -413,7 +413,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
             var defaultExchange = new Exchange { Name = "amq.default", Vhost = vhostName };
 
-            var properties = new Dictionary<string, string>
+            var properties = new Dictionary<string, object>
             {
                 { "app_id", "management-test"}
             };
