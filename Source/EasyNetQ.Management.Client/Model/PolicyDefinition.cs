@@ -22,7 +22,6 @@
         public string DeadLetterRoutingKey { get; set; }
         [JsonProperty("message-ttl", NullValueHandling = NullValueHandling.Ignore)]
         public uint? MessageTtl { get; set; }
-        [JsonProperty("expires", NullValueHandling = NullValueHandling.Ignore)]
         public uint? Expires { get; set; }
         [JsonProperty("max-length", NullValueHandling = NullValueHandling.Ignore)]
         public uint? MaxLength { get; set; }
