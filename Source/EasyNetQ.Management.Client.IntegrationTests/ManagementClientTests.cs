@@ -1019,5 +1019,23 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		   
 			federations.Single().Node.ShouldEqual($"rabbit@{rabbitHostName}");
 		}
+
+        [Fact]
+        public async Task Should_enable_tracing()
+        {
+            var vhost = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            await managementClient.EnableTracingAsync(vhost).ConfigureAwait(false);
+            var vhostAfterUpdate = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            Assert.True(vhostAfterUpdate.Tracing);
+        }
+
+        [Fact]
+        public async Task Should_disable_tracing()
+        {
+            var vhost = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            await managementClient.DisableTracingAsync(vhost).ConfigureAwait(false);
+            var vhostAfterUpdate = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            Assert.False(vhostAfterUpdate.Tracing);
+        }
 	}
 }

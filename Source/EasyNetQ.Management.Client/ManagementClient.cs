@@ -382,6 +382,24 @@ namespace EasyNetQ.Management.Client
             await DeleteAsync($"vhosts/{vhost.Name}", cancellationToken).ConfigureAwait(false);
         }
 
+        public async Task EnableTracingAsync(Vhost vhost,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Ensure.ArgumentNotNull(vhost, nameof(vhost));
+            vhost.Tracing = true;
+            await PutAsync<Vhost>($"vhosts/{SanitiseVhostName(vhost.Name)}", vhost, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        public async Task DisableTracingAsync(Vhost vhost,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Ensure.ArgumentNotNull(vhost, nameof(vhost));
+            vhost.Tracing = false;
+            await PutAsync<Vhost>($"vhosts/{SanitiseVhostName(vhost.Name)}", vhost, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
         public Task<IEnumerable<User>> GetUsersAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             return GetAsync<IEnumerable<User>>("users", cancellationToken);

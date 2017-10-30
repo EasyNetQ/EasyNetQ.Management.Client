@@ -319,6 +319,22 @@ namespace EasyNetQ.Management.Client
             CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
+        /// Enable tracing on given virtual host.
+        /// </summary>
+        /// <param name="vhost">The virtual host on which to enable tracing</param>
+        Task EnableTracingAsync(
+            [NotNull] Vhost vhost,
+            CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Disables tracing on given virtual host.
+        /// </summary>
+        /// <param name="vhost">The virtual host on which to disable tracing</param>
+        Task DisableTracingAsync(
+            [NotNull] Vhost vhost,
+            CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
         /// Create a new user
         /// </summary>
         /// <param name="userInfo">The user to create</param>
