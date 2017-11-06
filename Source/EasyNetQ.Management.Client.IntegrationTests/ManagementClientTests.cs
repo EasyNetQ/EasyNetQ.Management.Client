@@ -353,7 +353,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			var defaultExchange = new Exchange { Name = "amq.default", Vhost = vhostName };
 
 			var publishInfo = new PublishInfo(
-				new Dictionary<string, string>
+				new Dictionary<string, object>
 				{
 					{ "app_id", "management-test"}
 				},
