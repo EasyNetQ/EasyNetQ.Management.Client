@@ -14,17 +14,17 @@ namespace EasyNetQ.Management.Client.Model
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             }
             if (arguments == null)
             {
-                throw new ArgumentNullException("arguments");
+                throw new ArgumentNullException(nameof(arguments));
             }
 
             this.name = name;
             AutoDelete = autoDelete;
-            this.Durable = durable;
-            this.Arguments = arguments;
+            Durable = durable;
+            Arguments = arguments;
         }
 
         public QueueInfo(string name) :

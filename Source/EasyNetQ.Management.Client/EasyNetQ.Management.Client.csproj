@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.5;net452</TargetFrameworks>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <OutputType>Library</OutputType>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+
+    <Company>Mike Hadlow</Company>
+    <Copyright>Copyright © Mike Hadlow 2011 - present</Copyright>
+    <Product>EasyNetQ.Management.Client</Product>
+    <Description>A .NET client for the RabbitMQ RESTful management API</Description>
+    <AssemblyTitle>EasyNetQ.Management.Client</AssemblyTitle>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <InformationalVersion>0.1.0-alpha-01-commitHash</InformationalVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+
+    <Title>EasyNetQ.Management.Client</Title>
+    <Version>0.1.0-alpha-01-commitHash</Version>
+    <Authors>Mike Hadlow</Authors>
+    <PackageId>EasyNetQ.Management.Client</PackageId>
+    <PackageLicenseUrl>https://github.com/EasyNetQ/EasyNetQ.Management.Client/blob/master/license.txt</PackageLicenseUrl>
+    <PackageProjectUrl>http://easynetq.com</PackageProjectUrl>
+    <PackageIconUrl>https://raw.github.com/mikehadlow/EasyNetQ/gh-pages/design/logo_design.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/EasyNetQ/EasyNetQ.Management.Client</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>RabbitMQ Management.API .NET C# netstandard</PackageTags>
+    <PackageReleaseNotes>https://github.com/EasyNetQ/EasyNetQ.Management.Client/blob/master/version.txt</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net452'">
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net452'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard1.5'">
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+
+</Project>

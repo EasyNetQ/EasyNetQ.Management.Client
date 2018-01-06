@@ -16,7 +16,6 @@ namespace EasyNetQ.Management.Client.Tests
 
             if (namedArgs == Category.None)
             {
-                yield break;
             }
             else
             {

@@ -1,7 +1,7 @@
-﻿namespace EasyNetQ.Management.Client.Model
-{
-    using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
+namespace EasyNetQ.Management.Client.Model
+{
     public class PolicyDefinition
     {
         [JsonProperty("ha-mode", NullValueHandling = NullValueHandling.Ignore)]

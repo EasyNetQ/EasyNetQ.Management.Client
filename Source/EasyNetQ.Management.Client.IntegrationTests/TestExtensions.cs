@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests
 {
     public static class TestExtensions
     {
-        public static T ShouldNotBeNull<T>(this T obj)
+        public static T ShouldNotBeNull<T>(this T obj) where T:class
         {
             Assert.NotNull(obj);
             return obj;
@@ -24,39 +23,9 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             return actual;
         }
 
-        public static Exception ShouldBeThrownBy(this Type exceptionType, Action testDelegate)
-        {
-            return Assert.Throws(exceptionType, testDelegate);
-        }
-
-        public static void ShouldBe<T>(this object actual)
-        {
-            Assert.IsType<T>(actual);
-        }
-
-        public static void ShouldBeNull(this object actual)
-        {
-            Assert.Null(actual);
-        }
-
-        public static void ShouldBeTheSameAs(this object actual, object expected)
-        {
-            Assert.Same(expected, actual);
-        }
-
-        public static T CastTo<T>(this object source)
-        {
-            return (T)source;
-        }
-
         public static void ShouldBeTrue(this bool source)
         {
             Assert.True(source);
-        }
-
-        public static void ShouldBeTrue(this bool source, string message)
-        {
-            Assert.True(source, message);
         }
 
         public static void ShouldBeFalse(this bool source)
@@ -64,14 +33,11 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             Assert.False(source);
         }
 
-        public static void ShouldBeFalse(this bool source, string message)
+        public static T ShouldBeGreaterThan<T>(this T actual, T expected, string message = null)
+            where T : IComparable
         {
-            Assert.False(source, message);
-        }
-
-        public static void ShouldBeEmpty<T>(this IEnumerable<T> collection)
-        {
-            Assert.Empty(collection);
+            Assert.True(actual.CompareTo(expected) > 0, message);
+            return actual;
         }
     }
 }

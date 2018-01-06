@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using EasyNetQ.Management.Client.Model;
-using Queue = EasyNetQ.Management.Client.Model.Queue;
+using JetBrains.Annotations;
 
 namespace EasyNetQ.Management.Client
 {
@@ -27,33 +29,41 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="lengthsCriteria">Criteria for getting samples of queue length data</param>
         /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Overview GetOverview(GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null);
+        Task<Overview> GetOverviewAsync(
+            GetLengthsCriteria lengthsCriteria = null,
+            GetRatesCriteria ratesCriteria = null,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of nodes in the RabbitMQ cluster.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Node> GetNodes();
+        Task<IEnumerable<Node>> GetNodesAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// The server definitions - exchanges, queues, bindings, users, virtual hosts, permissions. 
         /// Everything apart from messages.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Definitions GetDefinitions();
+        Task<Definitions> GetDefinitionsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all open connections.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Connection> GetConnections();
+        Task<IEnumerable<Connection>> GetConnectionsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all open channels.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Channel> GetChannels();
+        Task<IEnumerable<Channel>> GetChannelsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Gets the channel. This returns more detail, including consumers than the GetChannels method.
@@ -61,76 +71,102 @@ namespace EasyNetQ.Management.Client
         /// <returns>The channel.</returns>
         /// <param name="channelName">Channel name.</param>
         /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
-        Channel GetChannel (string channelName, GetRatesCriteria ratesCriteria = null);
+        /// <param name="cancellationToken"></param>
+        Task<Channel> GetChannelAsync(
+            string channelName,
+            GetRatesCriteria ratesCriteria = null,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all exchanges.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Exchange> GetExchanges();
+        Task<IEnumerable<Exchange>> GetExchangesAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all queues.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Queue> GetQueues();
+        Task<IEnumerable<Queue>> GetQueuesAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all bindings.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Binding> GetBindings();
+        Task<IEnumerable<Binding>> GetBindingsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all vhosts.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Vhost> GetVHosts();
+        Task<IEnumerable<Vhost>> GetVHostsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all users.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<User> GetUsers();
+        Task<IEnumerable<User>> GetUsersAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all permissions for all users.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Permission> GetPermissions();
+        Task<IEnumerable<Permission>> GetPermissionsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Closes the given connection
         /// </summary>
         /// <param name="connection"></param>
-        void CloseConnection(Connection connection);
+        /// <param name="cancellationToken"></param>
+        Task CloseConnectionAsync(
+            [NotNull] Connection connection,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Creates the given exchange
         /// </summary>
         /// <param name="exchangeInfo"></param>
         /// <param name="vhost"></param>
-        Exchange CreateExchange(ExchangeInfo exchangeInfo, Vhost vhost);
+        /// <param name="cancellationToken"></param>
+        Task<Exchange> CreateExchangeAsync(
+            [NotNull] ExchangeInfo exchangeInfo,
+            [NotNull] Vhost vhost,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Delete the given exchange
         /// </summary>
         /// <param name="exchange"></param>
-        void DeleteExchange(Exchange exchange);
+        /// <param name="cancellationToken"></param>
+        Task DeleteExchangeAsync(
+            [NotNull] Exchange exchange,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all bindings in which a given exchange is the source.
         /// </summary>
         /// <param name="exchange"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Binding> GetBindingsWithSource(Exchange exchange);
+        Task<IEnumerable<Binding>> GetBindingsWithSourceAsync(
+            [NotNull] Exchange exchange,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all bindings in which a given exchange is the destination.
         /// </summary>
         /// <param name="exchange"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Binding> GetBindingsWithDestination(Exchange exchange);
+        Task<IEnumerable<Binding>> GetBindingsWithDestinationAsync(
+            [NotNull] Exchange exchange,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Publish a message to a given exchange.
@@ -141,33 +177,50 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="exchange">The exchange</param>
         /// <param name="publishInfo">The publication parameters</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>A PublishResult, routed == true if the message was sent to at least one queue</returns>
-        PublishResult Publish(Exchange exchange, PublishInfo publishInfo);
+        Task<PublishResult> PublishAsync(
+            [NotNull] Exchange exchange,
+            [NotNull] PublishInfo publishInfo,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Create the given queue
         /// </summary>
         /// <param name="queueInfo"></param>
         /// <param name="vhost"></param>
-        Queue CreateQueue(QueueInfo queueInfo, Vhost vhost);
+        /// <param name="cancellationToken"></param>
+        Task<Queue> CreateQueueAsync(
+            [NotNull] QueueInfo queueInfo,
+            [NotNull] Vhost vhost,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Delete the given queue
         /// </summary>
         /// <param name="queue"></param>
-        void DeleteQueue(Queue queue);
+        /// <param name="cancellationToken"></param>
+        Task DeleteQueueAsync(
+            [NotNull] Queue queue,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all bindings on a given queue.
         /// </summary>
         /// <param name="queue"></param>
-        IEnumerable<Binding> GetBindingsForQueue(Queue queue);
+        /// <param name="cancellationToken"></param>
+        Task<IEnumerable<Binding>> GetBindingsForQueueAsync(
+            [NotNull] Queue queue,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Purge a queue of all messages
         /// </summary>
         /// <param name="queue"></param>
-        void Purge(Queue queue);
+        /// <param name="cancellationToken"></param>
+        Task PurgeAsync(
+            [NotNull] Queue queue,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Get messages from a queue.
@@ -179,8 +232,12 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="queue">The queue to retrieve from</param>
         /// <param name="criteria">The criteria for the retrieve</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Messages</returns>
-        IEnumerable<Message> GetMessagesFromQueue(Queue queue, GetMessagesCriteria criteria);
+        Task<IEnumerable<Message>> GetMessagesFromQueueAsync(
+            [NotNull] Queue queue,
+            GetMessagesCriteria criteria,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Create a binding between an exchange and a queue
@@ -188,8 +245,13 @@ namespace EasyNetQ.Management.Client
         /// <param name="exchange">the exchange</param>
         /// <param name="queue">the queue</param>
         /// <param name="bindingInfo">properties of the binding</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The binding that was created</returns>
-        void CreateBinding(Exchange exchange, Queue queue, BindingInfo bindingInfo);
+        Task CreateBinding(
+            [NotNull] Exchange exchange,
+            [NotNull] Queue queue,
+            [NotNull] BindingInfo bindingInfo,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Create a binding between an exchange and an exchange
@@ -197,7 +259,12 @@ namespace EasyNetQ.Management.Client
         /// <param name="sourceExchange">the source exchange</param>
         /// <param name="destinationExchange">the destination exchange</param>
         /// <param name="bindingInfo">properties of the binding</param>
-        void CreateBinding(Exchange sourceExchange, Exchange destinationExchange, BindingInfo bindingInfo);
+        /// <param name="cancellationToken"></param>
+        Task CreateBinding(
+            [NotNull] Exchange sourceExchange,
+            [NotNull] Exchange destinationExchange,
+            [NotNull] BindingInfo bindingInfo,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all bindings between an exchange and a queue. 
@@ -205,73 +272,111 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="exchange"></param>
         /// <param name="queue"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Binding> GetBindings(Exchange exchange, Queue queue);
+        Task<IEnumerable<Binding>> GetBindingsAsync(
+            [NotNull] Exchange exchange,
+            [NotNull] Queue queue,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all bindings between an exchange and an exchange. 
         /// </summary>
         /// <param name="fromExchange"></param>
         /// <param name="toExchange"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        IEnumerable<Binding> GetBindings(Exchange fromExchange, Exchange toExchange);
+        Task<IEnumerable<Binding>> GetBindingsAsync(
+            [NotNull] Exchange fromExchange,
+            [NotNull] Exchange toExchange,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Delete the given binding
         /// </summary>
         /// <param name="binding"></param>
-        void DeleteBinding(Binding binding);
+        /// <param name="cancellationToken"></param>
+        Task DeleteBindingAsync(
+            [NotNull] Binding binding,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Create a new virtual host
         /// </summary>
         /// <param name="virtualHostName">The name of the new virtual host</param>
-        Vhost CreateVirtualHost(string virtualHostName);
+        /// <param name="cancellationToken"></param>
+        Task<Vhost> CreateVirtualHostAsync(
+            string virtualHostName,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Delete a virtual host
         /// </summary>
         /// <param name="vhost">The virtual host to delete</param>
-        void DeleteVirtualHost(Vhost vhost);
+        /// <param name="cancellationToken"></param>
+        Task DeleteVirtualHostAsync(
+            [NotNull] Vhost vhost,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Create a new user
         /// </summary>
         /// <param name="userInfo">The user to create</param>
-        User CreateUser(UserInfo userInfo);
+        /// <param name="cancellationToken"></param>
+        Task<User> CreateUserAsync(
+            [NotNull] UserInfo userInfo,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Delete a user
         /// </summary>
         /// <param name="user">The user to delete</param>
-        void DeleteUser(User user);
+        /// <param name="cancellationToken"></param>
+        Task DeleteUserAsync(
+            [NotNull] User user,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Create a permission
         /// </summary>
         /// <param name="permissionInfo">The permission to create</param>
-        void CreatePermission(PermissionInfo permissionInfo);
+        /// <param name="cancellationToken"></param>
+        Task CreatePermissionAsync(
+            [NotNull] PermissionInfo permissionInfo,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Delete a permission
         /// </summary>
         /// <param name="permission">The permission to delete</param>
-        void DeletePermission(Permission permission);
+        /// <param name="cancellationToken"></param>
+        Task DeletePermissionAsync(
+            [NotNull] Permission permission,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Update the password of an user.
         /// </summary>
         /// <param name="userName">The name of a user</param>
         /// <param name="newPassword">The new password to set</param>
-        User ChangeUserPassword(string userName, string newPassword);
+        /// <param name="cancellationToken"></param>
+        Task<User> ChangeUserPasswordAsync(
+            string userName,
+            string newPassword,
+            CancellationToken cancellationToken = default(CancellationToken));
 
+        
         /// <summary>
         /// Declares a test queue, then publishes and consumes a message. Intended for use 
         /// by monitoring tools. If everything is working correctly, will return true.
         /// Note: the test queue will not be deleted (to to prevent queue churn if this 
         /// is repeatedly pinged).
         /// </summary>
-        bool IsAlive(Vhost vhost);
+        /// <param name="vhost"></param>
+        /// <param name="cancellationToken"></param>
+        Task<bool> IsAliveAsync(
+            [NotNull] Vhost vhost,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Get an individual exchange by name
@@ -279,8 +384,13 @@ namespace EasyNetQ.Management.Client
         /// <param name="exchangeName">The name of the exchange</param>
         /// <param name="vhost">The virtual host that contains the exchange</param>
         /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The exchange</returns>
-        Exchange GetExchange(string exchangeName, Vhost vhost, GetRatesCriteria ratesCriteria = null);
+        Task<Exchange> GetExchangeAsync(
+            string exchangeName,
+            [NotNull] Vhost vhost,
+            GetRatesCriteria ratesCriteria = null,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Get an individual queue by name
@@ -289,51 +399,75 @@ namespace EasyNetQ.Management.Client
         /// <param name="vhost">The virtual host that contains the queue</param>
         /// <param name="lengthsCriteria">Criteria for getting samples of queue length data</param>
         /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The Queue</returns>
-        Queue GetQueue(string queueName, Vhost vhost, GetLengthsCriteria lengthsCriteria = null, GetRatesCriteria ratesCriteria = null);
+        Task<Queue> GetQueueAsync(
+            string queueName,
+            [NotNull] Vhost vhost,
+            GetLengthsCriteria lengthsCriteria = null,
+            GetRatesCriteria ratesCriteria = null,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Get an individual vhost by name
         /// </summary>
         /// <param name="vhostName">The VHost</param>
-        Vhost GetVhost(string vhostName);
+        /// <param name="cancellationToken"></param>
+        Task<Vhost> GetVhostAsync(
+            string vhostName,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Get a user by name
         /// </summary>
         /// <param name="userName">The name of the user</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The User</returns>
-        User GetUser(string userName);
+        Task<User> GetUserAsync(
+            string userName,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Get collection of Policies on the cluster
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns>Policies</returns>
-        IEnumerable<Policy> GetPolicies();
+        Task<IEnumerable<Policy>> GetPoliciesAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Creates a policy on the cluster
         /// </summary>
         /// <param name="policy">Policy to create</param>
-        void CreatePolicy(Policy policy);
+        /// <param name="cancellationToken"></param>
+        Task CreatePolicy(
+            [NotNull] Policy policy,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Delete a policy from the cluster
         /// </summary>
         /// <param name="policyName">Policy name</param>
         /// <param name="vhost">vhost on which the policy resides</param>
-        void DeletePolicy(string policyName, Vhost vhost);
+        /// <param name="cancellationToken"></param>
+        Task DeletePolicyAsync(
+            string policyName,
+            Vhost vhost,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Get all parameters on the cluster
         /// </summary>
-        IEnumerable<Parameter> GetParameters();
+        /// <param name="cancellationToken"></param>
+        Task<IEnumerable<Parameter>> GetParametersAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Creates a parameter on the cluster
         /// </summary>
-        /// <param name="policy">Parameter to create</param>
-        void CreateParameter(Parameter parameter);
+        /// <param name="parameter">Parameter to create</param>
+        /// <param name="cancellationToken"></param>
+        Task CreateParameterAsync(
+            [NotNull]Parameter parameter,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Delete a parameter from the cluster
@@ -341,13 +475,18 @@ namespace EasyNetQ.Management.Client
         /// <param name="componentName"></param>
         /// <param name="vhost"></param>
         /// <param name="name"></param>
-        void DeleteParameter(string componentName, string vhost, string name);
+        /// <param name="cancellationToken"></param>
+        Task DeleteParameterAsync(
+            string componentName,
+            string vhost,
+            string name,
+            CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Get list of federations
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        List<Federation> GetFederation();
-
+        Task<List<Federation>> GetFederationAsync(CancellationToken cancellationToken = default(CancellationToken));
     }
 }

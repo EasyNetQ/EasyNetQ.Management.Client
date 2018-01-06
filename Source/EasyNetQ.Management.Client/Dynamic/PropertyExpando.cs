@@ -12,7 +12,7 @@ namespace EasyNetQ.Management.Client.Dynamic
         {
             if (null == properties)
             {
-                throw new ArgumentNullException("properties", "The argument properties must not be null");
+                throw new ArgumentNullException(nameof(properties), "The argument properties must not be null");
             }
             _properties = properties;
         }
@@ -41,18 +41,9 @@ namespace EasyNetQ.Management.Client.Dynamic
             {
                 return (T)_properties[propertyName];
             }
-            else
-            {
-                return default(T);
-            }
+            return default(T);
         }
 
-        protected IDictionary<string, Object> Properties
-        {
-            get
-            {
-                return _properties;
-            }
-        }
+        protected IDictionary<string, Object> Properties => _properties;
     }
 }

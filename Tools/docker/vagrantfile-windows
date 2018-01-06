@@ -1,0 +1,83 @@
+Vagrant.configure("2") do |config|
+  config.winrm.host = "127.0.0.1"
+  config.winrm.username = "vagrant"
+  config.winrm.password = "vagrant"
+  config.vm.box = "symbols/windows_2016_core"
+  config.vm.box_check_update = false
+  config.vm.hostname = "docker-windows"
+  config.vm.network :forwarded_port, id: 'winrm', guest: 5985, host: 2201, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rdp', guest: 3389, host: 2202, auto_correct: false
+  config.vm.network :forwarded_port, id: 'docker-http-api', guest: 4243, host: 4243, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-mqttWithoutTls', guest: 1883, host: 1883, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-epmd', guest: 4369, host: 4369, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-amqpWithTls', guest: 5671, host: 5671, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-amqpWithoutTls', guest: 5672, host: 5672, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-mqttWithTls', guest: 8883, host: 8883, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-managementWithTls', guest: 15671, host: 15671, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-managementWithoutTls', guest: 15672, host: 15672, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-stompOverWebsockets', guest: 15674, host: 15674, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-mqttOverWebsockets', guest: 15675, host: 15675, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-erlangDistribution', guest: 25672, host: 25672, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-stompWithoutTls', guest: 61613, host: 61613, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-stompWithTls', guest: 61614, host: 61614, auto_correct: false
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "vm_docker_windows"
+    vb.cpus = 2
+    vb.memory = 1024
+    vb.gui = false
+  end
+  config.vm.provision "shell" do |s|
+    s.powershell_args = '-NoProfile -Noninteractive -NoLogo -ExecutionPolicy Bypass'
+    s.inline= <<-SHELL.gsub(/^ +/, '')
+      Write-Host '****************************** Configuring system settings'
+      $langList = New-WinUserLanguageList 'en-US'
+      $langList[0].InputMethodTips.Clear()
+      $langList[0].InputMethodTips.Add('0410:00000410')
+      Set-WinUserLanguageList $langList -Force
+      Write-Host '****************************** Updating PowerShell help'
+      Update-Help  -Force -ErrorAction Ignore
+      Write-Host '****************************** Updating Guest Additions'
+      Invoke-WebRequest -Uri 'http://download.virtualbox.org/virtualbox/LATEST.TXT' -OutFile "$env:SYSTEMROOT\\Temp\\vbga-latest-version.txt"
+      $vbgaLatestVersion = Get-Content "$env:SYSTEMROOT\\Temp\\vbga-latest-version.txt"
+      Remove-Item "$env:SYSTEMROOT\\Temp\\vbga-latest-version.txt"
+      Invoke-WebRequest -Uri "http://download.virtualbox.org/virtualbox/$vbgaLatestVersion/VBoxGuestAdditions_$vbgaLatestVersion.iso" -OutFile "$env:SYSTEMROOT\\Temp\\VBoxGuestAdditions.iso"
+      $mountResult = Mount-DiskImage -ImagePath $env:SYSTEMROOT\\Temp\\VBoxGuestAdditions.iso -PassThru
+      $mountedIsoDrive = (Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Name -eq ($mountResult | Get-Volume).DriveLetter }).Root
+      Set-Location (Join-Path -Path $mountedIsoDrive -ChildPath 'cert')
+      .\\VBoxCertUtil.exe 'remove-trusted-publisher' 'vbox-sha1.cer' | Out-Null
+      .\\VBoxCertUtil.exe 'remove-trusted-publisher' 'vbox-sha256.cer' | Out-Null
+      .\\VBoxCertUtil.exe 'remove-trusted-publisher' 'vbox-sha256-r3.cer' | Out-Null
+      .\\VBoxCertUtil.exe 'add-trusted-publisher' 'vbox*.cer' '--root' 'vbox*.cer' | Out-Null
+      Set-Location $mountedIsoDrive
+      Start-Process -NoNewWindow -Wait -FilePath .\\VBoxWindowsAdditions.exe -ArgumentList /S, /with_wddm, /xres=1024, /yres=768
+      $guestAdditionVersion = & "C:\\Program Files\\Oracle\\VirtualBox Guest Additions\\VBoxControl.exe" -v
+      Write-Host "***** Updated Guest Additions to version $guestAdditionVersion"
+      Dismount-DiskImage -ImagePath "$env:SYSTEMROOT\\Temp\\VBoxGuestAdditions.iso"
+      Remove-Item "$env:SYSTEMROOT\\Temp\\VBoxGuestAdditions.iso"
+      Write-Host '****************************** Installing Docker'
+      Write-Host '***** Installing Docker Engine'
+      Install-PackageProvider NuGet -Force
+      Install-Module DockerProvider -Force
+      Install-Package Docker -ProviderName DockerProvider -Force
+      Write-Host '***** Enabling named pipe and HTTP Docker APIs'
+      Write-Host "Usage: Invoke-WebRequest -Uri 'http://localhost:4243/images/json' -UseBasicParsing"
+      New-NetFirewallRule -DisplayName 'winrm' -Direction Inbound -LocalPort 5985 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rdp' -Direction Inbound -LocalPort 3389 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'docker-http-api' -Direction Inbound -LocalPort 4243 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-mqttWithoutTls' -Direction Inbound -LocalPort 1883 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-epmd' -Direction Inbound -LocalPort 4369 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-amqpWithTls' -Direction Inbound -LocalPort 5671 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-amqpWithoutTls' -Direction Inbound -LocalPort 5672 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-mqttWithTls' -Direction Inbound -LocalPort 8883 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-managementWithTls' -Direction Inbound -LocalPort 15671 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-managementWithoutTls' -Direction Inbound -LocalPort 15672 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-stompOverWebsockets' -Direction Inbound -LocalPort 15674 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-mqttOverWebsockets' -Direction Inbound -LocalPort 15675 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-erlangDistribution' -Direction Inbound -LocalPort 25672 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-stompWithoutTls' -Direction Inbound -LocalPort 61613 -Protocol TCP -Action Allow -Enabled True
+      New-NetFirewallRule -DisplayName 'rmq-stompWithTls' -Direction Inbound -LocalPort 61614 -Protocol TCP -Action Allow -Enabled True
+      New-Item -Force -Type File -Path 'C:\\ProgramData\\docker\\config\\daemon.json' -Value '{ "hosts": ["npipe://", "tcp://0.0.0.0:4243"] }'
+    SHELL
+  end
+  config.vm.provision :reload
+end

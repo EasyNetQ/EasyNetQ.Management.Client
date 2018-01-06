@@ -10,9 +10,9 @@ namespace EasyNetQ.Management.Client.Model
         {            
         }
 
-        public bool BasicNack { get { return GetPropertyOrDefault<Boolean>("BasicNack"); } }
-        public bool PublisherConfirms { get { return GetPropertyOrDefault<Boolean>("PublisherConfirms"); } }
-        public bool ConsumerCancelNotify { get { return GetPropertyOrDefault<Boolean>("ConsumerCancelNotify"); } }
-        public bool ExchangeExchangeBindings { get { return GetPropertyOrDefault<Boolean>("ExchangeExchangeBindings"); } }
+        public bool BasicNack => GetPropertyOrDefault<Boolean>("BasicNack");
+        public bool PublisherConfirms => GetPropertyOrDefault<Boolean>("PublisherConfirms");
+        public bool ConsumerCancelNotify => GetPropertyOrDefault<Boolean>("ConsumerCancelNotify");
+        public bool ExchangeExchangeBindings => GetPropertyOrDefault<Boolean>("ExchangeExchangeBindings");
     }
 }

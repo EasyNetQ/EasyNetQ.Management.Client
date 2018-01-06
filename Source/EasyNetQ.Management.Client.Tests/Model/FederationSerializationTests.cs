@@ -1,27 +1,25 @@
 ﻿using System.Collections.Generic;
 using EasyNetQ.Management.Client.Model;
-using NUnit.Framework;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture(Category = "Unit")]
     public class FederationSerializationTests
     {
-        private List<Federation> federations;
+        private readonly List<Federation> federations;
 
-        [SetUp]
-        public void SetUp()
+        public FederationSerializationTests()
         {
             federations = ResourceLoader.LoadObjectFromJson<List<Federation>>("Federations.json");
         }
 
-        [Test]
+        [Fact]
         public void Should_load_three_federation()
         {
             federations.Count.ShouldEqual(3);
         }
 
-        [Test]
+        [Fact]
         public void Should_have_federation_properties()
         {
             var federation = federations[0];

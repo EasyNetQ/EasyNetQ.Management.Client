@@ -16,7 +16,7 @@ namespace EasyNetQ.Management.Client.Tests
         {
             var settings = new JsonSerializerSettings
             {
-                ContractResolver = new RabbitContractResolver(),
+                ContractResolver = new RabbitContractResolver()
             };
 
             settings.Converters.Add(new PropertyConverter());

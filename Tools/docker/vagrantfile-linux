@@ -1,0 +1,61 @@
+Vagrant.configure("2") do |config|
+  config.ssh.host = "127.0.0.1"
+  config.ssh.username = "vagrant"
+  config.ssh.password = "vagrant"
+  config.vm.box = "bento/ubuntu-16.04"
+  config.vm.box_check_update = false
+  config.vm.hostname = "docker-linux"
+  config.vm.network :forwarded_port, id: 'ssh', guest: 22, host: 2200, auto_correct: false
+  config.vm.network :forwarded_port, id: 'docker-http-api', guest: 4243, host: 4243, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-epmd', guest: 4369, host: 1234, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-amqpWithTls', guest: 5671, host: 5671, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-amqpWithoutTls', guest: 5672, host: 5672, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-managementWithTls', guest: 15671, host: 15671, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-managementWithoutTls', guest: 15672, host: 15672, auto_correct: false
+  config.vm.network :forwarded_port, id: 'rmq-erlangDistribution', guest: 25672, host: 25672, auto_correct: false
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "vm_docker_linux"
+    vb.cpus = 2
+    vb.memory = 1024
+  end
+  config.vm.provision "shell", inline: <<-SHELL.gsub(/^ +/, '')
+    echo "****************************** Configuring system settings"
+    sudo timedatectl set-timezone Europe/Rome
+    sudo update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+    echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    echo "****************************** Downloading packages"
+    sudo apt-get -q -y update
+    sudo apt-get -q -y upgrade
+    sudo apt-get -q -y dist-upgrade
+    sudo apt-get -q -y install sysv-rc-conf sudo linux-kernel-headers git tree whois unzip nginx
+    echo "****************************** Updating Guest Additions"
+    sudo wget -q -c http://download.virtualbox.org/virtualbox/LATEST.TXT -O /tmp/vbga-latest-version.txt
+    vbgaLatestVersion=$(sudo cat /tmp/vbga-latest-version.txt)
+    sudo rm /tmp/vbga-latest-version.txt
+    sudo wget -q -c http://download.virtualbox.org/virtualbox/$vbgaLatestVersion/VBoxGuestAdditions_$vbgaLatestVersion.iso -O vbga.iso
+    sudo mount vbga.iso -o loop /mnt
+    sudo /mnt/VBoxLinuxAdditions.run
+    sudo umount /mnt
+    sudo rm vbga.iso
+    sudo sysv-rc-conf vboxadd on
+    echo "****************************** Installing Docker"
+    echo "***** Installing Docker Engine"
+    sudo wget -qO- https://get.docker.com/ | sudo bash
+    sudo usermod -aG docker vagrant
+    echo "***** Enabling socket and HTTP Docker APIs"
+    echo "Usage:"
+    echo "echo -e 'GET /images/json HTTP/1.0\\\\r\\\\n' | netcat -U /var/run/docker.sock"
+    echo "curl localhost:4243/images/json"
+    sudo mkdir -p /etc/systemd/system/docker.service.d
+    sudo echo "[Service]" > /etc/systemd/system/docker.service.d/hosts.conf
+    sudo echo "ExecStart=" >> /etc/systemd/system/docker.service.d/hosts.conf
+    sudo echo "ExecStart=/usr/bin/dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:4243" >> /etc/systemd/system/docker.service.d/hosts.conf
+    sudo systemctl daemon-reload
+    sudo systemctl restart docker
+    echo "***** Installing Docker Compose"
+    sudo wget -q https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` -O /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    echo "****************************** Rebooting"
+    sudo reboot
+  SHELL
+end

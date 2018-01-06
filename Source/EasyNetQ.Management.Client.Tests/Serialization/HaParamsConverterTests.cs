@@ -1,10 +1,10 @@
-﻿namespace EasyNetQ.Management.Client.Tests.Serialization
-{
-    using Client.Model;
-    using Client.Serialization;
-    using Newtonsoft.Json;
-    using Xunit;
+﻿using EasyNetQ.Management.Client.Model;
+using EasyNetQ.Management.Client.Serialization;
+using Newtonsoft.Json;
+using Xunit;
 
+namespace EasyNetQ.Management.Client.Tests.Serialization
+{
     public class HaParamsConverterTests
     {
         [Fact]

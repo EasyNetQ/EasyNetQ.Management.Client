@@ -1,6 +1,5 @@
 using System;
 using System.Net;
-using System.Runtime.Serialization;
 
 namespace EasyNetQ.Management.Client
 {
@@ -23,8 +22,8 @@ namespace EasyNetQ.Management.Client
         {
         }
 
-        public UnexpectedHttpStatusCodeException(HttpStatusCode statusCode) : 
-            base(string.Format("Unexpected Status Code: {0} {1}", (int)statusCode, statusCode))
+        public UnexpectedHttpStatusCodeException(HttpStatusCode statusCode) :
+            base($"Unexpected Status Code: {(int) statusCode} {statusCode}")
         {
             StatusCode = statusCode;
             StatusCodeNumber = (int) statusCode;

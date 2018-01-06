@@ -1,11 +1,11 @@
-﻿namespace EasyNetQ.Management.Client.Serialization
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Model;
-    using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using EasyNetQ.Management.Client.Model;
+using Newtonsoft.Json;
 
+namespace EasyNetQ.Management.Client.Serialization
+{
     public class HaParamsConverter : JsonConverter
     {
         // Support serializing/deserializing ha-params according to http://www.rabbitmq.com/ha.html#genesis for 3.1.3

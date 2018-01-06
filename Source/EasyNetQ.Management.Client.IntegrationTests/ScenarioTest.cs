@@ -1,54 +1,62 @@
-﻿// ReSharper disable InconsistentNaming
-
+﻿using System;
+using System.Threading.Tasks;
 using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Tests;
-using System;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests
 {
     [Integration]
-    [Explicit("Requires a RabbitMQ server on localhost to work")]
+    [Collection("Rabbitmq collection")]
     public class ScenarioTest
     {
+        private readonly string rabbitMqUrl;
+
+        public ScenarioTest(RabbitMqFixture fixture)
+        {
+            rabbitMqUrl = $"http://{fixture.RabbitContainerHostForManagement}";
+        }
+
         /// <summary>
         /// Demonstrate how to create a virtual host, add some users, set permissions
         /// and create exchanges, queues and bindings.
         /// </summary>
         [Fact]
-        public void Should_be_able_to_provision_a_virtual_host()
+        public async Task Should_be_able_to_provision_a_virtual_host()
         {
-            var initial = new ManagementClient("http://localhost", "guest", "guest");
+            var initial = new ManagementClient(rabbitMqUrl, Configuration.RabbitMqUser,
+                Configuration.RabbitMqPassword, Configuration.RabbitMqManagementPort);
 
             // first create a new virtual host
-            var vhost = initial.CreateVirtualHost("my_virtual_host");
+            var vhost = await initial.CreateVirtualHostAsync("my_virtual_host").ConfigureAwait(false);
 
             // next create a user for that virutal host
-            var user = initial.CreateUser(new UserInfo("mike", "topSecret"));
+            var user = await initial.CreateUserAsync(new UserInfo("mike", "topSecret").AddTag("administrator")).ConfigureAwait(false);
 
             // give the new user all permissions on the virtual host
-            initial.CreatePermission(new PermissionInfo(user, vhost));
+            await initial.CreatePermissionAsync(new PermissionInfo(user, vhost)).ConfigureAwait(false);
 
             // now log in again as the new user
-            var management = new ManagementClient("http://localhost", user.Name, "topSecret");
+            var management = new ManagementClient(rabbitMqUrl, user.Name, "topSecret",
+                Configuration.RabbitMqManagementPort);
 
             // test that everything's OK
-            management.IsAlive(vhost);
+            await management.IsAliveAsync(vhost).ConfigureAwait(false);
 
             // create an exchange
-            var exchange = management.CreateExchange(new ExchangeInfo("my_exchagne", "direct"), vhost);
+            var exchange = await management.CreateExchangeAsync(new ExchangeInfo("my_exchagne", "direct"), vhost).ConfigureAwait(false);
 
             // create a queue
-            var queue = management.CreateQueue(new QueueInfo("my_queue"), vhost);
+            var queue = await management.CreateQueueAsync(new QueueInfo("my_queue"), vhost).ConfigureAwait(false);
 
             // bind the exchange to the queue
-            management.CreateBinding(exchange, queue, new BindingInfo("my_routing_key"));
+            await management.CreateBinding(exchange, queue, new BindingInfo("my_routing_key")).ConfigureAwait(false);
 
             // publish a test message
-            management.Publish(exchange, new PublishInfo("my_routing_key", "Hello World!"));
+            await management.PublishAsync(exchange, new PublishInfo("my_routing_key", "Hello World!")).ConfigureAwait(false);
 
             // get any messages on the queue
-            var messages = management.GetMessagesFromQueue(queue, new GetMessagesCriteria(1, false));
+            var messages = await management.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, false)).ConfigureAwait(false);
 
             foreach (var message in messages)
             {
@@ -57,5 +65,3 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         }
     }
 }
-
-// ReSharper restore InconsistentNaming

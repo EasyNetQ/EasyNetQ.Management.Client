@@ -1,7 +1,7 @@
-﻿namespace EasyNetQ.Management.Client.Model
-{
-    using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
+namespace EasyNetQ.Management.Client.Model
+{
     /// <summary>
     /// About shovel parameters: https://www.rabbitmq.com/shovel-dynamic.html
     /// </summary>

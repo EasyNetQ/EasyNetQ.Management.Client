@@ -8,16 +8,10 @@ namespace EasyNetQ.Management.Client.Model
     {
         private readonly string name;
         public string Password { get; private set; }
-        public string Tags
-        {
-            get
-            {
-                return tagList.Any()
-                    ? string.Join(",", tagList)
-                    : string.Empty;
+        public string Tags => tagList.Any()
+            ? string.Join(",", tagList)
+            : string.Empty;
 
-            }
-        }
         private readonly ISet<string> allowedTags = new HashSet<string>
         {
             "administrator", "monitoring", "management", "policymaker"
@@ -37,7 +31,7 @@ namespace EasyNetQ.Management.Client.Model
             }
 
             this.name = name;
-            this.Password = password;
+            Password = password;
         }
 
         /// <summary>
@@ -55,12 +49,12 @@ namespace EasyNetQ.Management.Client.Model
             }
             if (tagList.Contains(tag))
             {
-                throw new ArgumentException(string.Format("tag '{0}' has already been added", tag));
+                throw new ArgumentException($"tag '{tag}' has already been added");
             }
             if (!allowedTags.Contains(tag))
             {
-                throw new ArgumentException(string.Format("tag '{0}' not recognised. Allowed tags are: {1}",
-                    tag, string.Join(", ", allowedTags)));
+                throw new ArgumentException(
+                    $"tag '{tag}' not recognised. Allowed tags are: {string.Join(", ", allowedTags)}");
             }
 
             tagList.Add(tag);

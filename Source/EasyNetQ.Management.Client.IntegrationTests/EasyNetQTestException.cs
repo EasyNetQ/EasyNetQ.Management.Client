@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyNetQ.Management.Client.Tests
+namespace EasyNetQ.Management.Client.IntegrationTests
 {
     /// <summary>
     /// Exception thrown when something unexpected happens in tests
