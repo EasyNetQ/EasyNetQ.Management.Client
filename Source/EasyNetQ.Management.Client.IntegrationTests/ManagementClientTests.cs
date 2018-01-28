@@ -422,7 +422,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
             managementClient.Publish(defaultExchange, publishInfo);
 
-            var criteria = new GetMessagesCriteria(1, false);
+            var criteria = new GetMessagesCriteria(1, Ackmodes.ack_requeue_false);
             var messages = managementClient.GetMessagesFromQueue(queue, criteria);
 
             foreach (var message in messages)

@@ -52,7 +52,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             management.Publish(exchange, new PublishInfo("my_routing_key", "Hello World!"));
 
             // get any messages on the queue
-            var messages = management.GetMessagesFromQueue(queue, new GetMessagesCriteria(1, false));
+            var messages = management.GetMessagesFromQueue(queue, new GetMessagesCriteria(1, Ackmodes.ack_requeue_false));
 
             foreach (var message in messages)
             {
