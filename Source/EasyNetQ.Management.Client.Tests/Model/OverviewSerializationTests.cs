@@ -1,29 +1,27 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using EasyNetQ.Management.Client.Model;
-using NUnit.Framework;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
 {
-    [TestFixture(Category = "Unit")]
     public class OverviewSerializationTests
     {
-        private Overview overview;
+        private readonly Overview overview;
 
-        [SetUp]
-        public void SetUp()
+        public OverviewSerializationTests()
         {
             overview = ResourceLoader.LoadObjectFromJson<Overview>("Overview.json", ManagementClient.Settings);
         }
 
-        [Test]
+        [Fact]
         public void Should_contain_management_version()
         {
             overview.ManagementVersion.ShouldEqual("2.8.6");
             overview.StatisticsLevel.ShouldEqual("fine");
         }
 
-        [Test]
+        [Fact]
         public void Should_congtain_exchange_types()
         {
             overview.ExchangeTypes[0].Name.ShouldEqual("topic");

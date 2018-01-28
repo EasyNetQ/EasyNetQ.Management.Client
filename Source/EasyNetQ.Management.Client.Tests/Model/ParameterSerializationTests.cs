@@ -1,14 +1,13 @@
-﻿namespace EasyNetQ.Management.Client.Tests.Model
-{
-    using Client.Model;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    using NUnit.Framework;
+﻿using EasyNetQ.Management.Client.Model;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Xunit;
 
-    [TestFixture(Category = "Unit")]
+namespace EasyNetQ.Management.Client.Tests.Model
+{
     public class ParameterSerializationTests
     {
-        [Test]
+        [Fact]
         public void Should_be_able_to_serialize_arbitrary_object_as_value()
         {
             var serializedvalue =
@@ -20,7 +19,7 @@
                     Value = new Policy {Pattern = "testvalue"}
                 }, ManagementClient.Settings);
             var parsedValue = JObject.Parse(serializedvalue);
-            Assert.AreEqual("testvalue", parsedValue["value"]["pattern"].Value<string>());
+            Assert.Equal("testvalue", parsedValue["value"]["pattern"].Value<string>());
         }
     }
 }

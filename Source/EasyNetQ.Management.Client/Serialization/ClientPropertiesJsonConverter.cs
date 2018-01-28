@@ -1,8 +1,8 @@
-﻿using EasyNetQ.Management.Client.Model;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using EasyNetQ.Management.Client.Model;
+using Newtonsoft.Json;
 
 namespace EasyNetQ.Management.Client.Serialization
 {
@@ -13,10 +13,7 @@ namespace EasyNetQ.Management.Client.Serialization
             throw new NotImplementedException();
         }
 
-        public override bool CanWrite
-        {
-            get { return false; }
-        }
+        public override bool CanWrite => false;
 
         public override object ReadJson(
             JsonReader reader,
@@ -148,10 +145,7 @@ namespace EasyNetQ.Management.Client.Serialization
             {
                 return char.ToUpper(str[0]).ToString();
             }
-            else
-            {
-                return char.ToUpper(str[0]) + str.Substring(1, str.Length - 1);
-            } 
+            return char.ToUpper(str[0]) + str.Substring(1, str.Length - 1);
         }
 
     }

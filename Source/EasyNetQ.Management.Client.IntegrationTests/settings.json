@@ -1,0 +1,14 @@
+{
+    "dockerHttpApiUri": "http://127.0.0.1:4243",
+    "rabbitMQClientPort": 5672,
+    "rabbitMQManagementPort": 15672,
+    "rabbitMQVirtualHost": "/",
+    "rabbitMQUser": "guest",
+    "rabbitMQPassword": "guest",
+    "linux": {
+        "rabbitMQDockerImage": "splazit/rabbitmq-federation"
+    },
+    "windows": {
+        "rabbitMQDockerImage": "giordanol/rabbitmqwindows"
+    }
+}

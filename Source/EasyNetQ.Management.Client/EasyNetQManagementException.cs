@@ -1,9 +1,10 @@
 using System;
-using System.Runtime.Serialization;
 
 namespace EasyNetQ.Management.Client
 {
+#if NETFX
     [Serializable]
+#endif
     public class EasyNetQManagementException : Exception
     {
         //
@@ -28,11 +29,12 @@ namespace EasyNetQ.Management.Client
         public EasyNetQManagementException(string message, Exception inner) : base(message, inner)
         {
         }
-
+#if NETFX
         protected EasyNetQManagementException(
             SerializationInfo info,
             StreamingContext context) : base(info, context)
         {
         }
+#endif
     }
 }

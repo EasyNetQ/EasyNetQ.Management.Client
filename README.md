@@ -1,6 +1,8 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/s3a158jwtxgwco90?svg=true)](https://ci.appveyor.com/project/EasyNetQ/easynetq-management-client)
+[![Appveyor build status](https://ci.appveyor.com/api/projects/status/919pinsvm6870x06/branch/netstandard?svg=true)](https://ci.appveyor.com/project/lsfera/easynetq-management-client/branch/netstandard)
+[![Travis build Status](https://travis-ci.org/lsfera/EasyNetQ.Management.Client.svg?branch=netstandard)](https://travis-ci.org/lsfera/EasyNetQ.Management.Client)
 
---
+----------
+
 
 ![EasyNetQ Logo](https://github.com/EasyNetQ/EasyNetQ/wiki/images/logo_design_150.png)
 

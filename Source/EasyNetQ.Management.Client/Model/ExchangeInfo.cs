@@ -16,7 +16,7 @@ namespace EasyNetQ.Management.Client.Model
         private readonly ISet<string> exchangeTypes = new HashSet<string>
         {
             "direct", "topic", "fanout", "headers", "x-delayed-message"
-        }; 
+        };
 
         public ExchangeInfo(string name, string type) : this(name, type, false, true, false, new Arguments())
         {
@@ -26,15 +26,15 @@ namespace EasyNetQ.Management.Client.Model
         {
             if(string.IsNullOrEmpty(name))
             {
-                throw new ArgumentNullException("name");
-            }   
+                throw new ArgumentNullException(nameof(name));
+            }
             if(type == null)
             {
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
             }
             if (!exchangeTypes.Contains(type))
             {
-                throw new EasyNetQManagementException("Unknown exchange type '{0}', expected one of {1}", 
+                throw new EasyNetQManagementException("Unknown exchange type '{0}', expected one of {1}",
                     type,
                     string.Join(", ", exchangeTypes));
             }

@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Serialization;
-using NUnit.Framework;
 using Newtonsoft.Json;
+using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests
 {
-    [TestFixture(Category = "Unit")]
     public class ManagementClientInternalsTests
     {
         /// <summary>
         /// Checks for regression from using Int32 instead of Int64 for RecvOct and so on
         /// </summary>
-        [Test]
+        [Fact]
         public void GetConnections_CheckDeserializeLargeNumbers()
         {
             //TODO: redesign the ManagementClient by factoring out some of it's responsibilities and use dependency injection
@@ -23,7 +21,7 @@ namespace EasyNetQ.Management.Client.Tests
             
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
-                ContractResolver = new RabbitContractResolver(),
+                ContractResolver = new RabbitContractResolver()
             };
 
             settings.Converters.Add(new PropertyConverter());
@@ -33,12 +31,12 @@ namespace EasyNetQ.Management.Client.Tests
             var connections = JsonConvert.DeserializeObject<IEnumerable<Connection>>(responseBody, settings);
         }
 
-        [Test]
+        [Fact]
         public void GetChannels()
         {
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
-                ContractResolver = new RabbitContractResolver(),
+                ContractResolver = new RabbitContractResolver()
             };
 
             settings.Converters.Add(new PropertyConverter());
@@ -47,15 +45,15 @@ namespace EasyNetQ.Management.Client.Tests
 
             var channels = JsonConvert.DeserializeObject<IEnumerable<Channel>>(responseBody, settings).ToList();
 
-            Assert.AreEqual(2,channels.Count);
+            Assert.Equal(2,channels.Count);
 
-            Assert.AreEqual(48538, channels[0].MessageStats.DeliverGet);
-            Assert.AreEqual(48538, channels[0].MessageStats.DeliverNoAck);
-            Assert.AreEqual(0, channels[0].MessageStats.Publish);
+            Assert.Equal(48538, channels[0].MessageStats.DeliverGet);
+            Assert.Equal(48538, channels[0].MessageStats.DeliverNoAck);
+            Assert.Equal(0, channels[0].MessageStats.Publish);
 
-            Assert.AreEqual(0, channels[1].MessageStats.DeliverGet);
-            Assert.AreEqual(0, channels[1].MessageStats.DeliverNoAck);
-            Assert.AreEqual(48538, channels[1].MessageStats.Publish);
+            Assert.Equal(0, channels[1].MessageStats.DeliverGet);
+            Assert.Equal(0, channels[1].MessageStats.DeliverNoAck);
+            Assert.Equal(48538, channels[1].MessageStats.Publish);
 
         }
 

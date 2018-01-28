@@ -20,7 +20,7 @@ namespace EasyNetQ.Management.Client.Serialization
             {
                 return new Properties();
             }
-            
+
             if (jToken.Type == JTokenType.Object)
             {
                 var properties = new Properties();
@@ -46,7 +46,7 @@ namespace EasyNetQ.Management.Client.Serialization
             }
 
             throw new JsonException(
-                string.Format("Expected array or object for properties, but was {0}", jToken.Type), null);
+                $"Expected array or object for properties, but was {jToken.Type}", null);
         }
 
         public override bool CanConvert(Type objectType)

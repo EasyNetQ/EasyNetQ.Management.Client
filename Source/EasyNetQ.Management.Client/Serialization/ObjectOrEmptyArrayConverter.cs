@@ -1,11 +1,10 @@
+using System;
+using EasyNetQ.Management.Client.Model;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 namespace EasyNetQ.Management.Client.Serialization
 {
-    using System;
-    using System.Collections.Generic;
-    using Model;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-
     class MessageStatsOrEmptyArrayConverter : ObjectOrEmptyArrayConverter<MessageStats>
     {
         

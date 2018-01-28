@@ -18,6 +18,7 @@ namespace EasyNetQ.Management.Client.Model
         public string Name { get; set; }
         public string Vhost { get; set; }
         public bool Durable { get; set; }
+        public bool Exclusive { get; set; }
         public bool AutoDelete { get; set; }
         public Arguments Arguments { get; set; }
         public string Node { get; set; }
