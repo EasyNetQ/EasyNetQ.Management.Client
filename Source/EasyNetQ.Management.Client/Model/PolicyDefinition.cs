@@ -20,6 +20,8 @@
         public string DeadLetterExchange { get; set; }
         [JsonProperty("dead-letter-routing-key", NullValueHandling = NullValueHandling.Ignore)]
         public string DeadLetterRoutingKey { get; set; }
+        [JsonProperty("queue-mode", NullValueHandling = NullValueHandling.Ignore)]
+        public string QueueMode { get; set; }
         [JsonProperty("message-ttl", NullValueHandling = NullValueHandling.Ignore)]
         public uint? MessageTtl { get; set; }
         [JsonProperty("expires", NullValueHandling = NullValueHandling.Ignore)]
