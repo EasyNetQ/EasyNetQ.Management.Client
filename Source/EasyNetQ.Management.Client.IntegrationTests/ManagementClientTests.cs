@@ -1104,6 +1104,16 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var vhostAfterUpdate = managementClient.GetVhost(vhostName);
             Assert.False(vhostAfterUpdate.Tracing);
         }
+
+        [Test]
+        [Ignore("Requires the federation plugin to work")]
+        public void Should_get_federations()
+        {
+            var federations = managementClient.GetFederation();
+
+            federations.Count().ShouldNotEqual(0);
+            federations.First().Node.ShouldEqual("rabbit@" + Environment.MachineName);
+        }
     }
 }
 
