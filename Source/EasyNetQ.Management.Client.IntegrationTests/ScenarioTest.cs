@@ -56,7 +56,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             await management.PublishAsync(exchange, new PublishInfo("my_routing_key", "Hello World!")).ConfigureAwait(false);
 
             // get any messages on the queue
-            var messages = await management.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, false)).ConfigureAwait(false);
+            var messages = await management.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, Ackmodes.ack_requeue_false)).ConfigureAwait(false);
 
             foreach (var message in messages)
             {

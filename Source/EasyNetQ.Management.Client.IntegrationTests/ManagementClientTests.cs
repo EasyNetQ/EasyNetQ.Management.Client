@@ -360,7 +360,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
 			await managementClient.PublishAsync(defaultExchange, publishInfo).ConfigureAwait(false);
 
-			foreach (var message in await managementClient.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, false)).ConfigureAwait(false))
+			foreach (var message in await managementClient.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, Ackmodes.ack_requeue_false)).ConfigureAwait(false))
 			{
 				Console.Out.WriteLine("message.Payload = {0}", message.Payload);
 				foreach (var property in message.Properties)
