@@ -2,10 +2,11 @@
 using System.Reflection;
 
 // EasyNetQ.Management.Client version number: <major>.<minor>.<non-breaking-feature>.<build>
-[assembly: AssemblyVersion("0.51.3.0")]
+[assembly: AssemblyVersion("0.52.0.0")]
 [assembly: CLSCompliant(true)]
 
 // Note: until version 1.0 expect breaking changes on 0.X versions.
+// 0.52.0.0 Use Ackmode instead of Requeue
 // 0.51.3.0 Adding GetFederation() method to ManagementClient
 // 0.51.2.0 Adding queue-mode parameter to policy definition
 // 0.51.1.0 Modified long for Queue.Memory/Node.Mem* type
