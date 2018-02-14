@@ -32,3 +32,6 @@ packages
 
 # Ignore NuGet binary
 Source/.nuget/NuGet.exe
+
+# Ignore vs2017 private dir
+.vs
