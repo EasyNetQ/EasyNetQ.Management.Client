@@ -480,16 +480,37 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		[Fact]
 		public async Task Should_delete_binding()
 		{
-			var sourceXchange = await CreateExchange("sourceXcg").ConfigureAwait(false);
-			var queue = await CreateTestQueue(testQueue).ConfigureAwait(false);
-			var bindingInfo = new BindingInfo("#");
-			await managementClient.CreateBinding(sourceXchange, queue, bindingInfo).ConfigureAwait(false);
-
-			foreach (var binding in await managementClient.GetBindingsAsync(sourceXchange, queue).ConfigureAwait(false))
-			{
-				await managementClient.DeleteBindingAsync(binding).ConfigureAwait(false);
-			}
+            var sourceXchange = await CreateExchange("sourceXcg").ConfigureAwait(false);
+            var queue = await CreateTestQueue(testQueue).ConfigureAwait(false);
+            var bindingInfo = new BindingInfo("#");
+            await managementClient.CreateBinding(sourceXchange, queue, bindingInfo).ConfigureAwait(false);
+            var binding = (await managementClient.GetBindingsAsync(sourceXchange, queue).ConfigureAwait(false)).First();
+            await managementClient.DeleteBindingAsync(binding).ConfigureAwait(false);
+            await managementClient.DeleteExchangeAsync(sourceXchange).ConfigureAwait(false);
+            await managementClient.DeleteQueueAsync(queue).ConfigureAwait(false);
 		}
+
+        [Fact]
+        public async Task Should_delete_exchange_to_exchange_binding()
+        {
+            const string sourceExchangeName = "management_api_test_source_exchange";
+            const string destinationExchangeName = "management_api_test_destination_exchange";
+
+            var vhost = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            var sourceExchangeInfo = new ExchangeInfo(sourceExchangeName, "direct");
+            var destinationExchangeInfo = new ExchangeInfo(destinationExchangeName, "direct");
+
+            var sourceExchange = await managementClient.CreateExchangeAsync(sourceExchangeInfo, vhost).ConfigureAwait(false);
+            var destinationExchange = await managementClient.CreateExchangeAsync(destinationExchangeInfo, vhost).ConfigureAwait(false);
+
+            await managementClient.CreateBinding(sourceExchange, destinationExchange, new BindingInfo("#")).ConfigureAwait(false);
+
+            var binding = (await managementClient.GetBindingsAsync(sourceExchange, destinationExchange).ConfigureAwait(false)).First();
+
+            await managementClient.DeleteBindingAsync(binding).ConfigureAwait(false);
+            await managementClient.DeleteExchangeAsync(sourceExchange).ConfigureAwait(false);
+            await managementClient.DeleteExchangeAsync(destinationExchange).ConfigureAwait(false);
+        }
 
 		[Fact]
 		public async Task Should_get_vhosts()
