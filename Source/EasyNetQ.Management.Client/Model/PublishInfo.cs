@@ -5,14 +5,14 @@ namespace EasyNetQ.Management.Client.Model
 {
     public class PublishInfo
     {
-        public IDictionary<string, string> Properties { get; private set; }
+        public IDictionary<string, object> Properties { get; private set; }
         public string RoutingKey { get; private set; }
         public string Payload { get; private set; }
         public string PayloadEncoding { get; private set; }
 
         private readonly ISet<string> payloadEncodings = new HashSet<string> { "string", "base64" };
 
-        public PublishInfo(IDictionary<string, string> properties, string routingKey, string payload, string payloadEncoding)
+        public PublishInfo(IDictionary<string, object> properties, string routingKey, string payload, string payloadEncoding)
         {
             if (properties == null)
             {
@@ -42,7 +42,7 @@ namespace EasyNetQ.Management.Client.Model
         }
 
         public PublishInfo(string routingKey, string payload) :
-            this(new Dictionary<string, string>(), routingKey, payload, "string")
+            this(new Dictionary<string, object>(), routingKey, payload, "string")
         {
         }
     }
