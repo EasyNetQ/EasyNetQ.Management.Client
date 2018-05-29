@@ -204,7 +204,7 @@
       {
         "channel_details": {
           "name": "channel_details_name",
-          "number": 1,
+          "number": "unknown",
           "user": "none",
           "connection_name": "channel_details_connection_name",
           "peer_port": "unknown",

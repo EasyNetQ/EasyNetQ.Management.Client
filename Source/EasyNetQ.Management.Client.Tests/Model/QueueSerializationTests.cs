@@ -39,6 +39,26 @@ namespace EasyNetQ.Management.Client.Tests.Model
 
             queue.ConsumerDetails[0].ChannelDetails.PeerPort.ShouldEqual(9861);
         }
+
+        [Fact]
+        public void NonInt_Consumer_Details_Channel_Details_Number_Can_Be_Deserialized()
+        {
+            queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json");
+
+            var queue = queues[2];
+
+            queue.ConsumerDetails[0].ChannelDetails.Number.ShouldEqual(0);
+        }
+
+        [Fact]
+        public void Int_Consumer_Details_Channel_Details_Number_Can_Be_Deserialized()
+        {
+            queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json");
+
+            var queue = queues[3];
+
+            queue.ConsumerDetails[0].ChannelDetails.Number.ShouldEqual(1);
+        }
     }
 }
 
