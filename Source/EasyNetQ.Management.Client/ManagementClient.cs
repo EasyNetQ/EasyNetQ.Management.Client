@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
+using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -53,6 +54,7 @@ namespace EasyNetQ.Management.Client
 
         public int PortNumber { get; }
 
+#if NETSTANDARD1_5
         public ManagementClient(
             string hostUrl,
             string username,
@@ -61,6 +63,28 @@ namespace EasyNetQ.Management.Client
             TimeSpan? timeout = null,
             Action<HttpRequestMessage> configureRequest = null,
             bool ssl = false)
+#else
+        public ManagementClient(
+            string hostUrl,
+            string username,
+            string password,
+            int portNumber = 15672,
+            TimeSpan? timeout = null,
+            Action<HttpRequestMessage> configureRequest = null,
+            bool ssl = false)
+            : this(hostUrl, username, password.Secure(), portNumber, timeout, configureRequest, ssl)
+        {
+        }
+
+        public ManagementClient(
+            string hostUrl,
+            string username,
+            SecureString password,
+            int portNumber = 15672,
+            TimeSpan? timeout = null,
+            Action<HttpRequestMessage> configureRequest = null,
+            bool ssl = false)
+#endif
         {
             if (string.IsNullOrEmpty(hostUrl))
             {
@@ -90,7 +114,7 @@ namespace EasyNetQ.Management.Client
             {
                 throw new ArgumentException("username is null or empty");
             }
-            if (string.IsNullOrEmpty(password))
+            if (password == null || password.Length == 0)
             {
                 throw new ArgumentException("password is null or empty");
             }
