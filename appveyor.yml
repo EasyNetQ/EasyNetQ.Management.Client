@@ -16,8 +16,10 @@ install:
 before_build:
   - ps: |
       $mostRecentTag = git describe --abbrev=0 --tags --always
+      Write-Host "Detected most recent tag is '$mostRecentTag'"
       if ($mostRecentTag.Substring(0, 1) -ne 'v') {
           $mostRecentTag = 'v1.0.0'
+          if ($env:APPVEYOR_REPO_TAG -eq 'true') { exit 1 }
       }
       $mostRecentVersion = $mostRecentTag.Substring(1)
       $currentCommitHash = git rev-parse --short HEAD

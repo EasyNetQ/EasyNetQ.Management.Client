@@ -20,8 +20,10 @@ before_install:
 script:
   - |
     mostRecentTag=$(git describe --abbrev=0 --tags --always)
+    echo "Detected most recent tag is '$mostRecentTag'"
     if [[ $mostRecentTag != v* ]]; then
         mostRecentTag='v1.0.0'
+        if [[ "${TRAVIS_TAG}" != "" ]]; then exit 1; fi
     fi
     mostRecentVersion=$(echo "$mostRecentTag" | cut -c 2-)
     FrameworkPathOverride=$MONO_BASE_PATH/4.5.2-api/ $(pwd)/Tools/build/build.sh '--target=Test' "--softwareVersion=$mostRecentVersion" "--buildNumber=$TRAVIS_BUILD_NUMBER"
