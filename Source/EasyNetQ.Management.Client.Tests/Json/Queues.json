@@ -218,7 +218,12 @@
         "exclusive": false,
         "ack_required": true,
         "prefetch_count": 1000,
-        "arguments": { }
+        "arguments": {
+          "x-credit": {
+            "credit": 0,
+            "drain": false
+          }
+        }
       }
     ],
     "name": "queue_name",
