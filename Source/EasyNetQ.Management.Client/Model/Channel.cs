@@ -32,7 +32,7 @@ namespace EasyNetQ.Management.Client.Model
 		public string ConsumerTag { get; set; }
 		public bool Exclusive { get; set; }
 		public bool AckRequired { get; set; }
-		public Arguments Arguments { get; set; }
+		public ConsumerArguments Arguments { get; set; }
         public ChannelDetail ChannelDetails { get; set; }
 	}
 
