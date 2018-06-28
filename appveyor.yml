@@ -1,7 +1,10 @@
 version: Build {build}
 image: Visual Studio 2017
 install:
-  - cmd: sc.exe config docker binpath="\"C:\Program Files\Docker\dockerd.exe\" --run-service -H npipe:// -H tcp://0.0.0.0:4243"
+  - cmd: |
+      sc qc docker
+      sc.exe config docker binpath="\"C:\Program Files\Docker\dockerd.exe\" --run-service -H npipe:// -H tcp://0.0.0.0:4243"
+      sc qc docker
   - ps: |
       Stop-Service docker
       Start-Service docker
