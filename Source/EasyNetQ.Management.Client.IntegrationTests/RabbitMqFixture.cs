@@ -37,12 +37,14 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             dockerEngineOsPlatform = await dockerProxy.GetDockerEngineOsAsync();
             dockerNetworkName = dockerEngineOsPlatform == OSPlatform.Windows ? null : "bridgeWhaleNet";
-            var rabbitMQDockerImage = Configuration.RabbitMQDockerImage(dockerEngineOsPlatform);
+            var rabbitMQDockerImageName = Configuration.RabbitMQDockerImageName(dockerEngineOsPlatform);
+            var rabbitMQDockerImageTag = Configuration.RabbitMQDockerImageTag(dockerEngineOsPlatform);
+            var rabbitMQDockerImage = string.Format("{0}:{1}", rabbitMQDockerImageName, rabbitMQDockerImageTag);
             await DisposeAsync().ConfigureAwait(false);
             if (dockerEngineOsPlatform == OSPlatform.Linux || dockerEngineOsPlatform == OSPlatform.OSX)
                 await dockerProxy.CreateNetworkAsync(dockerNetworkName).ConfigureAwait(false);
             
-            await dockerProxy.PullImageAsync(rabbitMQDockerImage, RabbitImageTag).ConfigureAwait(false);
+            await dockerProxy.PullImageAsync(rabbitMQDockerImageName, rabbitMQDockerImageTag).ConfigureAwait(false);
             var portMappings = new Dictionary<string, ISet<string>>
             {
                 { "4369", new HashSet<string>(){ "4369" } },
