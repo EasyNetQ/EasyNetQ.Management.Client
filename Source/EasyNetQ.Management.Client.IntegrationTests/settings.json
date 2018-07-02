@@ -1,5 +1,7 @@
 {
+    "testAgainstContainers": "true",
     "dockerHttpApiUri": "http://127.0.0.1:4243",
+    "rabbitMQHostName": "rmq",
     "rabbitMQClientPort": 5672,
     "rabbitMQManagementPort": 15672,
     "rabbitMQVirtualHost": "/",

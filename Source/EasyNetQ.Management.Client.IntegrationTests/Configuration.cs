@@ -18,7 +18,9 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         };
         private static readonly Lazy<Configuration> LazyInstance = new Lazy<Configuration>(() => new Configuration());
 
+        private readonly bool testAgainstContainers;
         private readonly string dockerHttpApiUri;
+        private readonly string rabbitMqHostName;
         private readonly int rabbitMqClientPort;
         private readonly int rabbitMqManagementPort;
         private readonly string rabbitMqVirtualHostName;
@@ -29,7 +31,11 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
         private static Configuration Instance => LazyInstance.Value;
 
+        public static bool TestAgainstContainers => Instance.testAgainstContainers;
+
         public static string DockerHttpApiUri => Instance.dockerHttpApiUri;
+
+        public static string RabbitMqHostName => Instance.rabbitMqHostName;
 
         public static int RabbitMqClientPort => Instance.rabbitMqClientPort;
 
@@ -55,7 +61,9 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("settings.json")
                 .Build();
+            testAgainstContainers = bool.Parse(settings["testAgainstContainers"]);
             dockerHttpApiUri = settings["dockerHttpApiUri"];
+            rabbitMqHostName = settings["rabbitMQHostName"];
             rabbitMqClientPort = int.Parse(settings["rabbitMQClientPort"]);
             rabbitMqManagementPort = int.Parse(settings["rabbitMQManagementPort"]);
             rabbitMqVirtualHostName = settings["rabbitMQVirtualHost"];
