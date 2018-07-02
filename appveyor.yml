@@ -2,14 +2,13 @@ version: Build {build}
 image: Visual Studio 2017
 install:
   - ps: |
-      Stop-Service docker
       $dockerPathName = (Get-WmiObject win32_service | ?{$_.Name -eq 'docker'}).PathName
-      $dockerConfigFile = $dockerPathName.split()[-1].trim('"')
       Write-Host $dockerPathName
+      $dockerConfigFile = $dockerPathName.split()[-1].trim('"')
       Get-Content $dockerConfigFile
-      (Get-Content $dockerConfigFile) -replace ("""hosts"": \[", """hosts"": [`r`n    ""tcp://127.0.0.1:4243"",") | Set-Content $dockerConfigFile
-      Get-Content $dockerConfigFile
-      Start-Service docker
+      $integTestsConfigFile = '.\Source\EasyNetQ.Management.Client.IntegrationTests\settings.json'
+      $integTestsConfig = Get-Content $integTestsConfigFile
+      $integTestsConfig -replace ("""dockerHttpApiUri"": ""http://127.0.0.1:4243""", """dockerHttpApiUri"": ""npipe://./pipe/docker_engine_windows""") | Set-Content $integTestsConfigFile
       $DOTNET_INSTALL_DIR = $(Join-Path (Get-Location) 'dotnetsdk')
       powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://dot.net/v1/dotnet-install.ps1'))) -Version 1.1.6 -InstallDir $DOTNET_INSTALL_DIR -NoPath"
       powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://dot.net/v1/dotnet-install.ps1'))) -Version 2.1.3 -InstallDir $DOTNET_INSTALL_DIR -NoPath"
