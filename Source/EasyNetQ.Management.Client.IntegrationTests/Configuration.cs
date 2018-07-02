@@ -43,8 +43,11 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
         public static string RabbitMqPassword => Instance.rabbitMqPassword;
 
-        public static string RabbitMQDockerImage(OSPlatform dockerEngineOsPlatform) =>
-            Instance.osSpecificSettings[dockerEngineOsPlatform]["rabbitMQDockerImage"];
+        public static string RabbitMQDockerImageName(OSPlatform dockerEngineOsPlatform) =>
+            Instance.osSpecificSettings[dockerEngineOsPlatform]["rabbitMQDockerImageName"];
+
+        public static string RabbitMQDockerImageTag(OSPlatform dockerEngineOsPlatform) =>
+            Instance.osSpecificSettings[dockerEngineOsPlatform]["rabbitMQDockerImageTag"];
 
         private Configuration()
         {

@@ -6,9 +6,11 @@
     "rabbitMQUser": "guest",
     "rabbitMQPassword": "guest",
     "linux": {
-        "rabbitMQDockerImage": "splazit/rabbitmq-federation"
+        "rabbitMQDockerImageName": "easynetq/rabbitmq",
+        "rabbitMQDockerImageTag": "3.6-alpine"
     },
     "windows": {
-        "rabbitMQDockerImage": "giordanol/rabbitmqwindows"
+        "rabbitMQDockerImageName": "easynetq/rabbitmq",
+        "rabbitMQDockerImageTag": "3.6-windowsservercore-ltsc2016"
     }
 }
