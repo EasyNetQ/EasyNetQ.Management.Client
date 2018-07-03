@@ -24,27 +24,62 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         private OSPlatform dockerEngineOsPlatform;
         private string dockerNetworkName;
 
-        public string RabbitContainerHostForManagement { get; private set; }
-
-        public string RabbitContainerAndHostName => "rmq";
+        public string RabbitHostForManagement { get; private set; }
 
         public RabbitMqFixture()
         {
             dockerProxy = new DockerProxy(new Uri(Configuration.DockerHttpApiUri));
+            RabbitHostForManagement = "localhost";
         }
 
         public async Task InitializeAsync()
         {
-            dockerEngineOsPlatform = await dockerProxy.GetDockerEngineOsAsync();
-            dockerNetworkName = dockerEngineOsPlatform == OSPlatform.Windows ? null : "bridgeWhaleNet";
-            var rabbitMQDockerImageName = Configuration.RabbitMQDockerImageName(dockerEngineOsPlatform);
-            var rabbitMQDockerImageTag = Configuration.RabbitMQDockerImageTag(dockerEngineOsPlatform);
-            var rabbitMQDockerImage = string.Format("{0}:{1}", rabbitMQDockerImageName, rabbitMQDockerImageTag);
-            await DisposeAsync().ConfigureAwait(false);
+            if (Configuration.TestAgainstContainers)
+            {
+                dockerEngineOsPlatform = await dockerProxy.GetDockerEngineOsAsync();
+                dockerNetworkName = dockerEngineOsPlatform == OSPlatform.Windows ? null : "bridgeWhaleNet";
+                await DisposeAsync().ConfigureAwait(false);
+                await CreateNetworkAsync().ConfigureAwait(false);
+                var rabbitMQDockerImage = await PullImageAsync().ConfigureAwait(false);
+                var containerId = await RunContainerAsync(rabbitMQDockerImage).ConfigureAwait(false);
+                if (dockerEngineOsPlatform == OSPlatform.Windows)
+                    RabbitHostForManagement = await dockerProxy.GetContainerIpAsync(containerId).ConfigureAwait(false);
+            }
+            await WaitForRabbitMqReadyAsync();
+        }
+
+        public async Task DisposeAsync()
+        {
+            if (!Configuration.TestAgainstContainers)
+                return;
+
+            await dockerProxy.StopContainerAsync(Configuration.RabbitMqHostName).ConfigureAwait(false);
+            await dockerProxy.RemoveContainerAsync(Configuration.RabbitMqHostName).ConfigureAwait(false);
+            if (dockerEngineOsPlatform == OSPlatform.Linux || dockerEngineOsPlatform == OSPlatform.OSX)
+                await dockerProxy.DeleteNetworkAsync(dockerNetworkName).ConfigureAwait(false);
+        }
+
+        public void Dispose()
+        {
+            dockerProxy.Dispose();
+        }
+
+        private async Task CreateNetworkAsync()
+        {
             if (dockerEngineOsPlatform == OSPlatform.Linux || dockerEngineOsPlatform == OSPlatform.OSX)
                 await dockerProxy.CreateNetworkAsync(dockerNetworkName).ConfigureAwait(false);
-            
+        }
+
+        private async Task<string> PullImageAsync()
+        {
+            var rabbitMQDockerImageName = Configuration.RabbitMQDockerImageName(dockerEngineOsPlatform);
+            var rabbitMQDockerImageTag = Configuration.RabbitMQDockerImageTag(dockerEngineOsPlatform);
             await dockerProxy.PullImageAsync(rabbitMQDockerImageName, rabbitMQDockerImageTag).ConfigureAwait(false);
+            return string.Format("{0}:{1}", rabbitMQDockerImageName, rabbitMQDockerImageTag);
+        }
+
+        private async Task<string> RunContainerAsync(string rabbitMQDockerImage)
+        {
             var portMappings = new Dictionary<string, ISet<string>>
             {
                 { "4369", new HashSet<string>(){ "4369" } },
@@ -56,43 +91,32 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             };
             var envVars = new List<string> { $"RABBITMQ_DEFAULT_VHOST={Configuration.RabbitMqVirtualHostName}" };
             var containerId = await dockerProxy
-                .CreateContainerAsync(rabbitMQDockerImage, RabbitContainerAndHostName, portMappings, dockerNetworkName, envVars)
+                .CreateContainerAsync(rabbitMQDockerImage, Configuration.RabbitMqHostName, portMappings, dockerNetworkName, envVars)
                 .ConfigureAwait(false);
             await dockerProxy.StartContainerAsync(containerId).ConfigureAwait(false);
-            RabbitContainerHostForManagement = "localhost";
-            if (dockerEngineOsPlatform == OSPlatform.Windows)
-                RabbitContainerHostForManagement = await dockerProxy.GetContainerIpAsync(containerId).ConfigureAwait(false);
+            return containerId;
+        }
+
+        private async Task WaitForRabbitMqReadyAsync()
+        {
             var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(DefaultTimeoutSeconds));
-            await WaitForRabbitMqReady(timeoutCts.Token).ConfigureAwait(false);
+            await WaitForRabbitMqReadyAsync(timeoutCts.Token).ConfigureAwait(false);
         }
 
-        public async Task DisposeAsync()
-        {
-            await dockerProxy.StopContainerAsync(RabbitContainerAndHostName).ConfigureAwait(false);
-            await dockerProxy.RemoveContainerAsync(RabbitContainerAndHostName).ConfigureAwait(false);
-            if (dockerEngineOsPlatform == OSPlatform.Linux || dockerEngineOsPlatform == OSPlatform.OSX)
-                await dockerProxy.DeleteNetworkAsync(dockerNetworkName).ConfigureAwait(false);
-        }
-
-        public void Dispose()
-        {
-            dockerProxy.Dispose();
-        }
-
-        private async Task WaitForRabbitMqReady(CancellationToken token)
+        private async Task WaitForRabbitMqReadyAsync(CancellationToken token)
         {
             while (true)
             {
                 token.ThrowIfCancellationRequested();
-                if (await IsRabbitMqReady().ConfigureAwait(false))
+                if (await IsRabbitMqReadyAsync().ConfigureAwait(false))
                     return;
                 await Task.Delay(500, token).ConfigureAwait(false);
             }
         }
 
-        private async Task<bool> IsRabbitMqReady()
+        private async Task<bool> IsRabbitMqReadyAsync()
         {
-            var rabbitMqManagementApi = new ManagementClient(RabbitContainerHostForManagement, Configuration.RabbitMqUser, Configuration.RabbitMqPassword, Configuration.RabbitMqManagementPort);
+            var rabbitMqManagementApi = new ManagementClient(RabbitHostForManagement, Configuration.RabbitMqUser, Configuration.RabbitMqPassword, Configuration.RabbitMqManagementPort);
 
             try
             {

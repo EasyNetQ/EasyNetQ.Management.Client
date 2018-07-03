@@ -14,7 +14,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
         public ScenarioTest(RabbitMqFixture fixture)
         {
-            rabbitMqUrl = $"http://{fixture.RabbitContainerHostForManagement}";
+            rabbitMqUrl = $"http://{fixture.RabbitHostForManagement}";
         }
 
         /// <summary>

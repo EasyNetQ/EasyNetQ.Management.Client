@@ -25,13 +25,12 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		private readonly int port = Configuration.RabbitMqManagementPort;
 		private readonly string vhostName = Configuration.RabbitMqVirtualHostName;
 		private readonly IManagementClient managementClient;
-		private readonly string rabbitHostName;
+		private readonly string rabbitHostName = Configuration.RabbitMqHostName;
 
 		public ManagementClientTests(RabbitMqFixture fixture)
 		{
-			hostUrl = $"http://{fixture.RabbitContainerHostForManagement}";
+			hostUrl = $"http://{fixture.RabbitHostForManagement}";
 			managementClient = new ManagementClient(hostUrl, username, password, port);
-			rabbitHostName = fixture.RabbitContainerAndHostName;
 		}
 
 		[Fact]
