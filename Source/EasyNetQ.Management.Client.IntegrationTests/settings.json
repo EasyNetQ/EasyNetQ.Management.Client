@@ -9,10 +9,10 @@
     "rabbitMQPassword": "guest",
     "linux": {
         "rabbitMQDockerImageName": "easynetq/rabbitmq",
-        "rabbitMQDockerImageTag": "3.6-alpine"
+        "rabbitMQDockerImageTag": "3.7-alpine"
     },
     "windows": {
         "rabbitMQDockerImageName": "easynetq/rabbitmq",
-        "rabbitMQDockerImageTag": "3.6-windowsservercore-ltsc2016"
+        "rabbitMQDockerImageTag": "3.7-windowsservercore-ltsc2016"
     }
 }
