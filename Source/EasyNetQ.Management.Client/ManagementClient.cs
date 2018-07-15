@@ -411,7 +411,7 @@ namespace EasyNetQ.Management.Client
         {
             Ensure.ArgumentNotNull(virtualHostName, nameof(virtualHostName));
 
-            await PutAsync<string>($"vhosts/{virtualHostName}", cancellationToken: cancellationToken)
+            await PutAsync<string>($"vhosts/{SanitiseVhostName(virtualHostName)}", cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
             return await GetVhostAsync(virtualHostName, cancellationToken).ConfigureAwait(false);
         }
@@ -421,7 +421,7 @@ namespace EasyNetQ.Management.Client
         {
             Ensure.ArgumentNotNull(vhost, nameof(vhost));
 
-            await DeleteAsync($"vhosts/{vhost.Name}", cancellationToken).ConfigureAwait(false);
+            await DeleteAsync($"vhosts/{SanitiseVhostName(vhost.Name)}", cancellationToken).ConfigureAwait(false);
         }
 
         public async Task EnableTracingAsync(Vhost vhost,
