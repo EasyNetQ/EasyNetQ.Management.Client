@@ -4,6 +4,8 @@ namespace EasyNetQ.Management.Client.Model
 {
     public class MessageStats
     {
+        public Int64 Ack { get; set; }
+        public MessageRateDetails AckDetails { get; set; }
         public Int64 DeliverGet { get; set; }
         public MessageRateDetails DeliverGetDetails { get; set; }
         public Int64 DeliverNoAck { get; set; }
