@@ -784,7 +784,7 @@ namespace EasyNetQ.Management.Client
 
         private static string SanitiseName(string name)
         {
-            return name.Replace("+", "%2B").Replace("#", "%23").Replace("/", "%2f").Replace(":", "%3A");
+            return WebUtility.UrlEncode(name);
         }
 
         private static string RecodeBindingPropertiesKey(string propertiesKey)
