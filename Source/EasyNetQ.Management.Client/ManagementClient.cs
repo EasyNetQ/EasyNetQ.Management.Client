@@ -389,9 +389,9 @@ namespace EasyNetQ.Management.Client
 
             await DeleteAsync(string.Format("bindings/{0}/e/{1}/{2}/{3}/{4}",
                 SanitiseVhostName(binding.Vhost),
-                binding.Source,
+                SanitiseName(binding.Source),
                 binding.DestinationType[0], // e for exchange or q for queue
-                binding.Destination,
+                SanitiseName(binding.Destination),
                 RecodeBindingPropertiesKey(binding.PropertiesKey)), cancellationToken).ConfigureAwait(false);
         }
 
@@ -782,9 +782,9 @@ namespace EasyNetQ.Management.Client
             return vhostName.Replace("/", "%2f");
         }
 
-        private static string SanitiseName(string queueName)
+        private static string SanitiseName(string name)
         {
-            return queueName.Replace("+", "%2B").Replace("#", "%23").Replace("/", "%2f");
+            return name.Replace("+", "%2B").Replace("#", "%23").Replace("/", "%2f").Replace(":", "%3A");
         }
 
         private static string RecodeBindingPropertiesKey(string propertiesKey)
