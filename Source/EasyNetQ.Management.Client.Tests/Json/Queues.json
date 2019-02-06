@@ -224,6 +224,18 @@
             "drain": false
           }
         }
+      },
+      {
+        "channel_details": [],
+        "queue": {
+          "name": "queue_name",
+          "vhost": "/"
+        },
+        "consumer_tag": "amq.ctag-_Zd2dXucXk__XmzXwdCppg",
+        "exclusive": false,
+        "ack_required": true,
+        "prefetch_count": 1000,
+        "arguments": { }
       }
     ],
     "name": "queue_name",
