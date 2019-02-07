@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Serialization;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
