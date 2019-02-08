@@ -120,6 +120,13 @@ namespace EasyNetQ.Management.Client
         Task<IEnumerable<Permission>> GetPermissionsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
+        /// A list of all topic permissions for all users.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<IEnumerable<TopicPermission>> GetTopicPermissionsAsync(CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
         /// Closes the given connection
         /// </summary>
         /// <param name="connection"></param>
@@ -368,6 +375,24 @@ namespace EasyNetQ.Management.Client
         /// <param name="cancellationToken"></param>
         Task DeletePermissionAsync(
             [NotNull] Permission permission,
+            CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Create a topic permission
+        /// </summary>
+        /// <param name="topicPermissionInfo">The topic permission to create</param>
+        /// <param name="cancellationToken"></param>
+        Task CreateTopicPermissionAsync(
+            [NotNull] TopicPermissionInfo topicPermissionInfo,
+            CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Delete a topic permission
+        /// </summary>
+        /// <param name="permission">The topic permission to delete</param>
+        /// <param name="cancellationToken"></param>
+        Task DeleteTopicPermissionAsync(
+            [NotNull] TopicPermission topicPermission,
             CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>

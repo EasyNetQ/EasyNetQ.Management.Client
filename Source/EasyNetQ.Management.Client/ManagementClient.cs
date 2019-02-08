@@ -553,6 +553,31 @@ namespace EasyNetQ.Management.Client
                 .ConfigureAwait(false);
         }
 
+        public Task<IEnumerable<TopicPermission>> GetTopicPermissionsAsync(
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return GetAsync<IEnumerable<TopicPermission>>("topic-permissions", cancellationToken);
+        }
+
+        public async Task CreateTopicPermissionAsync(TopicPermissionInfo topicPermissionInfo,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Ensure.ArgumentNotNull(topicPermissionInfo, nameof(topicPermissionInfo));
+
+            await PutAsync(
+                $"topic-permissions/{SanitiseVhostName(topicPermissionInfo.GetVirtualHostName())}/{topicPermissionInfo.GetUserName()}",
+                topicPermissionInfo, cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task DeleteTopicPermissionAsync(TopicPermission topicPermission,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Ensure.ArgumentNotNull(topicPermission, nameof(topicPermission));
+
+            await DeleteAsync($"topic-permissions/{topicPermission.Vhost}/{topicPermission.User}", cancellationToken)
+                .ConfigureAwait(false);
+        }
+
         public async Task<User> ChangeUserPasswordAsync(string userName, string newPassword,
             CancellationToken cancellationToken = default(CancellationToken))
         {
