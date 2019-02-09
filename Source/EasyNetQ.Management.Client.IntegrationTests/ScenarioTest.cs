@@ -50,7 +50,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var queue = await management.CreateQueueAsync(new QueueInfo("my_queue"), vhost).ConfigureAwait(false);
 
             // bind the exchange to the queue
-            await management.CreateBinding(exchange, queue, new BindingInfo("my_routing_key")).ConfigureAwait(false);
+            await management.CreateBindingAsync(exchange, queue, new BindingInfo("my_routing_key")).ConfigureAwait(false);
 
             // publish a test message
             await management.PublishAsync(exchange, new PublishInfo("my_routing_key", "Hello World!")).ConfigureAwait(false);
