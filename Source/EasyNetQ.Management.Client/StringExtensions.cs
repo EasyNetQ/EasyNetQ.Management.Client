@@ -1,5 +1,4 @@
-﻿#if !NETSTANDARD1_5
-using System.Security;
+﻿using System.Security;
 
 namespace EasyNetQ.Management.Client
 {
@@ -15,4 +14,3 @@ namespace EasyNetQ.Management.Client
         }
     }
 }
-#endif

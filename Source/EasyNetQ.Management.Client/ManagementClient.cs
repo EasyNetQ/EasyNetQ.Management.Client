@@ -53,16 +53,6 @@ namespace EasyNetQ.Management.Client
 
         public int PortNumber { get; }
 
-#if NETSTANDARD1_5
-        public ManagementClient(
-            string hostUrl,
-            string username,
-            string password,
-            int portNumber = 15672,
-            TimeSpan? timeout = null,
-            Action<HttpRequestMessage> configureRequest = null,
-            bool ssl = false)
-#else
         public ManagementClient(
             string hostUrl,
             string username,
@@ -83,7 +73,6 @@ namespace EasyNetQ.Management.Client
             TimeSpan? timeout = null,
             Action<HttpRequestMessage> configureRequest = null,
             bool ssl = false)
-#endif
         {
             if (string.IsNullOrEmpty(hostUrl))
             {
