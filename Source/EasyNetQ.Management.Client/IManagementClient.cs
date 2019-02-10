@@ -103,7 +103,7 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<IEnumerable<Vhost>> GetVHostsAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IEnumerable<Vhost>> GetVhostsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all users.
@@ -310,10 +310,10 @@ namespace EasyNetQ.Management.Client
         /// <summary>
         /// Create a new virtual host
         /// </summary>
-        /// <param name="virtualHostName">The name of the new virtual host</param>
+        /// <param name="vhostName">The name of the new virtual host</param>
         /// <param name="cancellationToken"></param>
-        Task<Vhost> CreateVirtualHostAsync(
-            string virtualHostName,
+        Task<Vhost> CreateVhostAsync(
+            string vhostName,
             CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
@@ -321,7 +321,7 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="vhost">The virtual host to delete</param>
         /// <param name="cancellationToken"></param>
-        Task DeleteVirtualHostAsync(
+        Task DeleteVhostAsync(
             [NotNull] Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken));
 
@@ -329,6 +329,7 @@ namespace EasyNetQ.Management.Client
         /// Enable tracing on given virtual host.
         /// </summary>
         /// <param name="vhost">The virtual host on which to enable tracing</param>
+        /// <param name="cancellationToken"></param>
         Task EnableTracingAsync(
             [NotNull] Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken));
@@ -337,6 +338,7 @@ namespace EasyNetQ.Management.Client
         /// Disables tracing on given virtual host.
         /// </summary>
         /// <param name="vhost">The virtual host on which to disable tracing</param>
+        /// <param name="cancellationToken"></param>
         Task DisableTracingAsync(
             [NotNull] Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken));
@@ -392,7 +394,7 @@ namespace EasyNetQ.Management.Client
         /// <param name="permission">The topic permission to delete</param>
         /// <param name="cancellationToken"></param>
         Task DeleteTopicPermissionAsync(
-            [NotNull] TopicPermission topicPermission,
+            [NotNull] TopicPermission permission,
             CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
@@ -514,12 +516,12 @@ namespace EasyNetQ.Management.Client
         /// Delete a parameter from the cluster
         /// </summary>
         /// <param name="componentName"></param>
-        /// <param name="vhost"></param>
+        /// <param name="vhostName"></param>
         /// <param name="name"></param>
         /// <param name="cancellationToken"></param>
         Task DeleteParameterAsync(
             string componentName,
-            string vhost,
+            string vhostName,
             string name,
             CancellationToken cancellationToken = default(CancellationToken));
 

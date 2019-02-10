@@ -28,7 +28,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                 Configuration.RabbitMqPassword, Configuration.RabbitMqManagementPort);
 
             // first create a new virtual host
-            var vhost = await initial.CreateVirtualHostAsync("my_virtual_host").ConfigureAwait(false);
+            var vhost = await initial.CreateVhostAsync("my_virtual_host").ConfigureAwait(false);
 
             // next create a user for that virutal host
             var user = await initial.CreateUserAsync(new UserInfo("mike", "topSecret").AddTag("administrator")).ConfigureAwait(false);
