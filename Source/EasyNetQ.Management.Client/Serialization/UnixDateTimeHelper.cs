@@ -11,13 +11,13 @@ namespace EasyNetQ.Management.Client.Serialization
         /// <summary>
         ///   Convert a long into a DateTime
         /// </summary>
-        public static DateTime FromUnixTime(this Int64 self)
+        public static DateTime FromUnixTime(this long self)
         {
             var ret = new DateTime(1970, 1, 1);
             return ret.AddSeconds(self);
         }
 
-        public static DateTime FromUnixTimeMs(this Int64 self)
+        public static DateTime FromUnixTimeMs(this long self)
         {
             var ret = new DateTime(1970, 1, 1);
             return ret.AddMilliseconds(self);
@@ -26,7 +26,7 @@ namespace EasyNetQ.Management.Client.Serialization
         /// <summary>
         ///   Convert a DateTime into a long
         /// </summary>
-        public static Int64 ToUnixTime(this DateTime self)
+        public static long ToUnixTime(this DateTime self)
         {
             if (self == DateTime.MinValue)
             {
@@ -41,7 +41,7 @@ namespace EasyNetQ.Management.Client.Serialization
             return (long)delta.TotalSeconds;
         }
 
-        public static Int64 ToUnixTimeMs(this DateTime self)
+        public static long ToUnixTimeMs(this DateTime self)
         {
             if (self == DateTime.MinValue)
             {

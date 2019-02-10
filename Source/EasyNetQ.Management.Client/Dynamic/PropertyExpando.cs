@@ -35,7 +35,7 @@ namespace EasyNetQ.Management.Client.Dynamic
             return true;
         }
 
-        protected T GetPropertyOrDefault<T>(String propertyName)
+        protected T GetPropertyOrDefault<T>(string propertyName)
         {
             if (_properties.Keys.Contains(propertyName) && _properties[propertyName] != null)
             {
@@ -44,6 +44,6 @@ namespace EasyNetQ.Management.Client.Dynamic
             return default(T);
         }
 
-        protected IDictionary<string, Object> Properties => _properties;
+        protected IDictionary<string, object> Properties => _properties;
     }
 }
