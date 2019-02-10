@@ -203,7 +203,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			var sourceXchange = await CreateExchange("sourceXcg").ConfigureAwait(false);
 			var destionationXchange = await CreateExchange("destinationXcg").ConfigureAwait(false);
 			var bindingInfo = new BindingInfo("#");
-			await managementClient.CreateBinding(sourceXchange, destionationXchange, bindingInfo).ConfigureAwait(false);
+			await managementClient.CreateBindingAsync(sourceXchange, destionationXchange, bindingInfo).ConfigureAwait(false);
 			Assert.NotEmpty((await managementClient.GetBindingsWithSourceAsync(sourceXchange).ConfigureAwait(false)).ToList());
 		}
 
@@ -213,7 +213,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			var sourceXchange = await CreateExchange("sourceXcg").ConfigureAwait(false);
 			var destionationXchange = await CreateExchange("destinationXcg").ConfigureAwait(false);
 			var bindingInfo = new BindingInfo("#");
-			await managementClient.CreateBinding(sourceXchange, destionationXchange, bindingInfo).ConfigureAwait(false);
+			await managementClient.CreateBindingAsync(sourceXchange, destionationXchange, bindingInfo).ConfigureAwait(false);
 
 			Assert.NotEmpty((await managementClient.GetBindingsWithDestinationAsync(destionationXchange).ConfigureAwait(false)).ToList());
 		}
@@ -448,7 +448,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
 			var bindingInfo = new BindingInfo(testQueue);
 
-			await managementClient.CreateBinding(exchange, queue, bindingInfo).ConfigureAwait(false);
+			await managementClient.CreateBindingAsync(exchange, queue, bindingInfo).ConfigureAwait(false);
 		}
 
 		[Fact]
@@ -464,7 +464,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			var sourceExchange = await managementClient.CreateExchangeAsync(sourceExchangeInfo, vhost).ConfigureAwait(false);
 			var destinationExchange = await managementClient.CreateExchangeAsync(destinationExchangeInfo, vhost).ConfigureAwait(false);
 
-			await managementClient.CreateBinding(sourceExchange, destinationExchange, new BindingInfo("#")).ConfigureAwait(false);
+			await managementClient.CreateBindingAsync(sourceExchange, destinationExchange, new BindingInfo("#")).ConfigureAwait(false);
 
 			var binding = (await managementClient.GetBindingsWithSourceAsync(sourceExchange).ConfigureAwait(false)).First();
 
@@ -482,7 +482,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var sourceXchange = await CreateExchange("sourceXcg").ConfigureAwait(false);
             var queue = await CreateTestQueue(testQueue).ConfigureAwait(false);
             var bindingInfo = new BindingInfo("#");
-            await managementClient.CreateBinding(sourceXchange, queue, bindingInfo).ConfigureAwait(false);
+            await managementClient.CreateBindingAsync(sourceXchange, queue, bindingInfo).ConfigureAwait(false);
             var binding = (await managementClient.GetBindingsAsync(sourceXchange, queue).ConfigureAwait(false)).First();
             await managementClient.DeleteBindingAsync(binding).ConfigureAwait(false);
             await managementClient.DeleteExchangeAsync(sourceXchange).ConfigureAwait(false);
@@ -502,7 +502,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var sourceExchange = await managementClient.CreateExchangeAsync(sourceExchangeInfo, vhost).ConfigureAwait(false);
             var destinationExchange = await managementClient.CreateExchangeAsync(destinationExchangeInfo, vhost).ConfigureAwait(false);
 
-            await managementClient.CreateBinding(sourceExchange, destinationExchange, new BindingInfo("#")).ConfigureAwait(false);
+            await managementClient.CreateBindingAsync(sourceExchange, destinationExchange, new BindingInfo("#")).ConfigureAwait(false);
 
             var binding = (await managementClient.GetBindingsAsync(sourceExchange, destinationExchange).ConfigureAwait(false)).First();
 
@@ -725,7 +725,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			const string policyName = "asamplepolicy";
 			const HaMode haMode = HaMode.All;
 			const HaSyncMode haSyncMode = HaSyncMode.Automatic;
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",
@@ -750,7 +750,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			const string policyName = "asamplepolicy-queue-only";
 			const HaMode haMode = HaMode.All;
 			const HaSyncMode haSyncMode = HaSyncMode.Automatic;
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",
@@ -776,7 +776,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			const string policyName = "asamplepolicy-exchange-only";
 			const HaMode haMode = HaMode.All;
 			const HaSyncMode haSyncMode = HaSyncMode.Automatic;
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",
@@ -801,7 +801,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		{
 			const string policyName = "a-sample-alternate-exchange-policy";
 			const string alternateExchange = "a-sample-alternate-exchange";
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",
@@ -823,7 +823,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			const string policyName = "a-sample-dead-letter-exchange";
 			const string deadLetterExchange = "a-sample-dead-letter-exchange";
 			const string deadLetterRoutingKey = "a-sample-dead-letter-exchange-key";
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",
@@ -846,7 +846,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		{
 			const string policyName = "a-sample-message-ttl";
 			const uint messageTtl = 5000;
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",
@@ -867,7 +867,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		{
 			const string policyName = "a-sample-expires";
 			const uint expires = 10000;
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",
@@ -888,7 +888,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		{
 			const string policyName = "a-sample-max-length";
 			const uint maxLength = 500;
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",
@@ -917,7 +917,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			const uint messageTtl = 5000;
 			const uint expires = 10000;
 			const uint maxLength = 500;
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",
@@ -954,7 +954,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		{
 			const string policyName = "a-sample-federation-upstream-policy";
 
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",
@@ -976,7 +976,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		{
 			const string policyName = "a-sample-federation-upstream-set-policy";
 
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",
@@ -996,7 +996,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		public async Task Should_be_able_to_delete_policies()
 		{
 			const string policyName = "asamplepolicy";
-			await managementClient.CreatePolicy(new Policy
+			await managementClient.CreatePolicyAsync(new Policy
 			{
 				Name = policyName,
 				Pattern = "averyuncommonpattern",

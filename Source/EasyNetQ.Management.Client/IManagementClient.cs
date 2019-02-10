@@ -254,7 +254,7 @@ namespace EasyNetQ.Management.Client
         /// <param name="bindingInfo">properties of the binding</param>
         /// <param name="cancellationToken"></param>
         /// <returns>The binding that was created</returns>
-        Task CreateBinding(
+        Task CreateBindingAsync(
             [NotNull] Exchange exchange,
             [NotNull] Queue queue,
             [NotNull] BindingInfo bindingInfo,
@@ -267,7 +267,7 @@ namespace EasyNetQ.Management.Client
         /// <param name="destinationExchange">the destination exchange</param>
         /// <param name="bindingInfo">properties of the binding</param>
         /// <param name="cancellationToken"></param>
-        Task CreateBinding(
+        Task CreateBindingAsync(
             [NotNull] Exchange sourceExchange,
             [NotNull] Exchange destinationExchange,
             [NotNull] BindingInfo bindingInfo,
@@ -480,7 +480,7 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="policy">Policy to create</param>
         /// <param name="cancellationToken"></param>
-        Task CreatePolicy(
+        Task CreatePolicyAsync(
             [NotNull] Policy policy,
             CancellationToken cancellationToken = default(CancellationToken));
 

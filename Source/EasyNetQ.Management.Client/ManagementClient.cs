@@ -320,7 +320,7 @@ namespace EasyNetQ.Management.Client
             return GetAsync<IEnumerable<Binding>>("bindings", cancellationToken);
         }
 
-        public async Task CreateBinding(Exchange exchange, Queue queue, BindingInfo bindingInfo,
+        public async Task CreateBindingAsync(Exchange exchange, Queue queue, BindingInfo bindingInfo,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(exchange, nameof(exchange));
@@ -332,7 +332,7 @@ namespace EasyNetQ.Management.Client
                 bindingInfo, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task CreateBinding(Exchange sourceExchange, Exchange destinationExchange, BindingInfo bindingInfo,
+        public async Task CreateBindingAsync(Exchange sourceExchange, Exchange destinationExchange, BindingInfo bindingInfo,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(sourceExchange, nameof(sourceExchange));
@@ -459,7 +459,7 @@ namespace EasyNetQ.Management.Client
             return GetAsync<IEnumerable<Policy>>("policies", cancellationToken);
         }
 
-        public async Task CreatePolicy(Policy policy, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task CreatePolicyAsync(Policy policy, CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(policy, nameof(policy));
             if (string.IsNullOrEmpty(policy.Name))
