@@ -383,7 +383,7 @@ namespace EasyNetQ.Management.Client
                 RecodeBindingPropertiesKey(binding.PropertiesKey)), cancellationToken).ConfigureAwait(false);
         }
 
-        public Task<IEnumerable<Vhost>> GetVHostsAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task<IEnumerable<Vhost>> GetVhostsAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             return GetAsync<IEnumerable<Vhost>>("vhosts", cancellationToken);
         }
@@ -394,17 +394,17 @@ namespace EasyNetQ.Management.Client
             return GetAsync<Vhost>($"vhosts/{SanitiseVhostName(vhostName)}", cancellationToken);
         }
 
-        public async Task<Vhost> CreateVirtualHostAsync(string virtualHostName,
+        public async Task<Vhost> CreateVhostAsync(string vhostName,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            Ensure.ArgumentNotNull(virtualHostName, nameof(virtualHostName));
+            Ensure.ArgumentNotNull(vhostName, nameof(vhostName));
 
-            await PutAsync<string>($"vhosts/{SanitiseVhostName(virtualHostName)}", cancellationToken: cancellationToken)
+            await PutAsync<string>($"vhosts/{SanitiseVhostName(vhostName)}", cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
-            return await GetVhostAsync(virtualHostName, cancellationToken).ConfigureAwait(false);
+            return await GetVhostAsync(vhostName, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task DeleteVirtualHostAsync(Vhost vhost,
+        public async Task DeleteVhostAsync(Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(vhost, nameof(vhost));

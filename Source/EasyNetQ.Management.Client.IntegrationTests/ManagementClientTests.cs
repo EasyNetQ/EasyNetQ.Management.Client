@@ -514,7 +514,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		[Fact]
 		public async Task Should_get_vhosts()
 		{
-			var vhosts = await managementClient.GetVHostsAsync().ConfigureAwait(false);
+			var vhosts = await managementClient.GetVhostsAsync().ConfigureAwait(false);
 
 			foreach (var vhost in vhosts)
 			{
@@ -527,7 +527,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		[Fact]
 		public async Task Should_be_able_to_get_an_individual_vhost()
 		{
-			await managementClient.CreateVirtualHostAsync(testVHost).ConfigureAwait(false);
+			await managementClient.CreateVhostAsync(testVHost).ConfigureAwait(false);
 			var vhost = await managementClient.GetVhostAsync(testVHost).ConfigureAwait(false);
 			vhost.Name.ShouldEqual(testVHost);
 		}
@@ -535,7 +535,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		[Fact]
 		public async Task Should_create_a_virtual_host()
 		{
-			var vhost = await managementClient.CreateVirtualHostAsync(testVHost).ConfigureAwait(false);
+			var vhost = await managementClient.CreateVhostAsync(testVHost).ConfigureAwait(false);
 			vhost.Name.ShouldEqual(testVHost);
 		}
 
@@ -543,7 +543,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		public async Task Should_delete_a_virtual_host()
 		{
 			var vhost = await managementClient.GetVhostAsync(testVHost).ConfigureAwait(false);
-			await managementClient.DeleteVirtualHostAsync(vhost).ConfigureAwait(false);
+			await managementClient.DeleteVhostAsync(vhost).ConfigureAwait(false);
 		}
 
 		[Fact]
@@ -637,7 +637,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			{
 				throw new EasyNetQTestException(string.Format("user '{0}' hasn't been created", testUser));
 			}
-			var vhost = (await managementClient.GetVHostsAsync().ConfigureAwait(false)).SingleOrDefault(x => x.Name == testVHost);
+			var vhost = (await managementClient.GetVhostsAsync().ConfigureAwait(false)).SingleOrDefault(x => x.Name == testVHost);
 			if (vhost == null)
 			{
 				throw new EasyNetQTestException(string.Format("Test vhost: '{0}' has not been created", testVHost));
@@ -657,7 +657,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 				var userInfo = new UserInfo(testUser, "topSecret").AddTag("administrator");
 				user = await managementClient.CreateUserAsync(userInfo).ConfigureAwait(false);
 			}
-			var vhost = (await managementClient.GetVHostsAsync().ConfigureAwait(false)).SingleOrDefault(x => x.Name == vhostName);
+			var vhost = (await managementClient.GetVhostsAsync().ConfigureAwait(false)).SingleOrDefault(x => x.Name == vhostName);
 			if (vhost == null)
 			{
 				throw new EasyNetQTestException(string.Format("Default vhost: '{0}' has not been created", testVHost));
@@ -672,7 +672,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		{
 			var userInfo = new UserInfo(testUser, "topSecret").AddTag("monitoring").AddTag("management");
 			var user = await managementClient.CreateUserAsync(userInfo).ConfigureAwait(false);
-			var vhost = await managementClient.CreateVirtualHostAsync(testVHost).ConfigureAwait(false);
+			var vhost = await managementClient.CreateVhostAsync(testVHost).ConfigureAwait(false);
 			var permissionInfo = new PermissionInfo(user, vhost);
 			await managementClient.CreatePermissionAsync(permissionInfo).ConfigureAwait(false);
 
@@ -704,7 +704,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		[Fact]
 		public async Task Should_check_that_the_broker_is_alive()
 		{
-			var vhost = await managementClient.CreateVirtualHostAsync(testVHost).ConfigureAwait(false);
+			var vhost = await managementClient.CreateVhostAsync(testVHost).ConfigureAwait(false);
 			var user = (await managementClient.GetUsersAsync().ConfigureAwait(false)).SingleOrDefault(x => x.Name == username);
 			var permissionInfo = new PermissionInfo(user, vhost);
 			await managementClient.CreatePermissionAsync(permissionInfo).ConfigureAwait(false);
