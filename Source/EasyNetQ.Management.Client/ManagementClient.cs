@@ -150,12 +150,11 @@ namespace EasyNetQ.Management.Client
             return GetAsync<IEnumerable<Connection>>("connections", cancellationToken);
         }
 
-        public async Task CloseConnectionAsync(Connection connection,
+        public Task CloseConnectionAsync(Connection connection,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(connection, nameof(connection));
-            await DeleteAsync($"connections/{connection.Name}", cancellationToken)
-                .ConfigureAwait(false);
+            return DeleteAsync($"connections/{connection.Name}", cancellationToken);
         }
 
         public Task<IEnumerable<Channel>> GetChannelsAsync(
@@ -211,13 +210,13 @@ namespace EasyNetQ.Management.Client
                 cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task DeleteExchangeAsync(Exchange exchange,
+        public Task DeleteExchangeAsync(Exchange exchange,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(exchange, nameof(exchange));
 
-            await DeleteAsync($"exchanges/{SanitiseVhostName(exchange.Vhost)}/{SanitiseName(exchange.Name)}",
-                cancellationToken).ConfigureAwait(false);
+            return DeleteAsync($"exchanges/{SanitiseVhostName(exchange.Vhost)}/{SanitiseName(exchange.Name)}",
+                cancellationToken);
         }
 
         public Task<IEnumerable<Binding>> GetBindingsWithSourceAsync(Exchange exchange,
@@ -268,13 +267,13 @@ namespace EasyNetQ.Management.Client
                 .ConfigureAwait(false);
         }
 
-        public async Task DeleteQueueAsync(Queue queue,
+        public Task DeleteQueueAsync(Queue queue,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(queue, nameof(queue));
 
-            await DeleteAsync($"queues/{SanitiseVhostName(queue.Vhost)}/{SanitiseName(queue.Name)}",
-                cancellationToken).ConfigureAwait(false);
+            return DeleteAsync($"queues/{SanitiseVhostName(queue.Vhost)}/{SanitiseName(queue.Name)}",
+                cancellationToken);
         }
 
         public Task<IEnumerable<Binding>> GetBindingsForQueueAsync(Queue queue,
@@ -286,12 +285,12 @@ namespace EasyNetQ.Management.Client
                 $"queues/{SanitiseVhostName(queue.Vhost)}/{SanitiseName(queue.Name)}/bindings", cancellationToken);
         }
 
-        public async Task PurgeAsync(Queue queue, CancellationToken cancellationToken = default(CancellationToken))
+        public Task PurgeAsync(Queue queue, CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(queue, nameof(queue));
 
-            await DeleteAsync($"queues/{SanitiseVhostName(queue.Vhost)}/{SanitiseName(queue.Name)}/contents",
-                cancellationToken).ConfigureAwait(false);
+            return DeleteAsync($"queues/{SanitiseVhostName(queue.Vhost)}/{SanitiseName(queue.Name)}/contents",
+                cancellationToken);
         }
 
         public Task<IEnumerable<Message>> GetMessagesFromQueueAsync(Queue queue, GetMessagesCriteria criteria,
@@ -309,28 +308,28 @@ namespace EasyNetQ.Management.Client
             return GetAsync<IEnumerable<Binding>>("bindings", cancellationToken);
         }
 
-        public async Task CreateBindingAsync(Exchange exchange, Queue queue, BindingInfo bindingInfo,
+        public Task CreateBindingAsync(Exchange exchange, Queue queue, BindingInfo bindingInfo,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(exchange, nameof(exchange));
             Ensure.ArgumentNotNull(queue, nameof(queue));
             Ensure.ArgumentNotNull(bindingInfo, nameof(bindingInfo));
 
-            await PostAsync<BindingInfo, object>(
+            return PostAsync<BindingInfo, object>(
                 $"bindings/{SanitiseVhostName(queue.Vhost)}/e/{exchange.Name}/q/{SanitiseName(queue.Name)}",
-                bindingInfo, cancellationToken).ConfigureAwait(false);
+                bindingInfo, cancellationToken);
         }
 
-        public async Task CreateBindingAsync(Exchange sourceExchange, Exchange destinationExchange, BindingInfo bindingInfo,
+        public Task CreateBindingAsync(Exchange sourceExchange, Exchange destinationExchange, BindingInfo bindingInfo,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(sourceExchange, nameof(sourceExchange));
             Ensure.ArgumentNotNull(destinationExchange, nameof(destinationExchange));
             Ensure.ArgumentNotNull(bindingInfo, nameof(bindingInfo));
 
-            await PostAsync<BindingInfo, object>(
+            return PostAsync<BindingInfo, object>(
                 $"bindings/{SanitiseVhostName(sourceExchange.Vhost)}/e/{sourceExchange.Name}/e/{destinationExchange.Name}",
-                bindingInfo, cancellationToken).ConfigureAwait(false);
+                bindingInfo, cancellationToken);
         }
 
         public Task<IEnumerable<Binding>> GetBindingsAsync(Exchange exchange, Queue queue,
@@ -355,7 +354,7 @@ namespace EasyNetQ.Management.Client
                 cancellationToken);
         }
 
-        public async Task DeleteBindingAsync(Binding binding,
+        public Task DeleteBindingAsync(Binding binding,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(binding, nameof(binding));
@@ -375,12 +374,12 @@ namespace EasyNetQ.Management.Client
                 throw new ArgumentException("Empty binding destination type isn't supported.");
             }
 
-            await DeleteAsync(string.Format("bindings/{0}/e/{1}/{2}/{3}/{4}",
+            return DeleteAsync(string.Format("bindings/{0}/e/{1}/{2}/{3}/{4}",
                 SanitiseVhostName(binding.Vhost),
                 binding.Source,
                 binding.DestinationType[0], // e for exchange or q for queue
                 binding.Destination,
-                RecodeBindingPropertiesKey(binding.PropertiesKey)), cancellationToken).ConfigureAwait(false);
+                RecodeBindingPropertiesKey(binding.PropertiesKey)), cancellationToken);
         }
 
         public Task<IEnumerable<Vhost>> GetVhostsAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -404,30 +403,28 @@ namespace EasyNetQ.Management.Client
             return await GetVhostAsync(vhostName, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task DeleteVhostAsync(Vhost vhost,
+        public Task DeleteVhostAsync(Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(vhost, nameof(vhost));
 
-            await DeleteAsync($"vhosts/{SanitiseVhostName(vhost.Name)}", cancellationToken).ConfigureAwait(false);
+            return DeleteAsync($"vhosts/{SanitiseVhostName(vhost.Name)}", cancellationToken);
         }
 
-        public async Task EnableTracingAsync(Vhost vhost,
+        public Task EnableTracingAsync(Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(vhost, nameof(vhost));
             vhost.Tracing = true;
-            await PutAsync<Vhost>($"vhosts/{SanitiseVhostName(vhost.Name)}", vhost, cancellationToken)
-                .ConfigureAwait(false);
+            return PutAsync<Vhost>($"vhosts/{SanitiseVhostName(vhost.Name)}", vhost, cancellationToken);
         }
 
-        public async Task DisableTracingAsync(Vhost vhost,
+        public Task DisableTracingAsync(Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(vhost, nameof(vhost));
             vhost.Tracing = false;
-            await PutAsync<Vhost>($"vhosts/{SanitiseVhostName(vhost.Name)}", vhost, cancellationToken)
-                .ConfigureAwait(false);
+            return PutAsync<Vhost>($"vhosts/{SanitiseVhostName(vhost.Name)}", vhost, cancellationToken);
         }
 
         public Task<IEnumerable<User>> GetUsersAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -448,7 +445,7 @@ namespace EasyNetQ.Management.Client
             return GetAsync<IEnumerable<Policy>>("policies", cancellationToken);
         }
 
-        public async Task CreatePolicyAsync(Policy policy, CancellationToken cancellationToken = default(CancellationToken))
+        public Task CreatePolicyAsync(Policy policy, CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(policy, nameof(policy));
             if (string.IsNullOrEmpty(policy.Name))
@@ -464,16 +461,16 @@ namespace EasyNetQ.Management.Client
                 throw new ArgumentException("Definition should not be null");
             }
 
-            await PutAsync(GetPolicyUrl(policy.Name, policy.Vhost), policy, cancellationToken).ConfigureAwait(false);
+            return PutAsync(GetPolicyUrl(policy.Name, policy.Vhost), policy, cancellationToken);
         }
 
-        public async Task DeletePolicyAsync(string policyName, Vhost vhost,
+        public Task DeletePolicyAsync(string policyName, Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(policyName, nameof(policyName));
             Ensure.ArgumentNotNull(vhost, nameof(vhost));
 
-            await DeleteAsync(GetPolicyUrl(policyName, vhost.Name), cancellationToken).ConfigureAwait(false);
+            return DeleteAsync(GetPolicyUrl(policyName, vhost.Name), cancellationToken);
         }
 
         public Task<IEnumerable<Parameter>> GetParametersAsync(
@@ -482,12 +479,12 @@ namespace EasyNetQ.Management.Client
             return GetAsync<IEnumerable<Parameter>>("parameters", cancellationToken);
         }
 
-        public async Task CreateParameterAsync(Parameter parameter,
+        public Task CreateParameterAsync(Parameter parameter,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(parameter, nameof(parameter));
-            await PutAsync(GetParameterUrl(parameter.Component, parameter.Vhost, parameter.Name), parameter.Value,
-                cancellationToken).ConfigureAwait(false);
+            return PutAsync(GetParameterUrl(parameter.Component, parameter.Vhost, parameter.Name), parameter.Value,
+                cancellationToken);
         }
 
         public async Task DeleteParameterAsync(string componentName, string vhost, string name,
@@ -510,11 +507,11 @@ namespace EasyNetQ.Management.Client
             return await GetUserAsync(userInfo.GetName(), cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task DeleteUserAsync(User user, CancellationToken cancellationToken = default(CancellationToken))
+        public Task DeleteUserAsync(User user, CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(user, nameof(user));
 
-            await DeleteAsync($"users/{user.Name}", cancellationToken).ConfigureAwait(false);
+            return DeleteAsync($"users/{user.Name}", cancellationToken);
         }
 
         public Task<IEnumerable<Permission>> GetPermissionsAsync(
@@ -523,23 +520,22 @@ namespace EasyNetQ.Management.Client
             return GetAsync<IEnumerable<Permission>>("permissions", cancellationToken);
         }
 
-        public async Task CreatePermissionAsync(PermissionInfo permissionInfo,
+        public Task CreatePermissionAsync(PermissionInfo permissionInfo,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(permissionInfo, nameof(permissionInfo));
 
-            await PutAsync(
+            return PutAsync(
                 $"permissions/{SanitiseVhostName(permissionInfo.GetVirtualHostName())}/{permissionInfo.GetUserName()}",
-                permissionInfo, cancellationToken).ConfigureAwait(false);
+                permissionInfo, cancellationToken);
         }
 
-        public async Task DeletePermissionAsync(Permission permission,
+        public Task DeletePermissionAsync(Permission permission,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(permission, nameof(permission));
 
-            await DeleteAsync($"permissions/{permission.Vhost}/{permission.User}", cancellationToken)
-                .ConfigureAwait(false);
+            return DeleteAsync($"permissions/{permission.Vhost}/{permission.User}", cancellationToken);
         }
 
         public Task<IEnumerable<TopicPermission>> GetTopicPermissionsAsync(
@@ -548,23 +544,22 @@ namespace EasyNetQ.Management.Client
             return GetAsync<IEnumerable<TopicPermission>>("topic-permissions", cancellationToken);
         }
 
-        public async Task CreateTopicPermissionAsync(TopicPermissionInfo topicPermissionInfo,
+        public Task CreateTopicPermissionAsync(TopicPermissionInfo topicPermissionInfo,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(topicPermissionInfo, nameof(topicPermissionInfo));
 
-            await PutAsync(
+            return PutAsync(
                 $"topic-permissions/{SanitiseVhostName(topicPermissionInfo.GetVirtualHostName())}/{topicPermissionInfo.GetUserName()}",
-                topicPermissionInfo, cancellationToken).ConfigureAwait(false);
+                topicPermissionInfo, cancellationToken);
         }
 
-        public async Task DeleteTopicPermissionAsync(TopicPermission topicPermission,
+        public Task DeleteTopicPermissionAsync(TopicPermission topicPermission,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(topicPermission, nameof(topicPermission));
 
-            await DeleteAsync($"topic-permissions/{topicPermission.Vhost}/{topicPermission.User}", cancellationToken)
-                .ConfigureAwait(false);
+            return DeleteAsync($"topic-permissions/{topicPermission.Vhost}/{topicPermission.User}", cancellationToken);
         }
 
         public async Task<User> ChangeUserPasswordAsync(string userName, string newPassword,
@@ -582,10 +577,10 @@ namespace EasyNetQ.Management.Client
             return await CreateUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<List<Federation>> GetFederationAsync(
+        public Task<List<Federation>> GetFederationAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await GetAsync<List<Federation>>("federation-links", cancellationToken);
+            return GetAsync<List<Federation>>("federation-links", cancellationToken);
         }
 
         public async Task<bool> IsAliveAsync(Vhost vhost,
