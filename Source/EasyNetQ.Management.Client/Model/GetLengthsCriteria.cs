@@ -1,4 +1,6 @@
-﻿namespace EasyNetQ.Management.Client.Model
+﻿using System.Collections.Generic;
+
+namespace EasyNetQ.Management.Client.Model
 {
     public class GetLengthsCriteria
     {
@@ -14,5 +16,14 @@
         }
         public int LengthsAge { get; private set; }
         public int LengthsIncr { get; private set; }
+        
+        public IReadOnlyDictionary<string, string> ToQueryParameters()
+        {
+            return new Dictionary<string, string>
+            {
+                {nameof(LengthsAge), LengthsAge.ToString()},
+                {nameof(LengthsIncr), LengthsIncr.ToString()}
+            };
+        }
     }
 }

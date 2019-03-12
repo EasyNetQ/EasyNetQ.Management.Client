@@ -1,4 +1,6 @@
-﻿namespace EasyNetQ.Management.Client.Model
+﻿using System.Collections.Generic;
+
+namespace EasyNetQ.Management.Client.Model
 {
     /// <summary>
     /// The criteria for retrieving messages from a queue
@@ -23,6 +25,16 @@
             Ackmode = ackmode.ToString();
             Count = count;
             Encoding = "auto";
+        }
+        
+        public IReadOnlyDictionary<string, string> ToQueryParameters()
+        {
+            return new Dictionary<string, string>
+            {
+                {nameof(Count), Count.ToString()},
+                {nameof(Ackmode), Ackmode},
+                {nameof(Encoding), Encoding}
+            };
         }
     }
 }
