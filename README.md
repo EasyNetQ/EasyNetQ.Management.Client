@@ -58,10 +58,6 @@ http://mikehadlow.blogspot.co.uk/search/label/EasyNetQ
 
 ## Getting started
 
-Just open EasyNetQ.sln in VisualStudio 2010 and build.
+Just open EasyNetQ.sln in VisualStudio 2017 and build.
 
 All the required dependencies for the solution file to build the software are included. To run the explicit tests that send messages you will have to be running the EasyNetQ.Tests.SimpleService application and have a working local RabbitMQ server (see http://www.rabbitmq.com/ for more details).
-
-## Mono specific
-
-If you are building the software in monodevelop under Linux you will have to change the active solution configuration to 'Debug|Mixed platforms' to build all the included projects and set the 'Copy to output directory' property on  the app.config files to something other then 'Do not copy'. Most of the example programs will not run since they utilise the TopShelf assembly to run as a windows service. The basic tests and Tests.SimpleServer seem to behave correctly.
