@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,6 +17,8 @@ namespace EasyNetQ.Management.Client
 {
     public class ManagementClient : IManagementClient
     {
+        private static readonly Regex ParameterNameRegex = new Regex("([a-z])([A-Z])", RegexOptions.Compiled);
+        
         private static Task CompletedTask { get; } = Task.FromResult<object>(null);
 
         private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue =
@@ -94,22 +95,27 @@ namespace EasyNetQ.Management.Client
                     throw new ArgumentException("hostUrl is illegal");
                 hostUrl = hostUrl.Contains("http://") ? hostUrl : "http://" + hostUrl;
             }
+
             if (!urlRegex.IsMatch(hostUrl) || !Uri.TryCreate(hostUrl, UriKind.Absolute, out var urlUri))
             {
                 throw new ArgumentException("hostUrl is illegal");
             }
+
             if (string.IsNullOrEmpty(username))
             {
                 throw new ArgumentException("username is null or empty");
             }
+
             if (password == null || password.Length == 0)
             {
                 throw new ArgumentException("password is null or empty");
             }
+
             if (configureRequest == null)
             {
                 configureRequest = x => { };
             }
+
             HostUrl = hostUrl;
             Username = username;
             PortNumber = portNumber;
@@ -131,7 +137,11 @@ namespace EasyNetQ.Management.Client
         public Task<Overview> GetOverviewAsync(GetLengthsCriteria lengthsCriteria = null,
             GetRatesCriteria ratesCriteria = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<Overview>("overview", cancellationToken, lengthsCriteria, ratesCriteria);
+            var queryParameters = MergeQueryParameters(
+                lengthsCriteria?.ToQueryParameters(), 
+                ratesCriteria?.ToQueryParameters()
+            );
+            return GetAsync<Overview>("overview", queryParameters, cancellationToken);
         }
 
         public Task<IEnumerable<Node>> GetNodesAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -168,7 +178,7 @@ namespace EasyNetQ.Management.Client
         {
             Ensure.ArgumentNotNull(channelName, nameof(channelName));
 
-            return GetAsync<Channel>($"channels/{channelName}", cancellationToken, ratesCriteria);
+            return GetAsync<Channel>($"channels/{channelName}", ratesCriteria?.ToQueryParameters(), cancellationToken);
         }
 
         public Task<IEnumerable<Exchange>> GetExchangesAsync(
@@ -183,8 +193,7 @@ namespace EasyNetQ.Management.Client
             Ensure.ArgumentNotNull(exchangeName, nameof(exchangeName));
             Ensure.ArgumentNotNull(vhost, nameof(vhost));
 
-            return GetAsync<Exchange>($"exchanges/{SanitiseVhostName(vhost.Name)}/{exchangeName}", cancellationToken,
-                ratesCriteria);
+            return GetAsync<Exchange>($"exchanges/{SanitiseVhostName(vhost.Name)}/{exchangeName}", ratesCriteria?.ToQueryParameters(), cancellationToken);
         }
 
         public Task<Queue> GetQueueAsync(string queueName, Vhost vhost, GetLengthsCriteria lengthsCriteria = null,
@@ -192,9 +201,13 @@ namespace EasyNetQ.Management.Client
         {
             Ensure.ArgumentNotNull(queueName, nameof(queueName));
             Ensure.ArgumentNotNull(vhost, nameof(vhost));
-
+            
+            var queryParameters = MergeQueryParameters(
+                lengthsCriteria?.ToQueryParameters(), 
+                ratesCriteria?.ToQueryParameters()
+            );
             return GetAsync<Queue>($"queues/{SanitiseVhostName(vhost.Name)}/{SanitiseName(queueName)}",
-                cancellationToken, lengthsCriteria, ratesCriteria);
+                queryParameters, cancellationToken);
         }
 
         public async Task<Exchange> CreateExchangeAsync(ExchangeInfo exchangeInfo, Vhost vhost,
@@ -363,12 +376,12 @@ namespace EasyNetQ.Management.Client
             {
                 throw new ArgumentException("Empty binding source isn't supported.");
             }
-            
+
             if (string.IsNullOrEmpty(binding.Destination))
             {
                 throw new ArgumentException("Empty binding destination isn't supported.");
             }
-            
+
             if (string.IsNullOrEmpty(binding.DestinationType))
             {
                 throw new ArgumentException("Empty binding destination type isn't supported.");
@@ -452,10 +465,12 @@ namespace EasyNetQ.Management.Client
             {
                 throw new ArgumentException("Policy name is empty");
             }
+
             if (string.IsNullOrEmpty(policy.Vhost))
             {
                 throw new ArgumentException("vhost name is empty");
             }
+
             if (policy.Definition == null)
             {
                 throw new ArgumentException("Definition should not be null");
@@ -487,14 +502,14 @@ namespace EasyNetQ.Management.Client
                 cancellationToken);
         }
 
-        public async Task DeleteParameterAsync(string componentName, string vhost, string name,
+        public Task DeleteParameterAsync(string componentName, string vhost, string name,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(componentName, nameof(componentName));
             Ensure.ArgumentNotNull(vhost, nameof(vhost));
             Ensure.ArgumentNotNull(name, nameof(name));
 
-            await DeleteAsync(GetParameterUrl(componentName, vhost, name), cancellationToken).ConfigureAwait(false);
+            return DeleteAsync(GetParameterUrl(componentName, vhost, name), cancellationToken);
         }
 
         public async Task<User> CreateUserAsync(UserInfo userInfo,
@@ -574,6 +589,7 @@ namespace EasyNetQ.Management.Client
             {
                 userInfo.AddTag(tag.Trim());
             }
+
             return await CreateUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
         }
 
@@ -588,27 +604,32 @@ namespace EasyNetQ.Management.Client
         {
             Ensure.ArgumentNotNull(vhost, nameof(vhost));
 
-            var result =
-                await GetAsync<AlivenessTestResult>($"aliveness-test/{SanitiseVhostName(vhost.Name)}",
-                    cancellationToken).ConfigureAwait(false);
+            var result = await GetAsync<AlivenessTestResult>($"aliveness-test/{SanitiseVhostName(vhost.Name)}",
+                cancellationToken).ConfigureAwait(false);
             return result.Status == "ok";
         }
 
         private Task<T> GetAsync<T>(
             string path,
-            CancellationToken cancellationToken = default(CancellationToken),
-            params object[] queryObjects)
+            CancellationToken cancellationToken = default(CancellationToken))
         {
-            var request = CreateRequestForPath(path, HttpMethod.Get, queryObjects);
+            return GetAsync<T>(path, null, cancellationToken);
+        }
 
+
+        private Task<T> GetAsync<T>(
+            string path,
+            IReadOnlyDictionary<string, string> queryParameters,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var request = CreateRequestForPath(HttpMethod.Get, path, BuildQueryString(queryParameters));
             return httpClient.SendAsync(request, cancellationToken)
                 .ContinueWithOrThrow(_ => AnalyseResponse<T>(code => code == HttpStatusCode.OK, _.Result), cancellationToken)
-                    .ContinueWith(__ =>
-                    {
-                        request?.Dispose();
-                        return __;
-                    }, cancellationToken).Unwrap();
-
+                .ContinueWith(__ =>
+                {
+                    request?.Dispose();
+                    return __;
+                }, cancellationToken).Unwrap();
         }
 
         private Task<TResult> PostAsync<TItem, TResult>(
@@ -616,7 +637,7 @@ namespace EasyNetQ.Management.Client
             TItem item,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var request = CreateRequestForPath(path, HttpMethod.Post);
+            var request = CreateRequestForPath(HttpMethod.Post, path, string.Empty);
 
             InsertRequestBody(request, item);
 
@@ -633,26 +654,24 @@ namespace EasyNetQ.Management.Client
                             request?.Dispose();
                             return __;
                         }, cancellationToken);
-
-                },cancellationToken).Unwrap();
+                }, cancellationToken).Unwrap();
         }
 
         private Task DeleteAsync(
             string path,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var request = CreateRequestForPath(path, HttpMethod.Delete);
-            
+            var request = CreateRequestForPath(HttpMethod.Delete, path, string.Empty);
+
             return httpClient.SendAsync(request, cancellationToken)
                 .ContinueWithOrThrow(_ =>
-                    AnalyseResponse(statusCode => statusCode == HttpStatusCode.NoContent, _.Result)
-                        .ContinueWith(__ =>
-                        {
-                            request?.Dispose();
-                            return __;
-                        }, cancellationToken).Unwrap()
+                        AnalyseResponse(statusCode => statusCode == HttpStatusCode.NoContent, _.Result)
+                            .ContinueWith(__ =>
+                            {
+                                request?.Dispose();
+                                return __;
+                            }, cancellationToken).Unwrap()
                     , cancellationToken);
-                
         }
 
         private Task PutAsync<T>(
@@ -660,8 +679,8 @@ namespace EasyNetQ.Management.Client
             T item = default(T),
             CancellationToken cancellationToken = default(CancellationToken)) where T : class
         {
-            var request = CreateRequestForPath(path, HttpMethod.Put);
-            
+            var request = CreateRequestForPath(HttpMethod.Put, path, string.Empty);
+
             if (item != default(T))
                 InsertRequestBody(request, item);
 
@@ -673,16 +692,15 @@ namespace EasyNetQ.Management.Client
                                                                          statusCode == HttpStatusCode.NoContent;
 
                     return AnalyseResponse(ResponseSucceeded, _.Result)
-                            .ContinueWith(__ =>
-                            {
-                                request?.Dispose();
-                                return __;
-                            }, cancellationToken).Unwrap();
+                        .ContinueWith(__ =>
+                        {
+                            request?.Dispose();
+                            return __;
+                        }, cancellationToken).Unwrap();
                 }, cancellationToken);
-            
         }
 
-        private Task AnalyseResponse(
+        private static Task AnalyseResponse(
             Func<HttpStatusCode, bool> success,
             HttpResponseMessage responseMessage)
         {
@@ -699,7 +717,7 @@ namespace EasyNetQ.Management.Client
             }
         }
 
-        private static Task<TResult> AnalyseResponse<TResult>(
+        private static Task<T> AnalyseResponse<T>(
             Func<HttpStatusCode, bool> success,
             HttpResponseMessage responseMessage)
         {
@@ -707,7 +725,7 @@ namespace EasyNetQ.Management.Client
             try
             {
                 if (success(httpStatusCode))
-                    return DeserializeResponseAsync<TResult>(responseMessage);
+                    return DeserializeResponseAsync<T>(responseMessage);
                 throw new UnexpectedHttpStatusCodeException(httpStatusCode);
             }
             finally
@@ -744,44 +762,31 @@ namespace EasyNetQ.Management.Client
                 .ContinueWith(_ => JsonConvert.DeserializeObject<T>(_.Result, Settings));
         }
 
-        private HttpRequestMessage CreateRequestForPath(string path, HttpMethod httpMethod,
-            IReadOnlyCollection<object> queryObjects = null)
+        private HttpRequestMessage CreateRequestForPath(HttpMethod httpMethod, string path, string query)
         {
-            var queryString = BuildQueryString(queryObjects);
-
-            var uri = new Uri($"{HostUrl}:{PortNumber}/api/{path}{queryString}");
+            var uri = new Uri($"{HostUrl}:{PortNumber}/api/{path}{query ?? string.Empty}");
             var request = new HttpRequestMessage(httpMethod, uri);
-
             configureRequest(request);
-
             return request;
         }
 
-        // Very simple query-string builder. 
-        private static string BuildQueryString(IReadOnlyCollection<object> queryObjects)
+        private static string BuildQueryString(IReadOnlyDictionary<string, string> queryParameters)
         {
-            if (queryObjects == null || queryObjects.Count == 0)
+            if (queryParameters == null || queryParameters.Count == 0)
                 return string.Empty;
 
             var queryStringBuilder = new StringBuilder("?");
             var first = true;
-            // One or more query objects can be used to build the query
-            foreach (var query in queryObjects)
+            foreach (var parameter in queryParameters)
             {
-                if (query == null)
-                    continue;
-                // All public properties are added to the query on the format property_name=value
-                var type = query.GetType();
-                foreach (var prop in type.GetProperties())
-                {
-                    var name = Regex.Replace(prop.Name, "([a-z])([A-Z])", "$1_$2").ToLower();
-                    var value = prop.GetValue(query, null);
-                    if (!first)
-                        queryStringBuilder.Append("&");
-                    queryStringBuilder.AppendFormat("{0}={1}", name, value ?? string.Empty);
-                    first = false;
-                }
+                if (!first)
+                    queryStringBuilder.Append("&");
+                var name = ParameterNameRegex.Replace(parameter.Key, "$1_$2").ToLower();
+                var value = parameter.Value ?? "";
+                queryStringBuilder.AppendFormat("{0}={1}", name, value);
+                first = false;
             }
+
             return queryStringBuilder.ToString();
         }
 
@@ -805,9 +810,27 @@ namespace EasyNetQ.Management.Client
             return propertiesKey.Replace("%5F", "%255F");
         }
 
+        private static IReadOnlyDictionary<string, string> MergeQueryParameters(params IReadOnlyDictionary<string, string>[] multipleQueryParameters)
+        {
+            if (multipleQueryParameters == null || multipleQueryParameters.Length == 0)
+                return null;
+
+            var mergedQueryParameters = new Dictionary<string, string>();
+            foreach (var queryParameters in multipleQueryParameters)
+            {
+                if (queryParameters == null)
+                    continue;
+
+                foreach (var kvp in queryParameters)
+                    mergedQueryParameters[kvp.Key] = kvp.Value;
+            }
+
+            return mergedQueryParameters;
+        }
+
         public void Dispose()
         {
-            httpClient?.Dispose();
+            httpClient.Dispose();
         }
     }
 }
