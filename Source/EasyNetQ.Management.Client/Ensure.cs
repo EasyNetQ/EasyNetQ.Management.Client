@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace EasyNetQ.Management.Client
 {
-    public static class Ensure
+    internal static class Ensure
     {
         /// <summary>
         /// Ensures that the specified argument is not null.

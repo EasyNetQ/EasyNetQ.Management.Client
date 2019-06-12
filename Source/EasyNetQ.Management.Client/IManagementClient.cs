@@ -103,7 +103,7 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<IEnumerable<Vhost>> GetVHostsAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IEnumerable<Vhost>> GetVhostsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// A list of all users.
@@ -118,6 +118,13 @@ namespace EasyNetQ.Management.Client
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<IEnumerable<Permission>> GetPermissionsAsync(CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// A list of all topic permissions for all users.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<IEnumerable<TopicPermission>> GetTopicPermissionsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Closes the given connection
@@ -247,7 +254,7 @@ namespace EasyNetQ.Management.Client
         /// <param name="bindingInfo">properties of the binding</param>
         /// <param name="cancellationToken"></param>
         /// <returns>The binding that was created</returns>
-        Task CreateBinding(
+        Task CreateBindingAsync(
             [NotNull] Exchange exchange,
             [NotNull] Queue queue,
             [NotNull] BindingInfo bindingInfo,
@@ -260,7 +267,7 @@ namespace EasyNetQ.Management.Client
         /// <param name="destinationExchange">the destination exchange</param>
         /// <param name="bindingInfo">properties of the binding</param>
         /// <param name="cancellationToken"></param>
-        Task CreateBinding(
+        Task CreateBindingAsync(
             [NotNull] Exchange sourceExchange,
             [NotNull] Exchange destinationExchange,
             [NotNull] BindingInfo bindingInfo,
@@ -303,10 +310,10 @@ namespace EasyNetQ.Management.Client
         /// <summary>
         /// Create a new virtual host
         /// </summary>
-        /// <param name="virtualHostName">The name of the new virtual host</param>
+        /// <param name="vhostName">The name of the new virtual host</param>
         /// <param name="cancellationToken"></param>
-        Task<Vhost> CreateVirtualHostAsync(
-            string virtualHostName,
+        Task<Vhost> CreateVhostAsync(
+            string vhostName,
             CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
@@ -314,7 +321,7 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="vhost">The virtual host to delete</param>
         /// <param name="cancellationToken"></param>
-        Task DeleteVirtualHostAsync(
+        Task DeleteVhostAsync(
             [NotNull] Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken));
 
@@ -322,6 +329,7 @@ namespace EasyNetQ.Management.Client
         /// Enable tracing on given virtual host.
         /// </summary>
         /// <param name="vhost">The virtual host on which to enable tracing</param>
+        /// <param name="cancellationToken"></param>
         Task EnableTracingAsync(
             [NotNull] Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken));
@@ -330,6 +338,7 @@ namespace EasyNetQ.Management.Client
         /// Disables tracing on given virtual host.
         /// </summary>
         /// <param name="vhost">The virtual host on which to disable tracing</param>
+        /// <param name="cancellationToken"></param>
         Task DisableTracingAsync(
             [NotNull] Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken));
@@ -368,6 +377,24 @@ namespace EasyNetQ.Management.Client
         /// <param name="cancellationToken"></param>
         Task DeletePermissionAsync(
             [NotNull] Permission permission,
+            CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Create a topic permission
+        /// </summary>
+        /// <param name="topicPermissionInfo">The topic permission to create</param>
+        /// <param name="cancellationToken"></param>
+        Task CreateTopicPermissionAsync(
+            [NotNull] TopicPermissionInfo topicPermissionInfo,
+            CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Delete a topic permission
+        /// </summary>
+        /// <param name="permission">The topic permission to delete</param>
+        /// <param name="cancellationToken"></param>
+        Task DeleteTopicPermissionAsync(
+            [NotNull] TopicPermission permission,
             CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
@@ -455,7 +482,7 @@ namespace EasyNetQ.Management.Client
         /// </summary>
         /// <param name="policy">Policy to create</param>
         /// <param name="cancellationToken"></param>
-        Task CreatePolicy(
+        Task CreatePolicyAsync(
             [NotNull] Policy policy,
             CancellationToken cancellationToken = default(CancellationToken));
 
@@ -489,12 +516,12 @@ namespace EasyNetQ.Management.Client
         /// Delete a parameter from the cluster
         /// </summary>
         /// <param name="componentName"></param>
-        /// <param name="vhost"></param>
+        /// <param name="vhostName"></param>
         /// <param name="name"></param>
         /// <param name="cancellationToken"></param>
         Task DeleteParameterAsync(
             string componentName,
-            string vhost,
+            string vhostName,
             string name,
             CancellationToken cancellationToken = default(CancellationToken));
 
