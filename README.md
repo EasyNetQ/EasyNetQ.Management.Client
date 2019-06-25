@@ -2,9 +2,9 @@
 [![Travis build Status](https://travis-ci.org/EasyNetQ/EasyNetQ.Management.Client.svg?branch=master)](https://travis-ci.org/EasyNetQ/EasyNetQ.Management.Client)
 ----------
 
-![EasyNetQ Logo](https://raw.githubusercontent.com/wiki/EasyNetQ/EasyNetQ/images/logo_design_150.png)
+![EasyNetQ Logo](easynetq_logo.png)
 
-##EasyNetQ.Management.Client
+## EasyNetQ.Management.Client
 
 EasyNetQ.Management.Client is a .NET client proxy for the RabbitMQ Management API. This lets you control all aspects for your
 RabbitMQ broker from .NET code, including creating virtual hosts and users; setting permissions; monitoring queues, 
