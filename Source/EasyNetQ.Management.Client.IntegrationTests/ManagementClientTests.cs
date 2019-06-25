@@ -243,7 +243,9 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			var vhost = await managementClient.CreateVhostAsync(testVHost).ConfigureAwait(false);
 			vhost.Name.ShouldEqual(testVHost);
 
-			await CreateTestQueueInVhost(testQueue, vhost).ConfigureAwait(false);
+            var queueName = $"{testVHost}_{testQueue}";
+
+			await CreateTestQueueInVhost(queueName, vhost).ConfigureAwait(false);
 			(await managementClient.GetQueuesAsync(vhost).ConfigureAwait(false)).ToList().Count.ShouldBeGreaterThan(0);
 		}
 
