@@ -238,6 +238,16 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		}
 
 		[Fact]
+		public async Task Should_get_queues_by_vhost()
+		{
+			var vhost = await managementClient.CreateVhostAsync(testVHost).ConfigureAwait(false);
+			vhost.Name.ShouldEqual(testVHost);
+
+			await CreateTestQueueInVhost(testQueue, vhost).ConfigureAwait(false);
+			(await managementClient.GetQueuesAsync(vhost).ConfigureAwait(false)).ToList().Count.ShouldBeGreaterThan(0);
+		}
+
+		[Fact]
 		public async Task Should_be_able_to_get_a_queue_by_name()
 		{
 			await CreateTestQueue(testQueue).ConfigureAwait(false);
@@ -409,6 +419,11 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 		private async Task<Queue> CreateTestQueue(string queueName)
 		{
 			var vhost = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            return await CreateTestQueueInVhost(queueName, vhost);
+		}
+
+		private async Task<Queue> CreateTestQueueInVhost(string queueName, Vhost vhost)
+		{
 			var queueInfo = new QueueInfo(queueName);
 			await managementClient.CreateQueueAsync(queueInfo, vhost).ConfigureAwait(false);
 			return await managementClient.GetQueueAsync(queueName, vhost).ConfigureAwait(false);

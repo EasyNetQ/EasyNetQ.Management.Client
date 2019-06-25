@@ -92,6 +92,14 @@ namespace EasyNetQ.Management.Client
         Task<IEnumerable<Queue>> GetQueuesAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
+        /// A list of all queues for a virtual host.
+        /// </summary>
+        /// <param name="vhost"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Queue>> GetQueuesAsync(Vhost vhost, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
         /// A list of all bindings.
         /// </summary>
         /// <param name="cancellationToken"></param>
