@@ -267,6 +267,11 @@ namespace EasyNetQ.Management.Client
             return GetAsync<IEnumerable<Queue>>("queues", cancellationToken);
         }
 
+        public Task<IEnumerable<Queue>> GetQueuesAsync(Vhost vhost, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return GetAsync<IEnumerable<Queue>>($"queues/{SanitiseVhostName(vhost.Name)}", cancellationToken);
+        }
+
         public async Task<Queue> CreateQueueAsync(QueueInfo queueInfo, Vhost vhost,
             CancellationToken cancellationToken = default(CancellationToken))
         {
