@@ -141,7 +141,23 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 			}
 		}
 
-		[Fact]
+        [Fact]
+        public async Task Should_get_channels_per_connection()
+        {
+            var connections = await managementClient.GetConnectionsAsync().ConfigureAwait(false);
+            foreach (var connection in connections)
+            {
+                Console.Out.WriteLine("connection.Name = {0}", connection.Name);
+                var channels = await managementClient.GetChannelsAsync(connection).ConfigureAwait(false);
+
+                foreach (var channel in channels)
+                {
+                    Console.Out.WriteLine("\tchannel.Name = {0}", channel.Name);
+                }
+            }
+        }
+
+        [Fact]
 		public async Task Should_get_exchanges()
 		{
 			var exchanges = await managementClient.GetExchangesAsync().ConfigureAwait(false);

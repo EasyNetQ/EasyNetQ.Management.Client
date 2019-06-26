@@ -173,6 +173,13 @@ namespace EasyNetQ.Management.Client
             return GetAsync<IEnumerable<Channel>>("channels", cancellationToken);
         }
 
+        public Task<IEnumerable<Channel>> GetChannelsAsync(
+            Connection connection,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return GetAsync<IEnumerable<Channel>>($"connections/{connection.Name}/channels", cancellationToken);
+        }
+
         public Task<Channel> GetChannelAsync(string channelName, GetRatesCriteria ratesCriteria = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {

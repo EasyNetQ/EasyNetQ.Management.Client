@@ -66,6 +66,14 @@ namespace EasyNetQ.Management.Client
         Task<IEnumerable<Channel>> GetChannelsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
+        /// A list of all open channels for the given connection.
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Channel>> GetChannelsAsync(Connection connection, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
         /// Gets the channel. This returns more detail, including consumers than the GetChannels method.
         /// </summary>
         /// <returns>The channel.</returns>
