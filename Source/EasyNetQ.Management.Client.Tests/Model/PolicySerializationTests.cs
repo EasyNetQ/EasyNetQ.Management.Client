@@ -126,6 +126,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
             }, ManagementClient.Settings);
             Console.WriteLine(serializedMessage);
             Assert.DoesNotContain("ha-params", serializedMessage);
+            Assert.DoesNotContain("ha-sync-batch-size", serializedMessage);
             Assert.DoesNotContain("federation_upstream_set", serializedMessage);
         }
     }

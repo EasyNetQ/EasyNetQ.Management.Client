@@ -10,6 +10,8 @@ namespace EasyNetQ.Management.Client.Model
         public HaParams HaParams;
         [JsonProperty("ha-sync-mode", NullValueHandling = NullValueHandling.Ignore)]
         public HaSyncMode? HaSyncMode;
+        [JsonProperty("ha-sync-batch-size", NullValueHandling = NullValueHandling.Ignore)]
+        public int? HaSyncBatchSize;
         [JsonProperty("federation-upstream", NullValueHandling = NullValueHandling.Ignore)]
         public string FederationUpstream { get; set; }
         [JsonProperty("federation-upstream-set", NullValueHandling = NullValueHandling.Ignore)]
