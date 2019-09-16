@@ -32,10 +32,11 @@ namespace EasyNetQ.Management.Client.Model
 		public string ConsumerTag { get; set; }
 		public bool Exclusive { get; set; }
 		public bool AckRequired { get; set; }
-		public ConsumerArguments Arguments { get; set; }
+        [JsonConverter(typeof(ObjectOrEmptyArrayConverter<ConsumerArguments>))]
+        public ConsumerArguments Arguments { get; set; }
         [JsonConverter(typeof(ObjectOrEmptyArrayConverter<ChannelDetail>))]
         public ChannelDetail ChannelDetails { get; set; }
-	}
+    }
 
     public class ChannelDetail
     {
