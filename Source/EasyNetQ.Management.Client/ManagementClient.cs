@@ -63,7 +63,7 @@ namespace EasyNetQ.Management.Client
             TimeSpan? timeout = null,
             Action<HttpRequestMessage> configureRequest = null,
             bool ssl = false,
-            Action<HttpClientHandler> handlerOverride = null)
+            Action<HttpClientHandler> handlerConfigurator  = null)
 #else
         public ManagementClient(
             string hostUrl,
@@ -73,8 +73,8 @@ namespace EasyNetQ.Management.Client
             TimeSpan? timeout = null,
             Action<HttpRequestMessage> configureRequest = null,
             bool ssl = false,
-            Action<HttpClientHandler> handlerOverride = null)
-            : this(hostUrl, username, password.Secure(), portNumber, timeout, configureRequest, ssl, handlerOverride)
+            Action<HttpClientHandler> handlerConfigurator  = null)
+            : this(hostUrl, username, password.Secure(), portNumber, timeout, configureRequest, ssl, handlerConfigurator )
         {
         }
 
@@ -86,7 +86,7 @@ namespace EasyNetQ.Management.Client
             TimeSpan? timeout = null,
             Action<HttpRequestMessage> configureRequest = null,
             bool ssl = false,
-            Action<HttpClientHandler> handlerOverride = null)
+            Action<HttpClientHandler> handlerConfigurator  = null)
 #endif
         {
             if (string.IsNullOrEmpty(hostUrl))
@@ -135,7 +135,7 @@ namespace EasyNetQ.Management.Client
                 Credentials = new NetworkCredential(username, password)
             };
 
-            handlerOverride?.Invoke(httpHandler);
+            handlerConfigurator ?.Invoke(httpHandler);
 
             httpClient = new HttpClient(httpHandler)
             {
