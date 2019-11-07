@@ -61,8 +61,9 @@ namespace EasyNetQ.Management.Client
             int portNumber = 15672,
             TimeSpan? timeout = null,
             Action<HttpRequestMessage> configureRequest = null,
-            bool ssl = false)
-            : this(hostUrl, username, password.Secure(), portNumber, timeout, configureRequest, ssl)
+            bool ssl = false,
+            Action<HttpClientHandler> handlerConfigurator = null)
+            : this(hostUrl, username, password.Secure(), portNumber, timeout, configureRequest, ssl, handlerConfigurator)
         {
         }
 
@@ -73,7 +74,8 @@ namespace EasyNetQ.Management.Client
             int portNumber = 15672,
             TimeSpan? timeout = null,
             Action<HttpRequestMessage> configureRequest = null,
-            bool ssl = false)
+            bool ssl = false,
+            Action<HttpClientHandler> handlerConfigurator = null)
         {
             if (string.IsNullOrEmpty(hostUrl))
             {
@@ -121,11 +123,14 @@ namespace EasyNetQ.Management.Client
             PortNumber = portNumber;
             this.configureRequest = configureRequest;
 
-
-            httpClient = new HttpClient(new HttpClientHandler
+            var httpHandler = new HttpClientHandler
             {
                 Credentials = new NetworkCredential(username, password)
-            })
+            };
+
+            handlerConfigurator?.Invoke(httpHandler);
+
+            httpClient = new HttpClient(httpHandler)
             {
                 Timeout = timeout ?? defaultTimeout
             };
