@@ -1,4 +1,6 @@
-﻿namespace EasyNetQ.Management.Client.Model
+﻿using System.Collections.Generic;
+
+namespace EasyNetQ.Management.Client.Model
 {
     public class GetRatesCriteria
     {
@@ -15,5 +17,14 @@
 
         public int MsgRatesAge { get; private set; }
         public int MsgRatesIncr { get; private set; }
+
+        public IReadOnlyDictionary<string, string> ToQueryParameters()
+        {
+            return new Dictionary<string, string>
+            {
+                {nameof(MsgRatesAge), MsgRatesAge.ToString()},
+                {nameof(MsgRatesIncr), MsgRatesIncr.ToString()}
+            };
+        }
     }
 }

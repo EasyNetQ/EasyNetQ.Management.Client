@@ -47,14 +47,14 @@ namespace EasyNetQ.Management.Client.Serialization
                 }
             }
 
-            IDictionary<String, Object> properties = new Dictionary<string, object>();
+            IDictionary<string, object> properties = new Dictionary<string, object>();
 
             while (reader.Read())
             {
                 switch (reader.TokenType)
                 {
                     case JsonToken.PropertyName:
-                        String propertyName = ConvertParameterNameToDotNetConvention(reader.Value.ToString());
+                        var propertyName = ConvertParameterNameToDotNetConvention(reader.Value.ToString());
                         if (!reader.Read())
                         {
                             throw new Exception("Unexpected JsonReader End");
@@ -90,14 +90,14 @@ namespace EasyNetQ.Management.Client.Serialization
                 }
             }
 
-            IDictionary<String, Object> properties = new Dictionary<string, object>();
+            IDictionary<string, object> properties = new Dictionary<string, object>();
 
             while (reader.Read())
             {
                 switch (reader.TokenType)
                 {
                     case JsonToken.PropertyName:
-                        String propertyName = ConvertParameterNameToDotNetConvention(reader.Value.ToString());
+                        var propertyName = ConvertParameterNameToDotNetConvention(reader.Value.ToString());
                         if (!reader.Read())
                         {
                             throw new Exception("Unexpected JsonReader End");
@@ -122,14 +122,14 @@ namespace EasyNetQ.Management.Client.Serialization
 
         private static string ConvertParameterNameToDotNetConvention(string str)
         {
-            return String.Join("", 
+            return string.Join("", 
                 str
                 .Replace('.','_') //Deal with things like 'basic.nack' --> 'basic_nack'
                 .Split('_') //Deal with things like publisher_confirms --> PublisherConfirms
                 .Select(CapitaliseFirstLetter));
         }
 
-        private static String CapitaliseFirstLetter(String str)
+        private static string CapitaliseFirstLetter(string str)
         {
             if (string.IsNullOrEmpty(str))
             {
