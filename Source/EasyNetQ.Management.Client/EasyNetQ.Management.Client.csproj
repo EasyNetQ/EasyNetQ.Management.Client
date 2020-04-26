@@ -24,6 +24,11 @@
     <RepositoryUrl>https://github.com/EasyNetQ/EasyNetQ.Management.Client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>RabbitMQ Management.API .NET C# netstandard</PackageTags>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='net461'">
@@ -41,6 +46,7 @@
     <PackageReference Include="System.Security.SecureString" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 </Project>

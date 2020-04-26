@@ -175,9 +175,9 @@ Task("NuGetPush")
     .IsDependentOn("Pack")
     .Does(() =>
     {
-        var packageSearchPattern = System.IO.Path.Combine(artifactsDir, "*.nupkg");
         var nuGetPushSettings = new DotNetCoreNuGetPushSettings { Source = "https://www.nuget.org/api/v2/package", ApiKey = nuGetApiKey };
-        DotNetCoreNuGetPush(packageSearchPattern, nuGetPushSettings);
+        DotNetCoreNuGetPush(System.IO.Path.Combine(artifactsDir, "*.nupkg"), nuGetPushSettings);
+        DotNetCoreNuGetPush(System.IO.Path.Combine(artifactsDir, "*.snupkg"), nuGetPushSettings);
     });
 
 RunTarget(target);
