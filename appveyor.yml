@@ -1,5 +1,5 @@
 version: Build {build}
-image: Visual Studio 2017
+image: Visual Studio 2019
 install:
   - ps: |
       $dockerPathName = (Get-WmiObject win32_service | ?{$_.Name -eq 'docker'}).PathName
