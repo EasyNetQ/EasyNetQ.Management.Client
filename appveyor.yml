@@ -33,7 +33,7 @@ build_script:
       if ($LastExitCode -ne 0) { exit $LastExitCode }
 test: off
 artifacts:
-  - path: Tools\build\artifacts\*.nupkg
+  - path: Tools\build\artifacts\*.s?nupkg
 deploy:
   provider: NuGet
   api_key:
