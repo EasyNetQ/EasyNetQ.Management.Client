@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyNetQ.Management.Client.Model;
+using FluentAssertions;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests
@@ -76,9 +77,9 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var updatedUser = await managementClient.ChangeUserPasswordAsync(testUser, "newPassword")
                 .ConfigureAwait(false);
 
-            updatedUser.Name.ShouldEqual(user.Name);
-            updatedUser.Tags.ShouldEqual(user.Tags);
-            updatedUser.PasswordHash.ShouldNotEqual(user.PasswordHash);
+            updatedUser.Name.Should().Be(user.Name);
+            updatedUser.Tags.Should().Be(user.Tags);
+            updatedUser.PasswordHash.Should().NotBe(user.PasswordHash);
         }
 
         [Fact(Skip = "Requires at least a connection")]
@@ -105,7 +106,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             (await managementClient.CreateQueueAsync(new QueueInfo(testQueue), Configuration.RabbitMqVirtualHost)
                     .ConfigureAwait(false))
-                .Name.ShouldEqual(testQueue);
+                .Name.Should().Be(testQueue);
         }
 
         [Fact]
@@ -117,8 +118,8 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             queueInfo.Arguments.Add(argumentKey, exchangeName);
             var queue = await managementClient.CreateQueueAsync(queueInfo, Configuration.RabbitMqVirtualHost)
                 .ConfigureAwait(false);
-            queue.Arguments[argumentKey].ShouldNotBeNull();
-            queue.Arguments[argumentKey].ShouldEqual(exchangeName);
+            queue.Arguments[argumentKey].Should().NotBeNull();
+            queue.Arguments[argumentKey].Should().Be(exchangeName);
         }
 
         [Fact]
@@ -127,7 +128,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var queueInfo = new QueueInfo(testQueueWithPlusChar);
             var queue = await managementClient.CreateQueueAsync(queueInfo, Configuration.RabbitMqVirtualHost)
                 .ConfigureAwait(false);
-            queue.Name.ShouldEqual(testQueueWithPlusChar);
+            queue.Name.Should().Be(testQueueWithPlusChar);
         }
 
         [Fact]
@@ -136,7 +137,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var userInfo = new UserInfo(testUser, "topSecret").AddTag("administrator");
 
             var user = await managementClient.CreateUserAsync(userInfo).ConfigureAwait(false);
-            user.Name.ShouldEqual(testUser);
+            user.Name.Should().Be(testUser);
         }
 
         [Fact]
@@ -149,7 +150,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var userInfo = new UserInfo(testUser, passwordHash, true).AddTag("administrator");
 
             var user = await managementClient.CreateUserAsync(userInfo).ConfigureAwait(false);
-            user.Name.ShouldEqual(testUser);
+            user.Name.Should().Be(testUser);
         }
 
         [Fact]
@@ -158,7 +159,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var userInfo = new UserInfo(testUser, "topSecret").AddTag("policymaker");
 
             var user = await managementClient.CreateUserAsync(userInfo).ConfigureAwait(false);
-            user.Name.ShouldEqual(testUser);
+            user.Name.Should().Be(testUser);
         }
 
         [Fact]
@@ -168,7 +169,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var userInfo = new UserInfo(testUser, "", true).AddTag("administrator");
 
             var user = await managementClient.CreateUserAsync(userInfo).ConfigureAwait(false);
-            user.Name.ShouldEqual(testUser);
+            user.Name.Should().Be(testUser);
         }
 
         [Fact]
@@ -241,7 +242,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         public async Task Should_be_able_to_create_an_exchange()
         {
             var exchange = await CreateExchange(testExchange).ConfigureAwait(false);
-            exchange.Name.ShouldEqual(testExchange);
+            exchange.Name.Should().Be(testExchange);
         }
 
         [Fact]
@@ -250,7 +251,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var exhangeInfo = new ExchangeInfo(testExchangetestQueueWithPlusChar, "direct");
             var queue = await managementClient.CreateExchangeAsync(exhangeInfo, Configuration.RabbitMqVirtualHost)
                 .ConfigureAwait(false);
-            queue.Name.ShouldEqual(testExchangetestQueueWithPlusChar);
+            queue.Name.Should().Be(testExchangetestQueueWithPlusChar);
         }
 
         [Fact]
@@ -594,7 +595,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
             var bindings = (await managementClient.GetBindingsAsync(exchange, queue).ConfigureAwait(false)).ToArray();
 
-            bindings.ShouldNotEqual(0);
+            bindings.Length.Should().NotBe(0);
 
             foreach (var binding in bindings)
             {
@@ -612,7 +613,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var bindings =
                 (await managementClient.GetBindingsAsync(exchange1, exchange2).ConfigureAwait(false)).ToArray();
 
-            bindings.ShouldNotEqual(0);
+            bindings.Length.Should().NotBe(0);
 
             foreach (var binding in bindings)
             {
@@ -627,7 +628,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             await CreateTestQueue(testQueue).ConfigureAwait(false);
             var queue = await managementClient.GetQueueAsync(testQueue, Configuration.RabbitMqVirtualHost)
                 .ConfigureAwait(false);
-            queue.Name.ShouldEqual(testQueue);
+            queue.Name.Should().Be(testQueue);
         }
 
         [Fact]
@@ -641,10 +642,10 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var queue = await managementClient.GetQueueAsync(testQueue, Configuration.RabbitMqVirtualHost,
                 new GetLengthsCriteria(age, increment), new GetRatesCriteria(age, increment)).ConfigureAwait(false);
 
-            queue.Name.ShouldEqual(testQueue);
-            queue.MessagesDetails.Samples.Count.ShouldBeGreaterThan(0);
-            queue.MessagesReadyDetails.Samples.Count.ShouldBeGreaterThan(0);
-            queue.MessagesUnacknowledgedDetails.Samples.Count.ShouldBeGreaterThan(0);
+            queue.Name.Should().Be(testQueue);
+            queue.MessagesDetails.Samples.Count.Should().BeGreaterThan(0);
+            queue.MessagesReadyDetails.Samples.Count.Should().BeGreaterThan(0);
+            queue.MessagesUnacknowledgedDetails.Samples.Count.Should().BeGreaterThan(0);
         }
 
         [Fact]
@@ -659,10 +660,10 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                 .GetQueueAsync(testQueue, Configuration.RabbitMqVirtualHost, new GetLengthsCriteria(age, increment))
                 .ConfigureAwait(false);
 
-            queue.Name.ShouldEqual(testQueue);
-            queue.MessagesDetails.Samples.Count.ShouldBeGreaterThan(0);
-            queue.MessagesReadyDetails.Samples.Count.ShouldBeGreaterThan(0);
-            queue.MessagesUnacknowledgedDetails.Samples.Count.ShouldBeGreaterThan(0);
+            queue.Name.Should().Be(testQueue);
+            queue.MessagesDetails.Samples.Count.Should().BeGreaterThan(0);
+            queue.MessagesReadyDetails.Samples.Count.Should().BeGreaterThan(0);
+            queue.MessagesUnacknowledgedDetails.Samples.Count.Should().BeGreaterThan(0);
         }
 
         [Fact]
@@ -673,7 +674,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             await CreateTestQueue(testQueue).ConfigureAwait(false);
             var queue = await managementClient.GetQueueAsync(testQueue, Configuration.RabbitMqVirtualHost,
                 ratesCriteria: new GetRatesCriteria(age, increment)).ConfigureAwait(false);
-            queue.Name.ShouldEqual(testQueue);
+            queue.Name.Should().Be(testQueue);
         }
 
         [Fact]
@@ -682,7 +683,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             await CreateTestQueue(testQueueWithPlusChar).ConfigureAwait(false);
             var queue = await managementClient.GetQueueAsync(testQueueWithPlusChar, Configuration.RabbitMqVirtualHost)
                 .ConfigureAwait(false);
-            queue.Name.ShouldEqual(testQueueWithPlusChar);
+            queue.Name.Should().Be(testQueueWithPlusChar);
         }
 
         [Fact]
@@ -691,7 +692,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var userInfo = new UserInfo(testUser, "topSecret");
             await managementClient.CreateUserAsync(userInfo).ConfigureAwait(false);
 
-            (await managementClient.GetUserAsync(testUser).ConfigureAwait(false)).Name.ShouldEqual(testUser);
+            (await managementClient.GetUserAsync(testUser).ConfigureAwait(false)).Name.Should().Be(testUser);
         }
 
         [Fact]
@@ -708,7 +709,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var vhost = new Vhost {Name = vhostName};
             var exchange = await managementClient.GetExchangeAsync(testExchange, vhost).ConfigureAwait(false);
 
-            exchange.Name.ShouldEqual(testExchange);
+            exchange.Name.Should().Be(testExchange);
         }
 
         [Fact]
@@ -716,7 +717,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             await managementClient.CreateVhostAsync(testVHost).ConfigureAwait(false);
             var vhost = await managementClient.GetVhostAsync(testVHost).ConfigureAwait(false);
-            vhost.Name.ShouldEqual(testVHost);
+            vhost.Name.Should().Be(testVHost);
         }
 
         [Fact]
@@ -768,7 +769,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var result = await managementClient.PublishAsync(exchange, publishInfo).ConfigureAwait(false);
 
             // the testExchange isn't bound to a queue
-            result.Routed.ShouldBeFalse();
+            result.Routed.Should().BeFalse();
         }
 
         [Fact]
@@ -780,14 +781,14 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var permissionInfo = new PermissionInfo(user, vhost);
             await managementClient.CreatePermissionAsync(permissionInfo).ConfigureAwait(false);
 
-            (await managementClient.IsAliveAsync(vhost).ConfigureAwait(false)).ShouldBeTrue();
+            (await managementClient.IsAliveAsync(vhost).ConfigureAwait(false)).Should().BeTrue();
         }
 
         [Fact]
         public async Task Should_create_a_virtual_host()
         {
             var vhost = await managementClient.CreateVhostAsync(testVHost).ConfigureAwait(false);
-            vhost.Name.ShouldEqual(testVHost);
+            vhost.Name.Should().Be(testVHost);
         }
 
         [Fact]
@@ -984,7 +985,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             var definitions = await managementClient.GetDefinitionsAsync().ConfigureAwait(false);
 
-            definitions.RabbitVersion[0].ShouldEqual('3');
+            definitions.RabbitVersion[0].Should().Be('3');
         }
 
         [Fact]
@@ -1000,7 +1001,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             var federations = await managementClient.GetFederationAsync().ConfigureAwait(false);
 
-            federations.Single().Node.ShouldEqual($"rabbit@{rabbitHostName}");
+            federations.Single().Node.Should().Be($"rabbit@{rabbitHostName}");
         }
 
         [Fact]
@@ -1008,8 +1009,8 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             var nodes = (await managementClient.GetNodesAsync().ConfigureAwait(false)).ToList();
 
-            nodes.Count.ShouldNotEqual(0);
-            nodes[0].Name.ShouldEqual($"rabbit@{rabbitHostName}");
+            nodes.Count.Should().NotBe(0);
+            nodes[0].Name.Should().Be($"rabbit@{rabbitHostName}");
         }
 
         [Fact]
@@ -1048,19 +1049,19 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         public async Task Should_get_queues()
         {
             await CreateTestQueue(testQueue).ConfigureAwait(false);
-            (await managementClient.GetQueuesAsync().ConfigureAwait(false)).ToList().Count.ShouldBeGreaterThan(0);
+            (await managementClient.GetQueuesAsync().ConfigureAwait(false)).ToList().Count.Should().BeGreaterThan(0);
         }
 
         [Fact]
         public async Task Should_get_queues_by_vhost()
         {
             var vhost = await managementClient.CreateVhostAsync(testVHost).ConfigureAwait(false);
-            vhost.Name.ShouldEqual(testVHost);
+            vhost.Name.Should().Be(testVHost);
 
             var queueName = $"{testVHost}_{testQueue}";
 
             await CreateTestQueueInVhost(queueName, vhost).ConfigureAwait(false);
-            (await managementClient.GetQueuesAsync(vhost).ConfigureAwait(false)).ToList().Count.ShouldBeGreaterThan(0);
+            (await managementClient.GetQueuesAsync(vhost).ConfigureAwait(false)).ToList().Count.Should().BeGreaterThan(0);
         }
 
         [Fact]

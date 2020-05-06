@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using EasyNetQ.Management.Client.Model;
+using FluentAssertions;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -46,7 +47,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
         [Fact]
         public void Should_read_exactly_ha_properly()
         {
-            _policy.Length.ShouldEqual(3);
+            _policy.Length.Should().Be(3);
             var exactlyPolicies = _policy.Where(p => p.Name == "ha-duplicate").ToList();
             Assert.Single(exactlyPolicies);
             var policy = exactlyPolicies[0];
@@ -61,7 +62,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
         [Fact]
         public void Should_read_nodes_ha_properly()
         {
-            _policy.Length.ShouldEqual(3);
+            _policy.Length.Should().Be(3);
             var mirrorTestPolicies = _policy.Where(p => p.Name == "mirror_test").ToList();
             Assert.Single(mirrorTestPolicies);
             var policy = mirrorTestPolicies.First();
