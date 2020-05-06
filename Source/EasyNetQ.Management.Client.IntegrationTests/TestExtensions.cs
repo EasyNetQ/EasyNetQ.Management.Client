@@ -5,7 +5,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 {
     public static class TestExtensions
     {
-        public static T ShouldNotBeNull<T>(this T obj) where T:class
+        public static T ShouldNotBeNull<T>(this T obj) where T : class
         {
             Assert.NotNull(obj);
             return obj;
