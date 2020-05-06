@@ -1,5 +1,6 @@
 version: Build {build}
-image: Visual Studio 2017
+skip_branch_with_pr: true
+image: Visual Studio 2019
 install:
   - ps: |
       $dockerPathName = (Get-WmiObject win32_service | ?{$_.Name -eq 'docker'}).PathName
@@ -8,12 +9,7 @@ install:
       Get-Content $dockerConfigFile
       $integTestsConfigFile = '.\Source\EasyNetQ.Management.Client.IntegrationTests\settings.json'
       $integTestsConfig = Get-Content $integTestsConfigFile
-      $integTestsConfig -replace ("""dockerHttpApiUri"": ""http://127.0.0.1:4243""", """dockerHttpApiUri"": ""npipe://./pipe/docker_engine_windows""") | Set-Content $integTestsConfigFile
-      $DOTNET_INSTALL_DIR = $(Join-Path (Get-Location) 'dotnetsdk')
-      powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://dot.net/v1/dotnet-install.ps1'))) -Version 1.1.9 -InstallDir $DOTNET_INSTALL_DIR -NoPath"
-      powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://dot.net/v1/dotnet-install.ps1'))) -Version 2.1.201 -InstallDir $DOTNET_INSTALL_DIR -NoPath"
-      powershell -NoProfile -ExecutionPolicy Unrestricted -Command "&([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://dot.net/v1/dotnet-install.ps1'))) -Version 2.1.301 -InstallDir $DOTNET_INSTALL_DIR -NoPath"
-      $env:Path = "$DOTNET_INSTALL_DIR;$env:Path"
+      $integTestsConfig -replace ("""dockerHttpApiUri"": ""http://127.0.0.1:2375""", """dockerHttpApiUri"": ""npipe://./pipe/docker_engine_windows""") | Set-Content $integTestsConfigFile
 before_build:
   - ps: |
       $mostRecentTag = git describe --abbrev=0 --tags --always
