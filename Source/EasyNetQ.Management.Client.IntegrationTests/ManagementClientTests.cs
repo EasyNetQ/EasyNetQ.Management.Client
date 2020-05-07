@@ -595,13 +595,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
             var bindings = (await managementClient.GetBindingsAsync(exchange, queue).ConfigureAwait(false)).ToArray();
 
-            bindings.Length.Should().NotBe(0);
-
-            foreach (var binding in bindings)
-            {
-                Console.Out.WriteLine("binding.RoutingKey = {0}", binding.RoutingKey);
-                Console.Out.WriteLine("binding.PropertiesKey = {0}", binding.PropertiesKey);
-            }
+            bindings.Length.Should().Be(0);
         }
 
         [Fact]
@@ -613,13 +607,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var bindings =
                 (await managementClient.GetBindingsAsync(exchange1, exchange2).ConfigureAwait(false)).ToArray();
 
-            bindings.Length.Should().NotBe(0);
-
-            foreach (var binding in bindings)
-            {
-                Console.Out.WriteLine("binding.RoutingKey = {0}", binding.RoutingKey);
-                Console.Out.WriteLine("binding.PropertiesKey = {0}", binding.PropertiesKey);
-            }
+            bindings.Length.Should().Be(0);
         }
 
         [Fact]
