@@ -2,6 +2,7 @@
 
 using System;
 using EasyNetQ.Management.Client.Model;
+using FluentAssertions;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
@@ -20,15 +21,15 @@ namespace EasyNetQ.Management.Client.Tests.Model
         [Fact]
         public void Should_have_correct_name_and_password()
         {
-            userInfo.GetName().ShouldEqual(userName);
-            userInfo.Password.ShouldEqual(password);
+            userInfo.GetName().Should().Be(userName);
+            userInfo.Password.Should().Be(password);
         }
 
         [Fact]
         public void Should_be_able_to_add_tags()
         {
             userInfo.AddTag("administrator").AddTag("management");
-            userInfo.Tags.ShouldEqual("administrator,management");
+            userInfo.Tags.Should().Be("administrator,management");
         }
 
         [Fact]
@@ -46,7 +47,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
         [Fact]
         public void Should_have_a_default_tag_of_empty_string()
         {
-            userInfo.Tags.ShouldEqual("");
+            userInfo.Tags.Should().Be("");
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using EasyNetQ.Management.Client.Model;
+using FluentAssertions;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
@@ -21,21 +22,21 @@ namespace EasyNetQ.Management.Client.Tests.Model
         [Fact]
         public void Should_return_the_correct_user_name()
         {
-            permissionInfo.GetUserName().ShouldEqual(user.Name);
+            permissionInfo.GetUserName().Should().Be(user.Name);
         }
 
         [Fact]
         public void Should_return_the_correct_vhost_name()
         {
-            permissionInfo.GetVirtualHostName().ShouldEqual(vhost.Name);
+            permissionInfo.GetVirtualHostName().Should().Be(vhost.Name);
         }
 
         [Fact]
         public void Should_set_default_permissions_to_allow_all()
         {
-            permissionInfo.Configure.ShouldEqual(".*");
-            permissionInfo.Write.ShouldEqual(".*");
-            permissionInfo.Read.ShouldEqual(".*");
+            permissionInfo.Configure.Should().Be(".*");
+            permissionInfo.Write.Should().Be(".*");
+            permissionInfo.Read.Should().Be(".*");
         }
 
         [Fact]
@@ -43,9 +44,9 @@ namespace EasyNetQ.Management.Client.Tests.Model
         {
             var permissions = permissionInfo.DenyAllConfigure().DenyAllRead().DenyAllWrite();
 
-            permissions.Configure.ShouldEqual("^$");
-            permissions.Write.ShouldEqual("^$");
-            permissions.Read.ShouldEqual("^$");
+            permissions.Configure.Should().Be("^$");
+            permissions.Write.Should().Be("^$");
+            permissions.Read.Should().Be("^$");
         }
 
         [Fact]
@@ -53,9 +54,9 @@ namespace EasyNetQ.Management.Client.Tests.Model
         {
             var permissions = permissionInfo.SetConfigure("abc").SetRead("def").SetWrite("xyz");
 
-            permissions.Configure.ShouldEqual("abc");
-            permissions.Write.ShouldEqual("xyz");
-            permissions.Read.ShouldEqual("def");
+            permissions.Configure.Should().Be("abc");
+            permissions.Write.Should().Be("xyz");
+            permissions.Read.Should().Be("def");
         }
     }
 }

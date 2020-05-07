@@ -1,6 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using EasyNetQ.Management.Client.Model;
+using FluentAssertions;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
@@ -21,26 +22,26 @@ namespace EasyNetQ.Management.Client.Tests.Model
         [Fact]
         public void Should_return_the_correct_user_name()
         {
-            topicPermissionInfo.GetUserName().ShouldEqual(user.Name);
+            topicPermissionInfo.GetUserName().Should().Be(user.Name);
         }
 
         [Fact]
         public void Should_return_the_correct_vhost_name()
         {
-            topicPermissionInfo.GetVirtualHostName().ShouldEqual(vhost.Name);
+            topicPermissionInfo.GetVirtualHostName().Should().Be(vhost.Name);
         }
 
         [Fact]
         public void Should_set_default_exchange_to_null()
         {
-            topicPermissionInfo.Exchange.ShouldBeNull();
+            topicPermissionInfo.Exchange.Should().BeNull();
         }
 
         [Fact]
         public void Should_set_default_permissions_to_allow_all()
         {
-            topicPermissionInfo.Write.ShouldEqual(".*");
-            topicPermissionInfo.Read.ShouldEqual(".*");
+            topicPermissionInfo.Write.Should().Be(".*");
+            topicPermissionInfo.Read.Should().Be(".*");
         }
 
         [Fact]
@@ -48,8 +49,8 @@ namespace EasyNetQ.Management.Client.Tests.Model
         {
             var topicPermissions = topicPermissionInfo.DenyAllRead().DenyAllWrite();
 
-            topicPermissions.Write.ShouldEqual("^$");
-            topicPermissions.Read.ShouldEqual("^$");
+            topicPermissions.Write.Should().Be("^$");
+            topicPermissions.Read.Should().Be("^$");
         }
 
         [Fact]
@@ -57,8 +58,8 @@ namespace EasyNetQ.Management.Client.Tests.Model
         {
             var topicPermissions = topicPermissionInfo.SetRead("def").SetWrite("xyz");
 
-            topicPermissions.Write.ShouldEqual("xyz");
-            topicPermissions.Read.ShouldEqual("def");
+            topicPermissions.Write.Should().Be("xyz");
+            topicPermissions.Read.Should().Be("def");
         }
 
         [Fact]
@@ -66,7 +67,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
         {
             var topicPermissions = topicPermissionInfo.SetExchangeType("amq.topic");
 
-            topicPermissions.Exchange.ShouldEqual("amq.topic");
+            topicPermissions.Exchange.Should().Be("amq.topic");
         }
     }
 }

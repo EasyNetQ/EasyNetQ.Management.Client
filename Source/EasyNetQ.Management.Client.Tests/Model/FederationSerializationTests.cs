@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using EasyNetQ.Management.Client.Model;
+using FluentAssertions;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
@@ -16,7 +17,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
         [Fact]
         public void Should_load_three_federation()
         {
-            federations.Count.ShouldEqual(3);
+            federations.Count.Should().Be(3);
         }
 
         [Fact]
@@ -24,9 +25,9 @@ namespace EasyNetQ.Management.Client.Tests.Model
         {
             var federation = federations[0];
 
-            federation.Status.ShouldEqual(FederationStatus.Running);
-            federation.Node.ShouldEqual("rabbit@oms-rabbitmq-03");
-            federation.Type.ShouldEqual("exchange");
+            federation.Status.Should().Be(FederationStatus.Running);
+            federation.Node.Should().Be("rabbit@oms-rabbitmq-03");
+            federation.Type.Should().Be("exchange");
         }
     }
 }

@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using EasyNetQ.Management.Client.Model;
+using FluentAssertions;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
@@ -17,7 +18,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
 
             var queue = queues[1];
 
-            queue.BackingQueueStatus.NextSeqId.ShouldEqual(((long)int.MaxValue) + 1);
+            queue.BackingQueueStatus.NextSeqId.Should().Be(((long)int.MaxValue) + 1);
         }
 
         [Fact]
@@ -27,7 +28,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
 
             var queue = queues[2];
 
-            queue.ConsumerDetails[0].ChannelDetails.PeerPort.ShouldEqual(0);
+            queue.ConsumerDetails[0].ChannelDetails.PeerPort.Should().Be(0);
         }
 
         [Fact]
@@ -37,7 +38,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
 
             var queue = queues[3];
 
-            queue.ConsumerDetails[0].ChannelDetails.PeerPort.ShouldEqual(9861);
+            queue.ConsumerDetails[0].ChannelDetails.PeerPort.Should().Be(9861);
         }
 
         [Fact]
@@ -47,7 +48,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
 
             var queue = queues[2];
 
-            queue.ConsumerDetails[0].ChannelDetails.Number.ShouldEqual(0);
+            queue.ConsumerDetails[0].ChannelDetails.Number.Should().Be(0);
         }
 
         [Fact]
@@ -57,7 +58,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
 
             var queue = queues[3];
 
-            queue.ConsumerDetails[0].ChannelDetails.Number.ShouldEqual(1);
+            queue.ConsumerDetails[0].ChannelDetails.Number.Should().Be(1);
         }
     }
 }
