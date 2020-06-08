@@ -18,7 +18,7 @@ namespace EasyNetQ.Management.Client
     public class ManagementClient : IManagementClient
     {
         private static readonly Regex ParameterNameRegex = new Regex("([a-z])([A-Z])", RegexOptions.Compiled);
-        
+
         private static Task CompletedTask { get; } = Task.FromResult<object>(null);
 
         private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue =
@@ -143,15 +143,15 @@ namespace EasyNetQ.Management.Client
             GetRatesCriteria ratesCriteria = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             var queryParameters = MergeQueryParameters(
-                lengthsCriteria?.ToQueryParameters(), 
+                lengthsCriteria?.ToQueryParameters(),
                 ratesCriteria?.ToQueryParameters()
             );
             return GetAsync<Overview>("overview", queryParameters, cancellationToken);
         }
 
-        public Task<IEnumerable<Node>> GetNodesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task<IReadOnlyList<Node>> GetNodesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Node>>("nodes", cancellationToken);
+            return GetAsync<IReadOnlyList<Node>>("nodes", cancellationToken);
         }
 
         public Task<Definitions> GetDefinitionsAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -159,10 +159,10 @@ namespace EasyNetQ.Management.Client
             return GetAsync<Definitions>("definitions", cancellationToken);
         }
 
-        public Task<IEnumerable<Connection>> GetConnectionsAsync(
+        public Task<IReadOnlyList<Connection>> GetConnectionsAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Connection>>("connections", cancellationToken);
+            return GetAsync<IReadOnlyList<Connection>>("connections", cancellationToken);
         }
 
         public Task CloseConnectionAsync(Connection connection,
@@ -172,17 +172,17 @@ namespace EasyNetQ.Management.Client
             return DeleteAsync($"connections/{connection.Name}", cancellationToken);
         }
 
-        public Task<IEnumerable<Channel>> GetChannelsAsync(
+        public Task<IReadOnlyList<Channel>> GetChannelsAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Channel>>("channels", cancellationToken);
+            return GetAsync<IReadOnlyList<Channel>>("channels", cancellationToken);
         }
 
-        public Task<IEnumerable<Channel>> GetChannelsAsync(
+        public Task<IReadOnlyList<Channel>> GetChannelsAsync(
             Connection connection,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Channel>>($"connections/{connection.Name}/channels", cancellationToken);
+            return GetAsync<IReadOnlyList<Channel>>($"connections/{connection.Name}/channels", cancellationToken);
         }
 
         public Task<Channel> GetChannelAsync(string channelName, GetRatesCriteria ratesCriteria = null,
@@ -193,10 +193,10 @@ namespace EasyNetQ.Management.Client
             return GetAsync<Channel>($"channels/{channelName}", ratesCriteria?.ToQueryParameters(), cancellationToken);
         }
 
-        public Task<IEnumerable<Exchange>> GetExchangesAsync(
+        public Task<IReadOnlyList<Exchange>> GetExchangesAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Exchange>>("exchanges", cancellationToken);
+            return GetAsync<IReadOnlyList<Exchange>>("exchanges", cancellationToken);
         }
 
         public Task<Exchange> GetExchangeAsync(string exchangeName, Vhost vhost, GetRatesCriteria ratesCriteria = null,
@@ -213,9 +213,9 @@ namespace EasyNetQ.Management.Client
         {
             Ensure.ArgumentNotNull(queueName, nameof(queueName));
             Ensure.ArgumentNotNull(vhost, nameof(vhost));
-            
+
             var queryParameters = MergeQueryParameters(
-                lengthsCriteria?.ToQueryParameters(), 
+                lengthsCriteria?.ToQueryParameters(),
                 ratesCriteria?.ToQueryParameters()
             );
             return GetAsync<Queue>($"queues/{SanitiseVhostName(vhost.Name)}/{SanitiseName(queueName)}",
@@ -244,21 +244,21 @@ namespace EasyNetQ.Management.Client
                 cancellationToken);
         }
 
-        public Task<IEnumerable<Binding>> GetBindingsWithSourceAsync(Exchange exchange,
+        public Task<IReadOnlyList<Binding>> GetBindingsWithSourceAsync(Exchange exchange,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(exchange, nameof(exchange));
 
-            return GetAsync<IEnumerable<Binding>>(
+            return GetAsync<IReadOnlyList<Binding>>(
                 $"exchanges/{SanitiseVhostName(exchange.Vhost)}/{exchange.Name}/bindings/source", cancellationToken);
         }
 
-        public Task<IEnumerable<Binding>> GetBindingsWithDestinationAsync(Exchange exchange,
+        public Task<IReadOnlyList<Binding>> GetBindingsWithDestinationAsync(Exchange exchange,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(exchange, nameof(exchange));
 
-            return GetAsync<IEnumerable<Binding>>(
+            return GetAsync<IReadOnlyList<Binding>>(
                 $"exchanges/{SanitiseVhostName(exchange.Vhost)}/{exchange.Name}/bindings/destination",
                 cancellationToken);
         }
@@ -274,14 +274,14 @@ namespace EasyNetQ.Management.Client
                 cancellationToken);
         }
 
-        public Task<IEnumerable<Queue>> GetQueuesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task<IReadOnlyList<Queue>> GetQueuesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Queue>>("queues", cancellationToken);
+            return GetAsync<IReadOnlyList<Queue>>("queues", cancellationToken);
         }
 
-        public Task<IEnumerable<Queue>> GetQueuesAsync(Vhost vhost, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<IReadOnlyList<Queue>> GetQueuesAsync(Vhost vhost, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Queue>>($"queues/{SanitiseVhostName(vhost.Name)}", cancellationToken);
+            return GetAsync<IReadOnlyList<Queue>>($"queues/{SanitiseVhostName(vhost.Name)}", cancellationToken);
         }
 
         public async Task<Queue> CreateQueueAsync(QueueInfo queueInfo, Vhost vhost,
@@ -306,12 +306,12 @@ namespace EasyNetQ.Management.Client
                 cancellationToken);
         }
 
-        public Task<IEnumerable<Binding>> GetBindingsForQueueAsync(Queue queue,
+        public Task<IReadOnlyList<Binding>> GetBindingsForQueueAsync(Queue queue,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(queue, nameof(queue));
 
-            return GetAsync<IEnumerable<Binding>>(
+            return GetAsync<IReadOnlyList<Binding>>(
                 $"queues/{SanitiseVhostName(queue.Vhost)}/{SanitiseName(queue.Name)}/bindings", cancellationToken);
         }
 
@@ -323,19 +323,19 @@ namespace EasyNetQ.Management.Client
                 cancellationToken);
         }
 
-        public Task<IEnumerable<Message>> GetMessagesFromQueueAsync(Queue queue, GetMessagesCriteria criteria,
+        public Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(Queue queue, GetMessagesCriteria criteria,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(queue, nameof(queue));
 
-            return PostAsync<GetMessagesCriteria, IEnumerable<Message>>(
+            return PostAsync<GetMessagesCriteria, IReadOnlyList<Message>>(
                 $"queues/{SanitiseVhostName(queue.Vhost)}/{SanitiseName(queue.Name)}/get", criteria, cancellationToken);
         }
 
-        public Task<IEnumerable<Binding>> GetBindingsAsync(
+        public Task<IReadOnlyList<Binding>> GetBindingsAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Binding>>("bindings", cancellationToken);
+            return GetAsync<IReadOnlyList<Binding>>("bindings", cancellationToken);
         }
 
         public Task CreateBindingAsync(Exchange exchange, Queue queue, BindingInfo bindingInfo,
@@ -362,24 +362,24 @@ namespace EasyNetQ.Management.Client
                 bindingInfo, cancellationToken);
         }
 
-        public Task<IEnumerable<Binding>> GetBindingsAsync(Exchange exchange, Queue queue,
+        public Task<IReadOnlyList<Binding>> GetBindingsAsync(Exchange exchange, Queue queue,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(exchange, nameof(exchange));
             Ensure.ArgumentNotNull(queue, nameof(queue));
 
-            return GetAsync<IEnumerable<Binding>>(
+            return GetAsync<IReadOnlyList<Binding>>(
                 $"bindings/{SanitiseVhostName(queue.Vhost)}/e/{exchange.Name}/q/{SanitiseName(queue.Name)}",
                 cancellationToken);
         }
 
-        public Task<IEnumerable<Binding>> GetBindingsAsync(Exchange fromExchange, Exchange toExchange,
+        public Task<IReadOnlyList<Binding>> GetBindingsAsync(Exchange fromExchange, Exchange toExchange,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             Ensure.ArgumentNotNull(fromExchange, nameof(fromExchange));
             Ensure.ArgumentNotNull(toExchange, nameof(toExchange));
 
-            return GetAsync<IEnumerable<Binding>>(
+            return GetAsync<IReadOnlyList<Binding>>(
                 $"bindings/{SanitiseVhostName(toExchange.Vhost)}/e/{fromExchange.Name}/e/{SanitiseName(toExchange.Name)}",
                 cancellationToken);
         }
@@ -412,9 +412,9 @@ namespace EasyNetQ.Management.Client
                 RecodeBindingPropertiesKey(binding.PropertiesKey)), cancellationToken);
         }
 
-        public Task<IEnumerable<Vhost>> GetVhostsAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task<IReadOnlyList<Vhost>> GetVhostsAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Vhost>>("vhosts", cancellationToken);
+            return GetAsync<IReadOnlyList<Vhost>>("vhosts", cancellationToken);
         }
 
         public Task<Vhost> GetVhostAsync(string vhostName,
@@ -457,9 +457,9 @@ namespace EasyNetQ.Management.Client
             return PutAsync<Vhost>($"vhosts/{SanitiseVhostName(vhost.Name)}", vhost, cancellationToken);
         }
 
-        public Task<IEnumerable<User>> GetUsersAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task<IReadOnlyList<User>> GetUsersAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<User>>("users", cancellationToken);
+            return GetAsync<IReadOnlyList<User>>("users", cancellationToken);
         }
 
         public Task<User> GetUserAsync(string userName,
@@ -469,10 +469,10 @@ namespace EasyNetQ.Management.Client
             return GetAsync<User>($"users/{userName}", cancellationToken);
         }
 
-        public Task<IEnumerable<Policy>> GetPoliciesAsync(
+        public Task<IReadOnlyList<Policy>> GetPoliciesAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Policy>>("policies", cancellationToken);
+            return GetAsync<IReadOnlyList<Policy>>("policies", cancellationToken);
         }
 
         public Task CreatePolicyAsync(Policy policy, CancellationToken cancellationToken = default(CancellationToken))
@@ -505,10 +505,10 @@ namespace EasyNetQ.Management.Client
             return DeleteAsync(GetPolicyUrl(policyName, vhost.Name), cancellationToken);
         }
 
-        public Task<IEnumerable<Parameter>> GetParametersAsync(
+        public Task<IReadOnlyList<Parameter>> GetParametersAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Parameter>>("parameters", cancellationToken);
+            return GetAsync<IReadOnlyList<Parameter>>("parameters", cancellationToken);
         }
 
         public Task CreateParameterAsync(Parameter parameter,
@@ -546,10 +546,10 @@ namespace EasyNetQ.Management.Client
             return DeleteAsync($"users/{user.Name}", cancellationToken);
         }
 
-        public Task<IEnumerable<Permission>> GetPermissionsAsync(
+        public Task<IReadOnlyList<Permission>> GetPermissionsAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<Permission>>("permissions", cancellationToken);
+            return GetAsync<IReadOnlyList<Permission>>("permissions", cancellationToken);
         }
 
         public Task CreatePermissionAsync(PermissionInfo permissionInfo,
@@ -570,10 +570,10 @@ namespace EasyNetQ.Management.Client
             return DeleteAsync($"permissions/{permission.Vhost}/{permission.User}", cancellationToken);
         }
 
-        public Task<IEnumerable<TopicPermission>> GetTopicPermissionsAsync(
+        public Task<IReadOnlyList<TopicPermission>> GetTopicPermissionsAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            return GetAsync<IEnumerable<TopicPermission>>("topic-permissions", cancellationToken);
+            return GetAsync<IReadOnlyList<TopicPermission>>("topic-permissions", cancellationToken);
         }
 
         public Task CreateTopicPermissionAsync(TopicPermissionInfo topicPermissionInfo,
