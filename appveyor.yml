@@ -1,6 +1,6 @@
 version: Build {build}
 skip_branch_with_pr: true
-image: Visual Studio 2019
+image: Previous Visual Studio 2019
 install:
   - ps: |
       $dockerPathName = (Get-WmiObject win32_service | ?{$_.Name -eq 'docker'}).PathName
