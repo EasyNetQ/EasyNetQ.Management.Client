@@ -9,7 +9,7 @@ namespace EasyNetQ.Management.Client
     public static class ManagementClientExtensions
     {
         /// <summary>
-        /// Various random bits of information that describe the whole system.
+        ///     Various random bits of information that describe the whole system.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="lengthsCriteria">Criteria for getting samples of queue length data</param>
@@ -20,7 +20,7 @@ namespace EasyNetQ.Management.Client
             [NotNull] this IManagementClient source,
             GetLengthsCriteria lengthsCriteria = null,
             GetRatesCriteria ratesCriteria = null,
-            CancellationToken cancellationToken = default(CancellationToken)
+            CancellationToken cancellationToken = default
         )
         {
             if (source == null)
@@ -33,13 +33,15 @@ namespace EasyNetQ.Management.Client
 
 
         /// <summary>
-        /// A list of nodes in the RabbitMQ cluster.
+        ///     A list of nodes in the RabbitMQ cluster.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Node> GetNodes([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<Node> GetNodes(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -50,14 +52,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// The server definitions - exchanges, queues, bindings, users, virtual hosts, permissions.
-        /// Everything apart from messages.
+        ///     The server definitions - exchanges, queues, bindings, users, virtual hosts, permissions.
+        ///     Everything apart from messages.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static Definitions GetDefinitions([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static Definitions GetDefinitions(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -68,13 +72,15 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all open connections.
+        ///     A list of all open connections.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Connection> GetConnections([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<Connection> GetConnections(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -85,13 +91,15 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all open channels.
+        ///     A list of all open channels.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Channel> GetChannels([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<Channel> GetChannels(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -102,17 +110,19 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Gets the channel. This returns more detail, including consumers than the GetChannels method.
+        ///     Gets the channel. This returns more detail, including consumers than the GetChannels method.
         /// </summary>
         /// <param name="source"></param>
         /// <returns>The channel.</returns>
         /// <param name="channelName">Channel name.</param>
         /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
         /// <param name="cancellationToken"></param>
-        public static Channel GetChannel([NotNull] this IManagementClient source,
+        public static Channel GetChannel(
+            [NotNull] this IManagementClient source,
             string channelName,
             GetRatesCriteria ratesCriteria = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -123,13 +133,15 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all exchanges.
+        ///     A list of all exchanges.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Exchange> GetExchanges([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<Exchange> GetExchanges(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -140,13 +152,15 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all queues.
+        ///     A list of all queues.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Queue> GetQueues([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<Queue> GetQueues(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -157,14 +171,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all queues for a virtual host.
+        ///     A list of all queues for a virtual host.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="vhost"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Queue> GetQueues([NotNull] this IManagementClient source, Vhost vhost,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<Queue> GetQueues(
+            [NotNull] this IManagementClient source, Vhost vhost,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -175,13 +191,15 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all bindings.
+        ///     A list of all bindings.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Binding> GetBindings([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<Binding> GetBindings(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -192,13 +210,15 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all vhosts.
+        ///     A list of all vhosts.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Vhost> GetVhosts([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<Vhost> GetVhosts(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -209,13 +229,15 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all users.
+        ///     A list of all users.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<User> GetUsers([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<User> GetUsers(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -226,13 +248,15 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all permissions for all users.
+        ///     A list of all permissions for all users.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Permission> GetPermissions([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<Permission> GetPermissions(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -243,13 +267,15 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all topic permissions for all users.
+        ///     A list of all topic permissions for all users.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<TopicPermission> GetTopicPermissions([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<TopicPermission> GetTopicPermissions(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -260,14 +286,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Closes the given connection
+        ///     Closes the given connection
         /// </summary>
         /// <param name="source"></param>
         /// <param name="connection"></param>
         /// <param name="cancellationToken"></param>
-        public static void CloseConnection([NotNull] this IManagementClient source,
+        public static void CloseConnection(
+            [NotNull] this IManagementClient source,
             [NotNull] Connection connection,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -278,16 +306,18 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Creates the given exchange
+        ///     Creates the given exchange
         /// </summary>
         /// <param name="source"></param>
         /// <param name="exchangeInfo"></param>
         /// <param name="vhost"></param>
         /// <param name="cancellationToken"></param>
-        public static Exchange CreateExchange([NotNull] this IManagementClient source,
+        public static Exchange CreateExchange(
+            [NotNull] this IManagementClient source,
             [NotNull] ExchangeInfo exchangeInfo,
             [NotNull] Vhost vhost,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -298,14 +328,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Delete the given exchange
+        ///     Delete the given exchange
         /// </summary>
         /// <param name="source"></param>
         /// <param name="exchange"></param>
         /// <param name="cancellationToken"></param>
-        public static void DeleteExchange([NotNull] this IManagementClient source,
+        public static void DeleteExchange(
+            [NotNull] this IManagementClient source,
             [NotNull] Exchange exchange,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -316,15 +348,17 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all bindings in which a given exchange is the source.
+        ///     A list of all bindings in which a given exchange is the source.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="exchange"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Binding> GetBindingsWithSource([NotNull] this IManagementClient source,
+        public static IReadOnlyList<Binding> GetBindingsWithSource(
+            [NotNull] this IManagementClient source,
             [NotNull] Exchange exchange,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -335,15 +369,17 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all bindings in which a given exchange is the destination.
+        ///     A list of all bindings in which a given exchange is the destination.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="exchange"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Binding> GetBindingsWithDestination([NotNull] this IManagementClient source,
+        public static IReadOnlyList<Binding> GetBindingsWithDestination(
+            [NotNull] this IManagementClient source,
             [NotNull] Exchange exchange,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -354,21 +390,22 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Publish a message to a given exchange.
-        ///
-        /// Please note that the publish / get paths in the HTTP API are intended for injecting
-        /// test messages, diagnostics etc - they do not implement reliable delivery and so should
-        /// be treated as a sysadmin's tool rather than a general API for messaging.
+        ///     Publish a message to a given exchange.
+        ///     Please note that the publish / get paths in the HTTP API are intended for injecting
+        ///     test messages, diagnostics etc - they do not implement reliable delivery and so should
+        ///     be treated as a sysadmin's tool rather than a general API for messaging.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="exchange">The exchange</param>
         /// <param name="publishInfo">The publication parameters</param>
         /// <param name="cancellationToken"></param>
         /// <returns>A PublishResult, routed == true if the message was sent to at least one queue</returns>
-        public static PublishResult Publish([NotNull] this IManagementClient source,
+        public static PublishResult Publish(
+            [NotNull] this IManagementClient source,
             [NotNull] Exchange exchange,
             [NotNull] PublishInfo publishInfo,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -379,16 +416,18 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Create the given queue
+        ///     Create the given queue
         /// </summary>
         /// <param name="source"></param>
         /// <param name="queueInfo"></param>
         /// <param name="vhost"></param>
         /// <param name="cancellationToken"></param>
-        public static Queue CreateQueue([NotNull] this IManagementClient source,
+        public static Queue CreateQueue(
+            [NotNull] this IManagementClient source,
             [NotNull] QueueInfo queueInfo,
             [NotNull] Vhost vhost,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -399,14 +438,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Delete the given queue
+        ///     Delete the given queue
         /// </summary>
         /// <param name="source"></param>
         /// <param name="queue"></param>
         /// <param name="cancellationToken"></param>
-        public static void DeleteQueue([NotNull] this IManagementClient source,
+        public static void DeleteQueue(
+            [NotNull] this IManagementClient source,
             [NotNull] Queue queue,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -417,14 +458,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all bindings on a given queue.
+        ///     A list of all bindings on a given queue.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="queue"></param>
         /// <param name="cancellationToken"></param>
-        public static IEnumerable<Binding> GetBindingsForQueue([NotNull] this IManagementClient source,
+        public static IReadOnlyList<Binding> GetBindingsForQueue(
+            [NotNull] this IManagementClient source,
             [NotNull] Queue queue,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -435,14 +478,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Purge a queue of all messages
+        ///     Purge a queue of all messages
         /// </summary>
         /// <param name="source"></param>
         /// <param name="queue"></param>
         /// <param name="cancellationToken"></param>
-        public static void Purge([NotNull] this IManagementClient source,
+        public static void Purge(
+            [NotNull] this IManagementClient source,
             [NotNull] Queue queue,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -453,22 +498,23 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Get messages from a queue.
-        ///
-        /// Please note that the publish / get paths in the HTTP API are intended for
-        /// injecting test messages, diagnostics etc - they do not implement reliable
-        /// delivery and so should be treated as a sysadmin's tool rather than a
-        /// general API for messaging.
+        ///     Get messages from a queue.
+        ///     Please note that the publish / get paths in the HTTP API are intended for
+        ///     injecting test messages, diagnostics etc - they do not implement reliable
+        ///     delivery and so should be treated as a sysadmin's tool rather than a
+        ///     general API for messaging.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="queue">The queue to retrieve from</param>
         /// <param name="criteria">The criteria for the retrieve</param>
         /// <param name="cancellationToken"></param>
         /// <returns>Messages</returns>
-        public static IEnumerable<Message> GetMessagesFromQueue([NotNull] this IManagementClient source,
+        public static IReadOnlyList<Message> GetMessagesFromQueue(
+            [NotNull] this IManagementClient source,
             [NotNull] Queue queue,
             GetMessagesCriteria criteria,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -479,7 +525,7 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Create a binding between an exchange and a queue
+        ///     Create a binding between an exchange and a queue
         /// </summary>
         /// <param name="source"></param>
         /// <param name="exchange">the exchange</param>
@@ -487,11 +533,13 @@ namespace EasyNetQ.Management.Client
         /// <param name="bindingInfo">properties of the binding</param>
         /// <param name="cancellationToken"></param>
         /// <returns>The binding that was created</returns>
-        public static void CreateBinding([NotNull] this IManagementClient source,
+        public static void CreateBinding(
+            [NotNull] this IManagementClient source,
             [NotNull] Exchange exchange,
             [NotNull] Queue queue,
             [NotNull] BindingInfo bindingInfo,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -502,18 +550,20 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Create a binding between an exchange and an exchange
+        ///     Create a binding between an exchange and an exchange
         /// </summary>
         /// <param name="source"></param>
         /// <param name="sourceExchange">the source exchange</param>
         /// <param name="destinationExchange">the destination exchange</param>
         /// <param name="bindingInfo">properties of the binding</param>
         /// <param name="cancellationToken"></param>
-        public static void CreateBinding([NotNull] this IManagementClient source,
+        public static void CreateBinding(
+            [NotNull] this IManagementClient source,
             [NotNull] Exchange sourceExchange,
             [NotNull] Exchange destinationExchange,
             [NotNull] BindingInfo bindingInfo,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -524,18 +574,20 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all bindings between an exchange and a queue.
-        /// Remember, an exchange and a queue can be bound together many times!
+        ///     A list of all bindings between an exchange and a queue.
+        ///     Remember, an exchange and a queue can be bound together many times!
         /// </summary>
         /// <param name="source"></param>
         /// <param name="exchange"></param>
         /// <param name="queue"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Binding> GetBindings([NotNull] this IManagementClient source,
+        public static IReadOnlyList<Binding> GetBindings(
+            [NotNull] this IManagementClient source,
             [NotNull] Exchange exchange,
             [NotNull] Queue queue,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -546,17 +598,19 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// A list of all bindings between an exchange and an exchange.
+        ///     A list of all bindings between an exchange and an exchange.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="fromExchange"></param>
         /// <param name="toExchange"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static IEnumerable<Binding> GetBindings([NotNull] this IManagementClient source,
+        public static IReadOnlyList<Binding> GetBindings(
+            [NotNull] this IManagementClient source,
             [NotNull] Exchange fromExchange,
             [NotNull] Exchange toExchange,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -567,14 +621,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Delete the given binding
+        ///     Delete the given binding
         /// </summary>
         /// <param name="source"></param>
         /// <param name="binding"></param>
         /// <param name="cancellationToken"></param>
-        public static void DeleteBinding([NotNull] this IManagementClient source,
+        public static void DeleteBinding(
+            [NotNull] this IManagementClient source,
             [NotNull] Binding binding,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -585,14 +641,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Create a new virtual host
+        ///     Create a new virtual host
         /// </summary>
         /// <param name="source"></param>
         /// <param name="vhostName">The name of the new virtual host</param>
         /// <param name="cancellationToken"></param>
-        public static Vhost CreateVhost([NotNull] this IManagementClient source,
+        public static Vhost CreateVhost(
+            [NotNull] this IManagementClient source,
             string vhostName,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -603,14 +661,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Delete a virtual host
+        ///     Delete a virtual host
         /// </summary>
         /// <param name="source"></param>
         /// <param name="vhost">The virtual host to delete</param>
         /// <param name="cancellationToken"></param>
-        public static void DeleteVhost([NotNull] this IManagementClient source,
+        public static void DeleteVhost(
+            [NotNull] this IManagementClient source,
             [NotNull] Vhost vhost,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -621,14 +681,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Enable tracing on given virtual host.
+        ///     Enable tracing on given virtual host.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="vhost">The virtual host on which to enable tracing</param>
         /// <param name="cancellationToken"></param>
-        public static void EnableTracing([NotNull] this IManagementClient source,
+        public static void EnableTracing(
+            [NotNull] this IManagementClient source,
             [NotNull] Vhost vhost,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -639,14 +701,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Disables tracing on given virtual host.
+        ///     Disables tracing on given virtual host.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="vhost">The virtual host on which to disable tracing</param>
         /// <param name="cancellationToken"></param>
-        public static void DisableTracing([NotNull] this IManagementClient source,
+        public static void DisableTracing(
+            [NotNull] this IManagementClient source,
             [NotNull] Vhost vhost,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -657,14 +721,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Create a new user
+        ///     Create a new user
         /// </summary>
         /// <param name="source"></param>
         /// <param name="userInfo">The user to create</param>
         /// <param name="cancellationToken"></param>
-        public static User CreateUser([NotNull] this IManagementClient source,
+        public static User CreateUser(
+            [NotNull] this IManagementClient source,
             [NotNull] UserInfo userInfo,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -675,14 +741,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Delete a user
+        ///     Delete a user
         /// </summary>
         /// <param name="source"></param>
         /// <param name="user">The user to delete</param>
         /// <param name="cancellationToken"></param>
-        public static void DeleteUser([NotNull] this IManagementClient source,
+        public static void DeleteUser(
+            [NotNull] this IManagementClient source,
             [NotNull] User user,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -693,14 +761,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Create a permission
+        ///     Create a permission
         /// </summary>
         /// <param name="source"></param>
         /// <param name="permissionInfo">The permission to create</param>
         /// <param name="cancellationToken"></param>
-        public static void CreatePermission([NotNull] this IManagementClient source,
+        public static void CreatePermission(
+            [NotNull] this IManagementClient source,
             [NotNull] PermissionInfo permissionInfo,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -711,14 +781,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Delete a permission
+        ///     Delete a permission
         /// </summary>
         /// <param name="source"></param>
         /// <param name="permission">The permission to delete</param>
         /// <param name="cancellationToken"></param>
-        public static void DeletePermission([NotNull] this IManagementClient source,
+        public static void DeletePermission(
+            [NotNull] this IManagementClient source,
             [NotNull] Permission permission,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -729,14 +801,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Create a topic permission
+        ///     Create a topic permission
         /// </summary>
         /// <param name="source"></param>
         /// <param name="topicPermissionInfo">The topic permission to create</param>
         /// <param name="cancellationToken"></param>
-        public static void CreateTopicPermission([NotNull] this IManagementClient source,
+        public static void CreateTopicPermission(
+            [NotNull] this IManagementClient source,
             [NotNull] TopicPermissionInfo topicPermissionInfo,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -747,14 +821,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Delete a topic permission
+        ///     Delete a topic permission
         /// </summary>
         /// <param name="source"></param>
         /// <param name="permission">The topic permission to delete</param>
         /// <param name="cancellationToken"></param>
-        public static void DeleteTopicPermission([NotNull] this IManagementClient source,
+        public static void DeleteTopicPermission(
+            [NotNull] this IManagementClient source,
             [NotNull] TopicPermission permission,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -765,16 +841,18 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Update the password of an user.
+        ///     Update the password of an user.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="userName">The name of a user</param>
         /// <param name="newPassword">The new password to set</param>
         /// <param name="cancellationToken"></param>
-        public static User ChangeUserPassword([NotNull] this IManagementClient source,
+        public static User ChangeUserPassword(
+            [NotNull] this IManagementClient source,
             string userName,
             string newPassword,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -786,17 +864,19 @@ namespace EasyNetQ.Management.Client
 
 
         /// <summary>
-        /// Declares a test queue, then publishes and consumes a message. Intended for use
-        /// by monitoring tools. If everything is working correctly, will return true.
-        /// Note: the test queue will not be deleted (to to prevent queue churn if this
-        /// is repeatedly pinged).
+        ///     Declares a test queue, then publishes and consumes a message. Intended for use
+        ///     by monitoring tools. If everything is working correctly, will return true.
+        ///     Note: the test queue will not be deleted (to to prevent queue churn if this
+        ///     is repeatedly pinged).
         /// </summary>
         /// <param name="source"></param>
         /// <param name="vhost"></param>
         /// <param name="cancellationToken"></param>
-        public static bool IsAlive([NotNull] this IManagementClient source,
+        public static bool IsAlive(
+            [NotNull] this IManagementClient source,
             [NotNull] Vhost vhost,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -807,7 +887,7 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Get an individual exchange by name
+        ///     Get an individual exchange by name
         /// </summary>
         /// <param name="source"></param>
         /// <param name="exchangeName">The name of the exchange</param>
@@ -815,11 +895,13 @@ namespace EasyNetQ.Management.Client
         /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
         /// <param name="cancellationToken"></param>
         /// <returns>The exchange</returns>
-        public static Exchange GetExchange([NotNull] this IManagementClient source,
+        public static Exchange GetExchange(
+            [NotNull] this IManagementClient source,
             string exchangeName,
             [NotNull] Vhost vhost,
             GetRatesCriteria ratesCriteria = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -830,7 +912,7 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Get an individual queue by name
+        ///     Get an individual queue by name
         /// </summary>
         /// <param name="source"></param>
         /// <param name="queueName">The name of the queue</param>
@@ -839,12 +921,14 @@ namespace EasyNetQ.Management.Client
         /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
         /// <param name="cancellationToken"></param>
         /// <returns>The Queue</returns>
-        public static Queue GetQueue([NotNull] this IManagementClient source,
+        public static Queue GetQueue(
+            [NotNull] this IManagementClient source,
             string queueName,
             [NotNull] Vhost vhost,
             GetLengthsCriteria lengthsCriteria = null,
             GetRatesCriteria ratesCriteria = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -855,14 +939,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Get an individual vhost by name
+        ///     Get an individual vhost by name
         /// </summary>
         /// <param name="source"></param>
         /// <param name="vhostName">The VHost</param>
         /// <param name="cancellationToken"></param>
-        public static Vhost GetVhost([NotNull] this IManagementClient source,
+        public static Vhost GetVhost(
+            [NotNull] this IManagementClient source,
             string vhostName,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -873,15 +959,17 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Get a user by name
+        ///     Get a user by name
         /// </summary>
         /// <param name="source"></param>
         /// <param name="userName">The name of the user</param>
         /// <param name="cancellationToken"></param>
         /// <returns>The User</returns>
-        public static User GetUser([NotNull] this IManagementClient source,
+        public static User GetUser(
+            [NotNull] this IManagementClient source,
             string userName,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -892,13 +980,15 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Get collection of Policies on the cluster
+        ///     Get collection of Policies on the cluster
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns>Policies</returns>
-        public static IEnumerable<Policy> GetPolicies([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<Policy> GetPolicies(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -909,14 +999,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Creates a policy on the cluster
+        ///     Creates a policy on the cluster
         /// </summary>
         /// <param name="source"></param>
         /// <param name="policy">Policy to create</param>
         /// <param name="cancellationToken"></param>
-        public static void CreatePolicy([NotNull] this IManagementClient source,
+        public static void CreatePolicy(
+            [NotNull] this IManagementClient source,
             [NotNull] Policy policy,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -927,16 +1019,18 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Delete a policy from the cluster
+        ///     Delete a policy from the cluster
         /// </summary>
         /// <param name="source"></param>
         /// <param name="policyName">Policy name</param>
         /// <param name="vhost">vhost on which the policy resides</param>
         /// <param name="cancellationToken"></param>
-        public static void DeletePolicy([NotNull] this IManagementClient source,
+        public static void DeletePolicy(
+            [NotNull] this IManagementClient source,
             string policyName,
             Vhost vhost,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -947,12 +1041,14 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Get all parameters on the cluster
+        ///     Get all parameters on the cluster
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
-        public static IEnumerable<Parameter> GetParameters([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static IReadOnlyList<Parameter> GetParameters(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -963,14 +1059,16 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Creates a parameter on the cluster
+        ///     Creates a parameter on the cluster
         /// </summary>
         /// <param name="source"></param>
         /// <param name="parameter">Parameter to create</param>
         /// <param name="cancellationToken"></param>
-        public static void CreateParameter([NotNull] this IManagementClient source,
+        public static void CreateParameter(
+            [NotNull] this IManagementClient source,
             [NotNull] Parameter parameter,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -981,18 +1079,20 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Delete a parameter from the cluster
+        ///     Delete a parameter from the cluster
         /// </summary>
         /// <param name="source"></param>
         /// <param name="componentName"></param>
         /// <param name="vhostName"></param>
         /// <param name="name"></param>
         /// <param name="cancellationToken"></param>
-        public static void DeleteParameter([NotNull] this IManagementClient source,
+        public static void DeleteParameter(
+            [NotNull] this IManagementClient source,
             string componentName,
             string vhostName,
             string name,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -1003,13 +1103,15 @@ namespace EasyNetQ.Management.Client
         }
 
         /// <summary>
-        /// Get list of federations
+        ///     Get list of federations
         /// </summary>
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static List<Federation> GetFederation([NotNull] this IManagementClient source,
-            CancellationToken cancellationToken = default(CancellationToken))
+        public static List<Federation> GetFederation(
+            [NotNull] this IManagementClient source,
+            CancellationToken cancellationToken = default
+        )
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
