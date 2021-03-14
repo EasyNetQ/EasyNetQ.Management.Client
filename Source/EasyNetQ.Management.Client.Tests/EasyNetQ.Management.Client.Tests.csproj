@@ -9,6 +9,7 @@
     <None Remove="Json\Bindings.json" />
     <None Remove="Json\Channels.json" />
     <None Remove="Json\Connections.json" />
+    <None Remove="Json\Consumers.json" />
     <None Remove="Json\Definitions.json" />
     <None Remove="Json\Exchanges.json" />
     <None Remove="Json\Federations.json" />
@@ -19,6 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Json\Consumers.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Json\Bindings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

@@ -849,5 +849,9 @@ namespace EasyNetQ.Management.Client
         {
             httpClient.Dispose();
         }
+        public Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default)
+        {
+            return GetAsync<IReadOnlyList<Consumer>>("consumers", cancellationToken);
+        }
     }
 }
