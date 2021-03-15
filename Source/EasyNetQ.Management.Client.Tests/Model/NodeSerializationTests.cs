@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using EasyNetQ.Management.Client.Model;
+using FluentAssertions;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
@@ -18,7 +19,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
         [Fact]
         public void Should_load_one_node()
         {
-            nodes.Count.ShouldEqual(1);
+            nodes.Count.Should().Be(1);
         }
 
         [Fact]
@@ -26,8 +27,8 @@ namespace EasyNetQ.Management.Client.Tests.Model
         {
             var node = nodes[0];
 
-            node.Name.ShouldEqual("rabbit@THOMAS");
-            node.Uptime.ShouldEqual(11463012619);
+            node.Name.Should().Be("rabbit@THOMAS");
+            node.Uptime.Should().Be(11463012619);
         }
     }
 }

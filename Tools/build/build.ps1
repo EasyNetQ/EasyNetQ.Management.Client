@@ -11,7 +11,7 @@ function Install-Package {
     Param($dir, $packageName, $packageVersion)
     Write-Host "Installing '$packageName' version '$packageVersion' in '$dir'..."
     New-Item -Type Directory -Path $dir -Force | Out-Null
-    $contents = '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>netstandard1.5</TargetFramework></PropertyGroup></Project>'
+    $contents = '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>netstandard2.0</TargetFramework></PropertyGroup></Project>'
     $proj = Join-Path $dir 'prj.csproj'
     Out-File -InputObject $contents -FilePath $proj
     $addPackageOutput = $(dotnet add "$proj" package $packageName --version $packageVersion --package-directory $dir)

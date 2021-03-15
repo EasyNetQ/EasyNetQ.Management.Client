@@ -63,7 +63,7 @@ Task("MSBuildSettings")
             Information("AssemblyInformationalVersion/NuGet package version: {0}", assemblyInformationalVersion);
             Information("Package release notes URL: {0}{1}", packageReleaseNotesUrl, Environment.NewLine);
 
-            perProjectMsBuildSettings[project] = new DotNetCoreMSBuildSettings { NoLogo = true }
+            perProjectMsBuildSettings[project] = new DotNetCoreMSBuildSettings { NoLogo = true, Verbosity = buildVerbosity }
                 .WithProperty("AssemblyVersion", assemblyVersion)
                 .WithProperty("FileVersion", assemblyFileVersion)
                 .WithProperty("InformationalVersion", assemblyInformationalVersion)
@@ -86,8 +86,7 @@ Task("Clean")
 
         var cleanSettings = new DotNetCoreCleanSettings
         {
-            MSBuildSettings = new DotNetCoreMSBuildSettings { NoLogo = true },
-            Verbosity = buildVerbosity
+            MSBuildSettings = new DotNetCoreMSBuildSettings { NoLogo = true }
         };
 
         foreach (var folder in toBuildFolders)
@@ -118,8 +117,7 @@ Task("Build")
             var buildSettings = new DotNetCoreBuildSettings
             {
                 MSBuildSettings = perProjectMsBuildSettings[projectToBuild],
-                Configuration = buildConfiguration,
-                Verbosity = buildVerbosity
+                Configuration = buildConfiguration
             };
             DotNetCoreBuild(projectToBuild, buildSettings);
         }
@@ -165,7 +163,6 @@ Task("Pack")
             {
                 MSBuildSettings = perProjectMsBuildSettings[projectToPack],
                 Configuration = buildConfiguration,
-                Verbosity = buildVerbosity,
                 NoBuild = true,
                 OutputDirectory = artifactsDir
             };
@@ -178,9 +175,9 @@ Task("NuGetPush")
     .IsDependentOn("Pack")
     .Does(() =>
     {
-        var packageSearchPattern = System.IO.Path.Combine(artifactsDir, "*.nupkg");
         var nuGetPushSettings = new DotNetCoreNuGetPushSettings { Source = "https://www.nuget.org/api/v2/package", ApiKey = nuGetApiKey };
-        DotNetCoreNuGetPush(packageSearchPattern, nuGetPushSettings);
+        DotNetCoreNuGetPush(System.IO.Path.Combine(artifactsDir, "*.nupkg"), nuGetPushSettings);
+        DotNetCoreNuGetPush(System.IO.Path.Combine(artifactsDir, "*.snupkg"), nuGetPushSettings);
     });
 
 RunTarget(target);

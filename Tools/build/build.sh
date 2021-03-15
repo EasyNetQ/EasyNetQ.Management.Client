@@ -16,7 +16,7 @@ function installPackage {
     local packageVersion=$3
     echo "Installing '$packageName' version '$packageVersion' in '$dir'..."
     mkdir -p $dir
-    local contents='<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>netstandard1.5</TargetFramework></PropertyGroup></Project>'
+    local contents='<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>netstandard2.0</TargetFramework></PropertyGroup></Project>'
     local proj="$dir/prj.csproj"
     echo $contents > $proj
     dotnet add "$proj" package $packageName --version $packageVersion --package-directory $dir

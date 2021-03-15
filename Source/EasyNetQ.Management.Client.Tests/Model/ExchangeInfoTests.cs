@@ -1,6 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using EasyNetQ.Management.Client.Model;
+using FluentAssertions;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model
@@ -12,7 +13,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
         {
             const string expectedName = "the_name";
             var exchangeInfo = new ExchangeInfo(expectedName, "direct");
-            exchangeInfo.GetName().ShouldEqual(expectedName);
+            exchangeInfo.GetName().Should().Be(expectedName);
         }
 
         [Fact]
