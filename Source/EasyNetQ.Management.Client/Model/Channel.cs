@@ -47,5 +47,6 @@ namespace EasyNetQ.Management.Client.Model
         [JsonConverter(typeof(TolerantInt32Converter))]
         public int PeerPort { get; set; }
         public string PeerHost { get; set; }
+        public string Node { get; set; }
     }
 }

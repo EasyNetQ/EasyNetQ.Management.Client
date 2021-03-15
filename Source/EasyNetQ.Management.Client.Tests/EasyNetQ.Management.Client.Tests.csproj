@@ -6,47 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Json\Bindings.json" />
-    <None Remove="Json\Channels.json" />
-    <None Remove="Json\Connections.json" />
-    <None Remove="Json\Definitions.json" />
-    <None Remove="Json\Exchanges.json" />
-    <None Remove="Json\Federations.json" />
-    <None Remove="Json\Nodes.json" />
-    <None Remove="Json\Overview.json" />
-    <None Remove="Json\Policies_ha.json" />
-    <None Remove="Json\Queues.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Json\Bindings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Json\Channels.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Json\Connections.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Json\Definitions.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Json\Exchanges.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Json\Federations.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Json\Nodes.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Json\Overview.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Json\Policies_ha.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Json\Queues.json">
+    <EmbeddedResource Include="Json\*.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

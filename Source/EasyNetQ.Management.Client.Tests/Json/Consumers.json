@@ -1,0 +1,77 @@
+﻿[
+  {
+    "arguments": {
+      "x-cancel-on-ha-failover": false,
+      "x-priority": 0
+    },
+    "ack_required": true,
+    "active": true,
+    "activity_status": "up",
+    "channel_details": {
+      "connection_name": "[::1]:65216 -> [::1]:5672",
+      "name": "[::1]:65216 -> [::1]:5672 (4)",
+      "node": "rabbit@LOCALHOST",
+      "number": 4,
+      "peer_host": "::1",
+      "peer_port": 65216,
+      "user": "guest"
+    },
+    "consumer_tag": "60479aa8-c8b8-43d1-baee-e45731b53024",
+    "exclusive": false,
+    "prefetch_count": 50,
+    "queue": {
+      "name": "Queue01",
+      "vhost": "/"
+    }
+  },
+  {
+    "arguments": {
+      "x-cancel-on-ha-failover": false,
+      "x-priority": 0
+    },
+    "ack_required": true,
+    "active": true,
+    "activity_status": "up",
+    "channel_details": {
+      "connection_name": "[::1]:65216 -> [::1]:5672",
+      "name": "[::1]:65216 -> [::1]:5672 (3)",
+      "node": "rabbit@LOCALHOST",
+      "number": 3,
+      "peer_host": "::1",
+      "peer_port": 65216,
+      "user": "guest"
+    },
+    "consumer_tag": "90479aa8-c8b8-43d1-baee-e45731b53111",
+    "exclusive": false,
+    "prefetch_count": 50,
+    "queue": {
+      "name": "Queue02",
+      "vhost": "/"
+    }
+  },
+  {
+    "arguments": {
+      "x-cancel-on-ha-failover": false,
+      "x-priority": 0
+    },
+    "ack_required": true,
+    "active": true,
+    "activity_status": "up",
+    "channel_details": {
+      "connection_name": "[::1]:65216 -> [::1]:5672",
+      "name": "[::1]:65216 -> [::1]:5672 (1)",
+      "node": "rabbit@LOCALHOST",
+      "number": 1,
+      "peer_host": "::1",
+      "peer_port": 65216,
+      "user": "guest"
+    },
+    "consumer_tag": "123459aa8-c8b8-43d1-baee-e45731b53024",
+    "exclusive": false,
+    "prefetch_count": 50,
+    "queue": {
+      "name": "Queue03",
+      "vhost": "/"
+    }
+  }
+]

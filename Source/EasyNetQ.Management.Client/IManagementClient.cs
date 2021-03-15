@@ -148,6 +148,13 @@ namespace EasyNetQ.Management.Client
         Task<IReadOnlyList<TopicPermission>> GetTopicPermissionsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
+        ///     A list of all consumers.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
         ///     Closes the given connection
         /// </summary>
         /// <param name="connection"></param>

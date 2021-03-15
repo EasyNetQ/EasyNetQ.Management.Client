@@ -920,6 +920,18 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }
         }
 
+        [Fact(Skip = "Requires at least a consumer")]
+        public async Task Should_get_consumers()
+        {
+            foreach (var consumer in await managementClient.GetConsumersAsync().ConfigureAwait(false))
+            {
+                Console.Out.WriteLine("consumer.ConsumerTag = {0}", consumer.ConsumerTag);
+                Console.Out.WriteLine("consumer.ChannelDetails.ConnectionName = {0}", consumer.ChannelDetails.ConnectionName);
+                Console.Out.WriteLine("consumer.ChannelDetails.ConnectionName = {0}", consumer.ChannelDetails.ConnectionName);
+                Console.Out.WriteLine("consumer.ChannelDetails.Node = {0}", consumer.ChannelDetails.Node);
+            }
+        }
+
         [Fact]
         public async Task Should_get_channels()
         {
