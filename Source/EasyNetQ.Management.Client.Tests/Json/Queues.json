@@ -235,7 +235,7 @@
         "exclusive": false,
         "ack_required": true,
         "prefetch_count": 1000,
-        "arguments": { }
+        "arguments": []
       }
     ],
     "name": "queue_name",
