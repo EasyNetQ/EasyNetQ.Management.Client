@@ -31,6 +31,7 @@ namespace EasyNetQ.Management.Client.Tests
         [InlineData("2001:db8:1111::50", false)]
         [InlineData("[::1]", true)]
         [InlineData("[2001:db8:1111::50]", true)]
+        [InlineData("[[2001:db8:1111::50]]", false)]
         public void Host_url_should_be_legal(string url, bool isValid)
         {
             var exception = Record.Exception(() => new ManagementClient(url, "user", "password"));
