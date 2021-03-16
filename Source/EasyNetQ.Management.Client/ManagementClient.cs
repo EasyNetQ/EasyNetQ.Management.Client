@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -31,7 +31,7 @@ namespace EasyNetQ.Management.Client
         private readonly HttpClient httpClient;
 
         private readonly Regex urlRegex =
-            new Regex(@"^(http|https):\/\/.+\w$", RegexOptions.Compiled | RegexOptions.Singleline);
+            new Regex(@"^(http|https):\/\/\[?.+\w\]?$", RegexOptions.Compiled | RegexOptions.Singleline);
 
         static ManagementClient()
         {
