@@ -78,7 +78,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                 .ConfigureAwait(false);
 
             updatedUser.Name.Should().Be(user.Name);
-            updatedUser.Tags.Should().Be(user.Tags);
+            updatedUser.Tags.SequenceEqual(user.Tags).Should().Be(true);
             updatedUser.PasswordHash.Should().NotBe(user.PasswordHash);
         }
 
