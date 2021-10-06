@@ -29,7 +29,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
         public void Should_be_able_to_add_tags()
         {
             userInfo.AddTag("administrator").AddTag("management");
-            userInfo.Tags.Should().Be("administrator,management");
+            userInfo.Tags.Should().Contain("administrator", "management");
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
         [Fact]
         public void Should_have_a_default_tag_of_empty_string()
         {
-            userInfo.Tags.Should().Be("");
+            userInfo.Tags.Should().BeEmpty();
         }
     }
 }

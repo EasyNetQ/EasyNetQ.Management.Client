@@ -9,9 +9,7 @@ namespace EasyNetQ.Management.Client.Model
         private readonly string name;
         public string Password { get; private set; }
         public string PasswordHash { get; private set; }
-        public string Tags => tagList.Any()
-            ? string.Join(",", tagList)
-            : string.Empty;
+        public List<string> Tags => tagList.ToList();
 
         private readonly ISet<string> allowedTags = new HashSet<string>
         {
