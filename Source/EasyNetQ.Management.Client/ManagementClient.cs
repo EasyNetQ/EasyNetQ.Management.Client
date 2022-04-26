@@ -600,9 +600,8 @@ namespace EasyNetQ.Management.Client
             Ensure.ArgumentNotNull(userName, nameof(userName));
             var user = await GetUserAsync(userName, cancellationToken).ConfigureAwait(false);
 
-            var tags = user.Tags.Split(',');
             var userInfo = new UserInfo(userName, newPassword);
-            foreach (var tag in tags)
+            foreach (var tag in user.Tags)
             {
                 userInfo.AddTag(tag.Trim());
             }
