@@ -69,7 +69,8 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
         public static string RabbitMQDockerImageTag(OSPlatform dockerEngineOsPlatform)
         {
-            return Instance.osSpecificSettings[dockerEngineOsPlatform]["rabbitMQDockerImageTag"];
+            return "latest";
+            //return Instance.osSpecificSettings[dockerEngineOsPlatform]["rabbitMQDockerImageTag"];
         }
     }
 }
