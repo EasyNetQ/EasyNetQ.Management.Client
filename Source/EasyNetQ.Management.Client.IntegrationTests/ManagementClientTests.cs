@@ -134,10 +134,12 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Fact]
         public async Task Should_be_able_to_create_a_user()
         {
-            var userInfo = new UserInfo(testUser, "topSecret").AddTag("administrator");
+            var userTag = "administrator";
+            var userInfo = new UserInfo(testUser, "topSecret").AddTag(userTag);
 
             var user = await managementClient.CreateUserAsync(userInfo).ConfigureAwait(false);
             user.Name.Should().Be(testUser);
+            user.Tags.Should().Contain(userTag);
         }
 
         [Fact]
