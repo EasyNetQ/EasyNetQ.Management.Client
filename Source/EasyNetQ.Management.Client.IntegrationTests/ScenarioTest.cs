@@ -5,15 +5,12 @@ using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests
 {
-    [Collection("Rabbitmq collection")]
+    [Collection("RabbitMQ")]
     public class ScenarioTest
     {
-        public ScenarioTest(RabbitMqFixture fixture)
-        {
-            rabbitMqUrl = $"http://{fixture.RabbitHostForManagement}";
-        }
+        private readonly RabbitMqFixture fixture;
 
-        private readonly string rabbitMqUrl;
+        public ScenarioTest(RabbitMqFixture fixture) => this.fixture = fixture;
 
         /// <summary>
         ///     Demonstrate how to create a virtual host, add some users, set permissions
@@ -22,22 +19,18 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Fact]
         public async Task Should_be_able_to_provision_a_virtual_host()
         {
-            var initial = new ManagementClient(rabbitMqUrl, Configuration.RabbitMqUser,
-                Configuration.RabbitMqPassword, Configuration.RabbitMqManagementPort);
-
             // first create a new virtual host
-            var vhost = await initial.CreateVhostAsync("my_virtual_host").ConfigureAwait(false);
+            var vhost = await fixture.ManagementClient.CreateVhostAsync("my_virtual_host").ConfigureAwait(false);
 
-            // next create a user for that virutal host
-            var user = await initial.CreateUserAsync(new UserInfo("mike", "topSecret").AddTag("administrator"))
+            // next create a user for that virtual host
+            var user = await fixture.ManagementClient.CreateUserAsync(new UserInfo("mike", "topSecret").AddTag("administrator"))
                 .ConfigureAwait(false);
 
             // give the new user all permissions on the virtual host
-            await initial.CreatePermissionAsync(new PermissionInfo(user, vhost)).ConfigureAwait(false);
+            await fixture.ManagementClient.CreatePermissionAsync(new PermissionInfo(user, vhost)).ConfigureAwait(false);
 
             // now log in again as the new user
-            var management = new ManagementClient(rabbitMqUrl, user.Name, "topSecret",
-                Configuration.RabbitMqManagementPort);
+            var management = new ManagementClient(fixture.Host, user.Name, "topSecret");
 
             // test that everything's OK
             await management.IsAliveAsync(vhost).ConfigureAwait(false);

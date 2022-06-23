@@ -8,13 +8,16 @@ using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests
 {
-    [Collection("Rabbitmq collection")]
+    [Collection("RabbitMQ")]
     public class ManagementClientTests
     {
+        private readonly RabbitMqFixture fixture;
+        private static readonly Vhost Vhost = new() { Name = "/", Tracing = false };
+
         public ManagementClientTests(RabbitMqFixture fixture)
         {
-            hostUrl = $"http://{fixture.RabbitHostForManagement}";
-            managementClient = new ManagementClient(hostUrl, username, password, port);
+            this.fixture = fixture;
+            managementClient = new ManagementClient(fixture.Host, fixture.User, fixture.Password);
         }
 
         private const string testExchange = "management_api_test_exchange";
@@ -24,18 +27,13 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         private const string testQueueWithPlusChar = "management_api_test_queue+plus+test";
         private const string testUser = "mikey";
 
-        private readonly string hostUrl;
-        private readonly string username = Configuration.RabbitMqUser;
-        private readonly string password = Configuration.RabbitMqPassword;
-        private readonly int port = Configuration.RabbitMqManagementPort;
-        private readonly string vhostName = Configuration.RabbitMqVirtualHostName;
         private readonly IManagementClient managementClient;
-        private readonly string rabbitHostName = Configuration.RabbitMqHostName;
 
         private Task<Exchange> CreateExchange(string exchangeName)
         {
-            return managementClient.CreateExchangeAsync(new ExchangeInfo(exchangeName, "direct"),
-                Configuration.RabbitMqVirtualHost);
+            return managementClient.CreateExchangeAsync(
+                new ExchangeInfo(exchangeName, "direct"), Vhost
+            );
         }
 
         private async Task<Queue> EnsureQueueExists(string managementApiTestQueue)
@@ -47,7 +45,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
         private async Task<Queue> CreateTestQueue(string queueName)
         {
-            var vhost = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            var vhost = await managementClient.GetVhostAsync(Vhost.Name).ConfigureAwait(false);
             return await CreateTestQueueInVhost(queueName, vhost);
         }
 
@@ -95,7 +93,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Fact]
         public async Task Should_be_able_to_configure_request()
         {
-            var client = new ManagementClient(hostUrl, username, password, port, configureRequest:
+            var client = new ManagementClient(fixture.Host, fixture.User, fixture.Password, configureRequest:
                 req => req.Headers.Add("x-not-used", "some_value"));
 
             await client.GetOverviewAsync().ConfigureAwait(false);
@@ -104,7 +102,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Fact]
         public async Task Should_be_able_to_create_a_queue()
         {
-            (await managementClient.CreateQueueAsync(new QueueInfo(testQueue), Configuration.RabbitMqVirtualHost)
+            (await managementClient.CreateQueueAsync(new QueueInfo(testQueue), Vhost)
                     .ConfigureAwait(false))
                 .Name.Should().Be(testQueue);
         }
@@ -116,7 +114,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             const string argumentKey = "x-dead-letter-exchange";
             var queueInfo = new QueueInfo($"{testQueue}1");
             queueInfo.Arguments.Add(argumentKey, exchangeName);
-            var queue = await managementClient.CreateQueueAsync(queueInfo, Configuration.RabbitMqVirtualHost)
+            var queue = await managementClient.CreateQueueAsync(queueInfo, Vhost)
                 .ConfigureAwait(false);
             queue.Arguments[argumentKey].Should().NotBeNull();
             queue.Arguments[argumentKey].Should().Be(exchangeName);
@@ -126,7 +124,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         public async Task Should_be_able_to_create_a_queue_with_plus_char_in_the_name()
         {
             var queueInfo = new QueueInfo(testQueueWithPlusChar);
-            var queue = await managementClient.CreateQueueAsync(queueInfo, Configuration.RabbitMqVirtualHost)
+            var queue = await managementClient.CreateQueueAsync(queueInfo, Vhost)
                 .ConfigureAwait(false);
             queue.Name.Should().Be(testQueueWithPlusChar);
         }
@@ -191,7 +189,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 Definition = new PolicyDefinition
                 {
                     HaMode = haMode,
@@ -207,7 +205,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1, (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(
                 p => p.Name == policyName
-                     && p.Vhost == vhostName
+                     && p.Vhost == Vhost.Name
                      && p.Priority == priority
                      && p.Definition.HaMode == haMode
                      && p.Definition.HaSyncMode == haSyncMode
@@ -228,7 +226,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 Definition = new PolicyDefinition
                 {
                     AlternateExchange = alternateExchange
@@ -236,7 +234,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1, (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(
                 p => p.Name == policyName
-                     && p.Vhost == vhostName
+                     && p.Vhost == Vhost.Name
                      && p.Definition.AlternateExchange == alternateExchange));
         }
 
@@ -251,7 +249,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         public async Task Should_be_able_to_create_an_exchange_with_plus_char_in_the_name()
         {
             var exhangeInfo = new ExchangeInfo(testExchangetestQueueWithPlusChar, "direct");
-            var queue = await managementClient.CreateExchangeAsync(exhangeInfo, Configuration.RabbitMqVirtualHost)
+            var queue = await managementClient.CreateExchangeAsync(exhangeInfo, Vhost)
                 .ConfigureAwait(false);
             queue.Name.Should().Be(testExchangetestQueueWithPlusChar);
         }
@@ -266,7 +264,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 Definition = new PolicyDefinition
                 {
                     DeadLetterExchange = deadLetterExchange,
@@ -275,7 +273,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1, (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(
                 p => p.Name == policyName
-                     && p.Vhost == vhostName
+                     && p.Vhost == Vhost.Name
                      && p.Definition.DeadLetterExchange == deadLetterExchange
                      && p.Definition.DeadLetterRoutingKey == deadLetterRoutingKey));
         }
@@ -290,7 +288,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 ApplyTo = ApplyMode.Exchanges,
                 Definition = new PolicyDefinition
                 {
@@ -300,7 +298,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1, (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(
                 p => p.Name == policyName
-                     && p.Vhost == vhostName
+                     && p.Vhost == Vhost.Name
                      && p.ApplyTo == ApplyMode.Exchanges
                      && p.Definition.HaMode == haMode
                      && p.Definition.HaSyncMode == haSyncMode));
@@ -315,7 +313,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 Definition = new PolicyDefinition
                 {
                     Expires = expires
@@ -323,7 +321,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1, (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(
                 p => p.Name == policyName
-                     && p.Vhost == vhostName
+                     && p.Vhost == Vhost.Name
                      && p.Definition.Expires == expires));
         }
 
@@ -336,7 +334,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 Definition = new PolicyDefinition
                 {
                     FederationUpstream = "my-upstream"
@@ -344,7 +342,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1, (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(
                 p => p.Name == policyName
-                     && p.Vhost == vhostName
+                     && p.Vhost == Vhost.Name
                      && p.Definition.FederationUpstream == "my-upstream"));
         }
 
@@ -357,7 +355,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 Definition = new PolicyDefinition
                 {
                     FederationUpstreamSet = "my-upstream-set"
@@ -365,7 +363,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1, (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(
                 p => p.Name == policyName
-                     && p.Vhost == vhostName
+                     && p.Vhost == Vhost.Name
                      && p.Definition.FederationUpstreamSet == "my-upstream-set"));
         }
 
@@ -378,7 +376,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 Definition = new PolicyDefinition
                 {
                     MaxLength = maxLength
@@ -386,7 +384,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1, (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(
                 p => p.Name == policyName
-                     && p.Vhost == vhostName
+                     && p.Vhost == Vhost.Name
                      && p.Definition.MaxLength == maxLength));
         }
 
@@ -399,7 +397,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 Definition = new PolicyDefinition
                 {
                     MessageTtl = messageTtl
@@ -407,7 +405,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1, (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(
                 p => p.Name == policyName
-                     && p.Vhost == vhostName
+                     && p.Vhost == Vhost.Name
                      && p.Definition.MessageTtl == messageTtl));
         }
 
@@ -418,8 +416,8 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Component = "federation-upstream",
                 Name = "myfakefederationupstream1",
-                Vhost = vhostName,
-                Value = new { value = new { uri = $"amqp://{username}:{password}@{rabbitHostName}" } }
+                Vhost = Vhost.Name,
+                Value = new { value = new { uri = $"amqp://{fixture.User}:{fixture.Password}@{fixture.Host}" } }
             }).ConfigureAwait(false);
             Assert.Contains(await managementClient.GetParametersAsync().ConfigureAwait(false),
                 p => p.Name == "myfakefederationupstream1");
@@ -431,12 +429,12 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var user = (await managementClient.GetUsersAsync().ConfigureAwait(false)).SingleOrDefault(x =>
                 x.Name == testUser);
             if (user == null)
-                throw new EasyNetQTestException(string.Format("user '{0}' hasn't been created", testUser));
+                throw new EasyNetQTestException($"user '{testUser}' hasn't been created");
             var vhost =
                 (await managementClient.GetVhostsAsync().ConfigureAwait(false)).SingleOrDefault(
                     x => x.Name == testVHost);
             if (vhost == null)
-                throw new EasyNetQTestException(string.Format("Test vhost: '{0}' has not been created", testVHost));
+                throw new EasyNetQTestException($"Test vhost: '{testVHost}' has not been created");
 
             var permissionInfo = new PermissionInfo(user, vhost);
             await managementClient.CreatePermissionAsync(permissionInfo).ConfigureAwait(false);
@@ -456,9 +454,9 @@ namespace EasyNetQ.Management.Client.IntegrationTests
 
             var vhost =
                 (await managementClient.GetVhostsAsync().ConfigureAwait(false)).SingleOrDefault(
-                    x => x.Name == vhostName);
+                    x => x.Name == Vhost.Name);
             if (vhost == null)
-                throw new EasyNetQTestException(string.Format("Default vhost: '{0}' has not been created", testVHost));
+                throw new EasyNetQTestException($"Default vhost: '{testVHost}' has not been created");
 
             var permissionInfo = new PermissionInfo(user, vhost);
             await managementClient.CreatePermissionAsync(permissionInfo).ConfigureAwait(false);
@@ -474,7 +472,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 Definition = new PolicyDefinition
                 {
                     HaMode = haMode,
@@ -483,7 +481,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1, (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(
                 p => p.Name == policyName
-                     && p.Vhost == vhostName
+                     && p.Vhost == Vhost.Name
                      && p.ApplyTo == ApplyMode.All
                      && p.Definition.HaMode == haMode
                      && p.Definition.HaSyncMode == haSyncMode));
@@ -499,7 +497,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 ApplyTo = ApplyMode.Queues,
                 Definition = new PolicyDefinition
                 {
@@ -509,7 +507,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1, (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(
                 p => p.Name == policyName
-                     && p.Vhost == vhostName
+                     && p.Vhost == Vhost.Name
                      && p.ApplyTo == ApplyMode.Queues
                      && p.Definition.HaMode == haMode
                      && p.Definition.HaSyncMode == haSyncMode));
@@ -572,7 +570,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             {
                 Name = policyName,
                 Pattern = "averyuncommonpattern",
-                Vhost = vhostName,
+                Vhost = Vhost.Name,
                 Definition = new PolicyDefinition
                 {
                     HaMode = HaMode.All,
@@ -581,11 +579,11 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             }).ConfigureAwait(false);
             Assert.Equal(1,
                 (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(p =>
-                    p.Name == policyName && p.Vhost == vhostName));
-            await managementClient.DeletePolicyAsync(policyName, new Vhost { Name = vhostName }).ConfigureAwait(false);
+                    p.Name == policyName && p.Vhost == Vhost.Name));
+            await managementClient.DeletePolicyAsync(policyName, new Vhost { Name = Vhost.Name }).ConfigureAwait(false);
             Assert.Equal(0,
                 (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(p =>
-                    p.Name == policyName && p.Vhost == vhostName));
+                    p.Name == policyName && p.Vhost == Vhost.Name));
         }
 
         [Fact]
@@ -616,7 +614,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         public async Task Should_be_able_to_get_a_queue_by_name()
         {
             await CreateTestQueue(testQueue).ConfigureAwait(false);
-            var queue = await managementClient.GetQueueAsync(testQueue, Configuration.RabbitMqVirtualHost)
+            var queue = await managementClient.GetQueueAsync(testQueue, Vhost)
                 .ConfigureAwait(false);
             queue.Name.Should().Be(testQueue);
         }
@@ -629,7 +627,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             await CreateTestQueue(testQueue).ConfigureAwait(false);
             await Task.Delay(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
 
-            var queue = await managementClient.GetQueueAsync(testQueue, Configuration.RabbitMqVirtualHost,
+            var queue = await managementClient.GetQueueAsync(testQueue, Vhost,
                 new GetLengthsCriteria(age, increment), new GetRatesCriteria(age, increment)).ConfigureAwait(false);
 
             queue.Name.Should().Be(testQueue);
@@ -647,7 +645,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             await Task.Delay(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
 
             var queue = await managementClient
-                .GetQueueAsync(testQueue, Configuration.RabbitMqVirtualHost, new GetLengthsCriteria(age, increment))
+                .GetQueueAsync(testQueue, Vhost, new GetLengthsCriteria(age, increment))
                 .ConfigureAwait(false);
 
             queue.Name.Should().Be(testQueue);
@@ -662,7 +660,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             const int age = 60;
             const int increment = 10;
             await CreateTestQueue(testQueue).ConfigureAwait(false);
-            var queue = await managementClient.GetQueueAsync(testQueue, Configuration.RabbitMqVirtualHost,
+            var queue = await managementClient.GetQueueAsync(testQueue, Vhost,
                 ratesCriteria: new GetRatesCriteria(age, increment)).ConfigureAwait(false);
             queue.Name.Should().Be(testQueue);
         }
@@ -671,7 +669,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         public async Task Should_be_able_to_get_a_queue_by_name_with_plus_char()
         {
             await CreateTestQueue(testQueueWithPlusChar).ConfigureAwait(false);
-            var queue = await managementClient.GetQueueAsync(testQueueWithPlusChar, Configuration.RabbitMqVirtualHost)
+            var queue = await managementClient.GetQueueAsync(testQueueWithPlusChar, Vhost)
                 .ConfigureAwait(false);
             queue.Name.Should().Be(testQueueWithPlusChar);
         }
@@ -696,7 +694,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Fact]
         public async Task Should_be_able_to_get_an_individual_exchange_by_name()
         {
-            var vhost = new Vhost { Name = vhostName };
+            var vhost = new Vhost { Name = Vhost.Name };
             var exchange = await managementClient.GetExchangeAsync(testExchange, vhost).ConfigureAwait(false);
 
             exchange.Name.Should().Be(testExchange);
@@ -715,7 +713,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             var queue = await CreateTestQueue(testQueue).ConfigureAwait(false);
 
-            var defaultExchange = new Exchange { Name = "amq.default", Vhost = vhostName };
+            var defaultExchange = new Exchange { Name = "amq.default", Vhost = Vhost.Name };
 
             var publishInfo = new PublishInfo(
                 new Dictionary<string, object>
@@ -767,7 +765,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             var vhost = await managementClient.CreateVhostAsync(testVHost).ConfigureAwait(false);
             var user = (await managementClient.GetUsersAsync().ConfigureAwait(false)).SingleOrDefault(x =>
-                x.Name == username);
+                x.Name == fixture.User);
             var permissionInfo = new PermissionInfo(user, vhost);
             await managementClient.CreatePermissionAsync(permissionInfo).ConfigureAwait(false);
 
@@ -784,7 +782,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Fact]
         public async Task Should_create_binding()
         {
-            var vhost = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            var vhost = await managementClient.GetVhostAsync(Vhost.Name).ConfigureAwait(false);
             var queue = await managementClient.GetQueueAsync(testQueue, vhost).ConfigureAwait(false);
             var exchange = await managementClient.GetExchangeAsync(testExchange, vhost).ConfigureAwait(false);
 
@@ -799,7 +797,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             const string sourceExchangeName = "management_api_test_source_exchange";
             const string destinationExchangeName = "management_api_test_destination_exchange";
 
-            var vhost = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            var vhost = await managementClient.GetVhostAsync(Vhost.Name).ConfigureAwait(false);
             var sourceExchangeInfo = new ExchangeInfo(sourceExchangeName, "direct");
             var destinationExchangeInfo = new ExchangeInfo(destinationExchangeName, "direct");
 
@@ -848,7 +846,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             const string sourceExchangeName = "management_api_test_source_exchange";
             const string destinationExchangeName = "management_api_test_destination_exchange";
 
-            var vhost = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            var vhost = await managementClient.GetVhostAsync(Vhost.Name).ConfigureAwait(false);
             var sourceExchangeInfo = new ExchangeInfo(sourceExchangeName, "direct");
             var destinationExchangeInfo = new ExchangeInfo(destinationExchangeName, "direct");
 
@@ -871,18 +869,18 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Fact]
         public async Task Should_disable_tracing()
         {
-            var vhost = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            var vhost = await managementClient.GetVhostAsync(Vhost.Name).ConfigureAwait(false);
             await managementClient.DisableTracingAsync(vhost).ConfigureAwait(false);
-            var vhostAfterUpdate = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            var vhostAfterUpdate = await managementClient.GetVhostAsync(Vhost.Name).ConfigureAwait(false);
             Assert.False(vhostAfterUpdate.Tracing);
         }
 
         [Fact]
         public async Task Should_enable_tracing()
         {
-            var vhost = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            var vhost = await managementClient.GetVhostAsync(Vhost.Name).ConfigureAwait(false);
             await managementClient.EnableTracingAsync(vhost).ConfigureAwait(false);
-            var vhostAfterUpdate = await managementClient.GetVhostAsync(vhostName).ConfigureAwait(false);
+            var vhostAfterUpdate = await managementClient.GetVhostAsync(Vhost.Name).ConfigureAwait(false);
             Assert.True(vhostAfterUpdate.Tracing);
         }
 
@@ -1003,7 +1001,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             var federations = await managementClient.GetFederationAsync().ConfigureAwait(false);
 
-            federations.Single().Node.Should().Be($"rabbit@{rabbitHostName}");
+            federations.Single().Node.Should().Be($"rabbit@{fixture.Host}");
         }
 
         [Fact]
@@ -1012,7 +1010,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var nodes = (await managementClient.GetNodesAsync().ConfigureAwait(false)).ToList();
 
             nodes.Count.Should().NotBe(0);
-            nodes[0].Name.Should().Be($"rabbit@{rabbitHostName}");
+            nodes[0].Name.Should().Be($"rabbit@{fixture.Host}");
         }
 
         [Fact]
