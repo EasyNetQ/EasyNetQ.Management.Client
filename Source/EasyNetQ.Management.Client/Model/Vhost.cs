@@ -1,8 +1,7 @@
-namespace EasyNetQ.Management.Client.Model
+namespace EasyNetQ.Management.Client.Model;
+
+public class Vhost
 {
-    public class Vhost
-    {
-        public string Name { get; set; }
-        public bool Tracing { get; set; }
-    }
+    public string Name { get; set; }
+    public bool Tracing { get; set; }
 }

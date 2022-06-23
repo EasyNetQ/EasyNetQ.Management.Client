@@ -1,10 +1,9 @@
-﻿namespace EasyNetQ.Management.Client.Model
+﻿namespace EasyNetQ.Management.Client.Model;
+
+public class Parameter
 {
-    public class Parameter
-    {
-        public string Vhost { get; set; }
-        public string Component { get; set; }
-        public string Name { get; set; }
-        public object Value { get; set; }
-    }
+    public string Vhost { get; set; }
+    public string Component { get; set; }
+    public string Name { get; set; }
+    public object Value { get; set; }
 }

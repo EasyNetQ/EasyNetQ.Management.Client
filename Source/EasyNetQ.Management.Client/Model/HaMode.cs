@@ -1,9 +1,8 @@
-﻿namespace EasyNetQ.Management.Client.Model
+﻿namespace EasyNetQ.Management.Client.Model;
+
+public enum HaMode
 {
-    public enum HaMode
-    {
-        All,
-        Exactly,
-        Nodes
-    }
+    All,
+    Exactly,
+    Nodes
 }

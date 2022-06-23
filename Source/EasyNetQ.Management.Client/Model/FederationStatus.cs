@@ -1,7 +1,6 @@
-namespace EasyNetQ.Management.Client.Model
+namespace EasyNetQ.Management.Client.Model;
+
+public enum FederationStatus
 {
-    public enum FederationStatus
-    {
-        Running
-    }
+    Running
 }
