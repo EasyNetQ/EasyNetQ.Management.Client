@@ -1010,7 +1010,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             var nodes = (await managementClient.GetNodesAsync().ConfigureAwait(false)).ToList();
 
             nodes.Count.Should().NotBe(0);
-            nodes[0].Name.Should().Be($"rabbit@{fixture.Host}");
+            nodes[0].Name.Should().Be($"rabbit@easynetq");
         }
 
         [Fact]
