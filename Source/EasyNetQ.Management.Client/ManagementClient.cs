@@ -736,23 +736,18 @@ public class ManagementClient : IManagementClient
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         await DeserializeResponseAsync(
-            statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent,
-            response
+            s => s is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, response
         ).ConfigureAwait(false);
     }
 
-    private static Task DeserializeResponseAsync(
-        Func<HttpStatusCode, bool> success, HttpResponseMessage response
-    )
+    private static Task DeserializeResponseAsync(Func<HttpStatusCode, bool> success, HttpResponseMessage response)
     {
         return success(response.StatusCode)
             ? Task.CompletedTask
             : Task.FromException(new UnexpectedHttpStatusCodeException(response.StatusCode));
     }
 
-    private static async Task<T> DeserializeResponseAsync<T>(
-        Func<HttpStatusCode, bool> success, HttpResponseMessage response
-    )
+    private static async Task<T> DeserializeResponseAsync<T>(Func<HttpStatusCode, bool> success, HttpResponseMessage response)
     {
         if (!success(response.StatusCode))
             throw new UnexpectedHttpStatusCodeException(response.StatusCode);
