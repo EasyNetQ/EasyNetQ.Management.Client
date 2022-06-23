@@ -1,7 +1,6 @@
-﻿namespace EasyNetQ.Management.Client.Model
+﻿namespace EasyNetQ.Management.Client.Model;
+
+public class AlivenessTestResult
 {
-    public class AlivenessTestResult
-    {
-        public string Status { get; set; }
-    }
+    public string Status { get; set; }
 }

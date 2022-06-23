@@ -1,9 +1,8 @@
-﻿namespace EasyNetQ.Management.Client.Model
+﻿namespace EasyNetQ.Management.Client.Model;
+
+public enum ApplyMode
 {
-    public enum ApplyMode
-    {
-        All,
-        Queues,
-        Exchanges
-    }
+    All,
+    Queues,
+    Exchanges
 }

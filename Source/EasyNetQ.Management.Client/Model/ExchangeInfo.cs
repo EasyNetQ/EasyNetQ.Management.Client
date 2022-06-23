@@ -1,55 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EasyNetQ.Management.Client.Model
+namespace EasyNetQ.Management.Client.Model;
+
+public class ExchangeInfo
 {
-    public class ExchangeInfo
+    public string Type { get; private set; }
+    public bool AutoDelete { get; private set; }
+    public bool Durable { get; private set; }
+    public bool Internal { get; private set; }
+    public Arguments Arguments { get; private set; }
+
+    private readonly string name;
+
+    private readonly ISet<string> exchangeTypes = new HashSet<string>
     {
-        public string Type { get; private set; }
-        public bool AutoDelete { get; private set; }
-        public bool Durable { get; private set; }
-        public bool Internal { get; private set; }
-        public Arguments Arguments { get; private set; }
+        "direct", "topic", "fanout", "headers", "x-delayed-message"
+    };
 
-        private readonly string name;
+    public ExchangeInfo(string name, string type) : this(name, type, false, true, false, new Arguments())
+    {
+    }
 
-        private readonly ISet<string> exchangeTypes = new HashSet<string>
+    public ExchangeInfo(string name, string type, bool autoDelete, bool durable, bool @internal, Arguments arguments)
+    {
+        if (string.IsNullOrEmpty(name))
         {
-            "direct", "topic", "fanout", "headers", "x-delayed-message"
-        };
-
-        public ExchangeInfo(string name, string type) : this(name, type, false, true, false, new Arguments())
+            throw new ArgumentNullException(nameof(name));
+        }
+        if (type == null)
         {
+            throw new ArgumentNullException(nameof(type));
+        }
+        if (!exchangeTypes.Contains(type))
+        {
+            throw new EasyNetQManagementException("Unknown exchange type '{0}', expected one of {1}",
+                type,
+                string.Join(", ", exchangeTypes));
         }
 
-        public ExchangeInfo(string name, string type, bool autoDelete, bool durable, bool @internal, Arguments arguments)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-            if (!exchangeTypes.Contains(type))
-            {
-                throw new EasyNetQManagementException("Unknown exchange type '{0}', expected one of {1}",
-                    type,
-                    string.Join(", ", exchangeTypes));
-            }
+        this.name = name;
+        Type = type;
+        AutoDelete = autoDelete;
+        Durable = durable;
+        Internal = @internal;
+        Arguments = arguments;
+    }
 
-            this.name = name;
-            Type = type;
-            AutoDelete = autoDelete;
-            Durable = durable;
-            Internal = @internal;
-            Arguments = arguments;
-        }
-
-        public string GetName()
-        {
-            return name;
-        }
+    public string GetName()
+    {
+        return name;
     }
 }
