@@ -1,7 +1,6 @@
-﻿namespace EasyNetQ.Management.Client.Model
+﻿namespace EasyNetQ.Management.Client.Model;
+
+public class PublishResult
 {
-    public class PublishResult
-    {
-        public bool Routed { get; set; }     
-    }
+    public bool Routed { get; set; }
 }

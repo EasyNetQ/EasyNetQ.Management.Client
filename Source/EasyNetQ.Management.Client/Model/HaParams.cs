@@ -1,9 +1,8 @@
-﻿namespace EasyNetQ.Management.Client.Model
+﻿namespace EasyNetQ.Management.Client.Model;
+
+public class HaParams
 {
-    public class HaParams
-    {
-        public HaMode AssociatedHaMode { get; set; }
-        public long ExactlyCount { get; set; }
-        public string[] Nodes { get; set; }
-    }
+    public HaMode AssociatedHaMode { get; set; }
+    public long ExactlyCount { get; set; }
+    public string[] Nodes { get; set; }
 }

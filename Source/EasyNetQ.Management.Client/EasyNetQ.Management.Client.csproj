@@ -5,7 +5,8 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <OutputType>Library</OutputType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-
+    <LangVersion>latest</LangVersion>
+    
     <Product>EasyNetQ.Management.Client</Product>
     <Description>A .NET client for the RabbitMQ RESTful management API</Description>
     <AssemblyTitle>EasyNetQ.Management.Client</AssemblyTitle>

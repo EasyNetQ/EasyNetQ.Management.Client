@@ -4,65 +4,65 @@ using System.Linq;
 using EasyNetQ.Management.Client.Model;
 using Newtonsoft.Json;
 
-namespace EasyNetQ.Management.Client.Serialization
+namespace EasyNetQ.Management.Client.Serialization;
+
+public class HaParamsConverter : JsonConverter
 {
-    public class HaParamsConverter : JsonConverter
+    // Support serializing/deserializing ha-params according to http://www.rabbitmq.com/ha.html#genesis for 3.1.3
+
+    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
     {
-        // Support serializing/deserializing ha-params according to http://www.rabbitmq.com/ha.html#genesis for 3.1.3
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        var valueToSerialize = value as HaParams;
+        if (valueToSerialize.AssociatedHaMode == HaMode.Exactly)
         {
-            var valueToSerialize = value as HaParams;
-            if (valueToSerialize.AssociatedHaMode == HaMode.Exactly)
-            {
-                serializer.Serialize(writer, valueToSerialize.ExactlyCount);
-            }
-            else if (valueToSerialize.AssociatedHaMode == HaMode.Nodes && valueToSerialize.Nodes != null)
-            {
-                serializer.Serialize(writer, valueToSerialize.Nodes);
-            }
-            else
-            {
-                throw new JsonSerializationException("Could not serialize ha-params object");
-            }
+            serializer.Serialize(writer, valueToSerialize.ExactlyCount);
         }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        else if (valueToSerialize.AssociatedHaMode == HaMode.Nodes && valueToSerialize.Nodes != null)
         {
-            HaParams returnValue = null;
-            var deserializationErrorMessage = "Could not read ha-params value";
-            if (reader.TokenType == JsonToken.Integer)
+            serializer.Serialize(writer, valueToSerialize.Nodes);
+        }
+        else
+        {
+            throw new JsonSerializationException("Could not serialize ha-params object");
+        }
+    }
+
+    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    {
+        HaParams returnValue = null;
+        var deserializationErrorMessage = "Could not read ha-params value";
+        if (reader.TokenType == JsonToken.Integer)
+        {
+            returnValue = new HaParams { AssociatedHaMode = HaMode.Exactly, ExactlyCount = (long)reader.Value };
+        }
+        else if (reader.TokenType == JsonToken.StartArray)
+        {
+            var potentialReturnValue = new HaParams { AssociatedHaMode = HaMode.Nodes };
+            var nodesList = new List<string>();
+            do
             {
-                returnValue = new HaParams {AssociatedHaMode = HaMode.Exactly, ExactlyCount = (long)reader.Value};
-            }else if (reader.TokenType == JsonToken.StartArray)
-            {
-                var potentialReturnValue = new HaParams {AssociatedHaMode = HaMode.Nodes};
-                var nodesList = new List<string>();
-                do
+                reader.Read();
+                if (!new[] { JsonToken.EndArray, JsonToken.String }.Contains(reader.TokenType))
                 {
-                    reader.Read();
-                    if (!new[] {JsonToken.EndArray, JsonToken.String}.Contains(reader.TokenType))
-                    {
-                        deserializationErrorMessage = "Could not read ha-params array value";
-                    }
-                    else if(reader.TokenType == JsonToken.String)
-                    {
-                        nodesList.Add(reader.Value as string);
-                    }
-                } while (reader.TokenType == JsonToken.String);
-                potentialReturnValue.Nodes = nodesList.ToArray();
-                returnValue = potentialReturnValue;
-            }
-            if (returnValue != null)
-            {
-                return returnValue;
-            }
-            throw new JsonSerializationException(deserializationErrorMessage);
+                    deserializationErrorMessage = "Could not read ha-params array value";
+                }
+                else if (reader.TokenType == JsonToken.String)
+                {
+                    nodesList.Add(reader.Value as string);
+                }
+            } while (reader.TokenType == JsonToken.String);
+            potentialReturnValue.Nodes = nodesList.ToArray();
+            returnValue = potentialReturnValue;
         }
-
-        public override bool CanConvert(Type objectType)
+        if (returnValue != null)
         {
-            return objectType == typeof(HaParams);
+            return returnValue;
         }
+        throw new JsonSerializationException(deserializationErrorMessage);
+    }
+
+    public override bool CanConvert(Type objectType)
+    {
+        return objectType == typeof(HaParams);
     }
 }

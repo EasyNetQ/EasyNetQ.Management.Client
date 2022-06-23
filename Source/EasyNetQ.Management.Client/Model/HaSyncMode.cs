@@ -1,8 +1,7 @@
-﻿namespace EasyNetQ.Management.Client.Model
+﻿namespace EasyNetQ.Management.Client.Model;
+
+public enum HaSyncMode
 {
-    public enum HaSyncMode
-    {
-        Manual,
-        Automatic
-    }
+    Manual,
+    Automatic
 }

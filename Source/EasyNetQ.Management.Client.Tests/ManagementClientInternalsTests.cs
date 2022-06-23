@@ -6,60 +6,60 @@ using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace EasyNetQ.Management.Client.Tests
+namespace EasyNetQ.Management.Client.Tests;
+
+public class ManagementClientInternalsTests
 {
-    public class ManagementClientInternalsTests
+    /// <summary>
+    /// Checks for regression from using Int32 instead of Int64 for RecvOct and so on
+    /// </summary>
+    [Fact]
+    public void GetConnections_CheckDeserializeLargeNumbers()
     {
-        /// <summary>
-        /// Checks for regression from using Int32 instead of Int64 for RecvOct and so on
-        /// </summary>
-        [Fact]
-        public void GetConnections_CheckDeserializeLargeNumbers()
+        //TODO: redesign the ManagementClient by factoring out some of it's responsibilities and use dependency injection
+        //for this test we'd seperate out the deserialization.
+
+        JsonSerializerSettings settings = new JsonSerializerSettings
         {
-            //TODO: redesign the ManagementClient by factoring out some of it's responsibilities and use dependency injection
-            //for this test we'd seperate out the deserialization.
-            
-            JsonSerializerSettings settings = new JsonSerializerSettings
-            {
-                ContractResolver = new RabbitContractResolver()
-            };
+            ContractResolver = new RabbitContractResolver()
+        };
 
-            settings.Converters.Add(new PropertyConverter());
+        settings.Converters.Add(new PropertyConverter());
 
-            String responseBody = GetExampleGetConnectionsJsonResponseBody();
+        String responseBody = GetExampleGetConnectionsJsonResponseBody();
 
-            var connections = JsonConvert.DeserializeObject<IEnumerable<Connection>>(responseBody, settings);
-        }
+        var connections = JsonConvert.DeserializeObject<IEnumerable<Connection>>(responseBody, settings);
+    }
 
-        [Fact]
-        public void GetChannels()
+    [Fact]
+    public void GetChannels()
+    {
+        JsonSerializerSettings settings = new JsonSerializerSettings
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings
-            {
-                ContractResolver = new RabbitContractResolver()
-            };
+            ContractResolver = new RabbitContractResolver()
+        };
 
-            settings.Converters.Add(new PropertyConverter());
+        settings.Converters.Add(new PropertyConverter());
 
-            String responseBody = GetExampleGetChannelsJsonResponseBody();
+        String responseBody = GetExampleGetChannelsJsonResponseBody();
 
-            var channels = JsonConvert.DeserializeObject<IEnumerable<Channel>>(responseBody, settings).ToList();
+        var channels = JsonConvert.DeserializeObject<IEnumerable<Channel>>(responseBody, settings).ToList();
 
-            Assert.Equal(2,channels.Count);
+        Assert.Equal(2, channels.Count);
 
-            Assert.Equal(48538, channels[0].MessageStats.DeliverGet);
-            Assert.Equal(48538, channels[0].MessageStats.DeliverNoAck);
-            Assert.Equal(0, channels[0].MessageStats.Publish);
+        Assert.Equal(48538, channels[0].MessageStats.DeliverGet);
+        Assert.Equal(48538, channels[0].MessageStats.DeliverNoAck);
+        Assert.Equal(0, channels[0].MessageStats.Publish);
 
-            Assert.Equal(0, channels[1].MessageStats.DeliverGet);
-            Assert.Equal(0, channels[1].MessageStats.DeliverNoAck);
-            Assert.Equal(48538, channels[1].MessageStats.Publish);
+        Assert.Equal(0, channels[1].MessageStats.DeliverGet);
+        Assert.Equal(0, channels[1].MessageStats.DeliverNoAck);
+        Assert.Equal(48538, channels[1].MessageStats.Publish);
 
-        }
+    }
 
-        private String GetExampleGetChannelsJsonResponseBody()
-        {
-            return @"
+    private String GetExampleGetChannelsJsonResponseBody()
+    {
+        return @"
 [{
 	""connection_details"": {
 		""name"": ""10.1.1.55:62305"",
@@ -128,11 +128,11 @@ namespace EasyNetQ.Management.Client.Tests
 	""vhost"": ""DANDESKTOP""
 }]
 ";
-        }
+    }
 
-        private String GetExampleGetConnectionsJsonResponseBody()
-        {
-            return @"
+    private String GetExampleGetConnectionsJsonResponseBody()
+    {
+        return @"
 [{
 	""recv_oct"": 2899479294,
 	""recv_cnt"": 7765146,
@@ -188,6 +188,5 @@ namespace EasyNetQ.Management.Client.Tests
 		""x-Liquid-Process"": ""Some useful description""
 	}
 }]";
-        }
     }
 }

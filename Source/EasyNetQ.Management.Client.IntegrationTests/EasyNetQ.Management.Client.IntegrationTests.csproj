@@ -4,8 +4,9 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <InformationalVersion>0.1.0-alpha-01-commitHash</InformationalVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
