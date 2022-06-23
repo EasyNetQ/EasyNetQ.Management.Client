@@ -46,11 +46,6 @@ jobs:
         cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.Tests
         dotnet test --configuration Release --no-build
 
-    - name: DI.Tests
-      run: |
-        cd ${{ github.workspace }}/Source/EasyNetQ.DI.Tests
-        dotnet test --configuration Release --no-build
-
     - name: Integration Tests
       run: |
         cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.IntegrationTests
