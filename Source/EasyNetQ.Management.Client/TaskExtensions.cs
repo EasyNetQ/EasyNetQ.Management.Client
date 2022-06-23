@@ -19,7 +19,7 @@ namespace EasyNetQ.Management.Client
             if (task == null) throw new ArgumentNullException(nameof(task));
             if (task.Exception != null)
                 throw task.Exception.GetBaseException();
-            return task.ContinueWith(func,cancellationToken).Unwrap();
+            return task.ContinueWith(func, cancellationToken).Unwrap();
         }
     }
 }

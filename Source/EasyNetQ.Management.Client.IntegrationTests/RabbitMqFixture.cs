@@ -93,7 +93,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                 {"15672", new HashSet<string> {"15672"}},
                 {"25672", new HashSet<string> {"25672"}}
             };
-            var envVars = new List<string> {$"RABBITMQ_DEFAULT_VHOST={Configuration.RabbitMqVirtualHostName}"};
+            var envVars = new List<string> { $"RABBITMQ_DEFAULT_VHOST={Configuration.RabbitMqVirtualHostName}" };
             var containerId = await dockerProxy
                 .CreateContainerAsync(rabbitMQDockerImage, Configuration.RabbitMqHostName, portMappings,
                     dockerNetworkName, envVars, cancellationToken)

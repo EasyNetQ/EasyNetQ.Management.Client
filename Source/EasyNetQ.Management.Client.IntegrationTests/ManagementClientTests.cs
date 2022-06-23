@@ -419,7 +419,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                 Component = "federation-upstream",
                 Name = "myfakefederationupstream1",
                 Vhost = vhostName,
-                Value = new {value = new {uri = $"amqp://{username}:{password}@{rabbitHostName}"}}
+                Value = new { value = new { uri = $"amqp://{username}:{password}@{rabbitHostName}" } }
             }).ConfigureAwait(false);
             Assert.Contains(await managementClient.GetParametersAsync().ConfigureAwait(false),
                 p => p.Name == "myfakefederationupstream1");
@@ -582,7 +582,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             Assert.Equal(1,
                 (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(p =>
                     p.Name == policyName && p.Vhost == vhostName));
-            await managementClient.DeletePolicyAsync(policyName, new Vhost {Name = vhostName}).ConfigureAwait(false);
+            await managementClient.DeletePolicyAsync(policyName, new Vhost { Name = vhostName }).ConfigureAwait(false);
             Assert.Equal(0,
                 (await managementClient.GetPoliciesAsync().ConfigureAwait(false)).Count(p =>
                     p.Name == policyName && p.Vhost == vhostName));
@@ -696,7 +696,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Fact]
         public async Task Should_be_able_to_get_an_individual_exchange_by_name()
         {
-            var vhost = new Vhost {Name = vhostName};
+            var vhost = new Vhost { Name = vhostName };
             var exchange = await managementClient.GetExchangeAsync(testExchange, vhost).ConfigureAwait(false);
 
             exchange.Name.Should().Be(testExchange);
@@ -715,7 +715,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         {
             var queue = await CreateTestQueue(testQueue).ConfigureAwait(false);
 
-            var defaultExchange = new Exchange {Name = "amq.default", Vhost = vhostName};
+            var defaultExchange = new Exchange { Name = "amq.default", Vhost = vhostName };
 
             var publishInfo = new PublishInfo(
                 new Dictionary<string, object>
@@ -978,7 +978,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
                 Console.WriteLine("MachineName:\t{0}", clientProperties.MachineName);
 
                 //Test the dynamic nature
-                Console.WriteLine("Copyright:\t{0}", ((dynamic) clientProperties).Copyright);
+                Console.WriteLine("Copyright:\t{0}", ((dynamic)clientProperties).Copyright);
             }
         }
 
@@ -1092,7 +1092,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests
         [Fact]
         public async Task Should_throw_when_trying_to_close_unknown_connection()
         {
-            var connection = new Connection {Name = "unknown"};
+            var connection = new Connection { Name = "unknown" };
             try
             {
                 await managementClient.CloseConnectionAsync(connection).ConfigureAwait(false);

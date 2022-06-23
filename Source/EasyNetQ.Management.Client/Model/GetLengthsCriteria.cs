@@ -16,7 +16,7 @@ namespace EasyNetQ.Management.Client.Model
         }
         public int LengthsAge { get; private set; }
         public int LengthsIncr { get; private set; }
-        
+
         public IReadOnlyDictionary<string, string> ToQueryParameters()
         {
             return new Dictionary<string, string>

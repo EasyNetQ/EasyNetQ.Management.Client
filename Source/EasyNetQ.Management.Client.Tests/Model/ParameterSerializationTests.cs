@@ -16,7 +16,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
                     Vhost = "/",
                     Component = "bob",
                     Name = "test",
-                    Value = new Policy {Pattern = "testvalue"}
+                    Value = new Policy { Pattern = "testvalue" }
                 }, ManagementClient.Settings);
             var parsedValue = JObject.Parse(serializedvalue);
             Assert.Equal("testvalue", parsedValue["value"]["pattern"].Value<string>());

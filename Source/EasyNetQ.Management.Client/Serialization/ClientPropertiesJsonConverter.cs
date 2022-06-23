@@ -77,7 +77,7 @@ namespace EasyNetQ.Management.Client.Serialization
                 }
             }
 
-            throw new Exception("Expected EndObject");  
+            throw new Exception("Expected EndObject");
         }
 
         private Capabilities ReadCapabilities(JsonReader reader)
@@ -102,8 +102,8 @@ namespace EasyNetQ.Management.Client.Serialization
                         {
                             throw new Exception("Unexpected JsonReader End");
                         }
-                        
-                        properties[propertyName] = ReadValue(reader);                        
+
+                        properties[propertyName] = ReadValue(reader);
                         break;
                     case JsonToken.Comment:
                         break;
@@ -112,19 +112,19 @@ namespace EasyNetQ.Management.Client.Serialization
                 }
             }
 
-            throw new Exception("Expected EndObject");  
+            throw new Exception("Expected EndObject");
         }
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof (ClientProperties);
+            return objectType == typeof(ClientProperties);
         }
 
         private static string ConvertParameterNameToDotNetConvention(string str)
         {
-            return string.Join("", 
+            return string.Join("",
                 str
-                .Replace('.','_') //Deal with things like 'basic.nack' --> 'basic_nack'
+                .Replace('.', '_') //Deal with things like 'basic.nack' --> 'basic_nack'
                 .Split('_') //Deal with things like publisher_confirms --> PublisherConfirms
                 .Select(CapitaliseFirstLetter));
         }

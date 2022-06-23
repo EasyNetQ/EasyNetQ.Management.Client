@@ -24,11 +24,11 @@ namespace EasyNetQ.Management.Client.Model
 
         public ExchangeInfo(string name, string type, bool autoDelete, bool durable, bool @internal, Arguments arguments)
         {
-            if(string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw new ArgumentNullException(nameof(name));
             }
-            if(type == null)
+            if (type == null)
             {
                 throw new ArgumentNullException(nameof(type));
             }

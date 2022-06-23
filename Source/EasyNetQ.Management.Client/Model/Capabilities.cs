@@ -6,8 +6,8 @@ namespace EasyNetQ.Management.Client.Model
 {
     public class Capabilities : PropertyExpando
     {
-        public Capabilities(IDictionary<string, object> properties) : base (properties)
-        {            
+        public Capabilities(IDictionary<string, object> properties) : base(properties)
+        {
         }
 
         public bool BasicNack => GetPropertyOrDefault<bool>("BasicNack");

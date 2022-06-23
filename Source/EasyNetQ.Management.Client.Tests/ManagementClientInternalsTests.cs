@@ -18,7 +18,7 @@ namespace EasyNetQ.Management.Client.Tests
         {
             //TODO: redesign the ManagementClient by factoring out some of it's responsibilities and use dependency injection
             //for this test we'd seperate out the deserialization.
-            
+
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
                 ContractResolver = new RabbitContractResolver()
@@ -45,7 +45,7 @@ namespace EasyNetQ.Management.Client.Tests
 
             var channels = JsonConvert.DeserializeObject<IEnumerable<Channel>>(responseBody, settings).ToList();
 
-            Assert.Equal(2,channels.Count);
+            Assert.Equal(2, channels.Count);
 
             Assert.Equal(48538, channels[0].MessageStats.DeliverGet);
             Assert.Equal(48538, channels[0].MessageStats.DeliverNoAck);

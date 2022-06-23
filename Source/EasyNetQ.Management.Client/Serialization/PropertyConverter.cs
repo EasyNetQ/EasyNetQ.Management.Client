@@ -26,11 +26,11 @@ namespace EasyNetQ.Management.Client.Serialization
                 var properties = new Properties();
                 foreach (var property in ((JObject)jToken).Properties())
                 {
-                    if(property.Name == "headers")
+                    if (property.Name == "headers")
                     {
                         if (property.Value.Type == JTokenType.Object)
                         {
-                            var headers = (JObject) property.Value;
+                            var headers = (JObject)property.Value;
                             foreach (var header in headers.Properties())
                             {
                                 properties.Headers.Add(header.Name, header.Value.ToString());
@@ -51,7 +51,7 @@ namespace EasyNetQ.Management.Client.Serialization
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof (Properties);
+            return objectType == typeof(Properties);
         }
     }
 }

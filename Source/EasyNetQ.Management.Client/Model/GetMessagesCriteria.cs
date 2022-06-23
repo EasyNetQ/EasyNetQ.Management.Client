@@ -26,7 +26,7 @@ namespace EasyNetQ.Management.Client.Model
             Count = count;
             Encoding = "auto";
         }
-        
+
         public IReadOnlyDictionary<string, string> ToQueryParameters()
         {
             return new Dictionary<string, string>

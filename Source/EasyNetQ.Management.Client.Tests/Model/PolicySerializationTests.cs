@@ -35,7 +35,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
             Assert.Equal(ApplyMode.All, policy.ApplyTo);
         }
 
-           [Fact]
+        [Fact]
         public void Should_read_federation_upstream_properly()
         {
             var exactlyPolicies = _policy.Where(p => p.Name == "mirror_test").ToList();
@@ -110,7 +110,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
             {
                 Name = "bob",
                 Pattern = "foo",
-                Definition = new PolicyDefinition { FederationUpstream = "my-upstream"}
+                Definition = new PolicyDefinition { FederationUpstream = "my-upstream" }
             }, ManagementClient.Settings);
 
             Assert.Contains("\"federation-upstream\":\"my-upstream\"", serializedMessage);
@@ -123,7 +123,7 @@ namespace EasyNetQ.Management.Client.Tests.Model
             {
                 Name = "bob",
                 Pattern = "foo",
-                Definition = new PolicyDefinition {HaMode = HaMode.All}
+                Definition = new PolicyDefinition { HaMode = HaMode.All }
             }, ManagementClient.Settings);
             Console.WriteLine(serializedMessage);
             Assert.DoesNotContain("ha-params", serializedMessage);

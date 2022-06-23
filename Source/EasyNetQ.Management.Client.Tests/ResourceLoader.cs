@@ -29,7 +29,7 @@ namespace EasyNetQ.Management.Client.Tests
             var resourceName = string.Format(namespaceFormat, fileToLoad);
             var assembly = typeof(ResourceLoader).GetTypeInfo().Assembly;
             string contents;
-            using(var resourceStream = assembly.GetManifestResourceStream(resourceName))
+            using (var resourceStream = assembly.GetManifestResourceStream(resourceName))
             {
                 if (resourceStream == null)
                 {
@@ -41,9 +41,9 @@ namespace EasyNetQ.Management.Client.Tests
                 }
             }
 
-            
+
 
             return JsonConvert.DeserializeObject<T>(contents, settings);
-        }     
+        }
     }
 }

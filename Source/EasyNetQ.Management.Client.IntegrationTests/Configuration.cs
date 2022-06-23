@@ -38,11 +38,11 @@ namespace EasyNetQ.Management.Client.IntegrationTests
             rabbitMqHostName = settings["rabbitMQHostName"];
             rabbitMqManagementPort = int.Parse(settings["rabbitMQManagementPort"]);
             rabbitMqVirtualHostName = settings["rabbitMQVirtualHost"];
-            rabbitMqVirtualHost = new Vhost {Name = rabbitMqVirtualHostName, Tracing = false};
+            rabbitMqVirtualHost = new Vhost { Name = rabbitMqVirtualHostName, Tracing = false };
             rabbitMqUser = settings["rabbitMQUser"];
             rabbitMqPassword = settings["rabbitMQPassword"];
             osSpecificSettings = OperatingSystems
-                .Select(x => new {Os = x, ConfigSection = settings.GetSection(x.ToString().ToLowerInvariant())})
+                .Select(x => new { Os = x, ConfigSection = settings.GetSection(x.ToString().ToLowerInvariant()) })
                 .ToDictionary(x => x.Os, x => x.ConfigSection);
         }
 

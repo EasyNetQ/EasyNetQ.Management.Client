@@ -33,19 +33,20 @@ namespace EasyNetQ.Management.Client.Serialization
             var deserializationErrorMessage = "Could not read ha-params value";
             if (reader.TokenType == JsonToken.Integer)
             {
-                returnValue = new HaParams {AssociatedHaMode = HaMode.Exactly, ExactlyCount = (long)reader.Value};
-            }else if (reader.TokenType == JsonToken.StartArray)
+                returnValue = new HaParams { AssociatedHaMode = HaMode.Exactly, ExactlyCount = (long)reader.Value };
+            }
+            else if (reader.TokenType == JsonToken.StartArray)
             {
-                var potentialReturnValue = new HaParams {AssociatedHaMode = HaMode.Nodes};
+                var potentialReturnValue = new HaParams { AssociatedHaMode = HaMode.Nodes };
                 var nodesList = new List<string>();
                 do
                 {
                     reader.Read();
-                    if (!new[] {JsonToken.EndArray, JsonToken.String}.Contains(reader.TokenType))
+                    if (!new[] { JsonToken.EndArray, JsonToken.String }.Contains(reader.TokenType))
                     {
                         deserializationErrorMessage = "Could not read ha-params array value";
                     }
-                    else if(reader.TokenType == JsonToken.String)
+                    else if (reader.TokenType == JsonToken.String)
                     {
                         nodesList.Add(reader.Value as string);
                     }

@@ -23,10 +23,10 @@ namespace EasyNetQ.Management.Client
         }
 
         public UnexpectedHttpStatusCodeException(HttpStatusCode statusCode) :
-            base($"Unexpected Status Code: {(int) statusCode} {statusCode}")
+            base($"Unexpected Status Code: {(int)statusCode} {statusCode}")
         {
             StatusCode = statusCode;
-            StatusCodeNumber = (int) statusCode;
+            StatusCodeNumber = (int)statusCode;
         }
 
         public UnexpectedHttpStatusCodeException(string message) : base(message)
