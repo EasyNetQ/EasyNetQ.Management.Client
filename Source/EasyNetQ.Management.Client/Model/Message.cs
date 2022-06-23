@@ -9,7 +9,7 @@ namespace EasyNetQ.Management.Client.Model
             Headers = new Dictionary<string, string>();
         }
 
-        public Dictionary<string, string> Headers { get; set; } 
+        public Dictionary<string, string> Headers { get; set; }
     }
 
     public class Message

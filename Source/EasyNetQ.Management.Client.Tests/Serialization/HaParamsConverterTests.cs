@@ -44,7 +44,7 @@ namespace EasyNetQ.Management.Client.Tests.Serialization
         [Fact]
         public void Should_be_able_to_serialize_count()
         {
-            Assert.Equal("2", JsonConvert.SerializeObject(new HaParams{AssociatedHaMode = HaMode.Exactly, ExactlyCount = 2}, new HaParamsConverter()));
+            Assert.Equal("2", JsonConvert.SerializeObject(new HaParams { AssociatedHaMode = HaMode.Exactly, ExactlyCount = 2 }, new HaParamsConverter()));
         }
 
         [Fact]
