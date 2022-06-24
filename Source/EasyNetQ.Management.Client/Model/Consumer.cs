@@ -1,8 +1,10 @@
-﻿namespace EasyNetQ.Management.Client.Model;
+﻿using System.Collections.Generic;
+
+namespace EasyNetQ.Management.Client.Model;
 
 public class Consumer
 {
-    public Arguments Arguments { get; set; }
+    public Dictionary<string, string> Arguments { get; set; }
     public bool AckRequired { get; set; }
     public bool Active { get; set; }
     public string ActivityStatus { get; set; }

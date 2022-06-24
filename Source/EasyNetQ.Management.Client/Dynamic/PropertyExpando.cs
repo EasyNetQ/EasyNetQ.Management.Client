@@ -6,43 +6,39 @@ namespace EasyNetQ.Management.Client.Dynamic;
 
 public abstract class PropertyExpando : DynamicObject
 {
-    protected readonly IDictionary<string, object> _properties;
+    private readonly IDictionary<string, object> properties;
 
     protected PropertyExpando(IDictionary<string, object> properties)
     {
-        if (null == properties)
-        {
-            throw new ArgumentNullException(nameof(properties), "The argument properties must not be null");
-        }
-        _properties = properties;
+        this.properties = properties ?? throw new ArgumentNullException(nameof(properties), "The argument properties must not be null");
     }
 
     public override bool TryGetMember(GetMemberBinder binder, out object result)
     {
-        if (!_properties.Keys.Contains(binder.Name))
+        if (!properties.Keys.Contains(binder.Name))
         {
             result = null;
             return false;
         }
 
-        result = _properties[binder.Name];
+        result = properties[binder.Name];
         return true;
     }
 
     public override bool TrySetMember(SetMemberBinder binder, object value)
     {
-        _properties[binder.Name] = value;
+        properties[binder.Name] = value;
         return true;
     }
 
     protected T GetPropertyOrDefault<T>(string propertyName)
     {
-        if (_properties.Keys.Contains(propertyName) && _properties[propertyName] != null)
+        if (properties.Keys.Contains(propertyName) && properties[propertyName] != null)
         {
-            return (T)_properties[propertyName];
+            return (T)properties[propertyName];
         }
         return default;
     }
 
-    protected IDictionary<string, object> Properties => _properties;
+    protected IDictionary<string, object> Properties => properties;
 }

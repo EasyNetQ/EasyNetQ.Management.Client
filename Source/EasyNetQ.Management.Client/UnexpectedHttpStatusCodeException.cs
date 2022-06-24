@@ -2,9 +2,8 @@ using System;
 using System.Net;
 
 namespace EasyNetQ.Management.Client;
-#if NETFX
-    [Serializable]
-#endif
+
+[Serializable]
 public class UnexpectedHttpStatusCodeException : Exception
 {
     //

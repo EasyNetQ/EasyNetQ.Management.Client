@@ -14,18 +14,6 @@ public class PublishInfo
 
     public PublishInfo(IDictionary<string, object> properties, string routingKey, string payload, string payloadEncoding)
     {
-        if (properties == null)
-        {
-            throw new ArgumentNullException(nameof(properties));
-        }
-        if (routingKey == null)
-        {
-            throw new ArgumentNullException(nameof(routingKey));
-        }
-        if (payload == null)
-        {
-            throw new ArgumentNullException(nameof(payload));
-        }
         if (payloadEncoding == null)
         {
             throw new ArgumentNullException(nameof(payloadEncoding));
@@ -35,9 +23,9 @@ public class PublishInfo
             throw new ArgumentException($"payloadEncoding must be one of: '{string.Join(", ", payloadEncodings)}'");
         }
 
-        Properties = properties;
-        RoutingKey = routingKey;
-        Payload = payload;
+        Properties = properties ?? throw new ArgumentNullException(nameof(properties));
+        RoutingKey = routingKey ?? throw new ArgumentNullException(nameof(routingKey));
+        Payload = payload ?? throw new ArgumentNullException(nameof(payload));
         PayloadEncoding = payloadEncoding;
     }
 

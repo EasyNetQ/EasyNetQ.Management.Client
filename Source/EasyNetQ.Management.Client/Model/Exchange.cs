@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace EasyNetQ.Management.Client.Model;
 
 public class Exchange
@@ -8,5 +10,5 @@ public class Exchange
     public bool Durable { get; set; }
     public bool AutoDelete { get; set; }
     public bool Internal { get; set; }
-    public Arguments Arguments { get; set; }
+    public Dictionary<string, string> Arguments { get; set; }
 }

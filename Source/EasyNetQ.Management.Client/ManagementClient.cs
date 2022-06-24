@@ -58,8 +58,8 @@ public class ManagementClient : IManagementClient
         TimeSpan? timeout = null,
         Action<HttpRequestMessage> configureRequest = null,
         bool ssl = false,
-        Action<HttpClientHandler> handlerConfigurator = null)
-        : this(hostUrl, username, password.Secure(), portNumber, timeout, configureRequest, ssl, handlerConfigurator)
+        Action<HttpClientHandler> handlerConfigurator = null
+    ) : this(hostUrl, username, password.Secure(), portNumber, timeout, configureRequest, ssl, handlerConfigurator)
     {
     }
 
@@ -71,7 +71,8 @@ public class ManagementClient : IManagementClient
         TimeSpan? timeout = null,
         Action<HttpRequestMessage> configureRequest = null,
         bool ssl = false,
-        Action<HttpClientHandler> handlerConfigurator = null)
+        Action<HttpClientHandler> handlerConfigurator = null
+    )
     {
         if (string.IsNullOrEmpty(hostUrl))
         {
@@ -228,8 +229,11 @@ public class ManagementClient : IManagementClient
         );
     }
 
-    public async Task<Exchange> CreateExchangeAsync(ExchangeInfo exchangeInfo, Vhost vhost,
-        CancellationToken cancellationToken = default)
+    public async Task<Exchange> CreateExchangeAsync(
+        ExchangeInfo exchangeInfo,
+        Vhost vhost,
+        CancellationToken cancellationToken = default
+    )
     {
         Ensure.ArgumentNotNull(vhost, nameof(exchangeInfo));
         Ensure.ArgumentNotNull(vhost, nameof(vhost));
@@ -712,10 +716,7 @@ public class ManagementClient : IManagementClient
         ).ConfigureAwait(false);
     }
 
-    private async Task DeleteAsync(
-        string path,
-        CancellationToken cancellationToken = default
-    )
+    private async Task DeleteAsync(string path, CancellationToken cancellationToken = default)
     {
         using var request = CreateRequestForPath(HttpMethod.Delete, path, string.Empty);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);

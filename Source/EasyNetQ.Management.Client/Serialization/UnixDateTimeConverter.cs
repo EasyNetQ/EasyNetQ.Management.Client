@@ -6,7 +6,7 @@ namespace EasyNetQ.Management.Client.Serialization;
 
 /// <summary>
 /// http://stackapps.com/questions/1175/how-to-convert-unix-timestamp-to-net-datetime/1176#1176
-/// 
+///
 ///   Useful when serializing/deserializing json for use with the Stack Overflow API, which produces and consumes Unix Timestamp dates
 /// </summary>
 /// <remarks>
@@ -40,13 +40,14 @@ public class UnixDateTimeConverter : DateTimeConverterBase
     /// <param name = "existingValue">The existing value of object being read.</param>
     /// <param name = "serializer">The calling serializer.</param>
     /// <returns>The object value.</returns>
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
-        JsonSerializer serializer)
+    public override object ReadJson(
+        JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer
+    )
     {
         if (reader.TokenType != JsonToken.Integer)
             throw new Exception("Wrong Token Type");
 
-        long ticks = (long)reader.Value;
+        var ticks = (long)reader.Value;
         return ticks.FromUnixTime();
     }
 }

@@ -8,7 +8,7 @@ namespace EasyNetQ.Management.Client.Tests;
 public class ResourceLoader
 {
     /// <summary>
-    /// Loads an embedded resource 
+    /// Loads an embedded resource
     /// </summary>
     /// <param name="fileToLoad"></param>
     /// <returns>The contents as a string</returns>
@@ -18,8 +18,6 @@ public class ResourceLoader
         {
             ContractResolver = new RabbitContractResolver()
         };
-
-        settings.Converters.Add(new PropertyConverter());
         return LoadObjectFromJson<T>(fileToLoad, settings);
     }
 

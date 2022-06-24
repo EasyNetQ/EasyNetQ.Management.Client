@@ -5,7 +5,7 @@ using Newtonsoft.Json.Converters;
 namespace EasyNetQ.Management.Client.Serialization;
 
 /// <summary>
-/// Converts Unix time in ms to DateTime and vice versa - based on 
+/// Converts Unix time in ms to DateTime and vice versa - based on
 /// http://stackapps.com/questions/1175/how-to-convert-unix-timestamp-to-net-datetime/1176#1176
 /// </summary>
 public class UnixMsDateTimeConverter : DateTimeConverterBase
@@ -36,13 +36,14 @@ public class UnixMsDateTimeConverter : DateTimeConverterBase
     /// <param name = "existingValue">The existing value of object being read.</param>
     /// <param name = "serializer">The calling serializer.</param>
     /// <returns>The object value.</returns>
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
-        JsonSerializer serializer)
+    public override object ReadJson(
+        JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer
+    )
     {
         if (reader.TokenType != JsonToken.Integer)
             throw new Exception("Wrong Token Type");
 
-        long ticks = (long)reader.Value;
+        var ticks = (long)reader.Value;
         return ticks.FromUnixTimeMs();
     }
 }

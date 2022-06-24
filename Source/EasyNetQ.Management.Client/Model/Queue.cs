@@ -20,7 +20,7 @@ public class Queue
     public bool Durable { get; set; }
     public bool Exclusive { get; set; }
     public bool AutoDelete { get; set; }
-    public Arguments Arguments { get; set; }
+    public Dictionary<string, string> Arguments { get; set; }
     public string Node { get; set; }
     public IEnumerable<string> SlaveNodes { get; set; }
     public IEnumerable<string> SynchronisedSlaveNodes { get; set; }

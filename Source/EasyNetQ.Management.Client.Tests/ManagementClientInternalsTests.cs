@@ -57,7 +57,7 @@ public class ManagementClientInternalsTests
 
     }
 
-    private String GetExampleGetChannelsJsonResponseBody()
+    private string GetExampleGetChannelsJsonResponseBody()
     {
         return @"
 [{
@@ -66,17 +66,17 @@ public class ManagementClientInternalsTests
 		""peer_address"": ""10.1.1.55"",
 		""peer_port"": 62305
 	},
-	""message_stats"": 
+	""message_stats"":
 	{
 		""deliver_get"": 48538,
-		""deliver_get_details"": 
+		""deliver_get_details"":
 		{
 			""rate"": 1300.1826094676971,
 			""interval"": 5000836,
 			""last_event"": 1357767545361
 		},
 		""deliver_no_ack"": 48538,
-		""deliver_no_ack_details"": 
+		""deliver_no_ack_details"":
 		{
 			""rate"": 1300.1826094676971,
 			""interval"": 5000836,
@@ -130,7 +130,7 @@ public class ManagementClientInternalsTests
 ";
     }
 
-    private String GetExampleGetConnectionsJsonResponseBody()
+    private string GetExampleGetConnectionsJsonResponseBody()
     {
         return @"
 [{
