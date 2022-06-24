@@ -18,7 +18,7 @@
     <PackageId>EasyNetQ.Management.Client</PackageId>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/EasyNetQ/EasyNetQ.Management.Client</PackageProjectUrl>
-    <PackageIconUrl>https://raw.github.com/mikehadlow/EasyNetQ/gh-pages/design/logo_design.png</PackageIconUrl>
+    <PackageIcon>EasyNetQ.png</PackageIcon>
     <RepositoryUrl>https://github.com/EasyNetQ/EasyNetQ.Management.Client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -28,8 +28,6 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Deterministic>true</Deterministic>
-    <!-- https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables -->
-    <!-- https://github.com/clairernovotny/DeterministicBuilds -->
     <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">True</ContinuousIntegrationBuild>
     <DebugType>embedded</DebugType>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -40,6 +38,7 @@
 
   <ItemGroup>
     <None Include="..\..\license.txt" Pack="true" PackagePath="" />
+    <None Include="..\..\Assets\EasyNetQ.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
