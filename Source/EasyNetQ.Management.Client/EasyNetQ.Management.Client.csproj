@@ -16,7 +16,7 @@
     <Version>0.1.0-alpha-01-commitHash</Version>
     <Authors>Mike Hadlow</Authors>
     <PackageId>EasyNetQ.Management.Client</PackageId>
-    <PackageLicenseFile>licence.txt</PackageLicenseFile>
+    <PackageLicenseFile>license.txt</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/EasyNetQ/EasyNetQ.Management.Client</PackageProjectUrl>
     <PackageIconUrl>https://raw.github.com/mikehadlow/EasyNetQ/gh-pages/design/logo_design.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/EasyNetQ/EasyNetQ.Management.Client</RepositoryUrl>
