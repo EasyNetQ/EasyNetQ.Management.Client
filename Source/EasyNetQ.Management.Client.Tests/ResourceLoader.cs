@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Reflection;
-using EasyNetQ.Management.Client.Serialization;
+﻿using System.Reflection;
 using Newtonsoft.Json;
 
 namespace EasyNetQ.Management.Client.Tests;

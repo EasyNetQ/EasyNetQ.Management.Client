@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 using FluentAssertions;
 using Xunit;
 

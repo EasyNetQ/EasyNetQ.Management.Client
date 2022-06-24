@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Xunit;

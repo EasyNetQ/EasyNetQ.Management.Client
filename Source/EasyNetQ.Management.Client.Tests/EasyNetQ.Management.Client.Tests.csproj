@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net6</TargetFramework>
-    <InformationalVersion>0.1.0-alpha-01-commitHash</InformationalVersion>
     <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>

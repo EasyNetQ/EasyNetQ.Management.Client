@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 using Newtonsoft.Json;
 
 namespace EasyNetQ.Management.Client.Serialization;

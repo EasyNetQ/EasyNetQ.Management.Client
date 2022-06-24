@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EasyNetQ.Management.Client.Model;
+﻿namespace EasyNetQ.Management.Client.Model;
 
 public class TopicPermissionInfo
 {

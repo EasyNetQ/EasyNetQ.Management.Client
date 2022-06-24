@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EasyNetQ.Management.Client.Model;
+﻿namespace EasyNetQ.Management.Client.Model;
 
 /// <summary>
 /// The criteria for retrieving messages from a queue

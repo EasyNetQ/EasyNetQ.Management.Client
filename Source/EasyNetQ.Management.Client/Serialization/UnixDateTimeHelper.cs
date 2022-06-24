@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EasyNetQ.Management.Client.Serialization;
+﻿namespace EasyNetQ.Management.Client.Serialization;
 
 ///<summary>
 /// http://stackapps.com/questions/1175/how-to-convert-unix-timestamp-to-net-datetime/1176#1176

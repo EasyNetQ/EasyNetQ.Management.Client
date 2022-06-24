@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 using FluentAssertions;
 using Xunit;
 
