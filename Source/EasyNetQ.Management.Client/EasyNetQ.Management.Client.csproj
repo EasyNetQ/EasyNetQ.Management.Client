@@ -2,11 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-    <OutputType>Library</OutputType>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <LangVersion>latest</LangVersion>
-    
+
     <Product>EasyNetQ.Management.Client</Product>
     <Description>A .NET client for the RabbitMQ RESTful management API</Description>
     <AssemblyTitle>EasyNetQ.Management.Client</AssemblyTitle>
@@ -19,18 +16,29 @@
     <Version>0.1.0-alpha-01-commitHash</Version>
     <Authors>Mike Hadlow</Authors>
     <PackageId>EasyNetQ.Management.Client</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageLicenseUrl>https://github.com/EasyNetQ/EasyNetQ.Management.Client/blob/master/license.txt</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/EasyNetQ/EasyNetQ.Management.Client</PackageProjectUrl>
     <PackageIconUrl>https://raw.github.com/mikehadlow/EasyNetQ/gh-pages/design/logo_design.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/EasyNetQ/EasyNetQ.Management.Client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>RabbitMQ Management.API .NET C# netstandard</PackageTags>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <Deterministic>true</Deterministic>
+    <!-- https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables -->
+    <!-- https://github.com/clairernovotny/DeterministicBuilds -->
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">True</ContinuousIntegrationBuild>
+    <DebugType>embedded</DebugType>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="MinVer" Version="4.0.0">
@@ -40,5 +48,14 @@
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
     <PackageReference Include="System.Security.SecureString" Version="4.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Roslynator.Analyzers" Version="4.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
+
 </Project>

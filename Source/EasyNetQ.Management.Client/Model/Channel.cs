@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using EasyNetQ.Management.Client.Serialization;
+﻿using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
 
 namespace EasyNetQ.Management.Client.Model;

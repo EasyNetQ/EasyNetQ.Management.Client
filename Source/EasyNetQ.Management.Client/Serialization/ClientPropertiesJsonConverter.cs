@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 using Newtonsoft.Json;
 
 namespace EasyNetQ.Management.Client.Serialization;
@@ -24,7 +21,7 @@ public class ClientPropertiesJsonConverter : JsonConverter
         return ReadClientProperties(reader);
     }
 
-    private object ReadValue(JsonReader reader)
+    private static object ReadValue(JsonReader reader)
     {
         while (reader.TokenType == JsonToken.Comment)
         {
@@ -37,7 +34,7 @@ public class ClientPropertiesJsonConverter : JsonConverter
         return reader.Value;
     }
 
-    private ClientProperties ReadClientProperties(JsonReader reader)
+    private static ClientProperties ReadClientProperties(JsonReader reader)
     {
         while (reader.TokenType == JsonToken.Comment)
         {
@@ -80,7 +77,7 @@ public class ClientPropertiesJsonConverter : JsonConverter
         throw new Exception("Expected EndObject");
     }
 
-    private Capabilities ReadCapabilities(JsonReader reader)
+    private static Capabilities ReadCapabilities(JsonReader reader)
     {
         while (reader.TokenType == JsonToken.Comment)
         {
@@ -122,8 +119,7 @@ public class ClientPropertiesJsonConverter : JsonConverter
 
     private static string ConvertParameterNameToDotNetConvention(string str)
     {
-        return string.Join("",
-            str
+        return string.Concat(str
                 .Replace('.', '_') //Deal with things like 'basic.nack' --> 'basic_nack'
                 .Split('_') //Deal with things like publisher_confirms --> PublisherConfirms
                 .Select(CapitaliseFirstLetter));
@@ -147,5 +143,4 @@ public class ClientPropertiesJsonConverter : JsonConverter
         }
         return char.ToUpper(str[0]) + str.Substring(1, str.Length - 1);
     }
-
 }

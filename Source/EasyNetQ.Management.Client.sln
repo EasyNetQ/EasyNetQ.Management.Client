@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyNetQ.Management.Client", "EasyNetQ.Management.Client\EasyNetQ.Management.Client.csproj", "{7E0EA2CD-2868-4A92-913F-B992045A9FEA}"
 EndProject
@@ -11,10 +11,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyNetQ.Management.Client.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{A69046CF-3E37-4C7D-B19A-DD79C2938556}"
 	ProjectSection(SolutionItems) = preProject
+		..\.editorconfig = ..\.editorconfig
 		..\.gitignore = ..\.gitignore
 		..\license.txt = ..\license.txt
 		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workfows", "workfows", "{BA5E3EFC-C305-4CE0-BC7E-F7D0FB3C3A5B}"
+	ProjectSection(SolutionItems) = preProject
 		..\.github\workflows\ci.yml = ..\.github\workflows\ci.yml
+		..\.github\workflows\codeql.yml = ..\.github\workflows\codeql.yml
+		..\.github\workflows\depsreview.yaml = ..\.github\workflows\depsreview.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{D4B57B8C-6ADC-42CE-BE94-72F8C6CEF2A9}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\CODEOWNERS = ..\.github\CODEOWNERS
 	EndProjectSection
 EndProject
 Global
@@ -38,6 +50,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BA5E3EFC-C305-4CE0-BC7E-F7D0FB3C3A5B} = {D4B57B8C-6ADC-42CE-BE94-72F8C6CEF2A9}
+		{D4B57B8C-6ADC-42CE-BE94-72F8C6CEF2A9} = {A69046CF-3E37-4C7D-B19A-DD79C2938556}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BB98742B-59A5-4586-BE0A-B1901EA19AB0}

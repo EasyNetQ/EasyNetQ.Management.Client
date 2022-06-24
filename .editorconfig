@@ -14,3 +14,9 @@ end_of_line = lf
 
 [*.{cmd, bat}]
 end_of_line = crlf
+
+# Remove unnecessary import https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0005
+dotnet_diagnostic.IDE0005.severity = error
+
+# Enforce formatting https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules#rule-id-ide0055-fix-formatting
+dotnet_diagnostic.IDE0055.severity = error

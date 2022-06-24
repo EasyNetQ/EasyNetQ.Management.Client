@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EasyNetQ.Management.Client.Tests;
+﻿namespace EasyNetQ.Management.Client.Tests;
 
 /// <summary>
 /// Exception thrown when something unexpected happens in tests

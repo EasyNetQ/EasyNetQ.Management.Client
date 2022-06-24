@@ -1,7 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
 
-using System;
-using System.Collections.Generic;
 using EasyNetQ.Management.Client.Model;
 using Xunit;
 

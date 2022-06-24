@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using EasyNetQ.Management.Client.Model;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests;
 
-public class RabbitMqFixture : IAsyncLifetime, IDisposable
+public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
 {
     private static readonly Vhost VirtualHost = new() { Name = "/", Tracing = false };
     private static readonly TimeSpan InitializationTimeout = TimeSpan.FromMinutes(2);
@@ -121,7 +117,7 @@ public class RabbitMqFixture : IAsyncLifetime, IDisposable
         {
             throw;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return false;
         }

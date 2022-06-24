@@ -1,4 +1,3 @@
-using System;
 using EasyNetQ.Management.Client.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -7,11 +6,9 @@ namespace EasyNetQ.Management.Client.Serialization;
 
 class MessageStatsOrEmptyArrayConverter : ObjectOrEmptyArrayConverter<MessageStats>
 {
-
 }
 class QueueTotalsOrEmptyArrayConverter : ObjectOrEmptyArrayConverter<QueueTotals>
 {
-
 }
 class ObjectOrEmptyArrayConverter<T> : JsonConverter where T : new()
 {

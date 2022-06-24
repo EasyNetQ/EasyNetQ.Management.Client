@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace EasyNetQ.Management.Client.Model;
+﻿namespace EasyNetQ.Management.Client.Model;
 
 public class UserInfo
 {
@@ -25,7 +21,7 @@ public class UserInfo
     /// </summary>
     /// <param name="name">User name</param>
     /// <param name="password">Password or password hash value.</param>
-    /// <param name="isHashed">Flag shows if <param name="password">password</param> value is raw password or password hash.</param>
+    /// <param name="isHashed">Flag shows if <paramref name="password">password</paramref> value is raw password or password hash.</param>
     /// <remarks>Hash should be calculated using RabbitMq hash computing algorithm.
     /// See https://www.rabbitmq.com/passwords.html.</remarks>
     /// <exception cref="ArgumentException"></exception>

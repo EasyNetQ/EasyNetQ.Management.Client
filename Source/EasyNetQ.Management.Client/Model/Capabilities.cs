@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using EasyNetQ.Management.Client.Dynamic;
 
 namespace EasyNetQ.Management.Client.Model;

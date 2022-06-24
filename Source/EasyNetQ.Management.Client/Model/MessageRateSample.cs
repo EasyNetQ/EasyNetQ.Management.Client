@@ -1,4 +1,3 @@
-using System;
 using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
 

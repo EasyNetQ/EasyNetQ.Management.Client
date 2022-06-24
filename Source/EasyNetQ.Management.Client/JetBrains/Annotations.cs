@@ -1,7 +1,4 @@
-﻿using System;
-
-#pragma warning disable 1591
-// ReSharper disable UnusedMember.Global
+﻿// ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable IntroduceOptionalParameters.Global
@@ -62,7 +59,7 @@ internal sealed class NotNullAttribute : Attribute { }
 /// // A method that returns null if the parameter is null,
 /// // and not null if the parameter is not null
 /// [ContractAnnotation("null =&gt; null; notnull =&gt; notnull")]
-/// public object Transform(object data) 
+/// public object Transform(object data)
 /// </code></item>
 /// <item><code>
 /// [ContractAnnotation("=&gt; true, result: notnull; =&gt; false, result: null")]
@@ -84,9 +81,9 @@ internal sealed class ContractAnnotationAttribute : Attribute
     }
 
     [NotNull]
-    public string Contract { get; private set; }
+    public string Contract { get; }
 
-    public bool ForceFullStates { get; private set; }
+    public bool ForceFullStates { get; }
 }
 
 /// <summary>

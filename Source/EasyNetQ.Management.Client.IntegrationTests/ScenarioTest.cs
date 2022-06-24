@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests;

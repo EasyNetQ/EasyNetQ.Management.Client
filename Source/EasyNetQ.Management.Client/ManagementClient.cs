@@ -1,17 +1,13 @@
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace EasyNetQ.Management.Client;
 
@@ -40,7 +36,7 @@ public class ManagementClient : IManagementClient
         Settings.Converters.Add(new PropertyConverter());
         Settings.Converters.Add(new MessageStatsOrEmptyArrayConverter());
         Settings.Converters.Add(new QueueTotalsOrEmptyArrayConverter());
-        Settings.Converters.Add(new StringEnumConverter { CamelCaseText = true });
+        Settings.Converters.Add(new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() });
         Settings.Converters.Add(new HaParamsConverter());
     }
 

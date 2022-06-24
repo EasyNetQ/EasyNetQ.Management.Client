@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using EasyNetQ.Management.Client.Model;
 using JetBrains.Annotations;
 

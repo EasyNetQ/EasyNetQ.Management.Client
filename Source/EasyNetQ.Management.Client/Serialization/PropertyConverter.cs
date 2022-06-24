@@ -1,4 +1,3 @@
-using System;
 using EasyNetQ.Management.Client.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
