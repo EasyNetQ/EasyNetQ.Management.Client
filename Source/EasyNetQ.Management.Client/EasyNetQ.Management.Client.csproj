@@ -39,7 +39,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\licence.txt" Pack="true" PackagePath="" />
+    <None Include="..\..\license.txt" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
