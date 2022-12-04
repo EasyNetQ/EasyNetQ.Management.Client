@@ -867,7 +867,7 @@ public class ManagementClientTests
 
         await fixture.ManagementClient.CreateBindingAsync(sourceExchange, destinationExchange, new BindingInfo("#"));
 
-        var binding = (await fixture.ManagementClient.GetBindingsAsync(sourceExchange, destinationExchange)).First();
+        var binding = (await fixture.ManagementClient.GetBindingsAsync(sourceExchange, destinationExchange))[0];
 
         await fixture.ManagementClient.DeleteBindingAsync(binding);
         await fixture.ManagementClient.DeleteExchangeAsync(sourceExchange);

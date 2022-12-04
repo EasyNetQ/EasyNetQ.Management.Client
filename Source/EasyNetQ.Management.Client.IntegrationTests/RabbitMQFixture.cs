@@ -20,7 +20,7 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
     public RabbitMqFixture()
     {
         dockerProxy = new DockerProxy();
-        tag = Environment.GetEnvironmentVariable("RABBITMQ_VERSION") ?? "3.7";
+        tag = $"{Environment.GetEnvironmentVariable("RABBITMQ_VERSION") ?? "3.11"}-management";
     }
 
     public string Host { get; private set; } = "localhost";
