@@ -202,7 +202,7 @@ public class ManagementClient : IManagementClient
         );
     }
 
-    public async Task<Exchange> CreateExchangeAsync(
+    public async Task CreateExchangeAsync(
         ExchangeInfo exchangeInfo,
         Vhost vhost,
         CancellationToken cancellationToken = default
@@ -216,12 +216,6 @@ public class ManagementClient : IManagementClient
             $"exchanges/{SanitiseVhostName(vhost.Name)}/{SanitiseName(exchangeInfo.GetName())}",
             exchangeInfo,
             cancellationToken
-        ).ConfigureAwait(false);
-
-        return await GetExchangeAsync(
-            SanitiseName(exchangeInfo.GetName()),
-            vhost,
-            cancellationToken: cancellationToken
         ).ConfigureAwait(false);
     }
 
@@ -287,17 +281,20 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Queue>>($"queues/{SanitiseVhostName(vhost.Name)}", cancellationToken);
     }
 
-    public async Task<Queue> CreateQueueAsync(QueueInfo queueInfo, Vhost vhost,
-        CancellationToken cancellationToken = default)
+    public async Task CreateQueueAsync(
+        QueueInfo queueInfo,
+        Vhost vhost,
+        CancellationToken cancellationToken = default
+    )
     {
         Ensure.ArgumentNotNull(queueInfo, nameof(queueInfo));
         Ensure.ArgumentNotNull(vhost, nameof(vhost));
 
-        await PutAsync($"queues/{SanitiseVhostName(vhost.Name)}/{SanitiseName(queueInfo.GetName())}", queueInfo,
-            cancellationToken).ConfigureAwait(false);
-
-        return await GetQueueAsync(queueInfo.GetName(), vhost, cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
+        await PutAsync(
+            $"queues/{SanitiseVhostName(vhost.Name)}/{SanitiseName(queueInfo.GetName())}",
+            queueInfo,
+            cancellationToken
+        ).ConfigureAwait(false);
     }
 
     public Task DeleteQueueAsync(Queue queue, CancellationToken cancellationToken = default)
@@ -455,13 +452,11 @@ public class ManagementClient : IManagementClient
         return GetAsync<Vhost>($"vhosts/{SanitiseVhostName(vhostName)}", cancellationToken);
     }
 
-    public async Task<Vhost> CreateVhostAsync(string vhostName, CancellationToken cancellationToken = default)
+    public Task CreateVhostAsync(string vhostName, CancellationToken cancellationToken = default)
     {
         Ensure.ArgumentNotNull(vhostName, nameof(vhostName));
 
-        await PutAsync<string>($"vhosts/{SanitiseVhostName(vhostName)}", cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
-        return await GetVhostAsync(vhostName, cancellationToken).ConfigureAwait(false);
+        return PutAsync<string>($"vhosts/{SanitiseVhostName(vhostName)}", cancellationToken: cancellationToken);
     }
 
     public Task DeleteVhostAsync(Vhost vhost, CancellationToken cancellationToken = default)
@@ -535,8 +530,7 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Parameter>>("parameters", cancellationToken);
     }
 
-    public Task CreateParameterAsync(Parameter parameter,
-        CancellationToken cancellationToken = default)
+    public Task CreateParameterAsync(Parameter parameter, CancellationToken cancellationToken = default)
     {
         Ensure.ArgumentNotNull(parameter, nameof(parameter));
 
@@ -561,13 +555,11 @@ public class ManagementClient : IManagementClient
         return DeleteAsync(GetParameterUrl(componentName, vhost, name), cancellationToken);
     }
 
-    public async Task<User> CreateUserAsync(UserInfo userInfo, CancellationToken cancellationToken = default)
+    public async Task CreateUserAsync(UserInfo userInfo, CancellationToken cancellationToken = default)
     {
         Ensure.ArgumentNotNull(userInfo, nameof(userInfo));
 
         await PutAsync($"users/{userInfo.GetName()}", userInfo, cancellationToken).ConfigureAwait(false);
-
-        return await GetUserAsync(userInfo.GetName(), cancellationToken).ConfigureAwait(false);
     }
 
     public Task DeleteUserAsync(User user, CancellationToken cancellationToken = default)
@@ -615,28 +607,11 @@ public class ManagementClient : IManagementClient
         );
     }
 
-    public Task DeleteTopicPermissionAsync(TopicPermission topicPermission,
-        CancellationToken cancellationToken = default)
+    public Task DeleteTopicPermissionAsync(TopicPermission topicPermission, CancellationToken cancellationToken = default)
     {
         Ensure.ArgumentNotNull(topicPermission, nameof(topicPermission));
 
         return DeleteAsync($"topic-permissions/{topicPermission.Vhost}/{topicPermission.User}", cancellationToken);
-    }
-
-    public async Task<User> ChangeUserPasswordAsync(string userName, string newPassword,
-        CancellationToken cancellationToken = default)
-    {
-        Ensure.ArgumentNotNull(userName, nameof(userName));
-        var user = await GetUserAsync(userName, cancellationToken).ConfigureAwait(false);
-
-        var tags = user.Tags.Split(',');
-        var userInfo = new UserInfo(userName, newPassword);
-        foreach (var tag in tags)
-        {
-            userInfo.AddTag(tag.Trim());
-        }
-
-        return await CreateUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
     }
 
     public Task<List<Federation>> GetFederationAsync(CancellationToken cancellationToken = default)
@@ -644,8 +619,7 @@ public class ManagementClient : IManagementClient
         return GetAsync<List<Federation>>("federation-links", cancellationToken);
     }
 
-    public async Task<bool> IsAliveAsync(Vhost vhost,
-        CancellationToken cancellationToken = default)
+    public async Task<bool> IsAliveAsync(Vhost vhost, CancellationToken cancellationToken = default)
     {
         Ensure.ArgumentNotNull(vhost, nameof(vhost));
 
@@ -725,10 +699,7 @@ public class ManagementClient : IManagementClient
     private static async Task<T> DeserializeResponseAsync<T>(Func<HttpStatusCode, bool> success, HttpResponseMessage response)
     {
         if (!success(response.StatusCode))
-        {
-            var error = await response.Content.ReadAsStringAsync();
             throw new UnexpectedHttpStatusCodeException(response.StatusCode);
-        }
 
         var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         return JsonConvert.DeserializeObject<T>(content, Settings);
@@ -741,7 +712,6 @@ public class ManagementClient : IManagementClient
 
         var body = JsonConvert.SerializeObject(item, Settings);
         var content = new StringContent(body);
-
         content.Headers.ContentType = JsonMediaTypeHeaderValue;
         request.Content = content;
     }

@@ -18,10 +18,13 @@ public class ScenarioTest
     public async Task Should_be_able_to_provision_a_virtual_host()
     {
         // first create a new virtual host
-        var vhost = await fixture.ManagementClient.CreateVhostAsync("my_virtual_host");
+        await fixture.ManagementClient.CreateVhostAsync("my_virtual_host");
+        var vhost = await fixture.ManagementClient.GetVhostAsync("my_virtual_host");
 
         // next create a user for that virtual host
-        var user = await fixture.ManagementClient.CreateUserAsync(new UserInfo("mike", "topSecret").AddTag("administrator"));
+        await fixture.ManagementClient.CreateUserAsync(new UserInfo("mike", "topSecret").AddTag("administrator"));
+        var user = await fixture.ManagementClient.GetUserAsync("mike");
+
 
         // give the new user all permissions on the virtual host
         await fixture.ManagementClient.CreatePermissionAsync(new PermissionInfo(user, vhost));
@@ -33,10 +36,12 @@ public class ScenarioTest
         await management.IsAliveAsync(vhost);
 
         // create an exchange
-        var exchange = await management.CreateExchangeAsync(new ExchangeInfo("my_exchagne", "direct"), vhost);
+        await management.CreateExchangeAsync(new ExchangeInfo("my_exchange", "direct"), vhost);
+        var exchange = await management.GetExchangeAsync("my_exchange", vhost);
 
         // create a queue
-        var queue = await management.CreateQueueAsync(new QueueInfo("my_queue"), vhost);
+        await management.CreateQueueAsync(new QueueInfo("my_queue"), vhost);
+        var queue = await fixture.ManagementClient.GetQueueAsync("my_queue", vhost);
 
         // bind the exchange to the queue
         await management.CreateBindingAsync(exchange, queue, new BindingInfo("my_routing_key"));
