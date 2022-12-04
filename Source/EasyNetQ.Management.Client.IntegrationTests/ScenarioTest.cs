@@ -34,24 +34,19 @@ public class ScenarioTest
         await management.IsAliveAsync(vhost);
 
         // create an exchange
-        var exchange = await management.CreateExchangeAsync(new ExchangeInfo("my_exchagne", "direct"), vhost)
-            ;
+        var exchange = await management.CreateExchangeAsync(new ExchangeInfo("my_exchagne", "direct"), vhost);
 
         // create a queue
         var queue = await management.CreateQueueAsync(new QueueInfo("my_queue"), vhost);
 
         // bind the exchange to the queue
-        await management.CreateBindingAsync(exchange, queue, new BindingInfo("my_routing_key"))
-            ;
+        await management.CreateBindingAsync(exchange, queue, new BindingInfo("my_routing_key"));
 
         // publish a test message
-        await management.PublishAsync(exchange, new PublishInfo("my_routing_key", "Hello World!"))
-            ;
+        await management.PublishAsync(exchange, new PublishInfo("my_routing_key", "Hello World!"));
 
         // get any messages on the queue
-        var messages = await management
-            .GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, Ackmodes.ack_requeue_false))
-            ;
+        var messages = await management.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, AckModes.AckRequeueFalse));
 
         foreach (var message in messages) Console.Out.WriteLine("message.payload = {0}", message.Payload);
     }

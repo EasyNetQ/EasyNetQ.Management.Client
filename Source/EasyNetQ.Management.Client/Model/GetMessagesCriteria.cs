@@ -15,23 +15,13 @@ public class GetMessagesCriteria
     /// <param name="count">
     /// Controls the number of messages to get. You may get fewer messages than this if the queue cannot immediately provide them.
     /// </param>
-    /// <param name="ackmode">
+    /// <param name="ackModes">
     /// Determines if the message(s) should be placed back into the queue.
     /// </param>
-    public GetMessagesCriteria(long count, Ackmodes ackmode)
+    public GetMessagesCriteria(long count, AckModes ackModes)
     {
-        Ackmode = ackmode.ToString();
+        Ackmode = ackModes.ToSnakeCaseString();
         Count = count;
         Encoding = "auto";
-    }
-
-    public IReadOnlyDictionary<string, string> ToQueryParameters()
-    {
-        return new Dictionary<string, string>
-        {
-            {nameof(Count), Count.ToString()},
-            {nameof(Ackmode), Ackmode},
-            {nameof(Encoding), Encoding}
-        };
     }
 }
