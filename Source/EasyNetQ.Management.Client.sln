@@ -20,7 +20,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workfows", "workfows", "{BA5E3EFC-C305-4CE0-BC7E-F7D0FB3C3A5B}"
 	ProjectSection(SolutionItems) = preProject
 		..\.github\workflows\ci.yml = ..\.github\workflows\ci.yml
-		..\.github\workflows\codeql.yml = ..\.github\workflows\codeql.yml
 		..\.github\workflows\depsreview.yaml = ..\.github\workflows\depsreview.yaml
 	EndProjectSection
 EndProject
