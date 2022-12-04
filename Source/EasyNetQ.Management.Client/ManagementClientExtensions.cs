@@ -723,7 +723,7 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="userInfo">The user to create</param>
     /// <param name="cancellationToken"></param>
-    public static User CreateUser(
+    public static void CreateUser(
         [NotNull] this IManagementClient source,
         [NotNull] UserInfo userInfo,
         CancellationToken cancellationToken = default
@@ -732,7 +732,7 @@ public static class ManagementClientExtensions
         if (source == null)
             throw new ArgumentNullException(nameof(source));
 
-        return source.CreateUserAsync(userInfo, cancellationToken)
+        source.CreateUserAsync(userInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
@@ -844,7 +844,7 @@ public static class ManagementClientExtensions
     /// <param name="userName">The name of a user</param>
     /// <param name="newPassword">The new password to set</param>
     /// <param name="cancellationToken"></param>
-    public static User ChangeUserPassword(
+    public static void ChangeUserPassword(
         [NotNull] this IManagementClient source,
         string userName,
         string newPassword,
@@ -854,7 +854,7 @@ public static class ManagementClientExtensions
         if (source == null)
             throw new ArgumentNullException(nameof(source));
 
-        return source.ChangeUserPasswordAsync(userName, newPassword, cancellationToken)
+        source.ChangeUserPasswordAsync(userName, newPassword, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
@@ -1116,5 +1116,33 @@ public static class ManagementClientExtensions
         return source.GetFederationAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
+    }
+
+    /// <summary>
+    ///     Update the password of an user.
+    /// </summary>
+    /// <param name="client">The client</param>
+    /// <param name="userName">The name of a user</param>
+    /// <param name="newPassword">The new password to set</param>
+    /// <param name="cancellationToken"></param>
+    public static async Task ChangeUserPasswordAsync(
+        this IManagementClient client,
+        string userName,
+        string newPassword,
+        CancellationToken cancellationToken = default
+    )
+    {
+        Ensure.ArgumentNotNull(userName, nameof(userName));
+
+        var user = await client.GetUserAsync(userName, cancellationToken).ConfigureAwait(false);
+
+        var tags = user.Tags.Split(',');
+        var userInfo = new UserInfo(userName, newPassword);
+        foreach (var tag in tags)
+        {
+            userInfo.AddTag(tag.Trim());
+        }
+
+        await client.CreateUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
     }
 }

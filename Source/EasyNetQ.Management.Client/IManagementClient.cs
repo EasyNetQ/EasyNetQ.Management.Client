@@ -387,7 +387,7 @@ public interface IManagementClient : IDisposable
     /// </summary>
     /// <param name="userInfo">The user to create</param>
     /// <param name="cancellationToken"></param>
-    Task<User> CreateUserAsync(
+    Task CreateUserAsync(
         [NotNull] UserInfo userInfo,
         CancellationToken cancellationToken = default
     );
@@ -441,19 +441,6 @@ public interface IManagementClient : IDisposable
         [NotNull] TopicPermission permission,
         CancellationToken cancellationToken = default
     );
-
-    /// <summary>
-    ///     Update the password of an user.
-    /// </summary>
-    /// <param name="userName">The name of a user</param>
-    /// <param name="newPassword">The new password to set</param>
-    /// <param name="cancellationToken"></param>
-    Task<User> ChangeUserPasswordAsync(
-        string userName,
-        string newPassword,
-        CancellationToken cancellationToken = default
-    );
-
 
     /// <summary>
     ///     Declares a test queue, then publishes and consumes a message. Intended for use

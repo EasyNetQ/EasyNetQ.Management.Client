@@ -555,13 +555,11 @@ public class ManagementClient : IManagementClient
         return DeleteAsync(GetParameterUrl(componentName, vhost, name), cancellationToken);
     }
 
-    public async Task<User> CreateUserAsync(UserInfo userInfo, CancellationToken cancellationToken = default)
+    public async Task CreateUserAsync(UserInfo userInfo, CancellationToken cancellationToken = default)
     {
         Ensure.ArgumentNotNull(userInfo, nameof(userInfo));
 
         await PutAsync($"users/{userInfo.GetName()}", userInfo, cancellationToken).ConfigureAwait(false);
-
-        return await GetUserAsync(userInfo.GetName(), cancellationToken).ConfigureAwait(false);
     }
 
     public Task DeleteUserAsync(User user, CancellationToken cancellationToken = default)
@@ -614,21 +612,6 @@ public class ManagementClient : IManagementClient
         Ensure.ArgumentNotNull(topicPermission, nameof(topicPermission));
 
         return DeleteAsync($"topic-permissions/{topicPermission.Vhost}/{topicPermission.User}", cancellationToken);
-    }
-
-    public async Task<User> ChangeUserPasswordAsync(string userName, string newPassword, CancellationToken cancellationToken = default)
-    {
-        Ensure.ArgumentNotNull(userName, nameof(userName));
-        var user = await GetUserAsync(userName, cancellationToken).ConfigureAwait(false);
-
-        var tags = user.Tags.Split(',');
-        var userInfo = new UserInfo(userName, newPassword);
-        foreach (var tag in tags)
-        {
-            userInfo.AddTag(tag.Trim());
-        }
-
-        return await CreateUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
     }
 
     public Task<List<Federation>> GetFederationAsync(CancellationToken cancellationToken = default)

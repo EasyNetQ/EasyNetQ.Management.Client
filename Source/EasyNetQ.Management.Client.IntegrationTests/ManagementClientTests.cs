@@ -64,10 +64,12 @@ public class ManagementClientTests
     {
         var userInfo = new UserInfo(testUser, "topSecret").AddTag("monitoring").AddTag("management");
         var managementClient1 = fixture.ManagementClient;
-        var user = await managementClient1.CreateUserAsync(userInfo);
+        await managementClient1.CreateUserAsync(userInfo);
+        var user = await fixture.ManagementClient.GetUserAsync(testUser);
 
-        var updatedUser = await managementClient1.ChangeUserPasswordAsync(testUser, "newPassword");
+        await managementClient1.ChangeUserPasswordAsync(testUser, "newPassword");
 
+        var updatedUser = await fixture.ManagementClient.GetUserAsync(testUser);
         updatedUser.Name.Should().Be(user.Name);
         updatedUser.Tags.Should().Be(user.Tags);
         updatedUser.PasswordHash.Should().NotBe(user.PasswordHash);
@@ -129,7 +131,9 @@ public class ManagementClientTests
         var userTag = "administrator";
         var userInfo = new UserInfo(testUser, "topSecret").AddTag(userTag);
 
-        var user = await fixture.ManagementClient.CreateUserAsync(userInfo);
+        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        var user = await fixture.ManagementClient.GetUserAsync(testUser);
+
         user.Name.Should().Be(testUser);
         user.Tags.Should().Contain(userTag);
     }
@@ -143,7 +147,8 @@ public class ManagementClientTests
         var passwordHash = "Qlp9Dgrqvx1S1VkuYsoWwgUD2XW2gZLuqQwreE+PAsPZETgo"; //"topSecret"
         var userInfo = new UserInfo(testUser, passwordHash, true).AddTag("administrator");
 
-        var user = await fixture.ManagementClient.CreateUserAsync(userInfo);
+        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        var user = await fixture.ManagementClient.GetUserAsync(testUser);
         user.Name.Should().Be(testUser);
     }
 
@@ -152,7 +157,9 @@ public class ManagementClientTests
     {
         var userInfo = new UserInfo(testUser, "topSecret").AddTag("policymaker");
 
-        var user = await fixture.ManagementClient.CreateUserAsync(userInfo);
+        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        var user = await fixture.ManagementClient.GetUserAsync(testUser);
+
         user.Name.Should().Be(testUser);
     }
 
@@ -162,7 +169,8 @@ public class ManagementClientTests
         var testUser = "empty";
         var userInfo = new UserInfo(testUser, "", true).AddTag("administrator");
 
-        var user = await fixture.ManagementClient.CreateUserAsync(userInfo);
+        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        var user = await fixture.ManagementClient.GetUserAsync(testUser);
         user.Name.Should().Be(testUser);
     }
 
@@ -451,7 +459,7 @@ public class ManagementClientTests
         {
             //create user if it does not exists
             var userInfo = new UserInfo(testUser, "topSecret").AddTag("administrator");
-            user = await fixture.ManagementClient.CreateUserAsync(userInfo);
+            user = await fixture.ManagementClient.GetUserAsync(testUser);
         }
 
         var vhost = (await fixture.ManagementClient.GetVhostsAsync()).SingleOrDefault(x => x.Name == Vhost.Name);
@@ -549,7 +557,8 @@ public class ManagementClientTests
     public async Task Should_be_able_to_delete_permissions()
     {
         var userInfo = new UserInfo(testUser, "topSecret").AddTag("monitoring").AddTag("management");
-        var user = await fixture.ManagementClient.CreateUserAsync(userInfo);
+        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        var user = await fixture.ManagementClient.GetUserAsync(testUser);
         await fixture.ManagementClient.CreateVhostAsync(testVHost);
         var vhost = await fixture.ManagementClient.GetVhostAsync(testVHost);
         var permissionInfo = new PermissionInfo(user, vhost);
