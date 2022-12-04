@@ -722,7 +722,7 @@ public class ManagementClientTests
 
         await fixture.ManagementClient.PublishAsync(defaultExchange, publishInfo);
 
-        var messages = await fixture.ManagementClient.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, Ackmodes.ack_requeue_false));
+        var messages = await fixture.ManagementClient.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, AckModes.AckRequeueFalse));
         foreach (var message in messages)
         {
             Console.Out.WriteLine("message.Payload = {0}", message.Payload);
@@ -887,9 +887,9 @@ public class ManagementClientTests
     public async Task Should_get_all_bindings_for_which_the_exchange_is_the_source()
     {
         var sourceXchange = await CreateExchange("sourceXcg");
-        var destionationXchange = await CreateExchange("destinationXcg");
+        var destinationXchange = await CreateExchange("destinationXcg");
         var bindingInfo = new BindingInfo("#");
-        await fixture.ManagementClient.CreateBindingAsync(sourceXchange, destionationXchange, bindingInfo);
+        await fixture.ManagementClient.CreateBindingAsync(sourceXchange, destinationXchange, bindingInfo);
         Assert.NotEmpty((await fixture.ManagementClient.GetBindingsWithSourceAsync(sourceXchange)).ToList());
     }
 
