@@ -212,7 +212,8 @@ public class ManagementClient : IManagementClient
         Ensure.ArgumentNotNull(vhost, nameof(vhost));
 
         await PutAsync
-        ($"exchanges/{SanitiseVhostName(vhost.Name)}/{SanitiseName(exchangeInfo.GetName())}",
+        (
+            $"exchanges/{SanitiseVhostName(vhost.Name)}/{SanitiseName(exchangeInfo.GetName())}",
             exchangeInfo,
             cancellationToken
         ).ConfigureAwait(false);
@@ -724,7 +725,10 @@ public class ManagementClient : IManagementClient
     private static async Task<T> DeserializeResponseAsync<T>(Func<HttpStatusCode, bool> success, HttpResponseMessage response)
     {
         if (!success(response.StatusCode))
+        {
+            var error = await response.Content.ReadAsStringAsync();
             throw new UnexpectedHttpStatusCodeException(response.StatusCode);
+        }
 
         var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         return JsonConvert.DeserializeObject<T>(content, Settings);

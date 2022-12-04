@@ -23,4 +23,10 @@
     <ProjectReference Include="..\EasyNetQ.Management.Client\EasyNetQ.Management.Client.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="rabbitmq_enabled_plugins">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

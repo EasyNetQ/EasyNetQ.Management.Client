@@ -17,9 +17,27 @@ jobs:
     name: Lint & Test
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    continue-on-error: ${{ matrix.experimental }}
+
     strategy:
+      max-parallel: 2
       matrix:
+        rabbitmq: ['3.7']
         dotnet: ['7.x']
+        experimental: [false]
+        include:
+          - rabbitmq: '3.8'
+            dotnet: '7.x'
+            experimental: true
+          - rabbitmq: '3.9'
+            dotnet: '7.x'
+            experimental: true
+          - rabbitmq: '3.10'
+            dotnet: '7.x'
+            experimental: true
+          - rabbitmq: '3.11'
+            dotnet: '7.x'
+            experimental: true
       fail-fast: true
     steps:
     - name: Checkout
@@ -49,6 +67,7 @@ jobs:
     - name: Integration Tests
       run: |
         cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.IntegrationTests
+        export RABBITMQ_VERSION=${{ matrix.rabbitmq }}
         dotnet test --configuration Release --no-build
 
   publish-to-nuget:

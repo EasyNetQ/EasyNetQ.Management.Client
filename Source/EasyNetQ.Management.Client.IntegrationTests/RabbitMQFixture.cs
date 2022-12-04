@@ -9,10 +9,10 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
     private static readonly Vhost VirtualHost = new() { Name = "/", Tracing = false };
     private static readonly TimeSpan InitializationTimeout = TimeSpan.FromMinutes(2);
 
-    private const string ContainerName = "easynetq.tests";
-    private const string Image = "easynetq/rabbitmq";
-    private const string Tag = "3.8-alpine";
+    private const string ContainerName = "easynetq.management.tests";
+    private const string Image = "rabbitmq";
 
+    private readonly string tag;
     private readonly DockerProxy dockerProxy;
     private OSPlatform dockerEngineOsPlatform;
     private string dockerNetworkName;
@@ -20,6 +20,7 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
     public RabbitMqFixture()
     {
         dockerProxy = new DockerProxy();
+        tag = Environment.GetEnvironmentVariable("RABBITMQ_VERSION") ?? "3.7";
     }
 
     public string Host { get; private set; } = "localhost";
@@ -69,23 +70,19 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
 
     private async Task PullImageAsync(CancellationToken cancellationToken)
     {
-        await dockerProxy.PullImageAsync(Image, Tag, cancellationToken);
+        await dockerProxy.PullImageAsync(Image, tag, cancellationToken);
     }
 
     private async Task<string> RunNewContainerAsync(CancellationToken cancellationToken)
     {
         var portMappings = new Dictionary<string, ISet<string>>
         {
-            {"4369", new HashSet<string> {"4369"}},
-            {"5671", new HashSet<string> {"5671"}},
-            {"5672", new HashSet<string> {"5672"}},
             {"15671", new HashSet<string> {"15671"}},
             {"15672", new HashSet<string> {"15672"}},
-            {"25672", new HashSet<string> {"25672"}}
         };
         var envVars = new List<string> { "RABBITMQ_DEFAULT_VHOST=/" };
         var containerId = await dockerProxy.CreateContainerAsync(
-            $"{Image}:{Tag}",
+            $"{Image}:{tag}",
             ContainerName,
             portMappings,
             dockerNetworkName,

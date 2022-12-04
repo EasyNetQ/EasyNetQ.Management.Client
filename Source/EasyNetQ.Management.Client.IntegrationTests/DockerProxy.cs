@@ -47,10 +47,17 @@ public class DockerProxy : IDisposable
         await client.Images.CreateImageAsync(createParameters, null, progress, token);
     }
 
-    public async Task<string> CreateContainerAsync(string image, string name,
-        IDictionary<string, ISet<string>> portMappings, string networkName = null, IList<string> envVars = null,
-        CancellationToken token = default)
+    public async Task<string> CreateContainerAsync(
+        string image,
+        string name,
+        IDictionary<string, ISet<string>> portMappings,
+        string networkName = null,
+        IList<string> envVars = null,
+        CancellationToken token = default
+    )
     {
+        var currentDirectory = Directory.GetCurrentDirectory();
+
         var createParameters = new CreateContainerParameters
         {
             Image = image,
@@ -60,7 +67,11 @@ public class DockerProxy : IDisposable
             HostConfig = new HostConfig
             {
                 PortBindings = PortBindings(portMappings),
-                NetworkMode = networkName
+                NetworkMode = networkName,
+                Binds = new List<string>
+                {
+                    $"{currentDirectory}/rabbitmq_enabled_plugins:/etc/rabbitmq/enabled_plugins"
+                }
             },
             ExposedPorts = portMappings.ToDictionary(x => x.Key, _ => new EmptyStruct())
         };
@@ -70,8 +81,7 @@ public class DockerProxy : IDisposable
 
     public async Task StartContainerAsync(string id, CancellationToken token = default)
     {
-        await client.Containers.StartContainerAsync(id, new ContainerStartParameters(), token)
-            ;
+        await client.Containers.StartContainerAsync(id, new ContainerStartParameters(), token);
     }
 
     public async Task<string> GetContainerIpAsync(string id, CancellationToken token = default)

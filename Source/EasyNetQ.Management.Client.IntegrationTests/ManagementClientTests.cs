@@ -826,7 +826,7 @@ public class ManagementClientTests
         var queue = await CreateTestQueue(testQueue);
         var bindingInfo = new BindingInfo("#");
         await fixture.ManagementClient.CreateBindingAsync(sourceXchange, queue, bindingInfo);
-        var binding = (await fixture.ManagementClient.GetBindingsAsync(sourceXchange, queue)).First();
+        var binding = (await fixture.ManagementClient.GetBindingsAsync(sourceXchange, queue))[0];
         await fixture.ManagementClient.DeleteBindingAsync(binding);
         await fixture.ManagementClient.DeleteExchangeAsync(sourceXchange);
         await fixture.ManagementClient.DeleteQueueAsync(queue);
