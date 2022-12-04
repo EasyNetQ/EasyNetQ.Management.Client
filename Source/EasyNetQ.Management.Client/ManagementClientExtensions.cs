@@ -309,7 +309,7 @@ public static class ManagementClientExtensions
     /// <param name="exchangeInfo"></param>
     /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
-    public static Exchange CreateExchange(
+    public static void CreateExchange(
         [NotNull] this IManagementClient source,
         [NotNull] ExchangeInfo exchangeInfo,
         [NotNull] Vhost vhost,
@@ -319,7 +319,7 @@ public static class ManagementClientExtensions
         if (source == null)
             throw new ArgumentNullException(nameof(source));
 
-        return source.CreateExchangeAsync(exchangeInfo, vhost, cancellationToken)
+        source.CreateExchangeAsync(exchangeInfo, vhost, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
@@ -419,7 +419,7 @@ public static class ManagementClientExtensions
     /// <param name="queueInfo"></param>
     /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
-    public static Queue CreateQueue(
+    public static void CreateQueue(
         [NotNull] this IManagementClient source,
         [NotNull] QueueInfo queueInfo,
         [NotNull] Vhost vhost,
@@ -429,7 +429,7 @@ public static class ManagementClientExtensions
         if (source == null)
             throw new ArgumentNullException(nameof(source));
 
-        return source.CreateQueueAsync(queueInfo, vhost, cancellationToken)
+        source.CreateQueueAsync(queueInfo, vhost, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
@@ -643,7 +643,7 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="vhostName">The name of the new virtual host</param>
     /// <param name="cancellationToken"></param>
-    public static Vhost CreateVhost(
+    public static void CreateVhost(
         [NotNull] this IManagementClient source,
         string vhostName,
         CancellationToken cancellationToken = default
@@ -652,7 +652,7 @@ public static class ManagementClientExtensions
         if (source == null)
             throw new ArgumentNullException(nameof(source));
 
-        return source.CreateVhostAsync(vhostName, cancellationToken)
+        source.CreateVhostAsync(vhostName, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }

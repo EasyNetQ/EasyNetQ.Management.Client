@@ -166,7 +166,7 @@ public interface IManagementClient : IDisposable
     /// <param name="exchangeInfo"></param>
     /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
-    Task<Exchange> CreateExchangeAsync(
+    Task CreateExchangeAsync(
         [NotNull] ExchangeInfo exchangeInfo,
         [NotNull] Vhost vhost,
         CancellationToken cancellationToken = default
@@ -226,7 +226,7 @@ public interface IManagementClient : IDisposable
     /// <param name="queueInfo"></param>
     /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
-    Task<Queue> CreateQueueAsync(
+    Task CreateQueueAsync(
         [NotNull] QueueInfo queueInfo,
         [NotNull] Vhost vhost,
         CancellationToken cancellationToken = default
@@ -350,10 +350,7 @@ public interface IManagementClient : IDisposable
     /// </summary>
     /// <param name="vhostName">The name of the new virtual host</param>
     /// <param name="cancellationToken"></param>
-    Task<Vhost> CreateVhostAsync(
-        string vhostName,
-        CancellationToken cancellationToken = default
-    );
+    Task CreateVhostAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Delete a virtual host
