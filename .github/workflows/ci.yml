@@ -22,8 +22,8 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        dotnet: ['7.x']
         rabbitmq: ['3.7']
+        dotnet: ['7.x']
         experimental: [false]
         include:
           - rabbitmq: '3.8'
