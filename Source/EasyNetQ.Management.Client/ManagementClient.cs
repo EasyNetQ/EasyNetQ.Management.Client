@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Headers;
-using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using EasyNetQ.Management.Client.Model;
@@ -55,19 +54,6 @@ public class ManagementClient : IManagementClient
         Action<HttpRequestMessage> configureRequest = null,
         bool ssl = false,
         Action<HttpClientHandler> handlerConfigurator = null
-    ) : this(hostUrl, username, password.Secure(), portNumber, timeout, configureRequest, ssl, handlerConfigurator)
-    {
-    }
-
-    public ManagementClient(
-        string hostUrl,
-        string username,
-        SecureString password,
-        int portNumber = 15672,
-        TimeSpan? timeout = null,
-        Action<HttpRequestMessage> configureRequest = null,
-        bool ssl = false,
-        Action<HttpClientHandler> handlerConfigurator = null
     )
     {
         if (string.IsNullOrEmpty(hostUrl))
@@ -101,15 +87,12 @@ public class ManagementClient : IManagementClient
             throw new ArgumentException("username is null or empty");
         }
 
-        if (password == null || password.Length == 0)
+        if (string.IsNullOrEmpty(password))
         {
             throw new ArgumentException("password is null or empty");
         }
 
-        if (configureRequest == null)
-        {
-            configureRequest = x => { };
-        }
+        configureRequest ??= _ => { };
 
         HostUrl = hostUrl;
         Username = username;
