@@ -26,6 +26,7 @@ jobs:
         rabbitmq: ['3.7']
         experimental: [false]
         include:
+          - dotnet: '7.x'
           - rabbitmq: '3.8'
             experimental: true
       fail-fast: true
