@@ -106,13 +106,7 @@ public class ManagementClient : IManagementClient
 
         handlerConfigurator?.Invoke(httpHandler);
 
-        httpClient = new HttpClient(httpHandler)
-        {
-            Timeout = timeout ?? defaultTimeout
-        };
-
-        //default WebRequest.KeepAlive to false to resolve spurious 'the request was aborted: the request was canceled' exceptions
-        httpClient.DefaultRequestHeaders.Add("Connection", "close");
+        httpClient = new HttpClient(httpHandler) { Timeout = timeout ?? defaultTimeout };
     }
 
     public Task<Overview> GetOverviewAsync(
@@ -218,7 +212,7 @@ public class ManagementClient : IManagementClient
         Ensure.ArgumentNotNull(vhost, nameof(vhost));
 
         await PutAsync
-            ($"exchanges/{SanitiseVhostName(vhost.Name)}/{SanitiseName(exchangeInfo.GetName())}",
+        ($"exchanges/{SanitiseVhostName(vhost.Name)}/{SanitiseName(exchangeInfo.GetName())}",
             exchangeInfo,
             cancellationToken
         ).ConfigureAwait(false);
@@ -830,7 +824,6 @@ public class ManagementClient : IManagementClient
     }
 
     public Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default)
-
     {
         return GetAsync<IReadOnlyList<Consumer>>("consumers", cancellationToken);
     }
