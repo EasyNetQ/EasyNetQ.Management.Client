@@ -9,6 +9,10 @@
     <AssemblyTitle>EasyNetQ.Management.Client</AssemblyTitle>
     <NeutralLanguage>en</NeutralLanguage>
 
+    <AssemblyOriginatorKeyFile>..\..\Assets\EasyNetQ.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign>false</PublicSign>
+
     <Title>EasyNetQ.Management.Client</Title>
     <Authors>Mike Hadlow</Authors>
     <PackageId>EasyNetQ.Management.Client</PackageId>
