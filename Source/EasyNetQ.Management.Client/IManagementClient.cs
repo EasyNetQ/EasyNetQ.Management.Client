@@ -21,6 +21,11 @@ public interface IManagementClient : IDisposable
     int PortNumber { get; }
 
     /// <summary>
+    ///     Indicates if the port number should be used to create the Uri default true
+    /// </summary>
+    public bool UsePort { get; }
+
+    /// <summary>
     ///     Various random bits of information that describe the whole system.
     /// </summary>
     /// <param name="lengthsCriteria">Criteria for getting samples of queue length data</param>

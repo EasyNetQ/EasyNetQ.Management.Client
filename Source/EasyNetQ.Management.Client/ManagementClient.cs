@@ -45,6 +45,8 @@ public class ManagementClient : IManagementClient
 
     public int PortNumber { get; }
 
+    public bool UsePort { get; }
+
     public ManagementClient(
         string hostUrl,
         string username,
@@ -53,7 +55,8 @@ public class ManagementClient : IManagementClient
         TimeSpan? timeout = null,
         Action<HttpRequestMessage> configureRequest = null,
         bool ssl = false,
-        Action<HttpClientHandler> handlerConfigurator = null
+        Action<HttpClientHandler> handlerConfigurator = null,
+        bool usePort = true
     )
     {
         if (string.IsNullOrEmpty(hostUrl))
@@ -98,6 +101,7 @@ public class ManagementClient : IManagementClient
         Username = username;
         PortNumber = portNumber;
         this.configureRequest = configureRequest;
+        UsePort = usePort;
 
         var httpHandler = new HttpClientHandler
         {
@@ -728,7 +732,13 @@ public class ManagementClient : IManagementClient
 
     private HttpRequestMessage CreateRequestForPath(HttpMethod httpMethod, string path, string query)
     {
-        var uri = new Uri($"{HostUrl}:{PortNumber}/api/{path}{query ?? string.Empty}");
+        string uriString;
+        if (UsePort)
+            uriString = $"{HostUrl}:{PortNumber}/api/{path}{query ?? string.Empty}";
+        else
+            uriString = $"{HostUrl}/api/{path}{query ?? string.Empty}";
+
+        var uri = new Uri(uriString);
         var request = new HttpRequestMessage(httpMethod, uri);
         configureRequest(request);
         return request;
