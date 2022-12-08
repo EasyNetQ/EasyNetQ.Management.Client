@@ -728,7 +728,13 @@ public class ManagementClient : IManagementClient
 
     private HttpRequestMessage CreateRequestForPath(HttpMethod httpMethod, string path, string query)
     {
-        var uri = new Uri($"{HostUrl}:{PortNumber}/api/{path}{query ?? string.Empty}");
+        string uriString;
+        if (PortNumber != 443)
+            uriString = $"{HostUrl}:{PortNumber}/api/{path}{query ?? string.Empty}";
+        else
+            uriString = $"{HostUrl}/api/{path}{query ?? string.Empty}";
+
+        var uri = new Uri(uriString);
         var request = new HttpRequestMessage(httpMethod, uri);
         configureRequest(request);
         return request;

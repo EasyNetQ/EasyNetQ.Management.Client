@@ -20,6 +20,7 @@ public interface IManagementClient : IDisposable
     /// </summary>
     int PortNumber { get; }
 
+
     /// <summary>
     ///     Various random bits of information that describe the whole system.
     /// </summary>
