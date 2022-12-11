@@ -562,7 +562,7 @@ public class ManagementClient : IManagementClient
     {
         Ensure.ArgumentNotNull(userInfo, nameof(userInfo));
 
-        await PutAsync($"users/{userInfo.GetName()}", userInfo, cancellationToken).ConfigureAwait(false);
+        await PutAsync($"users/{userInfo.Name}", userInfo, cancellationToken).ConfigureAwait(false);
     }
 
     public Task DeleteUserAsync(User user, CancellationToken cancellationToken = default)

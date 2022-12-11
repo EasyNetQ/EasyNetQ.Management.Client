@@ -18,35 +18,16 @@ public class UserInfoTests
     }
 
     [Fact]
-    public void Should_have_correct_name_and_password()
-    {
-        userInfo.GetName().Should().Be(userName);
-        userInfo.Password.Should().Be(password);
-    }
-
-    [Fact]
     public void Should_be_able_to_add_tags()
     {
-        userInfo.AddTag("administrator").AddTag("management");
-        userInfo.Tags.Should().Be("administrator,management");
-    }
-
-    [Fact]
-    public void Should_not_be_able_to_add_the_same_tag_twice()
-    {
-        Assert.Throws<ArgumentException>(() => userInfo.AddTag("management").AddTag("management"));
-    }
-
-    [Fact]
-    public void Should_not_be_able_to_add_incorrect_tags()
-    {
-        Assert.Throws<ArgumentException>(() => userInfo.AddTag("blah"));
+        userInfo.AddTag(UserTag.Administrator).AddTag(UserTag.Management);
+        userInfo.Tags.Should().BeEquivalentTo(new [] {UserTag.Administrator, UserTag.Management});
     }
 
     [Fact]
     public void Should_have_a_default_tag_of_empty_string()
     {
-        userInfo.Tags.Should().Be("");
+        userInfo.Tags.Should().BeEmpty();
     }
 }
 
