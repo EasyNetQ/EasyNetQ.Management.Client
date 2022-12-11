@@ -38,7 +38,7 @@ public class ManagementClient : IManagementClient
         Settings.Converters.Add(new PropertyConverter());
         Settings.Converters.Add(new MessageStatsOrEmptyArrayConverter());
         Settings.Converters.Add(new QueueTotalsOrEmptyArrayConverter());
-        Settings.Converters.Add(new StringEnumConverter{NamingStrategy = new SnakeCaseNamingStrategy(true, true)});
+        Settings.Converters.Add(new StringEnumConverter { NamingStrategy = new SnakeCaseNamingStrategy(true, true) });
         Settings.Converters.Add(new HaParamsConverter());
     }
 
