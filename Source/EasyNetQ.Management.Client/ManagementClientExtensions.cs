@@ -1136,12 +1136,8 @@ public static class ManagementClientExtensions
 
         var user = await client.GetUserAsync(userName, cancellationToken).ConfigureAwait(false);
 
-        var tags = user.Tags.Split(',');
         var userInfo = new UserInfo(userName, newPassword);
-        foreach (var tag in tags)
-        {
-            userInfo.AddTag(tag.Trim());
-        }
+        foreach (var tag in user.Tags) userInfo.AddTag(tag);
 
         await client.CreateUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
     }
