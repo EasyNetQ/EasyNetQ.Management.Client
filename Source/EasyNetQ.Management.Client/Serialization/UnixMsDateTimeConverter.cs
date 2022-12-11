@@ -15,16 +15,14 @@ public class UnixMsDateTimeConverter : DateTimeConverterBase
     /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter"/> to write to.</param><param name="value">The value.</param><param name="serializer">The calling serializer.</param>
     public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
     {
-        long val;
-        if (value is DateTime)
+        if (value is DateTime dateTime)
         {
-            val = ((DateTime)value).ToUnixTimeMs();
+            writer.WriteValue(dateTime.ToUnixTimeMs());
         }
         else
         {
             throw new Exception("Expected date object value.");
         }
-        writer.WriteValue(val);
     }
 
     /// <summary>
