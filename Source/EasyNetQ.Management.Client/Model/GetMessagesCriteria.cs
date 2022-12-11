@@ -6,7 +6,7 @@
 public class GetMessagesCriteria
 {
     public long Count { get; private set; }
-    public string Ackmode { get; private set; }
+    public AckMode Ackmode { get; private set; }
     public string Encoding { get; private set; }
 
     /// <summary>
@@ -15,12 +15,12 @@ public class GetMessagesCriteria
     /// <param name="count">
     /// Controls the number of messages to get. You may get fewer messages than this if the queue cannot immediately provide them.
     /// </param>
-    /// <param name="ackModes">
+    /// <param name="ackMode">
     /// Determines if the message(s) should be placed back into the queue.
     /// </param>
-    public GetMessagesCriteria(long count, AckModes ackModes)
+    public GetMessagesCriteria(long count, AckMode ackMode)
     {
-        Ackmode = ackModes.ToSnakeCaseString();
+        Ackmode = ackMode;
         Count = count;
         Encoding = "auto";
     }

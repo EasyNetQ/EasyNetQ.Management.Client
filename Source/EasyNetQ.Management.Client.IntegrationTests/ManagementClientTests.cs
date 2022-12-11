@@ -735,7 +735,7 @@ public class ManagementClientTests
 
         await fixture.ManagementClient.PublishAsync(defaultExchange, publishInfo);
 
-        var messages = await fixture.ManagementClient.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, AckModes.AckRequeueFalse));
+        var messages = await fixture.ManagementClient.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, AckMode.AckRequeueFalse));
         foreach (var message in messages)
         {
             Console.Out.WriteLine("message.Payload = {0}", message.Payload);

@@ -50,7 +50,7 @@ public class ScenarioTest
         await management.PublishAsync(exchange, new PublishInfo("my_routing_key", "Hello World!"));
 
         // get any messages on the queue
-        var messages = await management.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, AckModes.AckRequeueFalse));
+        var messages = await management.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, AckMode.AckRequeueFalse));
 
         foreach (var message in messages) Console.Out.WriteLine("message.payload = {0}", message.Payload);
     }

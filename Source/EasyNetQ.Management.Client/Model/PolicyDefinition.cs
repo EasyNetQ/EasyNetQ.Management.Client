@@ -4,28 +4,28 @@ namespace EasyNetQ.Management.Client.Model;
 
 public class PolicyDefinition
 {
-    [JsonProperty("ha-mode", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("ha-mode")]
     public HaMode? HaMode;
-    [JsonProperty("ha-params", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("ha-params")]
     public HaParams HaParams;
-    [JsonProperty("ha-sync-mode", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("ha-sync-mode")]
     public HaSyncMode? HaSyncMode;
-    [JsonProperty("federation-upstream", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("federation-upstream")]
     public string FederationUpstream { get; set; }
-    [JsonProperty("federation-upstream-set", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("federation-upstream-set")]
     public string FederationUpstreamSet { get; set; }
-    [JsonProperty("alternate-exchange", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("alternate-exchange")]
     public string AlternateExchange { get; set; }
-    [JsonProperty("dead-letter-exchange", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("dead-letter-exchange")]
     public string DeadLetterExchange { get; set; }
-    [JsonProperty("dead-letter-routing-key", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("dead-letter-routing-key")]
     public string DeadLetterRoutingKey { get; set; }
-    [JsonProperty("queue-mode", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("queue-mode")]
     public string QueueMode { get; set; }
-    [JsonProperty("message-ttl", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("message-ttl")]
     public uint? MessageTtl { get; set; }
-    [JsonProperty("expires", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("expires")]
     public uint? Expires { get; set; }
-    [JsonProperty("max-length", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("max-length")]
     public uint? MaxLength { get; set; }
 }
