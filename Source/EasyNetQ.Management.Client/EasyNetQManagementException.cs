@@ -1,3 +1,5 @@
+using System.Runtime.Serialization;
+
 namespace EasyNetQ.Management.Client;
 
 [Serializable]
@@ -25,11 +27,11 @@ public class EasyNetQManagementException : Exception
     public EasyNetQManagementException(string message, Exception inner) : base(message, inner)
     {
     }
-#if NETFX
-        protected EasyNetQManagementException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
-#endif
+
+    protected EasyNetQManagementException(
+        SerializationInfo info,
+        StreamingContext context
+    ) : base(info, context)
+    {
+    }
 }

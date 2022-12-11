@@ -4,10 +4,6 @@ internal readonly struct RelativePath
 {
     private readonly string[] segments;
 
-    public RelativePath()
-    {
-    }
-
     public RelativePath(string segment) => segments = new[] { segment };
 
     public string BuildEscaped() => string.Join("/", (segments ?? Array.Empty<string>()).Select(Uri.EscapeDataString));

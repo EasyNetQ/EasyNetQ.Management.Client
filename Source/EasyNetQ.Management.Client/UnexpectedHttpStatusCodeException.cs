@@ -1,4 +1,5 @@
 using System.Net;
+using System.Runtime.Serialization;
 
 namespace EasyNetQ.Management.Client;
 
@@ -33,11 +34,11 @@ public class UnexpectedHttpStatusCodeException : Exception
     public UnexpectedHttpStatusCodeException(string message, Exception inner) : base(message, inner)
     {
     }
-#if NETFX
-        protected UnexpectedHttpStatusCodeException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
-#endif
+
+    protected UnexpectedHttpStatusCodeException(
+        SerializationInfo info,
+        StreamingContext context
+    ) : base(info, context)
+    {
+    }
 }
