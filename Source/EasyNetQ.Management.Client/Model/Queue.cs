@@ -13,6 +13,7 @@ public class Queue
     public int ActiveConsumers { get; set; }
     public BackingQueueStatus BackingQueueStatus { get; set; }
     public List<ConsumerDetail> ConsumerDetails { get; set; }
+    public long? HeadMessageTimestamp { get; set; }
     public string Name { get; set; }
     public string Vhost { get; set; }
     public bool Durable { get; set; }
