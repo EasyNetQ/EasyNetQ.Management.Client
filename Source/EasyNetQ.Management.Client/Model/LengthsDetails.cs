@@ -3,12 +3,6 @@ namespace EasyNetQ.Management.Client.Model;
 public class LengthsDetails
 {
     public double Rate { get; set; }
-
-    [Obsolete("The Interval and LastEvent properties were removed in RabbitMQ v3.1")]
-    public long Interval { get; set; }
-    [Obsolete("The Interval and LastEvent properties were removed in RabbitMQ v3.1")]
-    public long LastEvent { get; set; }
-
     public double AvgRate { get; set; }
     public double Avg { get; set; }
 
