@@ -7,14 +7,14 @@ public class HaParamsConverter : JsonConverter
 {
     // Support serializing/deserializing ha-params according to http://www.rabbitmq.com/ha.html#genesis for 3.1.3
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
         var valueToSerialize = value as HaParams;
-        if (valueToSerialize.AssociatedHaMode == HaMode.Exactly)
+        if (valueToSerialize is { AssociatedHaMode: HaMode.Exactly })
         {
             serializer.Serialize(writer, valueToSerialize.ExactlyCount);
         }
-        else if (valueToSerialize.AssociatedHaMode == HaMode.Nodes && valueToSerialize.Nodes != null)
+        else if (valueToSerialize is { AssociatedHaMode: HaMode.Nodes, Nodes: { } })
         {
             serializer.Serialize(writer, valueToSerialize.Nodes);
         }
@@ -24,13 +24,13 @@ public class HaParamsConverter : JsonConverter
         }
     }
 
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
-        HaParams returnValue = null;
+        HaParams? returnValue = null;
         var deserializationErrorMessage = "Could not read ha-params value";
         if (reader.TokenType == JsonToken.Integer)
         {
-            returnValue = new HaParams { AssociatedHaMode = HaMode.Exactly, ExactlyCount = (long)reader.Value };
+            returnValue = new HaParams { AssociatedHaMode = HaMode.Exactly, ExactlyCount = (long)reader.Value! };
         }
         else if (reader.TokenType == JsonToken.StartArray)
         {
@@ -45,7 +45,7 @@ public class HaParamsConverter : JsonConverter
                 }
                 else if (reader.TokenType == JsonToken.String)
                 {
-                    nodesList.Add(reader.Value as string);
+                    nodesList.Add((reader.Value as string)!);
                 }
             } while (reader.TokenType == JsonToken.String);
             potentialReturnValue.Nodes = nodesList.ToArray();

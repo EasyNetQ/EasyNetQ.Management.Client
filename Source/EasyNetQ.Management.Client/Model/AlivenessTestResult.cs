@@ -2,5 +2,5 @@
 
 public class AlivenessTestResult
 {
-    public string Status { get; set; }
+    public string Status { get; set; } = null!;
 }

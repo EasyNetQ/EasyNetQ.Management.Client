@@ -13,7 +13,7 @@ class QueueTotalsOrEmptyArrayConverter : ObjectOrEmptyArrayConverter<QueueTotals
 class ObjectOrEmptyArrayConverter<T> : JsonConverter where T : new()
 {
     // From http://stackoverflow.com/questions/17171737/how-to-deserialize-json-data-which-sometimes-is-an-empty-array-and-sometimes-a-s
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.StartArray)
         {
@@ -32,7 +32,7 @@ class ObjectOrEmptyArrayConverter<T> : JsonConverter where T : new()
         return target;
     }
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
         serializer.Serialize(writer, value);
     }
