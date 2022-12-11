@@ -125,6 +125,7 @@ public class PolicySerializationTests
         }, ManagementClient.Settings);
         Console.WriteLine(serializedMessage);
         Assert.DoesNotContain("ha-params", serializedMessage);
-        Assert.DoesNotContain("federation_upstream_set", serializedMessage);
+        Assert.DoesNotContain("ha-sync-batch-size", serializedMessage);
+        Assert.DoesNotContain("federation-upstream-set", serializedMessage);
     }
 }
