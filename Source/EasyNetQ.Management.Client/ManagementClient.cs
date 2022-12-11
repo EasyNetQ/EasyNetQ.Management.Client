@@ -32,13 +32,13 @@ public class ManagementClient : IManagementClient
             {
                 NamingStrategy = new SnakeCaseNamingStrategy(true, true)
             },
-            NullValueHandling = NullValueHandling.Ignore,
+            NullValueHandling = NullValueHandling.Ignore
         };
 
         Settings.Converters.Add(new PropertyConverter());
         Settings.Converters.Add(new MessageStatsOrEmptyArrayConverter());
         Settings.Converters.Add(new QueueTotalsOrEmptyArrayConverter());
-        Settings.Converters.Add(new StringEnumConverter { AllowIntegerValues = false});
+        Settings.Converters.Add(new StringEnumConverter{NamingStrategy = new SnakeCaseNamingStrategy(true, true)});
         Settings.Converters.Add(new HaParamsConverter());
     }
 

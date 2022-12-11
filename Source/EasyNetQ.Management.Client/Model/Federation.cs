@@ -12,6 +12,7 @@ public class Federation
     public string Upstream { get; set; }
 
     public string Id { get; set; }
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
     public FederationStatus Status { get; set; }
     public string LocalConnection { get; set; }
     public string Uri { get; set; }
