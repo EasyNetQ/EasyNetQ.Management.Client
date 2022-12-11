@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Tests;
 
@@ -14,7 +15,10 @@ public class ResourceLoader
     {
         var settings = new JsonSerializerSettings
         {
-            ContractResolver = new RabbitContractResolver()
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy(true, true)
+            }
         };
         return LoadObjectFromJson<T>(fileToLoad, settings);
     }

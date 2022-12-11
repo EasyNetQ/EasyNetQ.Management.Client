@@ -8,7 +8,7 @@ public class Policy
     public string Name { get; set; }
     public string Pattern { get; set; }
     public PolicyDefinition Definition { get; set; }
-    [JsonProperty("apply-to", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("apply-to")]
     public ApplyMode ApplyTo { get; set; }
     public int Priority { get; set; }
 }

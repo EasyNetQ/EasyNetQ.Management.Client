@@ -1,6 +1,7 @@
 ﻿using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests;
@@ -18,7 +19,10 @@ public class ManagementClientInternalsTests
 
         JsonSerializerSettings settings = new JsonSerializerSettings
         {
-            ContractResolver = new RabbitContractResolver()
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy(true, true)
+            }
         };
 
         settings.Converters.Add(new PropertyConverter());
@@ -33,7 +37,10 @@ public class ManagementClientInternalsTests
     {
         JsonSerializerSettings settings = new JsonSerializerSettings
         {
-            ContractResolver = new RabbitContractResolver()
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy(true, true)
+            }
         };
 
         settings.Converters.Add(new PropertyConverter());

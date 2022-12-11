@@ -28,14 +28,17 @@ public class ManagementClient : IManagementClient
     {
         Settings = new JsonSerializerSettings
         {
-            ContractResolver = new RabbitContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy(true, true)
+            },
+            NullValueHandling = NullValueHandling.Ignore,
         };
 
         Settings.Converters.Add(new PropertyConverter());
         Settings.Converters.Add(new MessageStatsOrEmptyArrayConverter());
         Settings.Converters.Add(new QueueTotalsOrEmptyArrayConverter());
-        Settings.Converters.Add(new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() });
+        Settings.Converters.Add(new StringEnumConverter { AllowIntegerValues = false});
         Settings.Converters.Add(new HaParamsConverter());
     }
 

@@ -11,9 +11,7 @@ public class Federation
     public string Vhost { get; set; }
     public string Upstream { get; set; }
 
-    [JsonProperty("id")]
     public string Id { get; set; }
-    [JsonProperty("status", NullValueHandling = NullValueHandling.Ignore)]
     public FederationStatus Status { get; set; }
     public string LocalConnection { get; set; }
     public string Uri { get; set; }
