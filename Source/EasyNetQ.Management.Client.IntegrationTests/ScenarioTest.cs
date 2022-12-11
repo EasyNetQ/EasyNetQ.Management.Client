@@ -22,7 +22,7 @@ public class ScenarioTest
         var vhost = await fixture.ManagementClient.GetVhostAsync("my_virtual_host");
 
         // next create a user for that virtual host
-        await fixture.ManagementClient.CreateUserAsync(new UserInfo("mike", "topSecret").AddTag(UserTag.Administrator));
+        await fixture.ManagementClient.CreateUserAsync(new UserInfo("mike", "topSecret").AddTag(UserTags.Administrator));
         var user = await fixture.ManagementClient.GetUserAsync("mike");
 
 

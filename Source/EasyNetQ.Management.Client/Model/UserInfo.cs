@@ -5,7 +5,7 @@ public class UserInfo
     public string Name { get; set; }
     public string Password { get; set; }
     public string PasswordHash { get; set; }
-    public List<UserTag> Tags { get; set; } = new();
+    public List<string> Tags { get; set; } = new();
 
     /// <summary>
     /// Creates <see cref="UserInfo"/> instance.
@@ -41,7 +41,7 @@ public class UserInfo
         }
     }
 
-    public UserInfo AddTag(UserTag tag)
+    public UserInfo AddTag(string tag)
     {
         if (!Tags.Contains(tag))
             Tags.Add(tag);

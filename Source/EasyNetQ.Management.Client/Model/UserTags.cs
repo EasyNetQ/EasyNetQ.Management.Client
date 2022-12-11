@@ -7,11 +7,11 @@ namespace EasyNetQ.Management.Client.Model;
 /// Policymaker: User can access the management plugin and manage policies and parameters for the vhosts they have access to.
 /// Impersonator: User can forge a user-id.
 /// </summary>
-public enum UserTag
+public static class UserTags
 {
-    Administrator,
-    Monitoring,
-    Management,
-    Policymaker,
-    Impersonator
+    public const string Administrator = "administrator";
+    public const string Monitoring = "monitoring";
+    public const string Management = "management";
+    public const string Policymaker = "policymaker";
+    public const string Impersonator = "impersonator";
 }

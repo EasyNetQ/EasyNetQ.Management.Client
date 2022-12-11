@@ -62,7 +62,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_change_the_password_of_a_user()
     {
-        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTag.Monitoring).AddTag(UserTag.Management);
+        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTags.Monitoring).AddTag(UserTags.Management);
         await fixture.ManagementClient.CreateUserAsync(userInfo);
 
         var user = await fixture.ManagementClient.GetUserAsync(testUser);
@@ -128,13 +128,13 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_a_user()
     {
-        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTag.Administrator);
+        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTags.Administrator);
 
         await fixture.ManagementClient.CreateUserAsync(userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(testUser);
 
         user.Name.Should().Be(testUser);
-        user.Tags.Should().Contain(UserTag.Administrator);
+        user.Tags.Should().Contain(UserTags.Administrator);
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public class ManagementClientTests
         // Hash calculated using RabbitMq hash computing algorithm using Sha256
         // See https://www.rabbitmq.com/passwords.html
         var passwordHash = "Qlp9Dgrqvx1S1VkuYsoWwgUD2XW2gZLuqQwreE+PAsPZETgo"; //"topSecret"
-        var userInfo = new UserInfo(testUser, passwordHash, true).AddTag(UserTag.Administrator);
+        var userInfo = new UserInfo(testUser, passwordHash, true).AddTag(UserTags.Administrator);
 
         await fixture.ManagementClient.CreateUserAsync(userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(testUser);
@@ -154,7 +154,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_a_user_with_the_policymaker_tag()
     {
-        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTag.Policymaker);
+        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTags.Policymaker);
 
         await fixture.ManagementClient.CreateUserAsync(userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(testUser);
@@ -166,7 +166,7 @@ public class ManagementClientTests
     public async Task Should_be_able_to_create_a_user_without_password()
     {
         var testUser = "empty";
-        var userInfo = new UserInfo(testUser, "", true).AddTag(UserTag.Administrator);
+        var userInfo = new UserInfo(testUser, "", true).AddTag(UserTags.Administrator);
 
         await fixture.ManagementClient.CreateUserAsync(userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(testUser);
@@ -457,7 +457,7 @@ public class ManagementClientTests
         if (user == null)
         {
             //create user if it does not exists
-            var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTag.Administrator);
+            var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTags.Administrator);
             user = await fixture.ManagementClient.GetUserAsync(testUser);
         }
 
@@ -555,7 +555,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_delete_permissions()
     {
-        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTag.Monitoring).AddTag(UserTag.Management);
+        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTags.Monitoring).AddTag(UserTags.Management);
         await fixture.ManagementClient.CreateUserAsync(userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(testUser);
         await fixture.ManagementClient.CreateVhostAsync(testVHost);

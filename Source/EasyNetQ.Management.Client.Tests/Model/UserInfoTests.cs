@@ -20,8 +20,8 @@ public class UserInfoTests
     [Fact]
     public void Should_be_able_to_add_tags()
     {
-        userInfo.AddTag(UserTag.Administrator).AddTag(UserTag.Management);
-        userInfo.Tags.Should().BeEquivalentTo(new[] { UserTag.Administrator, UserTag.Management });
+        userInfo.AddTag(UserTags.Administrator).AddTag(UserTags.Management);
+        userInfo.Tags.Should().BeEquivalentTo(new[] { UserTags.Administrator, UserTags.Management });
     }
 
     [Fact]
