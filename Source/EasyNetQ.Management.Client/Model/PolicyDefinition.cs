@@ -5,11 +5,13 @@ namespace EasyNetQ.Management.Client.Model;
 public class PolicyDefinition
 {
     [JsonProperty("ha-mode")]
-    public HaMode? HaMode;
+    public HaMode? HaMode { get; set; }
     [JsonProperty("ha-params")]
-    public HaParams HaParams;
+    public HaParams HaParams { get; set; }
     [JsonProperty("ha-sync-mode")]
-    public HaSyncMode? HaSyncMode;
+    public HaSyncMode? HaSyncMode { get; set; }
+    [JsonProperty("ha-sync-batch-size")]
+    public int? HaSyncBatchSize { get; set; }
     [JsonProperty("federation-upstream")]
     public string FederationUpstream { get; set; }
     [JsonProperty("federation-upstream-set")]
