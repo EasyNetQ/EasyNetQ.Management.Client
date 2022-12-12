@@ -18,7 +18,7 @@ internal readonly struct RelativePath
         var old = segments ?? Array.Empty<string>();
         var current = new string[old.Length + 1];
         Array.Copy(old, 0, current, 0, old.Length);
-        current[old.Length] = segment;
+        current[old.Length] = segment.Trim('/');
         return new RelativePath(current);
     }
 }

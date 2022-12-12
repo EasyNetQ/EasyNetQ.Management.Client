@@ -19,9 +19,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetOverviewAsync(lengthsCriteria, ratesCriteria, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -39,9 +36,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetNodesAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -59,9 +53,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetDefinitionsAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -78,9 +69,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetConnectionsAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -97,9 +85,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetChannelsAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -120,9 +105,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetChannelAsync(channelName, ratesCriteria, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -139,9 +121,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetExchangesAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -158,9 +137,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetQueuesAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -178,9 +154,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetQueuesAsync(vhost, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -197,9 +170,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetBindingsAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -216,9 +186,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetVhostsAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -235,9 +202,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetUsersAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -254,9 +218,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetPermissionsAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -273,9 +234,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetTopicPermissionsAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -293,9 +251,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.CloseConnectionAsync(connection, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -315,9 +270,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.CreateExchangeAsync(exchangeInfo, vhost, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -335,9 +287,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.DeleteExchangeAsync(exchange, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -356,9 +305,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetBindingsWithSourceAsync(exchange, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -377,9 +323,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetBindingsWithDestinationAsync(exchange, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -403,9 +346,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.PublishAsync(exchange, publishInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -425,9 +365,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.CreateQueueAsync(queueInfo, vhost, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -445,9 +382,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.DeleteQueueAsync(queue, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -465,9 +399,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetBindingsForQueueAsync(queue, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -485,9 +416,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.PurgeAsync(queue, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -512,9 +440,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetMessagesFromQueueAsync(queue, criteria, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -537,9 +462,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.CreateBindingAsync(exchange, queue, bindingInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -561,9 +483,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.CreateBindingAsync(sourceExchange, destinationExchange, bindingInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -585,9 +504,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetBindingsAsync(exchange, queue, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -608,9 +524,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetBindingsAsync(fromExchange, toExchange, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -628,9 +541,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.DeleteBindingAsync(binding, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -648,9 +558,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.CreateVhostAsync(vhostName, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -668,9 +575,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.DeleteVhostAsync(vhost, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -688,9 +592,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.EnableTracingAsync(vhost, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -708,9 +609,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.DisableTracingAsync(vhost, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -728,9 +626,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.CreateUserAsync(userInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -748,9 +643,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.DeleteUserAsync(user, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -768,9 +660,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.CreatePermissionAsync(permissionInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -788,9 +677,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.DeletePermissionAsync(permission, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -808,9 +694,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.CreateTopicPermissionAsync(topicPermissionInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -828,9 +711,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.DeleteTopicPermissionAsync(permission, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -850,9 +730,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.ChangeUserPasswordAsync(userName, newPassword, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -874,9 +751,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.IsAliveAsync(vhost, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -899,9 +773,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetExchangeAsync(exchangeName, vhost, ratesCriteria, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -926,9 +797,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetQueueAsync(queueName, vhost, lengthsCriteria, ratesCriteria, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -946,9 +814,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetVhostAsync(vhostName, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -967,9 +832,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetUserAsync(userName, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -986,9 +848,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetPoliciesAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -1006,9 +865,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.CreatePolicyAsync(policy, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -1028,9 +884,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.DeletePolicyAsync(policyName, vhost, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -1046,9 +899,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         return source.GetParametersAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -1066,9 +916,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.CreateParameterAsync(parameter, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -1090,9 +937,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
         source.DeleteParameterAsync(componentName, vhostName, name, cancellationToken)
             .GetAwaiter()
             .GetResult();
@@ -1104,15 +948,12 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static List<Federation> GetFederation(
+    public static IReadOnlyList<Federation> GetFederations(
         this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
-        if (source == null)
-            throw new ArgumentNullException(nameof(source));
-
-        return source.GetFederationAsync(cancellationToken)
+        return source.GetFederationsAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
     }

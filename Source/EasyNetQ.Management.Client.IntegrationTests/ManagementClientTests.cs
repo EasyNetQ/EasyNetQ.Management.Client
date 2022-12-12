@@ -1002,7 +1002,7 @@ public class ManagementClientTests
     [Fact(Skip = "Requires at least an active federation")]
     public async Task Should_get_federations()
     {
-        var federations = await fixture.ManagementClient.GetFederationAsync();
+        var federations = await fixture.ManagementClient.GetFederationsAsync();
 
         federations.Single().Node.Should().Be($"rabbit@{fixture.Host}");
     }

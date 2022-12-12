@@ -27,6 +27,10 @@ public class ManagementClient : IManagementClient
     private static readonly RelativePath TopicPermissions = new("topic-permissions");
     private static readonly RelativePath Policies = new("policies");
     private static readonly RelativePath FederationLinks = new("federation-links");
+    private static readonly RelativePath Overview = new("overview");
+    private static readonly RelativePath Nodes = new("nodes");
+    private static readonly RelativePath Definitions = new("definitions");
+
 
     private static readonly Regex ParameterNameRegex = new("([a-z])([A-Z])", RegexOptions.Compiled);
 
@@ -137,17 +141,17 @@ public class ManagementClient : IManagementClient
         var queryParameters = MergeQueryParameters(
             lengthsCriteria?.ToQueryParameters(), ratesCriteria?.ToQueryParameters()
         );
-        return GetAsync<Overview>(new("overview"), queryParameters, cancellationToken);
+        return GetAsync<Overview>(Overview, queryParameters, cancellationToken);
     }
 
     public Task<IReadOnlyList<Node>> GetNodesAsync(CancellationToken cancellationToken = default)
     {
-        return GetAsync<IReadOnlyList<Node>>(new("nodes"), cancellationToken);
+        return GetAsync<IReadOnlyList<Node>>(Nodes, cancellationToken);
     }
 
     public Task<Definitions> GetDefinitionsAsync(CancellationToken cancellationToken = default)
     {
-        return GetAsync<Definitions>(new("definitions"), cancellationToken);
+        return GetAsync<Definitions>(Definitions, cancellationToken);
     }
 
     public Task<IReadOnlyList<Connection>> GetConnectionsAsync(CancellationToken cancellationToken = default)
@@ -222,8 +226,7 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        await PutAsync
-        (
+        await PutAsync(
             Exchanges / vhost.Name / exchangeInfo.GetName(),
             exchangeInfo,
             cancellationToken
@@ -554,24 +557,28 @@ public class ManagementClient : IManagementClient
         return DeleteAsync(TopicPermissions / topicPermission.Vhost / topicPermission.User, cancellationToken);
     }
 
-    public Task<List<Federation>> GetFederationAsync(CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<Federation>> GetFederationsAsync(CancellationToken cancellationToken = default)
     {
-        return GetAsync<List<Federation>>(FederationLinks, cancellationToken);
+        return GetAsync<IReadOnlyList<Federation>>(FederationLinks, cancellationToken);
     }
 
     public async Task<bool> IsAliveAsync(Vhost vhost, CancellationToken cancellationToken = default)
     {
-        var result = await GetAsync<AlivenessTestResult>(
-            AlivenessTest / vhost.Name, cancellationToken
-        ).ConfigureAwait(false);
+        var result = await GetAsync<AlivenessTestResult>(AlivenessTest / vhost.Name, cancellationToken).ConfigureAwait(false);
         return result.Status == "ok";
     }
 
-    private Task<T> GetAsync<T>(in RelativePath path, CancellationToken cancellationToken = default)
+    public void Dispose()
     {
-        return GetAsync<T>(path, null, cancellationToken);
+        httpClient.Dispose();
     }
 
+    public Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default)
+    {
+        return GetAsync<IReadOnlyList<Consumer>>(Consumers, cancellationToken);
+    }
+
+    private Task<T> GetAsync<T>(RelativePath path, CancellationToken cancellationToken = default) => GetAsync<T>(path, null, cancellationToken);
 
     private async Task<T> GetAsync<T>(
         RelativePath path,
@@ -705,15 +712,5 @@ public class ManagementClient : IManagementClient
         }
 
         return mergedQueryParameters;
-    }
-
-    public void Dispose()
-    {
-        httpClient.Dispose();
-    }
-
-    public Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default)
-    {
-        return GetAsync<IReadOnlyList<Consumer>>(Consumers, cancellationToken);
     }
 }
