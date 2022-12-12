@@ -1,8 +1,10 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
+#nullable disable
+
 public class TopicPermissionInfo
 {
-    public string? Exchange { get; private set; }
+    public string Exchange { get; private set; }
     public string Write { get; private set; }
     public string Read { get; private set; }
 

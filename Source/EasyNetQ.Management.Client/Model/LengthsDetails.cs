@@ -1,5 +1,7 @@
 namespace EasyNetQ.Management.Client.Model;
 
+#nullable disable
+
 public class LengthsDetails
 {
     public double Rate { get; set; }

@@ -1,5 +1,7 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
+#nullable disable
+
 public class ExchangeInfo
 {
     public string Type { get; private set; }

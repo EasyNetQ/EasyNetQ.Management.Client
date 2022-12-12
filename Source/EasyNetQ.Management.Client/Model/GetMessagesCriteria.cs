@@ -1,8 +1,8 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
-/// <summary>
-/// The criteria for retrieving messages from a queue
-/// </summary>
+#nullable disable
+
+
 public class GetMessagesCriteria
 {
     public long Count { get; private set; }

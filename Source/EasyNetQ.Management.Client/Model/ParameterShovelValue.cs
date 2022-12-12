@@ -2,6 +2,8 @@
 
 namespace EasyNetQ.Management.Client.Model;
 
+#nullable disable
+
 /// <summary>
 /// About shovel parameters: https://www.rabbitmq.com/shovel-dynamic.html
 /// </summary>
