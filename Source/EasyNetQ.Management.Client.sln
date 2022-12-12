@@ -26,6 +26,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{D4B57B8C-6ADC-42CE-BE94-72F8C6CEF2A9}"
 	ProjectSection(SolutionItems) = preProject
 		..\.github\CODEOWNERS = ..\.github\CODEOWNERS
+		..\.github\dependabot.yml = ..\.github\dependabot.yml
 	EndProjectSection
 EndProject
 Global
