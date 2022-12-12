@@ -2,7 +2,6 @@
 
 #nullable disable
 
-
 public class GetMessagesCriteria
 {
     public long Count { get; private set; }
