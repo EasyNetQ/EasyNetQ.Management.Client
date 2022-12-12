@@ -1,7 +1,6 @@
-using EasyNetQ.Management.Client.Serialization;
-using Newtonsoft.Json;
-
 namespace EasyNetQ.Management.Client.Model;
+
+#nullable disable
 
 public class User
 {

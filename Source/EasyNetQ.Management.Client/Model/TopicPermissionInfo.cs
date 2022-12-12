@@ -1,5 +1,7 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
+#nullable disable
+
 public class TopicPermissionInfo
 {
     public string Exchange { get; private set; }

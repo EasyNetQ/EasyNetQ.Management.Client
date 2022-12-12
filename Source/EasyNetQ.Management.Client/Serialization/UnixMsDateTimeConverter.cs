@@ -13,7 +13,7 @@ public class UnixMsDateTimeConverter : DateTimeConverterBase
     /// Writes the JSON representation of the object.
     /// </summary>
     /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter"/> to write to.</param><param name="value">The value.</param><param name="serializer">The calling serializer.</param>
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
         if (value is DateTime dateTime)
         {
@@ -34,13 +34,13 @@ public class UnixMsDateTimeConverter : DateTimeConverterBase
     /// <param name = "serializer">The calling serializer.</param>
     /// <returns>The object value.</returns>
     public override object ReadJson(
-        JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer
+        JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer
     )
     {
         if (reader.TokenType != JsonToken.Integer)
             throw new Exception("Wrong Token Type");
 
-        var ticks = (long)reader.Value;
+        var ticks = (long)reader.Value!;
         return ticks.FromUnixTimeMs();
     }
 }

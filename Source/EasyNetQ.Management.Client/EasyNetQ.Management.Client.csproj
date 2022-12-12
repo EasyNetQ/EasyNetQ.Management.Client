@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
 
     <Product>EasyNetQ.Management.Client</Product>
     <Description>A .NET client for the RabbitMQ RESTful management API</Description>
@@ -12,6 +13,9 @@
     <AssemblyOriginatorKeyFile>..\..\Assets\EasyNetQ.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign>false</PublicSign>
+
+    <ProjectWeaverXml>FodyWeavers.xml</ProjectWeaverXml>
+    <FodyGenerateXsd>false</FodyGenerateXsd>
 
     <Title>EasyNetQ.Management.Client</Title>
     <Authors>Mike Hadlow</Authors>
@@ -49,6 +53,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NullGuard.Fody" Version="3.1.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

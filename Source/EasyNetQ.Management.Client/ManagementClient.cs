@@ -70,9 +70,9 @@ public class ManagementClient : IManagementClient
         string password,
         int portNumber = 15672,
         TimeSpan? timeout = null,
-        Action<HttpRequestMessage> configureRequest = null,
+        Action<HttpRequestMessage>? configureRequest = null,
         bool ssl = false,
-        Action<HttpClientHandler> handlerConfigurator = null
+        Action<HttpClientHandler>? handlerConfigurator = null
     )
     {
         if (string.IsNullOrEmpty(hostUrl))
@@ -129,8 +129,8 @@ public class ManagementClient : IManagementClient
     }
 
     public Task<Overview> GetOverviewAsync(
-        GetLengthsCriteria lengthsCriteria = null,
-        GetRatesCriteria ratesCriteria = null,
+        GetLengthsCriteria? lengthsCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -157,7 +157,6 @@ public class ManagementClient : IManagementClient
 
     public Task CloseConnectionAsync(Connection connection, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(connection, nameof(connection));
         return DeleteAsync(Connections / connection.Name, cancellationToken);
     }
 
@@ -173,12 +172,10 @@ public class ManagementClient : IManagementClient
 
     public Task<Channel> GetChannelAsync(
         string channelName,
-        GetRatesCriteria ratesCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(channelName, nameof(channelName));
-
         return GetAsync<Channel>(Channels / channelName, ratesCriteria?.ToQueryParameters(), cancellationToken);
     }
 
@@ -190,13 +187,10 @@ public class ManagementClient : IManagementClient
     public Task<Exchange> GetExchangeAsync(
         string exchangeName,
         Vhost vhost,
-        GetRatesCriteria ratesCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(exchangeName, nameof(exchangeName));
-        Ensure.ArgumentNotNull(vhost, nameof(vhost));
-
         return GetAsync<Exchange>(
             Exchanges / vhost.Name / exchangeName,
             ratesCriteria?.ToQueryParameters(),
@@ -207,14 +201,11 @@ public class ManagementClient : IManagementClient
     public Task<Queue> GetQueueAsync(
         string queueName,
         Vhost vhost,
-        GetLengthsCriteria lengthsCriteria = null,
-        GetRatesCriteria ratesCriteria = null,
+        GetLengthsCriteria? lengthsCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(queueName, nameof(queueName));
-        Ensure.ArgumentNotNull(vhost, nameof(vhost));
-
         var queryParameters = MergeQueryParameters(
             lengthsCriteria?.ToQueryParameters(), ratesCriteria?.ToQueryParameters()
         );
@@ -231,9 +222,6 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(vhost, nameof(exchangeInfo));
-        Ensure.ArgumentNotNull(vhost, nameof(vhost));
-
         await PutAsync
         (
             Exchanges / vhost.Name / exchangeInfo.GetName(),
@@ -244,8 +232,6 @@ public class ManagementClient : IManagementClient
 
     public Task DeleteExchangeAsync(Exchange exchange, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(exchange, nameof(exchange));
-
         return DeleteAsync(
             Exchanges / exchange.Vhost / exchange.Name,
             cancellationToken
@@ -257,8 +243,6 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(exchange, nameof(exchange));
-
         return GetAsync<IReadOnlyList<Binding>>(
             Exchanges / exchange.Vhost / exchange.Name / "bindings" / "source",
             cancellationToken
@@ -270,8 +254,6 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(exchange, nameof(exchange));
-
         return GetAsync<IReadOnlyList<Binding>>(
             Exchanges / exchange.Vhost / exchange.Name / "bindings" / "destination",
             cancellationToken
@@ -284,9 +266,6 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(exchange, nameof(exchange));
-        Ensure.ArgumentNotNull(publishInfo, nameof(publishInfo));
-
         return PostAsync<PublishInfo, PublishResult>(
             Exchanges / exchange.Vhost / exchange.Name / "publish",
             publishInfo,
@@ -310,9 +289,6 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(queueInfo, nameof(queueInfo));
-        Ensure.ArgumentNotNull(vhost, nameof(vhost));
-
         await PutAsync(
             Queues / vhost.Name / queueInfo.GetName(),
             queueInfo,
@@ -322,8 +298,6 @@ public class ManagementClient : IManagementClient
 
     public Task DeleteQueueAsync(Queue queue, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(queue, nameof(queue));
-
         return DeleteAsync(
             Queues / queue.Vhost / queue.Name, cancellationToken
         );
@@ -331,8 +305,6 @@ public class ManagementClient : IManagementClient
 
     public Task<IReadOnlyList<Binding>> GetBindingsForQueueAsync(Queue queue, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(queue, nameof(queue));
-
         return GetAsync<IReadOnlyList<Binding>>(
             Queues / queue.Vhost / queue.Name / "bindings", cancellationToken
         );
@@ -340,8 +312,6 @@ public class ManagementClient : IManagementClient
 
     public Task PurgeAsync(Queue queue, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(queue, nameof(queue));
-
         return DeleteAsync(
             Queues / queue.Vhost / queue.Name / "contents", cancellationToken
         );
@@ -353,8 +323,6 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(queue, nameof(queue));
-
         return PostAsync<GetMessagesCriteria, IReadOnlyList<Message>>(
             Queues / queue.Vhost / queue.Name / "get",
             criteria,
@@ -374,10 +342,6 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(exchange, nameof(exchange));
-        Ensure.ArgumentNotNull(queue, nameof(queue));
-        Ensure.ArgumentNotNull(bindingInfo, nameof(bindingInfo));
-
         return PostAsync<BindingInfo, object>(
             Bindings / queue.Vhost / "e" / exchange.Name / "q" / queue.Name,
             bindingInfo,
@@ -392,10 +356,6 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(sourceExchange, nameof(sourceExchange));
-        Ensure.ArgumentNotNull(destinationExchange, nameof(destinationExchange));
-        Ensure.ArgumentNotNull(bindingInfo, nameof(bindingInfo));
-
         return PostAsync<BindingInfo, object>(
             Bindings / sourceExchange.Vhost / "e" / sourceExchange.Name / "e" / destinationExchange.Name,
             bindingInfo,
@@ -409,9 +369,6 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(exchange, nameof(exchange));
-        Ensure.ArgumentNotNull(queue, nameof(queue));
-
         return GetAsync<IReadOnlyList<Binding>>(
             Bindings / queue.Vhost / "e" / exchange.Name / "q" / queue.Name,
             cancellationToken
@@ -424,9 +381,6 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(fromExchange, nameof(fromExchange));
-        Ensure.ArgumentNotNull(toExchange, nameof(toExchange));
-
         return GetAsync<IReadOnlyList<Binding>>(
             Bindings / toExchange.Vhost / "e" / fromExchange.Name / "e" / toExchange.Name,
             cancellationToken
@@ -435,8 +389,6 @@ public class ManagementClient : IManagementClient
 
     public Task DeleteBindingAsync(Binding binding, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(binding, nameof(binding));
-
         if (string.IsNullOrEmpty(binding.Source))
         {
             throw new ArgumentException("Empty binding source isn't supported.");
@@ -470,28 +422,22 @@ public class ManagementClient : IManagementClient
 
     public Task CreateVhostAsync(string vhostName, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(vhostName, nameof(vhostName));
-
         return PutAsync<string>(Vhosts / vhostName, cancellationToken: cancellationToken);
     }
 
     public Task DeleteVhostAsync(Vhost vhost, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(vhost, nameof(vhost));
-
         return DeleteAsync(Vhosts / vhost.Name, cancellationToken);
     }
 
     public Task EnableTracingAsync(Vhost vhost, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(vhost, nameof(vhost));
         vhost.Tracing = true;
         return PutAsync(Vhosts / vhost.Name, vhost, cancellationToken);
     }
 
     public Task DisableTracingAsync(Vhost vhost, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(vhost, nameof(vhost));
         vhost.Tracing = false;
         return PutAsync(Vhosts / vhost.Name, vhost, cancellationToken);
     }
@@ -503,7 +449,6 @@ public class ManagementClient : IManagementClient
 
     public Task<User> GetUserAsync(string userName, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(userName, nameof(userName));
         return GetAsync<User>(Users / userName, cancellationToken);
     }
 
@@ -514,7 +459,6 @@ public class ManagementClient : IManagementClient
 
     public Task CreatePolicyAsync(Policy policy, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(policy, nameof(policy));
         if (string.IsNullOrEmpty(policy.Name))
         {
             throw new ArgumentException("Policy name is empty");
@@ -535,9 +479,6 @@ public class ManagementClient : IManagementClient
 
     public Task DeletePolicyAsync(string policyName, Vhost vhost, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(policyName, nameof(policyName));
-        Ensure.ArgumentNotNull(vhost, nameof(vhost));
-
         return DeleteAsync(Policies / vhost.Name / policyName, cancellationToken);
     }
 
@@ -548,8 +489,6 @@ public class ManagementClient : IManagementClient
 
     public Task CreateParameterAsync(Parameter parameter, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(parameter, nameof(parameter));
-
         return PutAsync(
             Parameters / parameter.Component / parameter.Vhost / parameter.Name,
             parameter.Value,
@@ -564,24 +503,16 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(componentName, nameof(componentName));
-        Ensure.ArgumentNotNull(vhost, nameof(vhost));
-        Ensure.ArgumentNotNull(name, nameof(name));
-
         return DeleteAsync(Parameters / componentName / vhost / name, cancellationToken);
     }
 
     public async Task CreateUserAsync(UserInfo userInfo, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(userInfo, nameof(userInfo));
-
         await PutAsync(Users / userInfo.Name, userInfo, cancellationToken).ConfigureAwait(false);
     }
 
     public Task DeleteUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(user, nameof(user));
-
         return DeleteAsync(Users / user.Name, cancellationToken);
     }
 
@@ -592,8 +523,6 @@ public class ManagementClient : IManagementClient
 
     public Task CreatePermissionAsync(PermissionInfo permissionInfo, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(permissionInfo, nameof(permissionInfo));
-
         return PutAsync(
             Permissions / permissionInfo.GetVirtualHostName() / permissionInfo.GetUserName(),
             permissionInfo,
@@ -603,8 +532,6 @@ public class ManagementClient : IManagementClient
 
     public Task DeletePermissionAsync(Permission permission, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(permission, nameof(permission));
-
         return DeleteAsync(Permissions / permission.Vhost / permission.User, cancellationToken);
     }
 
@@ -615,8 +542,6 @@ public class ManagementClient : IManagementClient
 
     public Task CreateTopicPermissionAsync(TopicPermissionInfo topicPermissionInfo, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(topicPermissionInfo, nameof(topicPermissionInfo));
-
         return PutAsync(
             TopicPermissions / topicPermissionInfo.GetVirtualHostName() / topicPermissionInfo.GetUserName(),
             topicPermissionInfo,
@@ -626,8 +551,6 @@ public class ManagementClient : IManagementClient
 
     public Task DeleteTopicPermissionAsync(TopicPermission topicPermission, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(topicPermission, nameof(topicPermission));
-
         return DeleteAsync(TopicPermissions / topicPermission.Vhost / topicPermission.User, cancellationToken);
     }
 
@@ -638,8 +561,6 @@ public class ManagementClient : IManagementClient
 
     public async Task<bool> IsAliveAsync(Vhost vhost, CancellationToken cancellationToken = default)
     {
-        Ensure.ArgumentNotNull(vhost, nameof(vhost));
-
         var result = await GetAsync<AlivenessTestResult>(
             AlivenessTest / vhost.Name, cancellationToken
         ).ConfigureAwait(false);
@@ -654,7 +575,7 @@ public class ManagementClient : IManagementClient
 
     private async Task<T> GetAsync<T>(
         RelativePath path,
-        IReadOnlyDictionary<string, string> queryParameters,
+        IReadOnlyDictionary<string, string>? queryParameters,
         CancellationToken cancellationToken = default
     )
     {
@@ -691,13 +612,13 @@ public class ManagementClient : IManagementClient
 
     private async Task PutAsync<T>(
         RelativePath path,
-        T item = default,
+        T? item = default,
         CancellationToken cancellationToken = default
     ) where T : class
     {
         using var request = CreateRequestForPath(HttpMethod.Put, path.BuildEscaped(), string.Empty);
 
-        if (item != null) InsertRequestBody(request, item);
+        if (item != default) InsertRequestBody(request, item);
 
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
@@ -719,7 +640,7 @@ public class ManagementClient : IManagementClient
             throw new UnexpectedHttpStatusCodeException(response.StatusCode);
 
         var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-        return JsonConvert.DeserializeObject<T>(content, Settings);
+        return JsonConvert.DeserializeObject<T>(content, Settings)!;
     }
 
     private static void InsertRequestBody<T>(HttpRequestMessage request, T item)
@@ -737,9 +658,9 @@ public class ManagementClient : IManagementClient
     {
         string uriString;
         if (PortNumber != 443)
-            uriString = $"{HostUrl}:{PortNumber}/api/{path}{query ?? string.Empty}";
+            uriString = $"{HostUrl}:{PortNumber}/api/{path}{query}";
         else
-            uriString = $"{HostUrl}/api/{path}{query ?? string.Empty}";
+            uriString = $"{HostUrl}/api/{path}{query}";
 
         var uri = new Uri(uriString);
         var request = new HttpRequestMessage(httpMethod, uri);
@@ -747,7 +668,7 @@ public class ManagementClient : IManagementClient
         return request;
     }
 
-    private static string BuildQueryString(IReadOnlyDictionary<string, string> queryParameters)
+    private static string BuildQueryString(IReadOnlyDictionary<string, string>? queryParameters)
     {
         if (queryParameters == null || queryParameters.Count == 0)
             return string.Empty;
@@ -757,10 +678,10 @@ public class ManagementClient : IManagementClient
         foreach (var parameter in queryParameters)
         {
             if (!first)
-                queryStringBuilder.Append("&");
+                queryStringBuilder.Append('&');
             var name = ParameterNameRegex.Replace(parameter.Key, "$1_$2").ToLower();
-            var value = parameter.Value ?? "";
-            queryStringBuilder.AppendFormat("{0}={1}", name, value);
+            var value = parameter.Value;
+            queryStringBuilder.Append($"{name}={value}");
             first = false;
         }
 
@@ -768,7 +689,7 @@ public class ManagementClient : IManagementClient
     }
 
 
-    private static IReadOnlyDictionary<string, string> MergeQueryParameters(params IReadOnlyDictionary<string, string>[] multipleQueryParameters)
+    private static IReadOnlyDictionary<string, string>? MergeQueryParameters(params IReadOnlyDictionary<string, string>?[]? multipleQueryParameters)
     {
         if (multipleQueryParameters == null || multipleQueryParameters.Length == 0)
             return null;

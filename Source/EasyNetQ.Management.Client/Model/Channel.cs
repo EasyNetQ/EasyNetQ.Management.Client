@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 
 namespace EasyNetQ.Management.Client.Model;
 
+#nullable disable
+
 public class Channel
 {
     public List<ConsumerDetail> ConsumerDetails { get; set; }

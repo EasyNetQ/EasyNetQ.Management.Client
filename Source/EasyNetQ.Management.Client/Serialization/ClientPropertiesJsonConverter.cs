@@ -5,7 +5,7 @@ namespace EasyNetQ.Management.Client.Serialization;
 
 public class ClientPropertiesJsonConverter : JsonConverter
 {
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
         throw new NotImplementedException();
     }
@@ -15,13 +15,14 @@ public class ClientPropertiesJsonConverter : JsonConverter
     public override object ReadJson(
         JsonReader reader,
         Type objectType,
-        object existingValue,
-        JsonSerializer serializer)
+        object? existingValue,
+        JsonSerializer serializer
+    )
     {
         return ReadClientProperties(reader);
     }
 
-    private static object ReadValue(JsonReader reader)
+    private static object? ReadValue(JsonReader reader)
     {
         while (reader.TokenType == JsonToken.Comment)
         {
@@ -44,14 +45,14 @@ public class ClientPropertiesJsonConverter : JsonConverter
             }
         }
 
-        IDictionary<string, object> properties = new Dictionary<string, object>();
+        IDictionary<string, object?> properties = new Dictionary<string, object?>();
 
         while (reader.Read())
         {
             switch (reader.TokenType)
             {
                 case JsonToken.PropertyName:
-                    var propertyName = ConvertParameterNameToDotNetConvention(reader.Value.ToString());
+                    var propertyName = ConvertParameterNameToDotNetConvention(reader.Value!.ToString()!);
                     if (!reader.Read())
                     {
                         throw new Exception("Unexpected JsonReader End");
@@ -87,14 +88,14 @@ public class ClientPropertiesJsonConverter : JsonConverter
             }
         }
 
-        IDictionary<string, object> properties = new Dictionary<string, object>();
+        IDictionary<string, object?> properties = new Dictionary<string, object?>();
 
         while (reader.Read())
         {
             switch (reader.TokenType)
             {
                 case JsonToken.PropertyName:
-                    var propertyName = ConvertParameterNameToDotNetConvention(reader.Value.ToString());
+                    var propertyName = ConvertParameterNameToDotNetConvention(reader.Value!.ToString()!);
                     if (!reader.Read())
                     {
                         throw new Exception("Unexpected JsonReader End");

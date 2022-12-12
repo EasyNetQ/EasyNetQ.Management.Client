@@ -1,5 +1,4 @@
 using EasyNetQ.Management.Client.Model;
-using JetBrains.Annotations;
 
 namespace EasyNetQ.Management.Client;
 
@@ -14,9 +13,9 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static Overview GetOverview(
-        [NotNull] this IManagementClient source,
-        GetLengthsCriteria lengthsCriteria = null,
-        GetRatesCriteria ratesCriteria = null,
+        this IManagementClient source,
+        GetLengthsCriteria? lengthsCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -36,7 +35,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Node> GetNodes(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -56,7 +55,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static Definitions GetDefinitions(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -75,7 +74,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Connection> GetConnections(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -94,7 +93,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Channel> GetChannels(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -115,9 +114,9 @@ public static class ManagementClientExtensions
     /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
     /// <param name="cancellationToken"></param>
     public static Channel GetChannel(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         string channelName,
-        GetRatesCriteria ratesCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -136,7 +135,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Exchange> GetExchanges(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -155,7 +154,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Queue> GetQueues(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -175,7 +174,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Queue> GetQueues(
-        [NotNull] this IManagementClient source, Vhost vhost,
+        this IManagementClient source, Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
@@ -194,7 +193,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Binding> GetBindings(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -213,7 +212,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Vhost> GetVhosts(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -232,7 +231,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<User> GetUsers(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -251,7 +250,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Permission> GetPermissions(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -270,7 +269,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<TopicPermission> GetTopicPermissions(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -289,8 +288,8 @@ public static class ManagementClientExtensions
     /// <param name="connection"></param>
     /// <param name="cancellationToken"></param>
     public static void CloseConnection(
-        [NotNull] this IManagementClient source,
-        [NotNull] Connection connection,
+        this IManagementClient source,
+        Connection connection,
         CancellationToken cancellationToken = default
     )
     {
@@ -310,9 +309,9 @@ public static class ManagementClientExtensions
     /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
     public static void CreateExchange(
-        [NotNull] this IManagementClient source,
-        [NotNull] ExchangeInfo exchangeInfo,
-        [NotNull] Vhost vhost,
+        this IManagementClient source,
+        ExchangeInfo exchangeInfo,
+        Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
@@ -331,8 +330,8 @@ public static class ManagementClientExtensions
     /// <param name="exchange"></param>
     /// <param name="cancellationToken"></param>
     public static void DeleteExchange(
-        [NotNull] this IManagementClient source,
-        [NotNull] Exchange exchange,
+        this IManagementClient source,
+        Exchange exchange,
         CancellationToken cancellationToken = default
     )
     {
@@ -352,8 +351,8 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Binding> GetBindingsWithSource(
-        [NotNull] this IManagementClient source,
-        [NotNull] Exchange exchange,
+        this IManagementClient source,
+        Exchange exchange,
         CancellationToken cancellationToken = default
     )
     {
@@ -373,8 +372,8 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Binding> GetBindingsWithDestination(
-        [NotNull] this IManagementClient source,
-        [NotNull] Exchange exchange,
+        this IManagementClient source,
+        Exchange exchange,
         CancellationToken cancellationToken = default
     )
     {
@@ -398,9 +397,9 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns>A PublishResult, routed == true if the message was sent to at least one queue</returns>
     public static PublishResult Publish(
-        [NotNull] this IManagementClient source,
-        [NotNull] Exchange exchange,
-        [NotNull] PublishInfo publishInfo,
+        this IManagementClient source,
+        Exchange exchange,
+        PublishInfo publishInfo,
         CancellationToken cancellationToken = default
     )
     {
@@ -420,9 +419,9 @@ public static class ManagementClientExtensions
     /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
     public static void CreateQueue(
-        [NotNull] this IManagementClient source,
-        [NotNull] QueueInfo queueInfo,
-        [NotNull] Vhost vhost,
+        this IManagementClient source,
+        QueueInfo queueInfo,
+        Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
@@ -441,8 +440,8 @@ public static class ManagementClientExtensions
     /// <param name="queue"></param>
     /// <param name="cancellationToken"></param>
     public static void DeleteQueue(
-        [NotNull] this IManagementClient source,
-        [NotNull] Queue queue,
+        this IManagementClient source,
+        Queue queue,
         CancellationToken cancellationToken = default
     )
     {
@@ -461,8 +460,8 @@ public static class ManagementClientExtensions
     /// <param name="queue"></param>
     /// <param name="cancellationToken"></param>
     public static IReadOnlyList<Binding> GetBindingsForQueue(
-        [NotNull] this IManagementClient source,
-        [NotNull] Queue queue,
+        this IManagementClient source,
+        Queue queue,
         CancellationToken cancellationToken = default
     )
     {
@@ -481,8 +480,8 @@ public static class ManagementClientExtensions
     /// <param name="queue"></param>
     /// <param name="cancellationToken"></param>
     public static void Purge(
-        [NotNull] this IManagementClient source,
-        [NotNull] Queue queue,
+        this IManagementClient source,
+        Queue queue,
         CancellationToken cancellationToken = default
     )
     {
@@ -507,8 +506,8 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns>Messages</returns>
     public static IReadOnlyList<Message> GetMessagesFromQueue(
-        [NotNull] this IManagementClient source,
-        [NotNull] Queue queue,
+        this IManagementClient source,
+        Queue queue,
         GetMessagesCriteria criteria,
         CancellationToken cancellationToken = default
     )
@@ -531,10 +530,10 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns>The binding that was created</returns>
     public static void CreateBinding(
-        [NotNull] this IManagementClient source,
-        [NotNull] Exchange exchange,
-        [NotNull] Queue queue,
-        [NotNull] BindingInfo bindingInfo,
+        this IManagementClient source,
+        Exchange exchange,
+        Queue queue,
+        BindingInfo bindingInfo,
         CancellationToken cancellationToken = default
     )
     {
@@ -555,10 +554,10 @@ public static class ManagementClientExtensions
     /// <param name="bindingInfo">properties of the binding</param>
     /// <param name="cancellationToken"></param>
     public static void CreateBinding(
-        [NotNull] this IManagementClient source,
-        [NotNull] Exchange sourceExchange,
-        [NotNull] Exchange destinationExchange,
-        [NotNull] BindingInfo bindingInfo,
+        this IManagementClient source,
+        Exchange sourceExchange,
+        Exchange destinationExchange,
+        BindingInfo bindingInfo,
         CancellationToken cancellationToken = default
     )
     {
@@ -580,9 +579,9 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Binding> GetBindings(
-        [NotNull] this IManagementClient source,
-        [NotNull] Exchange exchange,
-        [NotNull] Queue queue,
+        this IManagementClient source,
+        Exchange exchange,
+        Queue queue,
         CancellationToken cancellationToken = default
     )
     {
@@ -603,9 +602,9 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Binding> GetBindings(
-        [NotNull] this IManagementClient source,
-        [NotNull] Exchange fromExchange,
-        [NotNull] Exchange toExchange,
+        this IManagementClient source,
+        Exchange fromExchange,
+        Exchange toExchange,
         CancellationToken cancellationToken = default
     )
     {
@@ -624,8 +623,8 @@ public static class ManagementClientExtensions
     /// <param name="binding"></param>
     /// <param name="cancellationToken"></param>
     public static void DeleteBinding(
-        [NotNull] this IManagementClient source,
-        [NotNull] Binding binding,
+        this IManagementClient source,
+        Binding binding,
         CancellationToken cancellationToken = default
     )
     {
@@ -644,7 +643,7 @@ public static class ManagementClientExtensions
     /// <param name="vhostName">The name of the new virtual host</param>
     /// <param name="cancellationToken"></param>
     public static void CreateVhost(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         string vhostName,
         CancellationToken cancellationToken = default
     )
@@ -664,8 +663,8 @@ public static class ManagementClientExtensions
     /// <param name="vhost">The virtual host to delete</param>
     /// <param name="cancellationToken"></param>
     public static void DeleteVhost(
-        [NotNull] this IManagementClient source,
-        [NotNull] Vhost vhost,
+        this IManagementClient source,
+        Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
@@ -684,8 +683,8 @@ public static class ManagementClientExtensions
     /// <param name="vhost">The virtual host on which to enable tracing</param>
     /// <param name="cancellationToken"></param>
     public static void EnableTracing(
-        [NotNull] this IManagementClient source,
-        [NotNull] Vhost vhost,
+        this IManagementClient source,
+        Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
@@ -704,8 +703,8 @@ public static class ManagementClientExtensions
     /// <param name="vhost">The virtual host on which to disable tracing</param>
     /// <param name="cancellationToken"></param>
     public static void DisableTracing(
-        [NotNull] this IManagementClient source,
-        [NotNull] Vhost vhost,
+        this IManagementClient source,
+        Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
@@ -724,8 +723,8 @@ public static class ManagementClientExtensions
     /// <param name="userInfo">The user to create</param>
     /// <param name="cancellationToken"></param>
     public static void CreateUser(
-        [NotNull] this IManagementClient source,
-        [NotNull] UserInfo userInfo,
+        this IManagementClient source,
+        UserInfo userInfo,
         CancellationToken cancellationToken = default
     )
     {
@@ -744,8 +743,8 @@ public static class ManagementClientExtensions
     /// <param name="user">The user to delete</param>
     /// <param name="cancellationToken"></param>
     public static void DeleteUser(
-        [NotNull] this IManagementClient source,
-        [NotNull] User user,
+        this IManagementClient source,
+        User user,
         CancellationToken cancellationToken = default
     )
     {
@@ -764,8 +763,8 @@ public static class ManagementClientExtensions
     /// <param name="permissionInfo">The permission to create</param>
     /// <param name="cancellationToken"></param>
     public static void CreatePermission(
-        [NotNull] this IManagementClient source,
-        [NotNull] PermissionInfo permissionInfo,
+        this IManagementClient source,
+        PermissionInfo permissionInfo,
         CancellationToken cancellationToken = default
     )
     {
@@ -784,8 +783,8 @@ public static class ManagementClientExtensions
     /// <param name="permission">The permission to delete</param>
     /// <param name="cancellationToken"></param>
     public static void DeletePermission(
-        [NotNull] this IManagementClient source,
-        [NotNull] Permission permission,
+        this IManagementClient source,
+        Permission permission,
         CancellationToken cancellationToken = default
     )
     {
@@ -804,8 +803,8 @@ public static class ManagementClientExtensions
     /// <param name="topicPermissionInfo">The topic permission to create</param>
     /// <param name="cancellationToken"></param>
     public static void CreateTopicPermission(
-        [NotNull] this IManagementClient source,
-        [NotNull] TopicPermissionInfo topicPermissionInfo,
+        this IManagementClient source,
+        TopicPermissionInfo topicPermissionInfo,
         CancellationToken cancellationToken = default
     )
     {
@@ -824,8 +823,8 @@ public static class ManagementClientExtensions
     /// <param name="permission">The topic permission to delete</param>
     /// <param name="cancellationToken"></param>
     public static void DeleteTopicPermission(
-        [NotNull] this IManagementClient source,
-        [NotNull] TopicPermission permission,
+        this IManagementClient source,
+        TopicPermission permission,
         CancellationToken cancellationToken = default
     )
     {
@@ -845,7 +844,7 @@ public static class ManagementClientExtensions
     /// <param name="newPassword">The new password to set</param>
     /// <param name="cancellationToken"></param>
     public static void ChangeUserPassword(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         string userName,
         string newPassword,
         CancellationToken cancellationToken = default
@@ -870,8 +869,8 @@ public static class ManagementClientExtensions
     /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
     public static bool IsAlive(
-        [NotNull] this IManagementClient source,
-        [NotNull] Vhost vhost,
+        this IManagementClient source,
+        Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
@@ -893,10 +892,10 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns>The exchange</returns>
     public static Exchange GetExchange(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         string exchangeName,
-        [NotNull] Vhost vhost,
-        GetRatesCriteria ratesCriteria = null,
+        Vhost vhost,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -919,11 +918,11 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns>The Queue</returns>
     public static Queue GetQueue(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         string queueName,
-        [NotNull] Vhost vhost,
-        GetLengthsCriteria lengthsCriteria = null,
-        GetRatesCriteria ratesCriteria = null,
+        Vhost vhost,
+        GetLengthsCriteria? lengthsCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -942,7 +941,7 @@ public static class ManagementClientExtensions
     /// <param name="vhostName">The VHost</param>
     /// <param name="cancellationToken"></param>
     public static Vhost GetVhost(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         string vhostName,
         CancellationToken cancellationToken = default
     )
@@ -963,7 +962,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns>The User</returns>
     public static User GetUser(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         string userName,
         CancellationToken cancellationToken = default
     )
@@ -983,7 +982,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns>Policies</returns>
     public static IReadOnlyList<Policy> GetPolicies(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -1002,8 +1001,8 @@ public static class ManagementClientExtensions
     /// <param name="policy">Policy to create</param>
     /// <param name="cancellationToken"></param>
     public static void CreatePolicy(
-        [NotNull] this IManagementClient source,
-        [NotNull] Policy policy,
+        this IManagementClient source,
+        Policy policy,
         CancellationToken cancellationToken = default
     )
     {
@@ -1023,7 +1022,7 @@ public static class ManagementClientExtensions
     /// <param name="vhost">vhost on which the policy resides</param>
     /// <param name="cancellationToken"></param>
     public static void DeletePolicy(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         string policyName,
         Vhost vhost,
         CancellationToken cancellationToken = default
@@ -1043,7 +1042,7 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="cancellationToken"></param>
     public static IReadOnlyList<Parameter> GetParameters(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -1062,8 +1061,8 @@ public static class ManagementClientExtensions
     /// <param name="parameter">Parameter to create</param>
     /// <param name="cancellationToken"></param>
     public static void CreateParameter(
-        [NotNull] this IManagementClient source,
-        [NotNull] Parameter parameter,
+        this IManagementClient source,
+        Parameter parameter,
         CancellationToken cancellationToken = default
     )
     {
@@ -1084,7 +1083,7 @@ public static class ManagementClientExtensions
     /// <param name="name"></param>
     /// <param name="cancellationToken"></param>
     public static void DeleteParameter(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         string componentName,
         string vhostName,
         string name,
@@ -1106,7 +1105,7 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static List<Federation> GetFederation(
-        [NotNull] this IManagementClient source,
+        this IManagementClient source,
         CancellationToken cancellationToken = default
     )
     {
@@ -1132,8 +1131,6 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        Ensure.ArgumentNotNull(userName, nameof(userName));
-
         var user = await client.GetUserAsync(userName, cancellationToken).ConfigureAwait(false);
 
         var userInfo = new UserInfo(userName, newPassword);

@@ -1,5 +1,7 @@
 namespace EasyNetQ.Management.Client.Model;
 
+#nullable disable
+
 public class BackingQueueStatus
 {
     public int Q1 { get; set; }

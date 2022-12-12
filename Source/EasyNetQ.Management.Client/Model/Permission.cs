@@ -1,5 +1,7 @@
 namespace EasyNetQ.Management.Client.Model;
 
+#nullable disable
+
 public class Permission
 {
     public string User { get; set; }

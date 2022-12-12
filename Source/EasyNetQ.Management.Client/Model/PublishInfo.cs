@@ -1,5 +1,7 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
+#nullable disable
+
 public class PublishInfo
 {
     public IDictionary<string, object> Properties { get; private set; }

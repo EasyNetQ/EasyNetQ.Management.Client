@@ -1,5 +1,7 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
+#nullable disable
+
 public class Properties : Dictionary<string, string>
 {
     public Properties()
