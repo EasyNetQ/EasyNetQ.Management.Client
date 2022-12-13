@@ -12,7 +12,7 @@ public class OverviewSerializationTests
 
     public OverviewSerializationTests()
     {
-        overview = ResourceLoader.LoadObjectFromJson<Overview>("Overview.json", ManagementClient.Settings);
+        overview = ResourceLoader.LoadObjectFromJson<Overview>("Overview.json", ManagementClient.SerializerSettings);
     }
 
     [Fact]

@@ -17,7 +17,7 @@ public class ParameterSerializationTests
                 Component = "bob",
                 Name = "test",
                 Value = new Policy { Pattern = "testvalue" }
-            }, ManagementClient.Settings);
+            }, ManagementClient.SerializerSettings);
         var parsedValue = JObject.Parse(serializedvalue);
         Assert.Equal("testvalue", parsedValue["value"]["pattern"].Value<string>());
     }

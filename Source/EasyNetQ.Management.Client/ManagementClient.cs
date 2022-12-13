@@ -34,14 +34,14 @@ public class ManagementClient : IManagementClient
 
     private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new("application/json");
 
-    public static readonly JsonSerializerSettings Settings;
+    internal static readonly JsonSerializerSettings SerializerSettings;
 
     private readonly HttpClient httpClient;
     private readonly Action<HttpRequestMessage>? configureHttpRequestMessage;
 
     static ManagementClient()
     {
-        Settings = new JsonSerializerSettings
+        SerializerSettings = new JsonSerializerSettings
         {
             ContractResolver = new DefaultContractResolver
             {
@@ -50,11 +50,11 @@ public class ManagementClient : IManagementClient
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        Settings.Converters.Add(new PropertyConverter());
-        Settings.Converters.Add(new MessageStatsOrEmptyArrayConverter());
-        Settings.Converters.Add(new QueueTotalsOrEmptyArrayConverter());
-        Settings.Converters.Add(new StringEnumConverter { NamingStrategy = new SnakeCaseNamingStrategy(true, true) });
-        Settings.Converters.Add(new HaParamsConverter());
+        SerializerSettings.Converters.Add(new PropertyConverter());
+        SerializerSettings.Converters.Add(new MessageStatsOrEmptyArrayConverter());
+        SerializerSettings.Converters.Add(new QueueTotalsOrEmptyArrayConverter());
+        SerializerSettings.Converters.Add(new StringEnumConverter { NamingStrategy = new SnakeCaseNamingStrategy(true, true) });
+        SerializerSettings.Converters.Add(new HaParamsConverter());
     }
 
     [Obsolete("Please use another constructor")]
@@ -613,7 +613,7 @@ public class ManagementClient : IManagementClient
             throw new UnexpectedHttpStatusCodeException(response.StatusCode);
 
         var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-        return JsonConvert.DeserializeObject<T>(content, Settings)!;
+        return JsonConvert.DeserializeObject<T>(content, SerializerSettings)!;
     }
 
     private static void InsertRequestBody<T>(HttpRequestMessage request, T item)
@@ -621,7 +621,7 @@ public class ManagementClient : IManagementClient
         if (!request.Headers.Accept.Contains(JsonMediaTypeHeaderValue))
             request.Headers.Accept.Add(JsonMediaTypeHeaderValue);
 
-        var body = JsonConvert.SerializeObject(item, Settings);
+        var body = JsonConvert.SerializeObject(item, SerializerSettings);
         var content = new StringContent(body);
         content.Headers.ContentType = JsonMediaTypeHeaderValue;
         request.Content = content;

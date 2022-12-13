@@ -13,7 +13,7 @@ public class QueueSerializationTests
     [Fact]
     public void BackingQueueStatus_With_NextSeqId_Exceeding_IntMaxLength_Can_Be_Deserialized()
     {
-        queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json");
+        queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json", ManagementClient.SerializerSettings);
 
         var queue = queues[1];
 
@@ -23,7 +23,7 @@ public class QueueSerializationTests
     [Fact]
     public void NonInt_Consumer_Details_Channel_Details_Peer_Port_Can_Be_Deserialize()
     {
-        queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json");
+        queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json", ManagementClient.SerializerSettings);
 
         var queue = queues[2];
 
@@ -33,7 +33,7 @@ public class QueueSerializationTests
     [Fact]
     public void Int_Consumer_Details_Channel_Details_Peer_Port_Can_Be_Deserialize()
     {
-        queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json");
+        queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json", ManagementClient.SerializerSettings);
 
         var queue = queues[3];
 
@@ -43,7 +43,7 @@ public class QueueSerializationTests
     [Fact]
     public void NonInt_Consumer_Details_Channel_Details_Number_Can_Be_Deserialized()
     {
-        queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json");
+        queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json", ManagementClient.SerializerSettings);
 
         var queue = queues[2];
 
@@ -53,7 +53,7 @@ public class QueueSerializationTests
     [Fact]
     public void Int_Consumer_Details_Channel_Details_Number_Can_Be_Deserialized()
     {
-        queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json");
+        queues = ResourceLoader.LoadObjectFromJson<List<Queue>>("Queues.json", ManagementClient.SerializerSettings);
 
         var queue = queues[3];
 

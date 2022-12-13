@@ -11,7 +11,7 @@ public class PolicySerializationTests
 
     public PolicySerializationTests()
     {
-        _policy = ResourceLoader.LoadObjectFromJson<Policy[]>("Policies_ha.json", ManagementClient.Settings);
+        _policy = ResourceLoader.LoadObjectFromJson<Policy[]>("Policies_ha.json", ManagementClient.SerializerSettings);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class PolicySerializationTests
         {
             Name = "bob",
             Pattern = "foo"
-        }, ManagementClient.Settings);
+        }, ManagementClient.SerializerSettings);
 
         Assert.Contains("\"apply-to\":\"all\"", serializedMessage);
 
@@ -88,7 +88,7 @@ public class PolicySerializationTests
             Name = "bob",
             Pattern = "foo",
             ApplyTo = ApplyMode.Exchanges
-        }, ManagementClient.Settings);
+        }, ManagementClient.SerializerSettings);
 
         Assert.Contains("\"apply-to\":\"exchanges\"", serializedMessage);
 
@@ -97,7 +97,7 @@ public class PolicySerializationTests
             Name = "bob",
             Pattern = "foo",
             ApplyTo = ApplyMode.Queues
-        }, ManagementClient.Settings);
+        }, ManagementClient.SerializerSettings);
         Assert.Contains("\"apply-to\":\"queues\"", serializedMessage);
     }
 
@@ -109,7 +109,7 @@ public class PolicySerializationTests
             Name = "bob",
             Pattern = "foo",
             Definition = new PolicyDefinition { FederationUpstream = "my-upstream" }
-        }, ManagementClient.Settings);
+        }, ManagementClient.SerializerSettings);
 
         Assert.Contains("\"federation-upstream\":\"my-upstream\"", serializedMessage);
     }
@@ -122,7 +122,7 @@ public class PolicySerializationTests
             Name = "bob",
             Pattern = "foo",
             Definition = new PolicyDefinition { HaMode = HaMode.All }
-        }, ManagementClient.Settings);
+        }, ManagementClient.SerializerSettings);
         Console.WriteLine(serializedMessage);
         Assert.DoesNotContain("ha-params", serializedMessage);
         Assert.DoesNotContain("ha-sync-batch-size", serializedMessage);

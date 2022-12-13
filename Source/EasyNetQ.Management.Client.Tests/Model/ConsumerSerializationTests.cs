@@ -10,7 +10,7 @@ public class ConsumerSerializationTests
 
     public ConsumerSerializationTests()
     {
-        consumers = ResourceLoader.LoadObjectFromJson<List<Consumer>>("Consumers.json");
+        consumers = ResourceLoader.LoadObjectFromJson<List<Consumer>>("Consumers.json", ManagementClient.SerializerSettings);
     }
 
     [Fact]

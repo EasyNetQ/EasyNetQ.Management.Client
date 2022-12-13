@@ -18,7 +18,7 @@ public class MessageSerializationTests
                             @"""properties"":{""delivery_mode"":2,""headers"":{""key"":""value""}},""payload"":""Hello World""," +
                             @"""payload_encoding"":""string""}";
 
-        var message = JsonConvert.DeserializeObject<Message>(json, new PropertyConverter());
+        var message = JsonConvert.DeserializeObject<Message>(json, ManagementClient.SerializerSettings);
 
         message.Properties.Count.Should().Be(1);
         message.Payload.Should().Be("Hello World");
@@ -34,7 +34,7 @@ public class MessageSerializationTests
                             @"""properties"":[],""payload"":""Hello World""," +
                             @"""payload_encoding"":""string""}";
 
-        var message = JsonConvert.DeserializeObject<Message>(json, new PropertyConverter());
+        var message = JsonConvert.DeserializeObject<Message>(json, ManagementClient.SerializerSettings);
 
         message.Properties.Count.Should().Be(0);
     }
