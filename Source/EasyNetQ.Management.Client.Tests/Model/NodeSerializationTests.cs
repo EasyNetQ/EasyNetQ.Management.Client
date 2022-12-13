@@ -12,7 +12,7 @@ public class NodeSerializationTests
 
     public NodeSerializationTests()
     {
-        nodes = ResourceLoader.LoadObjectFromJson<List<Node>>("Nodes.json");
+        nodes = ResourceLoader.LoadObjectFromJson<List<Node>>("Nodes.json", ManagementClient.SerializerSettings);
     }
 
     [Fact]
