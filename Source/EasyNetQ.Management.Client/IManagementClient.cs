@@ -5,7 +5,7 @@ namespace EasyNetQ.Management.Client;
 public interface IManagementClient : IDisposable
 {
     /// <summary>
-    ///     The host URL that this instance is using.
+    ///     The endpoint that the client is using.
     /// </summary>
     Uri Endpoint { get; }
 
