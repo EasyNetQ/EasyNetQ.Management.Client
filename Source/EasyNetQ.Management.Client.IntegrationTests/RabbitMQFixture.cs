@@ -114,7 +114,7 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
         {
             throw;
         }
-        catch (Exception)
+        catch (Exception exception)
         {
             return false;
         }

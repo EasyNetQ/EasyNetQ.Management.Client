@@ -7,17 +7,7 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     The host URL that this instance is using.
     /// </summary>
-    string HostUrl { get; }
-
-    /// <summary>
-    ///     The Username that this instance is connecting as.
-    /// </summary>
-    string Username { get; }
-
-    /// <summary>
-    ///     The port number this instance connects using.
-    /// </summary>
-    int PortNumber { get; }
+    Uri Endpoint { get; }
 
     /// <summary>
     ///     Various random bits of information that describe the whole system.
@@ -27,8 +17,8 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<Overview> GetOverviewAsync(
-        GetLengthsCriteria? lengthsCriteria = null,
-        GetRatesCriteria? ratesCriteria = null,
+        LengthsCriteria? lengthsCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 
@@ -81,7 +71,7 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     Task<Channel> GetChannelAsync(
         string channelName,
-        GetRatesCriteria? ratesCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 
@@ -274,7 +264,7 @@ public interface IManagementClient : IDisposable
     /// <returns>Messages</returns>
     Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(
         Queue queue,
-        GetMessagesCriteria criteria,
+        MessagesCriteria criteria,
         CancellationToken cancellationToken = default
     );
 
@@ -465,7 +455,7 @@ public interface IManagementClient : IDisposable
     Task<Exchange> GetExchangeAsync(
         string exchangeName,
         Vhost vhost,
-        GetRatesCriteria? ratesCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 
@@ -481,8 +471,8 @@ public interface IManagementClient : IDisposable
     Task<Queue> GetQueueAsync(
         string queueName,
         Vhost vhost,
-        GetLengthsCriteria? lengthsCriteria = null,
-        GetRatesCriteria? ratesCriteria = null,
+        LengthsCriteria? lengthsCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 

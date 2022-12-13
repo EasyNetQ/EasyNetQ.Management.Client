@@ -14,8 +14,8 @@ public static class ManagementClientExtensions
     /// <returns></returns>
     public static Overview GetOverview(
         this IManagementClient source,
-        GetLengthsCriteria? lengthsCriteria = null,
-        GetRatesCriteria? ratesCriteria = null,
+        LengthsCriteria? lengthsCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -101,7 +101,7 @@ public static class ManagementClientExtensions
     public static Channel GetChannel(
         this IManagementClient source,
         string channelName,
-        GetRatesCriteria? ratesCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -436,7 +436,7 @@ public static class ManagementClientExtensions
     public static IReadOnlyList<Message> GetMessagesFromQueue(
         this IManagementClient source,
         Queue queue,
-        GetMessagesCriteria criteria,
+        MessagesCriteria criteria,
         CancellationToken cancellationToken = default
     )
     {
@@ -769,7 +769,7 @@ public static class ManagementClientExtensions
         this IManagementClient source,
         string exchangeName,
         Vhost vhost,
-        GetRatesCriteria? ratesCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -792,8 +792,8 @@ public static class ManagementClientExtensions
         this IManagementClient source,
         string queueName,
         Vhost vhost,
-        GetLengthsCriteria? lengthsCriteria = null,
-        GetRatesCriteria? ratesCriteria = null,
+        LengthsCriteria? lengthsCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
