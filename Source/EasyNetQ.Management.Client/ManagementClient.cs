@@ -97,11 +97,7 @@ public class ManagementClient : IManagementClient
 
         this.configureHttpRequestMessage = configureHttpRequestMessage;
 
-        # if NET6_0
         var httpHandler = new HttpHandler { Credentials = new NetworkCredential(username, password) };
-        # else
-        var httpHandler = new HttpHandler { Credentials = new NetworkCredential(username, password) };
-        # endif
         configureHttpHandler?.Invoke(httpHandler);
         httpClient = new HttpClient(httpHandler) { Timeout = timeout ?? DefaultTimeout, BaseAddress = endpoint };
     }
