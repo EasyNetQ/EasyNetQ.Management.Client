@@ -45,20 +45,4 @@ public class ManagementClientConstructorTests
             exception.Message.Should().Be("hostUrl is illegal");
         }
     }
-
-    [Fact]
-    public void Username_should_not_be_null()
-    {
-        var exception = Assert.Throws<ArgumentException>(() => new ManagementClient("localhost", string.Empty, "password"));
-
-        exception.Message.Should().Be("username is null or empty");
-    }
-
-    [Fact]
-    public void Password_should_not_be_null()
-    {
-        var exception = Assert.Throws<ArgumentException>(() => new ManagementClient("localhost", "user", string.Empty));
-
-        exception.Message.Should().Be("password is null or empty");
-    }
 }

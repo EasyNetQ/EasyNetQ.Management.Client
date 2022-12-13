@@ -12,6 +12,7 @@ public class GetLengthsCriteria
         LengthsAge = age;
         LengthsIncr = increment;
     }
+
     public int LengthsAge { get; private set; }
     public int LengthsIncr { get; private set; }
 
@@ -19,8 +20,8 @@ public class GetLengthsCriteria
     {
         return new Dictionary<string, string>
         {
-            {nameof(LengthsAge), LengthsAge.ToString()},
-            {nameof(LengthsIncr), LengthsIncr.ToString()}
+            { "lengths_age", LengthsAge.ToString() },
+            { "lengths_incr", LengthsIncr.ToString() }
         };
     }
 }

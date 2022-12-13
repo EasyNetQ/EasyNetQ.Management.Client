@@ -89,8 +89,9 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_configure_request()
     {
-        var client = new ManagementClient(fixture.Host, fixture.User, fixture.Password, configureRequest:
-            req => req.Headers.Add("x-not-used", "some_value"));
+        var client = new ManagementClient(
+            fixture.Host, fixture.User, fixture.Password, configureHttpRequestMessage: req => req.Headers.Add("x-not-used", "some_value")
+        );
 
         await client.GetOverviewAsync();
     }

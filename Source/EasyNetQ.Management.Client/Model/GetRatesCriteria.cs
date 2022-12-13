@@ -20,8 +20,8 @@ public class GetRatesCriteria
     {
         return new Dictionary<string, string>
         {
-            {nameof(MsgRatesAge), MsgRatesAge.ToString()},
-            {nameof(MsgRatesIncr), MsgRatesIncr.ToString()}
+            { "msg_rates_age", MsgRatesAge.ToString() },
+            { "msg_rates_incr", MsgRatesIncr.ToString() }
         };
     }
 }

@@ -6,9 +6,10 @@ internal readonly struct RelativePath
 
     public RelativePath(string segment) => segments = new[] { segment };
 
-    public string BuildEscaped() => string.Join("/", (segments ?? Array.Empty<string>()).Select(Uri.EscapeDataString));
+    public string Build() => string.Join("/", (segments ?? Array.Empty<string>()).Select(Uri.EscapeDataString));
 
     public static RelativePath operator /(RelativePath parent, string segment) => parent.Add(segment);
+
     public static RelativePath operator /(RelativePath parent, char segment) => parent.Add(segment + "");
 
     private RelativePath(string[] segments) => this.segments = segments;

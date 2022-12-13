@@ -7,17 +7,7 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     The host URL that this instance is using.
     /// </summary>
-    string HostUrl { get; }
-
-    /// <summary>
-    ///     The Username that this instance is connecting as.
-    /// </summary>
-    string Username { get; }
-
-    /// <summary>
-    ///     The port number this instance connects using.
-    /// </summary>
-    int PortNumber { get; }
+    Uri Endpoint { get; }
 
     /// <summary>
     ///     Various random bits of information that describe the whole system.

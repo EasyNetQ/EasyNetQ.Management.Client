@@ -1,7 +1,5 @@
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Text.RegularExpressions;
 using EasyNetQ.Management.Client.Internals;
 using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Serialization;
@@ -13,36 +11,33 @@ namespace EasyNetQ.Management.Client;
 
 public class ManagementClient : IManagementClient
 {
-    private static readonly RelativePath Vhosts = new("vhosts");
-    private static readonly RelativePath AlivenessTest = new("aliveness-test");
-    private static readonly RelativePath Connections = new("connections");
-    private static readonly RelativePath Consumers = new("consumers");
-    private static readonly RelativePath Channels = new("channels");
-    private static readonly RelativePath Users = new("users");
-    private static readonly RelativePath Permissions = new("permissions");
-    private static readonly RelativePath Parameters = new("parameters");
-    private static readonly RelativePath Bindings = new("bindings");
-    private static readonly RelativePath Queues = new("queues");
-    private static readonly RelativePath Exchanges = new("exchanges");
-    private static readonly RelativePath TopicPermissions = new("topic-permissions");
-    private static readonly RelativePath Policies = new("policies");
-    private static readonly RelativePath FederationLinks = new("federation-links");
-    private static readonly RelativePath Overview = new("overview");
-    private static readonly RelativePath Nodes = new("nodes");
-    private static readonly RelativePath Definitions = new("definitions");
+    private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(20);
 
-
-    private static readonly Regex ParameterNameRegex = new("([a-z])([A-Z])", RegexOptions.Compiled);
+    private static readonly RelativePath Api = new("api");
+    private static readonly RelativePath Vhosts = Api / "vhosts";
+    private static readonly RelativePath AlivenessTest = Api / "aliveness-test";
+    private static readonly RelativePath Connections = Api / "connections";
+    private static readonly RelativePath Consumers = Api / "consumers";
+    private static readonly RelativePath Channels = Api / "channels";
+    private static readonly RelativePath Users = Api / "users";
+    private static readonly RelativePath Permissions = Api / "permissions";
+    private static readonly RelativePath Parameters = Api / "parameters";
+    private static readonly RelativePath Bindings = Api / "bindings";
+    private static readonly RelativePath Queues = Api / "queues";
+    private static readonly RelativePath Exchanges = Api / "exchanges";
+    private static readonly RelativePath TopicPermissions = Api / "topic-permissions";
+    private static readonly RelativePath Policies = Api / "policies";
+    private static readonly RelativePath FederationLinks = Api / "federation-links";
+    private static readonly RelativePath Overview = Api / "overview";
+    private static readonly RelativePath Nodes = Api / "nodes";
+    private static readonly RelativePath Definitions = Api / "definitions";
 
     private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new("application/json");
 
     public static readonly JsonSerializerSettings Settings;
 
-    private readonly Action<HttpRequestMessage> configureRequest;
-    private readonly TimeSpan defaultTimeout = TimeSpan.FromSeconds(20);
     private readonly HttpClient httpClient;
-
-    private readonly Regex urlRegex = new(@"^(http|https):\/\/\[?.+\w\]?$", RegexOptions.Compiled | RegexOptions.Singleline);
+    private readonly Action<HttpRequestMessage>? configureHttpRequestMessage;
 
     static ManagementClient()
     {
@@ -62,75 +57,46 @@ public class ManagementClient : IManagementClient
         Settings.Converters.Add(new HaParamsConverter());
     }
 
-    public string HostUrl { get; }
-
-    public string Username { get; }
-
-    public int PortNumber { get; }
-
+    [Obsolete("Please use another constructor")]
     public ManagementClient(
         string hostUrl,
         string username,
         string password,
         int portNumber = 15672,
         TimeSpan? timeout = null,
-        Action<HttpRequestMessage>? configureRequest = null,
+        Action<HttpRequestMessage>? configureHttpRequestMessage = null,
         bool ssl = false,
-        Action<HttpClientHandler>? handlerConfigurator = null
+        Action<HttpClientHandler>? configureHttpClientHandler = null
+    ) : this(
+        LegacyEndpointBuilder.Build(hostUrl, portNumber, ssl),
+        username,
+        password,
+        timeout,
+        configureHttpRequestMessage,
+        configureHttpClientHandler
     )
     {
-        if (string.IsNullOrEmpty(hostUrl))
-        {
-            throw new ArgumentException("hostUrl is null or empty");
-        }
-
-        if (hostUrl.StartsWith("https://"))
-            ssl = true;
-
-        if (ssl)
-        {
-            if (hostUrl.Contains("http://"))
-                throw new ArgumentException("hostUrl is illegal");
-            hostUrl = hostUrl.Contains("https://") ? hostUrl : "https://" + hostUrl;
-        }
-        else
-        {
-            if (hostUrl.Contains("https://"))
-                throw new ArgumentException("hostUrl is illegal");
-            hostUrl = hostUrl.Contains("http://") ? hostUrl : "http://" + hostUrl;
-        }
-
-        if (!urlRegex.IsMatch(hostUrl) || !Uri.TryCreate(hostUrl, UriKind.Absolute, out var urlUri))
-        {
-            throw new ArgumentException("hostUrl is illegal");
-        }
-
-        if (string.IsNullOrEmpty(username))
-        {
-            throw new ArgumentException("username is null or empty");
-        }
-
-        if (string.IsNullOrEmpty(password))
-        {
-            throw new ArgumentException("password is null or empty");
-        }
-
-        configureRequest ??= _ => { };
-
-        HostUrl = hostUrl;
-        Username = username;
-        PortNumber = portNumber;
-        this.configureRequest = configureRequest;
-
-        var httpHandler = new HttpClientHandler
-        {
-            Credentials = new NetworkCredential(username, password)
-        };
-
-        handlerConfigurator?.Invoke(httpHandler);
-
-        httpClient = new HttpClient(httpHandler) { Timeout = timeout ?? defaultTimeout };
     }
+
+    public ManagementClient(
+        Uri endpoint,
+        string username,
+        string password,
+        TimeSpan? timeout = null,
+        Action<HttpRequestMessage>? configureHttpRequestMessage = null,
+        Action<HttpClientHandler>? configureHttpClientHandler = null
+    )
+    {
+        if (!endpoint.IsAbsoluteUri) throw new ArgumentOutOfRangeException(nameof(endpoint), endpoint, "Endpoint should be absolute");
+
+        this.configureHttpRequestMessage = configureHttpRequestMessage;
+
+        var httpHandler = new HttpClientHandler { Credentials = new NetworkCredential(username, password) };
+        configureHttpClientHandler?.Invoke(httpHandler);
+        httpClient = new HttpClient(httpHandler) { Timeout = timeout ?? DefaultTimeout, BaseAddress = endpoint };
+    }
+
+    public Uri Endpoint => httpClient.BaseAddress!;
 
     public Task<Overview> GetOverviewAsync(
         GetLengthsCriteria? lengthsCriteria = null,
@@ -586,7 +552,7 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        using var request = CreateRequestForPath(HttpMethod.Get, path.BuildEscaped(), BuildQueryString(queryParameters));
+        using var request = CreateRequestForPath(HttpMethod.Get, path, queryParameters);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         return await DeserializeResponseAsync<T>(c => c == HttpStatusCode.OK, response).ConfigureAwait(false);
@@ -598,7 +564,7 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        using var request = CreateRequestForPath(HttpMethod.Post, path.BuildEscaped(), string.Empty);
+        using var request = CreateRequestForPath(HttpMethod.Post, path);
 
         InsertRequestBody(request, item);
 
@@ -611,7 +577,7 @@ public class ManagementClient : IManagementClient
 
     private async Task DeleteAsync(RelativePath path, CancellationToken cancellationToken = default)
     {
-        using var request = CreateRequestForPath(HttpMethod.Delete, path.BuildEscaped(), string.Empty);
+        using var request = CreateRequestForPath(HttpMethod.Delete, path);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         await DeserializeResponseAsync(c => c == HttpStatusCode.NoContent, response).ConfigureAwait(false);
@@ -623,7 +589,7 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     ) where T : class
     {
-        using var request = CreateRequestForPath(HttpMethod.Put, path.BuildEscaped(), string.Empty);
+        using var request = CreateRequestForPath(HttpMethod.Put, path);
 
         if (item != default) InsertRequestBody(request, item);
 
@@ -661,40 +627,16 @@ public class ManagementClient : IManagementClient
         request.Content = content;
     }
 
-    private HttpRequestMessage CreateRequestForPath(HttpMethod httpMethod, string path, string query)
+    private HttpRequestMessage CreateRequestForPath(
+        HttpMethod httpMethod,
+        in RelativePath path,
+        IReadOnlyDictionary<string, string>? queryParameters = null
+    )
     {
-        string uriString;
-        if (PortNumber != 443)
-            uriString = $"{HostUrl}:{PortNumber}/api/{path}{query}";
-        else
-            uriString = $"{HostUrl}/api/{path}{query}";
-
-        var uri = new Uri(uriString);
-        var request = new HttpRequestMessage(httpMethod, uri);
-        configureRequest(request);
-        return request;
+        var httpRequestMessage = new HttpRequestMessage(httpMethod, QueryStringHelpers.AddQueryString(path.Build(), queryParameters));
+        configureHttpRequestMessage?.Invoke(httpRequestMessage);
+        return httpRequestMessage;
     }
-
-    private static string BuildQueryString(IReadOnlyDictionary<string, string>? queryParameters)
-    {
-        if (queryParameters == null || queryParameters.Count == 0)
-            return string.Empty;
-
-        var queryStringBuilder = new StringBuilder("?");
-        var first = true;
-        foreach (var parameter in queryParameters)
-        {
-            if (!first)
-                queryStringBuilder.Append('&');
-            var name = ParameterNameRegex.Replace(parameter.Key, "$1_$2").ToLower();
-            var value = parameter.Value;
-            queryStringBuilder.Append($"{name}={value}");
-            first = false;
-        }
-
-        return queryStringBuilder.ToString();
-    }
-
 
     private static IReadOnlyDictionary<string, string>? MergeQueryParameters(params IReadOnlyDictionary<string, string>?[]? multipleQueryParameters)
     {
