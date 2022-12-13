@@ -7,6 +7,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
+#if NET6_0
+using HttpHandler = System.Net.Http.SocketsHttpHandler;
+#else
+using HttpHandler = System.Net.Http.HttpClientHandler;
+#endif
+
 namespace EasyNetQ.Management.Client;
 
 public class ManagementClient : IManagementClient
@@ -66,14 +72,14 @@ public class ManagementClient : IManagementClient
         TimeSpan? timeout = null,
         Action<HttpRequestMessage>? configureHttpRequestMessage = null,
         bool ssl = false,
-        Action<HttpClientHandler>? configureHttpClientHandler = null
+        Action<HttpHandler>? configureHttpHandler = null
     ) : this(
         LegacyEndpointBuilder.Build(hostUrl, portNumber, ssl),
         username,
         password,
         timeout,
         configureHttpRequestMessage,
-        configureHttpClientHandler
+        configureHttpHandler
     )
     {
     }
@@ -84,15 +90,15 @@ public class ManagementClient : IManagementClient
         string password,
         TimeSpan? timeout = null,
         Action<HttpRequestMessage>? configureHttpRequestMessage = null,
-        Action<HttpClientHandler>? configureHttpClientHandler = null
+        Action<HttpHandler>? configureHttpHandler = null
     )
     {
         if (!endpoint.IsAbsoluteUri) throw new ArgumentOutOfRangeException(nameof(endpoint), endpoint, "Endpoint should be absolute");
 
         this.configureHttpRequestMessage = configureHttpRequestMessage;
 
-        var httpHandler = new HttpClientHandler { Credentials = new NetworkCredential(username, password) };
-        configureHttpClientHandler?.Invoke(httpHandler);
+        var httpHandler = new HttpHandler { Credentials = new NetworkCredential(username, password) };
+        configureHttpHandler?.Invoke(httpHandler);
         httpClient = new HttpClient(httpHandler) { Timeout = timeout ?? DefaultTimeout, BaseAddress = endpoint };
     }
 
