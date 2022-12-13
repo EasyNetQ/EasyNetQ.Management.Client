@@ -57,8 +57,7 @@ public class ManagementClient : IManagementClient
         Settings.Converters.Add(new HaParamsConverter());
     }
 
-    public Uri Endpoint => httpClient.BaseAddress!;
-
+    [Obsolete("Please use another constructor")]
     public ManagementClient(
         string hostUrl,
         string username,
@@ -79,7 +78,6 @@ public class ManagementClient : IManagementClient
     {
     }
 
-
     public ManagementClient(
         Uri endpoint,
         string username,
@@ -97,6 +95,8 @@ public class ManagementClient : IManagementClient
         configureHttpClientHandler?.Invoke(httpHandler);
         httpClient = new HttpClient(httpHandler) { Timeout = timeout ?? DefaultTimeout, BaseAddress = endpoint };
     }
+
+    public Uri Endpoint => httpClient.BaseAddress!;
 
     public Task<Overview> GetOverviewAsync(
         LengthsCriteria? lengthsCriteria = null,
