@@ -2,7 +2,7 @@
 
 #nullable disable
 
-public class MessagesCriteria
+public class GetMessagesCriteria
 {
     public long Count { get; private set; }
     public AckMode Ackmode { get; private set; }
@@ -17,7 +17,7 @@ public class MessagesCriteria
     /// <param name="ackMode">
     /// Determines if the message(s) should be placed back into the queue.
     /// </param>
-    public MessagesCriteria(long count, AckMode ackMode)
+    public GetMessagesCriteria(long count, AckMode ackMode)
     {
         Ackmode = ackMode;
         Count = count;

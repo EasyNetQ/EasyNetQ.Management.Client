@@ -17,8 +17,8 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<Overview> GetOverviewAsync(
-        LengthsCriteria? lengthsCriteria = null,
-        RatesCriteria? ratesCriteria = null,
+        GetLengthsCriteria? lengthsCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 
@@ -71,7 +71,7 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     Task<Channel> GetChannelAsync(
         string channelName,
-        RatesCriteria? ratesCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 
@@ -264,7 +264,7 @@ public interface IManagementClient : IDisposable
     /// <returns>Messages</returns>
     Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(
         Queue queue,
-        MessagesCriteria criteria,
+        GetMessagesCriteria criteria,
         CancellationToken cancellationToken = default
     );
 
@@ -455,7 +455,7 @@ public interface IManagementClient : IDisposable
     Task<Exchange> GetExchangeAsync(
         string exchangeName,
         Vhost vhost,
-        RatesCriteria? ratesCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 
@@ -471,8 +471,8 @@ public interface IManagementClient : IDisposable
     Task<Queue> GetQueueAsync(
         string queueName,
         Vhost vhost,
-        LengthsCriteria? lengthsCriteria = null,
-        RatesCriteria? ratesCriteria = null,
+        GetLengthsCriteria? lengthsCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 

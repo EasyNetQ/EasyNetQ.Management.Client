@@ -99,8 +99,8 @@ public class ManagementClient : IManagementClient
     public Uri Endpoint => httpClient.BaseAddress!;
 
     public Task<Overview> GetOverviewAsync(
-        LengthsCriteria? lengthsCriteria = null,
-        RatesCriteria? ratesCriteria = null,
+        GetLengthsCriteria? lengthsCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -142,7 +142,7 @@ public class ManagementClient : IManagementClient
 
     public Task<Channel> GetChannelAsync(
         string channelName,
-        RatesCriteria? ratesCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -157,7 +157,7 @@ public class ManagementClient : IManagementClient
     public Task<Exchange> GetExchangeAsync(
         string exchangeName,
         Vhost vhost,
-        RatesCriteria? ratesCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -171,8 +171,8 @@ public class ManagementClient : IManagementClient
     public Task<Queue> GetQueueAsync(
         string queueName,
         Vhost vhost,
-        LengthsCriteria? lengthsCriteria = null,
-        RatesCriteria? ratesCriteria = null,
+        GetLengthsCriteria? lengthsCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -288,11 +288,11 @@ public class ManagementClient : IManagementClient
 
     public Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(
         Queue queue,
-        MessagesCriteria criteria,
+        GetMessagesCriteria criteria,
         CancellationToken cancellationToken = default
     )
     {
-        return PostAsync<MessagesCriteria, IReadOnlyList<Message>>(
+        return PostAsync<GetMessagesCriteria, IReadOnlyList<Message>>(
             Queues / queue.Vhost / queue.Name / "get",
             criteria,
             cancellationToken
