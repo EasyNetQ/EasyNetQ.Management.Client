@@ -571,5 +571,5 @@ public interface IManagementClient : IDisposable
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<List<Federation>> GetFederationAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Federation>> GetFederationsAsync(CancellationToken cancellationToken = default);
 }
