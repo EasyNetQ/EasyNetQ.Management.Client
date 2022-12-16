@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text;
 using EasyNetQ.Management.Client.Internals;
 using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Serialization;
@@ -9,6 +10,7 @@ using Newtonsoft.Json.Serialization;
 
 #if NET6_0
 using HttpHandler = System.Net.Http.SocketsHttpHandler;
+
 #else
 using HttpHandler = System.Net.Http.HttpClientHandler;
 #endif
@@ -44,6 +46,8 @@ public class ManagementClient : IManagementClient
 
     private readonly HttpClient httpClient;
     private readonly Action<HttpRequestMessage>? configureHttpRequestMessage;
+    private readonly bool disposeHttpClient;
+    private readonly AuthenticationHeaderValue basicAuthHeader;
 
     static ManagementClient()
     {
@@ -97,9 +101,25 @@ public class ManagementClient : IManagementClient
 
         this.configureHttpRequestMessage = configureHttpRequestMessage;
 
-        var httpHandler = new HttpHandler { Credentials = new NetworkCredential(username, password) };
+        var httpHandler = new HttpHandler();
         configureHttpHandler?.Invoke(httpHandler);
+        basicAuthHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
         httpClient = new HttpClient(httpHandler) { Timeout = timeout ?? DefaultTimeout, BaseAddress = endpoint };
+        disposeHttpClient = true;
+    }
+
+    public ManagementClient(HttpClient httpClient, string username, string password)
+    {
+        if (httpClient.BaseAddress == null)
+            throw new ArgumentNullException(nameof(httpClient.BaseAddress), "Endpoint should be specified");
+
+        if (!httpClient.BaseAddress.IsAbsoluteUri)
+            throw new ArgumentOutOfRangeException(nameof(httpClient.BaseAddress), httpClient.BaseAddress, "Endpoint should be absolute");
+
+        this.httpClient = httpClient;
+        basicAuthHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
+        configureHttpRequestMessage = null;
+        disposeHttpClient = false;
     }
 
     public Uri Endpoint => httpClient.BaseAddress!;
@@ -542,7 +562,8 @@ public class ManagementClient : IManagementClient
 
     public void Dispose()
     {
-        httpClient.Dispose();
+        if (disposeHttpClient)
+            httpClient.Dispose();
     }
 
     public Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default)
@@ -558,7 +579,7 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        using var request = CreateRequestForPath(HttpMethod.Get, path, queryParameters);
+        using var request = CreateRequest(HttpMethod.Get, path, queryParameters);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         return await DeserializeResponseAsync<T>(c => c == HttpStatusCode.OK, response).ConfigureAwait(false);
@@ -570,7 +591,7 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        using var request = CreateRequestForPath(HttpMethod.Post, path);
+        using var request = CreateRequest(HttpMethod.Post, path);
 
         InsertRequestBody(request, item);
 
@@ -583,7 +604,7 @@ public class ManagementClient : IManagementClient
 
     private async Task DeleteAsync(RelativePath path, CancellationToken cancellationToken = default)
     {
-        using var request = CreateRequestForPath(HttpMethod.Delete, path);
+        using var request = CreateRequest(HttpMethod.Delete, path);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         await DeserializeResponseAsync(c => c == HttpStatusCode.NoContent, response).ConfigureAwait(false);
@@ -595,7 +616,7 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     ) where T : class
     {
-        using var request = CreateRequestForPath(HttpMethod.Put, path);
+        using var request = CreateRequest(HttpMethod.Put, path);
 
         if (item != default) InsertRequestBody(request, item);
 
@@ -633,15 +654,16 @@ public class ManagementClient : IManagementClient
         request.Content = content;
     }
 
-    private HttpRequestMessage CreateRequestForPath(
+    private HttpRequestMessage CreateRequest(
         HttpMethod httpMethod,
         in RelativePath path,
         IReadOnlyDictionary<string, string>? queryParameters = null
     )
     {
-        var httpRequestMessage = new HttpRequestMessage(httpMethod, QueryStringHelpers.AddQueryString(path.Build(), queryParameters));
-        configureHttpRequestMessage?.Invoke(httpRequestMessage);
-        return httpRequestMessage;
+        var request = new HttpRequestMessage(httpMethod, QueryStringHelpers.AddQueryString(path.Build(), queryParameters));
+        request.Headers.Authorization = basicAuthHeader;
+        configureHttpRequestMessage?.Invoke(request);
+        return request;
     }
 
     private static IReadOnlyDictionary<string, string>? MergeQueryParameters(params IReadOnlyDictionary<string, string>?[]? multipleQueryParameters)
