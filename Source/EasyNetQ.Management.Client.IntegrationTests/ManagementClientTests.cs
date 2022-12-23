@@ -1053,7 +1053,28 @@ public class ManagementClientTests
     public async Task Should_get_queues()
     {
         await CreateTestQueue(testQueue);
-        (await fixture.ManagementClient.GetQueuesAsync()).ToList().Count.Should().BeGreaterThan(0);
+        (await fixture.ManagementClient.GetQueuesAsync()).Count.Should().BeGreaterThan(0);
+    }
+
+
+    [Fact]
+    public async Task Should_get_queues_with_pagination()
+    {
+        foreach (var queue in await fixture.ManagementClient.GetQueuesAsync())
+            await fixture.ManagementClient.DeleteQueueAsync(queue);
+
+        await CreateTestQueue("1");
+        await CreateTestQueue("2");
+
+        var firstPage = await fixture.ManagementClient.GetQueuesByPageAsync(new PageCriteria(1, 1));
+        firstPage
+            .Should()
+            .BeEquivalentTo(new PageResult<Queue>(2, 1, Array.Empty<Queue>(), 1, 2, 1, 2), x => x.Excluding(x => x.Items));
+
+        var secondPage = await fixture.ManagementClient.GetQueuesByPageAsync(new PageCriteria(2, 1));
+        secondPage
+            .Should()
+            .BeEquivalentTo(new PageResult<Queue>(2, 1, Array.Empty<Queue>(), 2, 2, 1, 2), x => x.Excluding(x => x.Items));
     }
 
     [Fact]
@@ -1066,7 +1087,7 @@ public class ManagementClientTests
         var queueName = $"{testVHost}_{testQueue}";
 
         await CreateTestQueueInVhost(queueName, vhost);
-        (await fixture.ManagementClient.GetQueuesAsync(vhost)).ToList().Count.Should().BeGreaterThan(0);
+        (await fixture.ManagementClient.GetQueuesAsync(vhost)).Count.Should().BeGreaterThan(0);
     }
 
     [Fact]

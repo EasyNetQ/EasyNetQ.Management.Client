@@ -90,12 +90,29 @@ public interface IManagementClient : IDisposable
     Task<IReadOnlyList<Queue>> GetQueuesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    ///     A list of all queues.
+    /// </summary>
+    /// <param name="pageCriteria"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<PageResult<Queue>> GetQueuesByPageAsync(PageCriteria pageCriteria, CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     A list of all queues for a virtual host.
     /// </summary>
     /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<IReadOnlyList<Queue>> GetQueuesAsync(Vhost vhost, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all queues for a virtual host.
+    /// </summary>
+    /// <param name="vhost"></param>
+    /// <param name="pageCriteria"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<PageResult<Queue>> GetQueuesByPageAsync(Vhost vhost, PageCriteria pageCriteria, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all bindings.

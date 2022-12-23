@@ -150,7 +150,8 @@ public static class ManagementClientExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static IReadOnlyList<Queue> GetQueues(
-        this IManagementClient source, Vhost vhost,
+        this IManagementClient source,
+        Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
