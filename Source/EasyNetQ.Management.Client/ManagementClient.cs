@@ -268,14 +268,25 @@ public class ManagementClient : IManagementClient
         );
     }
 
+
     public Task<IReadOnlyList<Queue>> GetQueuesAsync(CancellationToken cancellationToken = default)
     {
         return GetAsync<IReadOnlyList<Queue>>(Queues, cancellationToken);
     }
 
+    public Task<PageResult<Queue>> GetQueuesByPageAsync(PageCriteria pageCriteria, CancellationToken cancellationToken = default)
+    {
+        return GetAsync<PageResult<Queue>>(Queues, pageCriteria.ToQueryParameters(), cancellationToken);
+    }
+
     public Task<IReadOnlyList<Queue>> GetQueuesAsync(Vhost vhost, CancellationToken cancellationToken = default)
     {
         return GetAsync<IReadOnlyList<Queue>>(Queues / vhost.Name, cancellationToken);
+    }
+
+    public Task<PageResult<Queue>> GetQueuesByPageAsync(Vhost vhost, PageCriteria pageCriteria, CancellationToken cancellationToken = default)
+    {
+        return GetAsync<PageResult<Queue>>(Queues / vhost.Name, pageCriteria.ToQueryParameters(), cancellationToken);
     }
 
     public async Task CreateQueueAsync(
