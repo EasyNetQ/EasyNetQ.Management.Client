@@ -1060,7 +1060,8 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_get_queues_with_pagination()
     {
-        await fixture.ManagementClient.DeleteQueueAsync(new Queue { Name = "aliveness-test", Vhost = "/" });
+        foreach (var queue in await fixture.ManagementClient.GetQueuesAsync())
+            await fixture.ManagementClient.DeleteQueueAsync(queue);
 
         await CreateTestQueue("1");
         await CreateTestQueue("2");
