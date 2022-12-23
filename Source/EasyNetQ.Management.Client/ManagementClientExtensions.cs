@@ -161,6 +161,44 @@ public static class ManagementClientExtensions
     }
 
     /// <summary>
+    ///     A list of all queues.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="pageCriteria"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static PageResult<Queue> GetQueuesByPage(
+        this IManagementClient source,
+        PageCriteria pageCriteria,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return source.GetQueuesByPageAsync(pageCriteria, cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
+    ///     A list of all queues for a virtual host.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="vhost"></param>
+    /// <param name="pageCriteria"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static PageResult<Queue> GetQueuesByPage(
+        this IManagementClient source,
+        Vhost vhost,
+        PageCriteria pageCriteria,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return source.GetQueuesByPageAsync(vhost, pageCriteria, cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
     ///     A list of all bindings.
     /// </summary>
     /// <param name="source"></param>
