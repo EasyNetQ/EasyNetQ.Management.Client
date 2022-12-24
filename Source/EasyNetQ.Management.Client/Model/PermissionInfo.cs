@@ -4,32 +4,18 @@
 
 public class PermissionInfo
 {
+    private const string DenyAll = "^$";
+    private const string AllowAll = ".*";
+
+    public string UserName { get; private set; }
     public string Configure { get; private set; }
     public string Write { get; private set; }
     public string Read { get; private set; }
 
-    private readonly User user;
-    private readonly Vhost vhost;
-
-    private const string denyAll = "^$";
-    private const string allowAll = ".*";
-
-    public PermissionInfo(User user, Vhost vhost)
+    public PermissionInfo(string userName)
     {
-        this.user = user;
-        this.vhost = vhost;
-
-        Configure = Write = Read = allowAll;
-    }
-
-    public string GetUserName()
-    {
-        return user.Name;
-    }
-
-    public string GetVirtualHostName()
-    {
-        return vhost.Name;
+        UserName = userName;
+        Configure = Write = Read = AllowAll;
     }
 
     public PermissionInfo SetConfigure(string resourcesToAllow)
@@ -52,19 +38,19 @@ public class PermissionInfo
 
     public PermissionInfo DenyAllConfigure()
     {
-        Configure = denyAll;
+        Configure = DenyAll;
         return this;
     }
 
     public PermissionInfo DenyAllWrite()
     {
-        Write = denyAll;
+        Write = DenyAll;
         return this;
     }
 
     public PermissionInfo DenyAllRead()
     {
-        Read = denyAll;
+        Read = DenyAll;
         return this;
     }
 }

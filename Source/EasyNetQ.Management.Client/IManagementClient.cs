@@ -54,11 +54,11 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     A list of all open channels for the given connection.
     /// </summary>
-    /// <param name="connection"></param>
+    /// <param name="connectionName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<IReadOnlyList<Channel>> GetChannelsAsync(
-        Connection connection,
+        string connectionName,
         CancellationToken cancellationToken = default
     );
 
@@ -100,19 +100,19 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     A list of all queues for a virtual host.
     /// </summary>
-    /// <param name="vhost"></param>
+    /// <param name="vhostName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IReadOnlyList<Queue>> GetQueuesAsync(Vhost vhost, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Queue>> GetQueuesAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all queues for a virtual host.
     /// </summary>
-    /// <param name="vhost"></param>
+    /// <param name="vhostName"></param>
     /// <param name="pageCriteria"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<PageResult<Queue>> GetQueuesByPageAsync(Vhost vhost, PageCriteria pageCriteria, CancellationToken cancellationToken = default);
+    Task<PageResult<Queue>> GetQueuesByPageAsync(string vhostName, PageCriteria pageCriteria, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all bindings.
@@ -159,54 +159,60 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Closes the given connection
     /// </summary>
-    /// <param name="connection"></param>
+    /// <param name="connectionName"></param>
     /// <param name="cancellationToken"></param>
     Task CloseConnectionAsync(
-        Connection connection,
+        string connectionName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     Creates the given exchange
     /// </summary>
+    /// <param name="vhostName"></param>
     /// <param name="exchangeInfo"></param>
-    /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
     Task CreateExchangeAsync(
+        string vhostName,
         ExchangeInfo exchangeInfo,
-        Vhost vhost,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     Delete the given exchange
     /// </summary>
-    /// <param name="exchange"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="exchangeName"></param>
     /// <param name="cancellationToken"></param>
     Task DeleteExchangeAsync(
-        Exchange exchange,
+        string vhostName,
+        string exchangeName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     A list of all bindings in which a given exchange is the source.
     /// </summary>
-    /// <param name="exchange"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="exchangeName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<IReadOnlyList<Binding>> GetBindingsWithSourceAsync(
-        Exchange exchange,
+        string vhostName,
+        string exchangeName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     A list of all bindings in which a given exchange is the destination.
     /// </summary>
-    /// <param name="exchange"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="exchangeName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<IReadOnlyList<Binding>> GetBindingsWithDestinationAsync(
-        Exchange exchange,
+        string vhostName,
+        string exchangeName,
         CancellationToken cancellationToken = default
     );
 
@@ -216,12 +222,14 @@ public interface IManagementClient : IDisposable
     ///     test messages, diagnostics etc - they do not implement reliable delivery and so should
     ///     be treated as a sysadmin's tool rather than a general API for messaging.
     /// </summary>
-    /// <param name="exchange">The exchange</param>
+    /// <param name="vhostName">The vhost</param>
+    /// <param name="exchangeName">The exchange</param>
     /// <param name="publishInfo">The publication parameters</param>
     /// <param name="cancellationToken"></param>
     /// <returns>A PublishResult, routed == true if the message was sent to at least one queue</returns>
     Task<PublishResult> PublishAsync(
-        Exchange exchange,
+        string vhostName,
+        string exchangeName,
         PublishInfo publishInfo,
         CancellationToken cancellationToken = default
     );
@@ -229,42 +237,48 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Create the given queue
     /// </summary>
+    /// <param name="vhostName"></param>
     /// <param name="queueInfo"></param>
-    /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
     Task CreateQueueAsync(
+        string vhostName,
         QueueInfo queueInfo,
-        Vhost vhost,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     Delete the given queue
     /// </summary>
-    /// <param name="queue"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="queueName"></param>
     /// <param name="cancellationToken"></param>
     Task DeleteQueueAsync(
-        Queue queue,
+        string vhostName,
+        string queueName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     A list of all bindings on a given queue.
     /// </summary>
-    /// <param name="queue"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="queueName"></param>
     /// <param name="cancellationToken"></param>
     Task<IReadOnlyList<Binding>> GetBindingsForQueueAsync(
-        Queue queue,
+        string vhostName,
+        string queueName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     Purge a queue of all messages
     /// </summary>
-    /// <param name="queue"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="queueName"></param>
     /// <param name="cancellationToken"></param>
     Task PurgeAsync(
-        Queue queue,
+        string vhostName,
+        string queueName,
         CancellationToken cancellationToken = default
     );
 
@@ -275,12 +289,14 @@ public interface IManagementClient : IDisposable
     ///     delivery and so should be treated as a sysadmin's tool rather than a
     ///     general API for messaging.
     /// </summary>
-    /// <param name="queue">The queue to retrieve from</param>
+    /// <param name="vhostName"></param>
+    /// <param name="queueName">The queue to retrieve from</param>
     /// <param name="criteria">The criteria for the retrieve</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Messages</returns>
     Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(
-        Queue queue,
+        string vhostName,
+        string queueName,
         GetMessagesCriteria criteria,
         CancellationToken cancellationToken = default
     );
@@ -288,14 +304,16 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Create a binding between an exchange and a queue
     /// </summary>
-    /// <param name="exchange">the exchange</param>
-    /// <param name="queue">the queue</param>
+    /// <param name="vhostName">the vhost</param>
+    /// <param name="exchangeName">the exchange</param>
+    /// <param name="queueName">the queue</param>
     /// <param name="bindingInfo">properties of the binding</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The binding that was created</returns>
-    Task CreateBindingAsync(
-        Exchange exchange,
-        Queue queue,
+    Task CreateQueueBindingAsync(
+        string vhostName,
+        string exchangeName,
+        string queueName,
         BindingInfo bindingInfo,
         CancellationToken cancellationToken = default
     );
@@ -303,13 +321,15 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Create a binding between an exchange and an exchange
     /// </summary>
-    /// <param name="sourceExchange">the source exchange</param>
-    /// <param name="destinationExchange">the destination exchange</param>
+    /// <param name="vhostName">the vhost</param>
+    /// <param name="sourceExchangeName">the source exchange</param>
+    /// <param name="destinationExchangeName">the destination exchange</param>
     /// <param name="bindingInfo">properties of the binding</param>
     /// <param name="cancellationToken"></param>
-    Task CreateBindingAsync(
-        Exchange sourceExchange,
-        Exchange destinationExchange,
+    Task CreateExchangeBindingAsync(
+        string vhostName,
+        string sourceExchangeName,
+        string destinationExchangeName,
         BindingInfo bindingInfo,
         CancellationToken cancellationToken = default
     );
@@ -318,36 +338,63 @@ public interface IManagementClient : IDisposable
     ///     A list of all bindings between an exchange and a queue.
     ///     Remember, an exchange and a queue can be bound together many times!
     /// </summary>
-    /// <param name="exchange"></param>
-    /// <param name="queue"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="exchangeName"></param>
+    /// <param name="queueName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IReadOnlyList<Binding>> GetBindingsAsync(
-        Exchange exchange,
-        Queue queue,
+    Task<IReadOnlyList<Binding>> GetQueueBindingsAsync(
+        string vhostName,
+        string exchangeName,
+        string queueName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     A list of all bindings between an exchange and an exchange.
+    ///     Remember, an exchange and a exchange can be bound together many times!
     /// </summary>
-    /// <param name="fromExchange"></param>
-    /// <param name="toExchange"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="fromExchangeName"></param>
+    /// <param name="toExchangeName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IReadOnlyList<Binding>> GetBindingsAsync(
-        Exchange fromExchange,
-        Exchange toExchange,
+    Task<IReadOnlyList<Binding>> GetExchangeBindingsAsync(
+        string vhostName,
+        string fromExchangeName,
+        string toExchangeName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     Delete the given binding
     /// </summary>
-    /// <param name="binding"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="exchangeName"></param>
+    /// <param name="queueName"></param>
+    /// <param name="propertiesKey"></param>
     /// <param name="cancellationToken"></param>
-    Task DeleteBindingAsync(
-        Binding binding,
+    Task DeleteQueueBindingAsync(
+        string vhostName,
+        string exchangeName,
+        string queueName,
+        string propertiesKey,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
+    ///     Delete the given binding
+    /// </summary>
+    /// <param name="vhostName"></param>
+    /// <param name="fromExchangeName"></param>
+    /// <param name="sourceExchangeName"></param>
+    /// <param name="propertiesKey"></param>
+    /// <param name="cancellationToken"></param>
+    Task DeleteExchangeBindingAsync(
+        string vhostName,
+        string fromExchangeName,
+        string sourceExchangeName,
+        string propertiesKey,
         CancellationToken cancellationToken = default
     );
 
@@ -361,30 +408,30 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Delete a virtual host
     /// </summary>
-    /// <param name="vhost">The virtual host to delete</param>
+    /// <param name="vhostName">The virtual host to delete</param>
     /// <param name="cancellationToken"></param>
     Task DeleteVhostAsync(
-        Vhost vhost,
+        string vhostName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     Enable tracing on given virtual host.
     /// </summary>
-    /// <param name="vhost">The virtual host on which to enable tracing</param>
+    /// <param name="vhostName">The virtual host on which to enable tracing</param>
     /// <param name="cancellationToken"></param>
     Task EnableTracingAsync(
-        Vhost vhost,
+        string vhostName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     Disables tracing on given virtual host.
     /// </summary>
-    /// <param name="vhost">The virtual host on which to disable tracing</param>
+    /// <param name="vhostName">The virtual host on which to disable tracing</param>
     /// <param name="cancellationToken"></param>
     Task DisableTracingAsync(
-        Vhost vhost,
+        string vhostName,
         CancellationToken cancellationToken = default
     );
 
@@ -401,19 +448,21 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Delete a user
     /// </summary>
-    /// <param name="user">The user to delete</param>
+    /// <param name="userName">The user to delete</param>
     /// <param name="cancellationToken"></param>
     Task DeleteUserAsync(
-        User user,
+        string userName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     Create a permission
     /// </summary>
-    /// <param name="permissionInfo">The permission to create</param>
+    /// <param name="vhostName"></param>
+    /// <param name="permissionInfo"></param>
     /// <param name="cancellationToken"></param>
     Task CreatePermissionAsync(
+        string vhostName,
         PermissionInfo permissionInfo,
         CancellationToken cancellationToken = default
     );
@@ -421,19 +470,23 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Delete a permission
     /// </summary>
-    /// <param name="permission">The permission to delete</param>
+    /// <param name="vhostName"></param>
+    /// <param name="userName"></param>
     /// <param name="cancellationToken"></param>
     Task DeletePermissionAsync(
-        Permission permission,
+        string vhostName,
+        string userName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     Create a topic permission
     /// </summary>
-    /// <param name="topicPermissionInfo">The topic permission to create</param>
+    /// <param name="vhostName"></param>
+    /// <param name="topicPermissionInfo"></param>
     /// <param name="cancellationToken"></param>
     Task CreateTopicPermissionAsync(
+        string vhostName,
         TopicPermissionInfo topicPermissionInfo,
         CancellationToken cancellationToken = default
     );
@@ -441,10 +494,12 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Delete a topic permission
     /// </summary>
-    /// <param name="permission">The topic permission to delete</param>
+    /// <param name="vhostName"></param>
+    /// <param name="userName"></param>
     /// <param name="cancellationToken"></param>
     Task DeleteTopicPermissionAsync(
-        TopicPermission permission,
+        string vhostName,
+        string userName,
         CancellationToken cancellationToken = default
     );
 
@@ -454,24 +509,24 @@ public interface IManagementClient : IDisposable
     ///     Note: the test queue will not be deleted (to to prevent queue churn if this
     ///     is repeatedly pinged).
     /// </summary>
-    /// <param name="vhost"></param>
+    /// <param name="vhostName"></param>
     /// <param name="cancellationToken"></param>
     Task<bool> IsAliveAsync(
-        Vhost vhost,
+        string vhostName,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     Get an individual exchange by name
     /// </summary>
+    /// <param name="vhostName">The virtual host that contains the exchange</param>
     /// <param name="exchangeName">The name of the exchange</param>
-    /// <param name="vhost">The virtual host that contains the exchange</param>
     /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The exchange</returns>
     Task<Exchange> GetExchangeAsync(
+        string vhostName,
         string exchangeName,
-        Vhost vhost,
         GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
@@ -480,14 +535,14 @@ public interface IManagementClient : IDisposable
     ///     Get an individual queue by name
     /// </summary>
     /// <param name="queueName">The name of the queue</param>
-    /// <param name="vhost">The virtual host that contains the queue</param>
+    /// <param name="vhostName">The virtual host that contains the queue</param>
     /// <param name="lengthsCriteria">Criteria for getting samples of queue length data</param>
     /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The Queue</returns>
     Task<Queue> GetQueueAsync(
+        string vhostName,
         string queueName,
-        Vhost vhost,
         GetLengthsCriteria? lengthsCriteria = null,
         GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
@@ -524,22 +579,24 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Creates a policy on the cluster
     /// </summary>
-    /// <param name="policy">Policy to create</param>
+    /// <param name="vhostName"></param>
+    /// <param name="policyInfo"></param>
     /// <param name="cancellationToken"></param>
     Task CreatePolicyAsync(
-        Policy policy,
+        string vhostName,
+        PolicyInfo policyInfo,
         CancellationToken cancellationToken = default
     );
 
     /// <summary>
     ///     Delete a policy from the cluster
     /// </summary>
+    /// <param name="vhostName">vhost on which the policy resides</param>
     /// <param name="policyName">Policy name</param>
-    /// <param name="vhost">vhost on which the policy resides</param>
     /// <param name="cancellationToken"></param>
     Task DeletePolicyAsync(
+        string vhostName,
         string policyName,
-        Vhost vhost,
         CancellationToken cancellationToken = default
     );
 
@@ -552,10 +609,16 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Creates a parameter on the cluster
     /// </summary>
-    /// <param name="parameter">Parameter to create</param>
+    /// <param name="componentName"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="parameterName"></param>
+    /// <param name="parameterValue"></param>
     /// <param name="cancellationToken"></param>
     Task CreateParameterAsync(
-        Parameter parameter,
+        string componentName,
+        string vhostName,
+        string parameterName,
+        object parameterValue,
         CancellationToken cancellationToken = default
     );
 

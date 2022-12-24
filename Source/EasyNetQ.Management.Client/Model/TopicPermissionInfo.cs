@@ -4,46 +4,32 @@
 
 public class TopicPermissionInfo
 {
-    public string Exchange { get; private set; }
-    public string Write { get; private set; }
-    public string Read { get; private set; }
-
-    private readonly User user;
-    private readonly Vhost vhost;
-
-    private const string denyAll = "^$";
-    private const string allowAll = ".*";
-
-    private readonly ISet<string> exchangeTypes = new HashSet<string>
+    private static readonly ISet<string> ExchangeTypes = new HashSet<string>
     {
         "amq.direct", "amq.topic", "amq.fanout", "amq.headers", "amq.match", "amq.rabbitmq.trace"
     };
 
-    public TopicPermissionInfo(User user, Vhost vhost)
-    {
-        this.user = user;
-        this.vhost = vhost;
+    private const string DenyAll = "^$";
+    private const string AllowAll = ".*";
 
-        Write = Read = allowAll;
-    }
+    public string UserName { get; private set; }
+    public string Exchange { get; private set; }
+    public string Write { get; private set; }
+    public string Read { get; private set; }
 
-    public string GetUserName()
+    public TopicPermissionInfo(string userName)
     {
-        return user.Name;
-    }
-
-    public string GetVirtualHostName()
-    {
-        return vhost.Name;
+        UserName = userName;
+        Write = Read = AllowAll;
     }
 
     public TopicPermissionInfo SetExchangeType(string exchangeType)
     {
-        if (exchangeType != null && !exchangeTypes.Contains(exchangeType))
+        if (exchangeType != null && !ExchangeTypes.Contains(exchangeType))
         {
             throw new EasyNetQManagementException("Unknown exchange type '{0}', expected one of {1}",
                 exchangeType,
-                string.Join(", ", exchangeTypes));
+                string.Join(", ", ExchangeTypes));
         }
 
         Exchange = exchangeType;
@@ -64,13 +50,13 @@ public class TopicPermissionInfo
 
     public TopicPermissionInfo DenyAllWrite()
     {
-        Write = denyAll;
+        Write = DenyAll;
         return this;
     }
 
     public TopicPermissionInfo DenyAllRead()
     {
-        Read = denyAll;
+        Read = DenyAll;
         return this;
     }
 }
