@@ -83,6 +83,31 @@ public interface IManagementClient : IDisposable
     Task<IReadOnlyList<Exchange>> GetExchangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    ///     A list of all exchanges.
+    /// </summary>
+    /// <param name="pageCriteria"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<PageResult<Exchange>> GetExchangesByPageAsync(PageCriteria pageCriteria, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all exchanges.
+    /// </summary>
+    /// <param name="vhostName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<Exchange>> GetExchangesAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all exchanges.
+    /// </summary>
+    /// <param name="vhostName"></param>
+    /// <param name="pageCriteria"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<PageResult<Exchange>> GetExchangesByPageAsync(string vhostName, PageCriteria pageCriteria, CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     A list of all queues.
     /// </summary>
     /// <param name="cancellationToken"></param>
