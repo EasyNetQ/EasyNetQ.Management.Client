@@ -40,7 +40,7 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
         var containerId = await RunNewContainerAsync(cts.Token);
         if (dockerEngineOsPlatform == OSPlatform.Windows)
             Host = await dockerProxy.GetContainerIpAsync(containerId, cts.Token);
-        ManagementClient = new ManagementClient(Host, User, Password);
+        ManagementClient = new ManagementClient(new Uri($"http://{Host}:15672"), User, Password);
         await WaitForRabbitMqReadyAsync(cts.Token);
     }
 
@@ -114,8 +114,9 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
         {
             throw;
         }
-        catch (Exception)
+        catch (Exception exception)
         {
+            Console.WriteLine(exception);
             return false;
         }
     }

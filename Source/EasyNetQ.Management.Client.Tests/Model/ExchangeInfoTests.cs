@@ -13,7 +13,7 @@ public class ExchangeInfoTests
     {
         const string expectedName = "the_name";
         var exchangeInfo = new ExchangeInfo(expectedName, "direct");
-        exchangeInfo.GetName().Should().Be(expectedName);
+        exchangeInfo.Name.Should().Be(expectedName);
     }
 
     [Fact]

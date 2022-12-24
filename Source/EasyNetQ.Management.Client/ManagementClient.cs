@@ -10,7 +10,6 @@ using Newtonsoft.Json.Serialization;
 
 #if NET6_0
 using HttpHandler = System.Net.Http.SocketsHttpHandler;
-
 #else
 using HttpHandler = System.Net.Http.HttpClientHandler;
 #endif
@@ -151,9 +150,9 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Connection>>(Connections, cancellationToken);
     }
 
-    public Task CloseConnectionAsync(Connection connection, CancellationToken cancellationToken = default)
+    public Task CloseConnectionAsync(string connectionName, CancellationToken cancellationToken = default)
     {
-        return DeleteAsync(Connections / connection.Name, cancellationToken);
+        return DeleteAsync(Connections / connectionName, cancellationToken);
     }
 
     public Task<IReadOnlyList<Channel>> GetChannelsAsync(CancellationToken cancellationToken = default)
@@ -161,9 +160,9 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Channel>>(Channels, cancellationToken);
     }
 
-    public Task<IReadOnlyList<Channel>> GetChannelsAsync(Connection connection, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<Channel>> GetChannelsAsync(string connectionName, CancellationToken cancellationToken = default)
     {
-        return GetAsync<IReadOnlyList<Channel>>(Connections / connection.Name / "channels", cancellationToken);
+        return GetAsync<IReadOnlyList<Channel>>(Connections / connectionName / "channels", cancellationToken);
     }
 
     public Task<Channel> GetChannelAsync(
@@ -181,22 +180,22 @@ public class ManagementClient : IManagementClient
     }
 
     public Task<Exchange> GetExchangeAsync(
+        string vhostName,
         string exchangeName,
-        Vhost vhost,
         GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
         return GetAsync<Exchange>(
-            Exchanges / vhost.Name / exchangeName,
+            Exchanges / vhostName / exchangeName,
             ratesCriteria?.ToQueryParameters(),
             cancellationToken
         );
     }
 
     public Task<Queue> GetQueueAsync(
+        string vhostName,
         string queueName,
-        Vhost vhost,
         GetLengthsCriteria? lengthsCriteria = null,
         GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
@@ -206,63 +205,66 @@ public class ManagementClient : IManagementClient
             lengthsCriteria?.ToQueryParameters(), ratesCriteria?.ToQueryParameters()
         );
         return GetAsync<Queue>(
-            Queues / vhost.Name / queueName,
+            Queues / vhostName / queueName,
             queryParameters,
             cancellationToken
         );
     }
 
-    public async Task CreateExchangeAsync(
+    public Task CreateExchangeAsync(
+        string vhostName,
         ExchangeInfo exchangeInfo,
-        Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
-        await PutAsync(
-            Exchanges / vhost.Name / exchangeInfo.GetName(),
+        return PutAsync(
+            Exchanges / vhostName / exchangeInfo.Name,
             exchangeInfo,
             cancellationToken
-        ).ConfigureAwait(false);
+        );
     }
 
-    public Task DeleteExchangeAsync(Exchange exchange, CancellationToken cancellationToken = default)
+    public Task DeleteExchangeAsync(string vhostName, string exchangeName, CancellationToken cancellationToken = default)
     {
         return DeleteAsync(
-            Exchanges / exchange.Vhost / exchange.Name,
+            Exchanges / vhostName / exchangeName,
             cancellationToken
         );
     }
 
     public Task<IReadOnlyList<Binding>> GetBindingsWithSourceAsync(
-        Exchange exchange,
+        string vhostName,
+        string exchangeName,
         CancellationToken cancellationToken = default
     )
     {
         return GetAsync<IReadOnlyList<Binding>>(
-            Exchanges / exchange.Vhost / exchange.Name / "bindings" / "source",
+            Exchanges / vhostName / exchangeName / "bindings" / "source",
             cancellationToken
         );
     }
 
     public Task<IReadOnlyList<Binding>> GetBindingsWithDestinationAsync(
-        Exchange exchange,
+        string vhostName,
+        string exchangeName,
         CancellationToken cancellationToken = default
     )
     {
         return GetAsync<IReadOnlyList<Binding>>(
-            Exchanges / exchange.Vhost / exchange.Name / "bindings" / "destination",
+            Exchanges / vhostName / exchangeName / "bindings" / "destination",
             cancellationToken
         );
     }
 
     public Task<PublishResult> PublishAsync(
-        Exchange exchange,
+        string vhostName,
+        string exchangeName,
         PublishInfo publishInfo,
         CancellationToken cancellationToken = default
     )
     {
         return PostAsync<PublishInfo, PublishResult>(
-            Exchanges / exchange.Vhost / exchange.Name / "publish",
+            Exchanges / vhostName / exchangeName / "publish",
             publishInfo,
             cancellationToken
         );
@@ -279,58 +281,61 @@ public class ManagementClient : IManagementClient
         return GetAsync<PageResult<Queue>>(Queues, pageCriteria.ToQueryParameters(), cancellationToken);
     }
 
-    public Task<IReadOnlyList<Queue>> GetQueuesAsync(Vhost vhost, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<Queue>> GetQueuesAsync(string vhostName, CancellationToken cancellationToken = default)
     {
-        return GetAsync<IReadOnlyList<Queue>>(Queues / vhost.Name, cancellationToken);
+        return GetAsync<IReadOnlyList<Queue>>(Queues / vhostName, cancellationToken);
     }
 
-    public Task<PageResult<Queue>> GetQueuesByPageAsync(Vhost vhost, PageCriteria pageCriteria, CancellationToken cancellationToken = default)
+    public Task<PageResult<Queue>> GetQueuesByPageAsync(string vhostName, PageCriteria pageCriteria, CancellationToken cancellationToken = default)
     {
-        return GetAsync<PageResult<Queue>>(Queues / vhost.Name, pageCriteria.ToQueryParameters(), cancellationToken);
+        return GetAsync<PageResult<Queue>>(Queues / vhostName, pageCriteria.ToQueryParameters(), cancellationToken);
     }
 
-    public async Task CreateQueueAsync(
+    public Task CreateQueueAsync(
+        string vhostName,
         QueueInfo queueInfo,
-        Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
-        await PutAsync(
-            Queues / vhost.Name / queueInfo.GetName(),
+        return PutAsync(
+            Queues / vhostName / queueInfo.Name,
             queueInfo,
             cancellationToken
-        ).ConfigureAwait(false);
-    }
-
-    public Task DeleteQueueAsync(Queue queue, CancellationToken cancellationToken = default)
-    {
-        return DeleteAsync(
-            Queues / queue.Vhost / queue.Name, cancellationToken
         );
     }
 
-    public Task<IReadOnlyList<Binding>> GetBindingsForQueueAsync(Queue queue, CancellationToken cancellationToken = default)
+    public Task DeleteQueueAsync(string vhostName, string queueName, CancellationToken cancellationToken = default)
+    {
+        return DeleteAsync(
+            Queues / vhostName / queueName, cancellationToken
+        );
+    }
+
+    public Task<IReadOnlyList<Binding>> GetBindingsForQueueAsync(
+        string vhostName, string queueName, CancellationToken cancellationToken = default
+    )
     {
         return GetAsync<IReadOnlyList<Binding>>(
-            Queues / queue.Vhost / queue.Name / "bindings", cancellationToken
+            Queues / vhostName / queueName / "bindings", cancellationToken
         );
     }
 
-    public Task PurgeAsync(Queue queue, CancellationToken cancellationToken = default)
+    public Task PurgeAsync(string vhostName, string queueName, CancellationToken cancellationToken = default)
     {
         return DeleteAsync(
-            Queues / queue.Vhost / queue.Name / "contents", cancellationToken
+            Queues / vhostName / queueName / "contents", cancellationToken
         );
     }
 
     public Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(
-        Queue queue,
+        string vhostName,
+        string queueName,
         GetMessagesCriteria criteria,
         CancellationToken cancellationToken = default
     )
     {
         return PostAsync<GetMessagesCriteria, IReadOnlyList<Message>>(
-            Queues / queue.Vhost / queue.Name / "get",
+            Queues / vhostName / queueName / "get",
             criteria,
             cancellationToken
         );
@@ -341,77 +346,86 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Binding>>(Bindings, cancellationToken);
     }
 
-    public Task CreateBindingAsync(
-        Exchange exchange,
-        Queue queue,
+    public Task CreateQueueBindingAsync(
+        string vhostName,
+        string exchangeName,
+        string queueName,
         BindingInfo bindingInfo,
         CancellationToken cancellationToken = default
     )
     {
         return PostAsync<BindingInfo, object>(
-            Bindings / queue.Vhost / "e" / exchange.Name / "q" / queue.Name,
+            Bindings / vhostName / "e" / exchangeName / "q" / queueName,
             bindingInfo,
             cancellationToken
         );
     }
 
-    public Task CreateBindingAsync(
-        Exchange sourceExchange,
-        Exchange destinationExchange,
+    public Task CreateExchangeBindingAsync(
+        string vhostName,
+        string sourceExchangeName,
+        string destinationExchangeName,
         BindingInfo bindingInfo,
         CancellationToken cancellationToken = default
     )
     {
         return PostAsync<BindingInfo, object>(
-            Bindings / sourceExchange.Vhost / "e" / sourceExchange.Name / "e" / destinationExchange.Name,
+            Bindings / vhostName / "e" / sourceExchangeName / "e" / destinationExchangeName,
             bindingInfo,
             cancellationToken
         );
     }
 
-    public Task<IReadOnlyList<Binding>> GetBindingsAsync(
-        Exchange exchange,
-        Queue queue,
+    public Task<IReadOnlyList<Binding>> GetQueueBindingsAsync(
+        string vhostName,
+        string exchangeName,
+        string queueName,
         CancellationToken cancellationToken = default
     )
     {
         return GetAsync<IReadOnlyList<Binding>>(
-            Bindings / queue.Vhost / "e" / exchange.Name / "q" / queue.Name,
+            Bindings / vhostName / "e" / exchangeName / "q" / queueName,
             cancellationToken
         );
     }
 
-    public Task<IReadOnlyList<Binding>> GetBindingsAsync(
-        Exchange fromExchange,
-        Exchange toExchange,
+    public Task<IReadOnlyList<Binding>> GetExchangeBindingsAsync(
+        string vhostName,
+        string fromExchangeName,
+        string toExchangeName,
         CancellationToken cancellationToken = default
     )
     {
         return GetAsync<IReadOnlyList<Binding>>(
-            Bindings / toExchange.Vhost / "e" / fromExchange.Name / "e" / toExchange.Name,
+            Bindings / vhostName / "e" / fromExchangeName / "e" / toExchangeName,
             cancellationToken
         );
     }
 
-    public Task DeleteBindingAsync(Binding binding, CancellationToken cancellationToken = default)
+    public Task DeleteQueueBindingAsync(
+        string vhostName,
+        string exchangeName,
+        string queueName,
+        string propertiesKey,
+        CancellationToken cancellationToken = default
+    )
     {
-        if (string.IsNullOrEmpty(binding.Source))
-        {
-            throw new ArgumentException("Empty binding source isn't supported.");
-        }
-
-        if (string.IsNullOrEmpty(binding.Destination))
-        {
-            throw new ArgumentException("Empty binding destination isn't supported.");
-        }
-
-        if (string.IsNullOrEmpty(binding.DestinationType))
-        {
-            throw new ArgumentException("Empty binding destination type isn't supported.");
-        }
-
         return DeleteAsync(
-            Bindings / binding.Vhost / "e" / binding.Source / binding.DestinationType[0] / binding.Destination / binding.PropertiesKey,
+            Bindings / vhostName / "e" / exchangeName / "q" / queueName / propertiesKey,
+            cancellationToken
+        );
+    }
+
+    public Task DeleteExchangeBindingAsync(
+        string vhostName,
+        string fromExchangeName,
+        string toExchangeName,
+        string propertiesKey,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return DeleteAsync(
+            Bindings / vhostName / "e" / fromExchangeName / "e" / toExchangeName / propertiesKey,
             cancellationToken
         );
     }
@@ -431,21 +445,19 @@ public class ManagementClient : IManagementClient
         return PutAsync<string>(Vhosts / vhostName, cancellationToken: cancellationToken);
     }
 
-    public Task DeleteVhostAsync(Vhost vhost, CancellationToken cancellationToken = default)
+    public Task DeleteVhostAsync(string vhostName, CancellationToken cancellationToken = default)
     {
-        return DeleteAsync(Vhosts / vhost.Name, cancellationToken);
+        return DeleteAsync(Vhosts / vhostName, cancellationToken);
     }
 
-    public Task EnableTracingAsync(Vhost vhost, CancellationToken cancellationToken = default)
+    public Task EnableTracingAsync(string vhostName, CancellationToken cancellationToken = default)
     {
-        vhost.Tracing = true;
-        return PutAsync(Vhosts / vhost.Name, vhost, cancellationToken);
+        return PutAsync(Vhosts / vhostName, new { Tracing = true }, cancellationToken);
     }
 
-    public Task DisableTracingAsync(Vhost vhost, CancellationToken cancellationToken = default)
+    public Task DisableTracingAsync(string vhostName, CancellationToken cancellationToken = default)
     {
-        vhost.Tracing = false;
-        return PutAsync(Vhosts / vhost.Name, vhost, cancellationToken);
+        return PutAsync(Vhosts / vhostName, new { Tracing = false }, cancellationToken);
     }
 
     public Task<IReadOnlyList<User>> GetUsersAsync(CancellationToken cancellationToken = default)
@@ -463,29 +475,18 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Policy>>(Policies, cancellationToken);
     }
 
-    public Task CreatePolicyAsync(Policy policy, CancellationToken cancellationToken = default)
+    public Task CreatePolicyAsync(
+        string vhostName,
+        PolicyInfo policyInfo,
+        CancellationToken cancellationToken = default
+    )
     {
-        if (string.IsNullOrEmpty(policy.Name))
-        {
-            throw new ArgumentException("Policy name is empty");
-        }
-
-        if (string.IsNullOrEmpty(policy.Vhost))
-        {
-            throw new ArgumentException("vhost name is empty");
-        }
-
-        if (policy.Definition == null)
-        {
-            throw new ArgumentException("Definition should not be null");
-        }
-
-        return PutAsync(Policies / policy.Vhost / policy.Name, policy, cancellationToken);
+        return PutAsync(Policies / vhostName / policyInfo.Name, policyInfo, cancellationToken);
     }
 
-    public Task DeletePolicyAsync(string policyName, Vhost vhost, CancellationToken cancellationToken = default)
+    public Task DeletePolicyAsync(string vhostName, string policyName, CancellationToken cancellationToken = default)
     {
-        return DeleteAsync(Policies / vhost.Name / policyName, cancellationToken);
+        return DeleteAsync(Policies / vhostName / policyName, cancellationToken);
     }
 
     public Task<IReadOnlyList<Parameter>> GetParametersAsync(CancellationToken cancellationToken = default)
@@ -493,33 +494,39 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Parameter>>(Parameters, cancellationToken);
     }
 
-    public Task CreateParameterAsync(Parameter parameter, CancellationToken cancellationToken = default)
+    public Task CreateParameterAsync(
+        string componentName,
+        string vhostName,
+        string parameterName,
+        object parameterValue,
+        CancellationToken cancellationToken = default
+    )
     {
         return PutAsync(
-            Parameters / parameter.Component / parameter.Vhost / parameter.Name,
-            parameter.Value,
+            Parameters / componentName / vhostName / parameterName,
+            parameterValue,
             cancellationToken
         );
     }
 
     public Task DeleteParameterAsync(
         string componentName,
-        string vhost,
+        string vhostName,
         string name,
         CancellationToken cancellationToken = default
     )
     {
-        return DeleteAsync(Parameters / componentName / vhost / name, cancellationToken);
+        return DeleteAsync(Parameters / componentName / vhostName / name, cancellationToken);
     }
 
-    public async Task CreateUserAsync(UserInfo userInfo, CancellationToken cancellationToken = default)
+    public Task CreateUserAsync(UserInfo userInfo, CancellationToken cancellationToken = default)
     {
-        await PutAsync(Users / userInfo.Name, userInfo, cancellationToken).ConfigureAwait(false);
+        return PutAsync(Users / userInfo.Name, userInfo, cancellationToken);
     }
 
-    public Task DeleteUserAsync(User user, CancellationToken cancellationToken = default)
+    public Task DeleteUserAsync(string userName, CancellationToken cancellationToken = default)
     {
-        return DeleteAsync(Users / user.Name, cancellationToken);
+        return DeleteAsync(Users / userName, cancellationToken);
     }
 
     public Task<IReadOnlyList<Permission>> GetPermissionsAsync(CancellationToken cancellationToken = default)
@@ -527,18 +534,18 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Permission>>(Permissions, cancellationToken);
     }
 
-    public Task CreatePermissionAsync(PermissionInfo permissionInfo, CancellationToken cancellationToken = default)
+    public Task CreatePermissionAsync(string vhostName, PermissionInfo permissionInfo, CancellationToken cancellationToken = default)
     {
         return PutAsync(
-            Permissions / permissionInfo.GetVirtualHostName() / permissionInfo.GetUserName(),
+            Permissions / vhostName / permissionInfo.UserName,
             permissionInfo,
             cancellationToken
         );
     }
 
-    public Task DeletePermissionAsync(Permission permission, CancellationToken cancellationToken = default)
+    public Task DeletePermissionAsync(string vhostName, string userName, CancellationToken cancellationToken = default)
     {
-        return DeleteAsync(Permissions / permission.Vhost / permission.User, cancellationToken);
+        return DeleteAsync(Permissions / vhostName / userName, cancellationToken);
     }
 
     public Task<IReadOnlyList<TopicPermission>> GetTopicPermissionsAsync(CancellationToken cancellationToken = default)
@@ -546,18 +553,22 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<TopicPermission>>(TopicPermissions, cancellationToken);
     }
 
-    public Task CreateTopicPermissionAsync(TopicPermissionInfo topicPermissionInfo, CancellationToken cancellationToken = default)
+    public Task CreateTopicPermissionAsync(
+        string vhostName,
+        TopicPermissionInfo topicPermissionInfo,
+        CancellationToken cancellationToken = default
+    )
     {
         return PutAsync(
-            TopicPermissions / topicPermissionInfo.GetVirtualHostName() / topicPermissionInfo.GetUserName(),
+            TopicPermissions / vhostName / topicPermissionInfo.UserName,
             topicPermissionInfo,
             cancellationToken
         );
     }
 
-    public Task DeleteTopicPermissionAsync(TopicPermission topicPermission, CancellationToken cancellationToken = default)
+    public Task DeleteTopicPermissionAsync(string vhostName, string userName, CancellationToken cancellationToken = default)
     {
-        return DeleteAsync(TopicPermissions / topicPermission.Vhost / topicPermission.User, cancellationToken);
+        return DeleteAsync(TopicPermissions / vhostName / userName, cancellationToken);
     }
 
     public Task<IReadOnlyList<Federation>> GetFederationsAsync(CancellationToken cancellationToken = default)
@@ -565,9 +576,9 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Federation>>(FederationLinks, cancellationToken);
     }
 
-    public async Task<bool> IsAliveAsync(Vhost vhost, CancellationToken cancellationToken = default)
+    public async Task<bool> IsAliveAsync(string vhostName, CancellationToken cancellationToken = default)
     {
-        var result = await GetAsync<AlivenessTestResult>(AlivenessTest / vhost.Name, cancellationToken).ConfigureAwait(false);
+        var result = await GetAsync<AlivenessTestResult>(AlivenessTest / vhostName, cancellationToken).ConfigureAwait(false);
         return result.Status == "ok";
     }
 

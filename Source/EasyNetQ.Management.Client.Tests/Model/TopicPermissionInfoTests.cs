@@ -9,26 +9,16 @@ namespace EasyNetQ.Management.Client.Tests.Model;
 public class TopicPermissionInfoTests
 {
     private TopicPermissionInfo topicPermissionInfo;
-    private User user;
-    private Vhost vhost;
 
     public TopicPermissionInfoTests()
     {
-        user = new User { Name = "mikey" };
-        vhost = new Vhost { Name = "theVHostName" };
-        topicPermissionInfo = new TopicPermissionInfo(user, vhost);
+        topicPermissionInfo = new TopicPermissionInfo("mikey");
     }
 
     [Fact]
     public void Should_return_the_correct_user_name()
     {
-        topicPermissionInfo.GetUserName().Should().Be(user.Name);
-    }
-
-    [Fact]
-    public void Should_return_the_correct_vhost_name()
-    {
-        topicPermissionInfo.GetVirtualHostName().Should().Be(vhost.Name);
+        topicPermissionInfo.UserName.Should().Be("mikey");
     }
 
     [Fact]

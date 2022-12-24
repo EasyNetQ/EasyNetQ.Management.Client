@@ -91,6 +91,19 @@ public static class ManagementClientExtensions
     }
 
     /// <summary>
+    ///     A list of all open channels.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="connection"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task<IReadOnlyList<Channel>> GetChannelsAsync(
+        this IManagementClient source,
+        Connection connection,
+        CancellationToken cancellationToken = default
+    ) => source.GetChannelsAsync(connection.Name, cancellationToken);
+
+    /// <summary>
     ///     Gets the channel. This returns more detail, including consumers than the GetChannels method.
     /// </summary>
     /// <param name="source"></param>
@@ -149,6 +162,19 @@ public static class ManagementClientExtensions
     /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
+    public static Task<IReadOnlyList<Queue>> GetQueuesAsync(
+        this IManagementClient source,
+        Vhost vhost,
+        CancellationToken cancellationToken = default
+    ) => source.GetQueuesAsync(vhost.Name, cancellationToken);
+
+    /// <summary>
+    ///     A list of all queues for a virtual host.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="vhost"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public static IReadOnlyList<Queue> GetQueues(
         this IManagementClient source,
         Vhost vhost,
@@ -177,6 +203,21 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     A list of all queues for a virtual host.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="vhost"></param>
+    /// <param name="pageCriteria"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task<PageResult<Queue>> GetQueuesByPageAsync(
+        this IManagementClient source,
+        Vhost vhost,
+        PageCriteria pageCriteria,
+        CancellationToken cancellationToken = default
+    ) => source.GetQueuesByPageAsync(vhost.Name, pageCriteria, cancellationToken);
 
     /// <summary>
     ///     A list of all queues for a virtual host.
@@ -284,6 +325,18 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="connection"></param>
     /// <param name="cancellationToken"></param>
+    public static Task CloseConnectionAsync(
+        this IManagementClient source,
+        Connection connection,
+        CancellationToken cancellationToken = default
+    ) => source.CloseConnectionAsync(connection.Name, cancellationToken);
+
+    /// <summary>
+    ///     Closes the given connection
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="connection"></param>
+    /// <param name="cancellationToken"></param>
     public static void CloseConnection(
         this IManagementClient source,
         Connection connection,
@@ -294,6 +347,37 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     Closes the given connection
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="connectionName"></param>
+    /// <param name="cancellationToken"></param>
+    public static void CloseConnection(
+        this IManagementClient source,
+        string connectionName,
+        CancellationToken cancellationToken = default
+    )
+    {
+        source.CloseConnectionAsync(connectionName, cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
+    ///     Creates the given exchange
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="exchangeInfo"></param>
+    /// <param name="vhost"></param>
+    /// <param name="cancellationToken"></param>
+    public static Task CreateExchangeAsync(
+        this IManagementClient source,
+        ExchangeInfo exchangeInfo,
+        Vhost vhost,
+        CancellationToken cancellationToken = default
+    ) => source.CreateExchangeAsync(vhost.Name, exchangeInfo, cancellationToken);
 
     /// <summary>
     ///     Creates the given exchange
@@ -320,6 +404,18 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="exchange"></param>
     /// <param name="cancellationToken"></param>
+    public static Task DeleteExchangeAsync(
+        this IManagementClient source,
+        Exchange exchange,
+        CancellationToken cancellationToken = default
+    ) => source.DeleteExchangeAsync(exchange.Vhost, exchange.Name, cancellationToken);
+
+    /// <summary>
+    ///     Delete the given exchange
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="exchange"></param>
+    /// <param name="cancellationToken"></param>
     public static void DeleteExchange(
         this IManagementClient source,
         Exchange exchange,
@@ -330,6 +426,19 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     A list of all bindings in which a given exchange is the source.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="exchange"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task<IReadOnlyList<Binding>> GetBindingsWithSourceAsync(
+        this IManagementClient source,
+        Exchange exchange,
+        CancellationToken cancellationToken = default
+    ) => source.GetBindingsWithSourceAsync(exchange.Vhost, exchange.Name, cancellationToken);
 
     /// <summary>
     ///     A list of all bindings in which a given exchange is the source.
@@ -356,6 +465,19 @@ public static class ManagementClientExtensions
     /// <param name="exchange"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
+    public static Task<IReadOnlyList<Binding>> GetBindingsWithDestinationAsync(
+        this IManagementClient source,
+        Exchange exchange,
+        CancellationToken cancellationToken = default
+    ) => source.GetBindingsWithDestinationAsync(exchange.Vhost, exchange.Name, cancellationToken);
+
+    /// <summary>
+    ///     A list of all bindings in which a given exchange is the destination.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="exchange"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public static IReadOnlyList<Binding> GetBindingsWithDestination(
         this IManagementClient source,
         Exchange exchange,
@@ -366,6 +488,24 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     Publish a message to a given exchange.
+    ///     Please note that the publish / get paths in the HTTP API are intended for injecting
+    ///     test messages, diagnostics etc - they do not implement reliable delivery and so should
+    ///     be treated as a sysadmin's tool rather than a general API for messaging.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="exchange">The exchange</param>
+    /// <param name="publishInfo">The publication parameters</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>A PublishResult, routed == true if the message was sent to at least one queue</returns>
+    public static Task<PublishResult> PublishAsync(
+        this IManagementClient source,
+        Exchange exchange,
+        PublishInfo publishInfo,
+        CancellationToken cancellationToken = default
+    ) => source.PublishAsync(exchange.Vhost, exchange.Name, publishInfo, cancellationToken);
 
     /// <summary>
     ///     Publish a message to a given exchange.
@@ -397,6 +537,20 @@ public static class ManagementClientExtensions
     /// <param name="queueInfo"></param>
     /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
+    public static Task CreateQueueAsync(
+        this IManagementClient source,
+        QueueInfo queueInfo,
+        Vhost vhost,
+        CancellationToken cancellationToken = default
+    ) => source.CreateQueueAsync(vhost.Name, queueInfo, cancellationToken);
+
+    /// <summary>
+    ///     Create the given queue
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="queueInfo"></param>
+    /// <param name="vhost"></param>
+    /// <param name="cancellationToken"></param>
     public static void CreateQueue(
         this IManagementClient source,
         QueueInfo queueInfo,
@@ -408,6 +562,18 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     Delete the given queue
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="queue"></param>
+    /// <param name="cancellationToken"></param>
+    public static Task DeleteQueueAsync(
+        this IManagementClient source,
+        Queue queue,
+        CancellationToken cancellationToken = default
+    ) => source.DeleteQueueAsync(queue.Vhost, queue.Name, cancellationToken);
 
     /// <summary>
     ///     Delete the given queue
@@ -432,6 +598,18 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="queue"></param>
     /// <param name="cancellationToken"></param>
+    public static Task<IReadOnlyList<Binding>> GetBindingsForQueueAsync(
+        this IManagementClient source,
+        Queue queue,
+        CancellationToken cancellationToken = default
+    ) => source.GetBindingsForQueueAsync(queue.Vhost, queue.Name, cancellationToken);
+
+    /// <summary>
+    ///     A list of all bindings on a given queue.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="queue"></param>
+    /// <param name="cancellationToken"></param>
     public static IReadOnlyList<Binding> GetBindingsForQueue(
         this IManagementClient source,
         Queue queue,
@@ -449,6 +627,18 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="queue"></param>
     /// <param name="cancellationToken"></param>
+    public static Task PurgeAsync(
+        this IManagementClient source,
+        Queue queue,
+        CancellationToken cancellationToken = default
+    ) => source.PurgeAsync(queue.Vhost, queue.Name, cancellationToken);
+
+    /// <summary>
+    ///     Purge a queue of all messages
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="queue"></param>
+    /// <param name="cancellationToken"></param>
     public static void Purge(
         this IManagementClient source,
         Queue queue,
@@ -459,6 +649,25 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     Get messages from a queue.
+    ///     Please note that the publish / get paths in the HTTP API are intended for
+    ///     injecting test messages, diagnostics etc - they do not implement reliable
+    ///     delivery and so should be treated as a sysadmin's tool rather than a
+    ///     general API for messaging.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="queue">The queue to retrieve from</param>
+    /// <param name="criteria">The criteria for the retrieve</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Messages</returns>
+    public static Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(
+        this IManagementClient source,
+        Queue queue,
+        GetMessagesCriteria criteria,
+        CancellationToken cancellationToken = default
+    ) => source.GetMessagesFromQueueAsync(queue.Vhost, queue.Name, criteria, cancellationToken);
 
     /// <summary>
     ///     Get messages from a queue.
@@ -493,7 +702,24 @@ public static class ManagementClientExtensions
     /// <param name="bindingInfo">properties of the binding</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The binding that was created</returns>
-    public static void CreateBinding(
+    public static Task CreateQueueBindingAsync(
+        this IManagementClient source,
+        Exchange exchange,
+        Queue queue,
+        BindingInfo bindingInfo,
+        CancellationToken cancellationToken = default
+    ) => source.CreateQueueBindingAsync(exchange.Vhost, exchange.Name, queue.Name, bindingInfo, cancellationToken);
+
+    /// <summary>
+    ///     Create a binding between an exchange and a queue
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="exchange">the exchange</param>
+    /// <param name="queue">the queue</param>
+    /// <param name="bindingInfo">properties of the binding</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The binding that was created</returns>
+    public static void CreateQueueBinding(
         this IManagementClient source,
         Exchange exchange,
         Queue queue,
@@ -501,10 +727,11 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        source.CreateBindingAsync(exchange, queue, bindingInfo, cancellationToken)
+        source.CreateQueueBindingAsync(exchange, queue, bindingInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
+
 
     /// <summary>
     ///     Create a binding between an exchange and an exchange
@@ -514,7 +741,23 @@ public static class ManagementClientExtensions
     /// <param name="destinationExchange">the destination exchange</param>
     /// <param name="bindingInfo">properties of the binding</param>
     /// <param name="cancellationToken"></param>
-    public static void CreateBinding(
+    public static Task CreateExchangeBindingAsync(
+        this IManagementClient source,
+        Exchange sourceExchange,
+        Exchange destinationExchange,
+        BindingInfo bindingInfo,
+        CancellationToken cancellationToken = default
+    ) => source.CreateExchangeBindingAsync(sourceExchange.Vhost, sourceExchange.Name, destinationExchange.Name, bindingInfo, cancellationToken);
+
+    /// <summary>
+    ///     Create a binding between an exchange and an exchange
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="sourceExchange">the source exchange</param>
+    /// <param name="destinationExchange">the destination exchange</param>
+    /// <param name="bindingInfo">properties of the binding</param>
+    /// <param name="cancellationToken"></param>
+    public static void CreateExchangeBinding(
         this IManagementClient source,
         Exchange sourceExchange,
         Exchange destinationExchange,
@@ -522,7 +765,7 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        source.CreateBindingAsync(sourceExchange, destinationExchange, bindingInfo, cancellationToken)
+        source.CreateExchangeBindingAsync(sourceExchange, destinationExchange, bindingInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
@@ -536,17 +779,50 @@ public static class ManagementClientExtensions
     /// <param name="queue"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static IReadOnlyList<Binding> GetBindings(
+    public static Task<IReadOnlyList<Binding>> GetQueueBindingsAsync(
+        this IManagementClient source,
+        Exchange exchange,
+        Queue queue,
+        CancellationToken cancellationToken = default
+    ) => source.GetQueueBindingsAsync(exchange.Vhost, exchange.Name, queue.Name, cancellationToken);
+
+    /// <summary>
+    ///     A list of all bindings between an exchange and a queue.
+    ///     Remember, an exchange and a queue can be bound together many times!
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="exchange"></param>
+    /// <param name="queue"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static IReadOnlyList<Binding> GetQueueBindings(
         this IManagementClient source,
         Exchange exchange,
         Queue queue,
         CancellationToken cancellationToken = default
     )
     {
-        return source.GetBindingsAsync(exchange, queue, cancellationToken)
+        return source.GetQueueBindingsAsync(exchange, queue, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
+
+
+    /// <summary>
+    ///     A list of all bindings between an exchange and a queue.
+    ///     Remember, an exchange and a queue can be bound together many times!
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="fromExchange"></param>
+    /// <param name="toExchange"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task<IReadOnlyList<Binding>> GetExchangeBindingsAsync(
+        this IManagementClient source,
+        Exchange fromExchange,
+        Exchange toExchange,
+        CancellationToken cancellationToken = default
+    ) => source.GetExchangeBindingsAsync(fromExchange.Vhost, fromExchange.Name, toExchange.Name, cancellationToken);
 
     /// <summary>
     ///     A list of all bindings between an exchange and an exchange.
@@ -556,16 +832,36 @@ public static class ManagementClientExtensions
     /// <param name="toExchange"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static IReadOnlyList<Binding> GetBindings(
+    public static IReadOnlyList<Binding> GetExchangeBindings(
         this IManagementClient source,
         Exchange fromExchange,
         Exchange toExchange,
         CancellationToken cancellationToken = default
     )
     {
-        return source.GetBindingsAsync(fromExchange, toExchange, cancellationToken)
+        return GetExchangeBindingsAsync(source, fromExchange, toExchange, cancellationToken)
             .GetAwaiter()
             .GetResult();
+    }
+
+    /// <summary>
+    ///     Delete the given binding
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="binding"></param>
+    /// <param name="cancellationToken"></param>
+    public static Task DeleteBindingAsync(
+        this IManagementClient source,
+        Binding binding,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return binding.DestinationType switch
+        {
+            "queue" => source.DeleteQueueBindingAsync(binding.Vhost, binding.Source, binding.Destination, binding.PropertiesKey, cancellationToken),
+            "exchange" => source.DeleteExchangeBindingAsync(binding.Vhost, binding.Source, binding.Destination, binding.PropertiesKey, cancellationToken),
+            _ => throw new ArgumentOutOfRangeException(nameof(binding.DestinationType), binding.DestinationType, null)
+        };
     }
 
     /// <summary>
@@ -608,6 +904,18 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="vhost">The virtual host to delete</param>
     /// <param name="cancellationToken"></param>
+    public static Task DeleteVhostAsync(
+        this IManagementClient source,
+        Vhost vhost,
+        CancellationToken cancellationToken = default
+    ) => source.DeleteVhostAsync(vhost.Name, cancellationToken);
+
+    /// <summary>
+    ///     Delete a virtual host
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="vhost">The virtual host to delete</param>
+    /// <param name="cancellationToken"></param>
     public static void DeleteVhost(
         this IManagementClient source,
         Vhost vhost,
@@ -625,6 +933,22 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="vhost">The virtual host on which to enable tracing</param>
     /// <param name="cancellationToken"></param>
+    public static async Task EnableTracingAsync(
+        this IManagementClient source,
+        Vhost vhost,
+        CancellationToken cancellationToken = default
+    )
+    {
+        await source.EnableTracingAsync(vhost.Name, cancellationToken).ConfigureAwait(false);
+        vhost.Tracing = true;
+    }
+
+    /// <summary>
+    ///     Enable tracing on given virtual host.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="vhost">The virtual host on which to enable tracing</param>
+    /// <param name="cancellationToken"></param>
     public static void EnableTracing(
         this IManagementClient source,
         Vhost vhost,
@@ -634,6 +958,22 @@ public static class ManagementClientExtensions
         source.EnableTracingAsync(vhost, cancellationToken)
             .GetAwaiter()
             .GetResult();
+    }
+
+    /// <summary>
+    ///     Disables tracing on given virtual host.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="vhost">The virtual host on which to disable tracing</param>
+    /// <param name="cancellationToken"></param>
+    public static async Task DisableTracingAsync(
+        this IManagementClient source,
+        Vhost vhost,
+        CancellationToken cancellationToken = default
+    )
+    {
+        await source.DisableTracingAsync(vhost.Name, cancellationToken).ConfigureAwait(false);
+        vhost.Tracing = false;
     }
 
     /// <summary>
@@ -676,6 +1016,18 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="user">The user to delete</param>
     /// <param name="cancellationToken"></param>
+    public static Task DeleteUserAsync(
+        this IManagementClient source,
+        User user,
+        CancellationToken cancellationToken = default
+    ) => source.DeleteUserAsync(user.Name, cancellationToken);
+
+    /// <summary>
+    ///     Delete a user
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="user">The user to delete</param>
+    /// <param name="cancellationToken"></param>
     public static void DeleteUser(
         this IManagementClient source,
         User user,
@@ -691,18 +1043,46 @@ public static class ManagementClientExtensions
     ///     Create a permission
     /// </summary>
     /// <param name="source"></param>
-    /// <param name="permissionInfo">The permission to create</param>
+    /// <param name="vhost"></param>
+    /// <param name="permissionInfo"></param>
+    /// <param name="cancellationToken"></param>
+    public static Task CreatePermissionAsync(
+        this IManagementClient source,
+        Vhost vhost,
+        PermissionInfo permissionInfo,
+        CancellationToken cancellationToken = default
+    ) => source.CreatePermissionAsync(vhost.Name, permissionInfo, cancellationToken);
+
+    /// <summary>
+    ///     Create a permission
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="vhost"></param>
+    /// <param name="permissionInfo"></param>
     /// <param name="cancellationToken"></param>
     public static void CreatePermission(
         this IManagementClient source,
+        Vhost vhost,
         PermissionInfo permissionInfo,
         CancellationToken cancellationToken = default
     )
     {
-        source.CreatePermissionAsync(permissionInfo, cancellationToken)
+        source.CreatePermissionAsync(vhost, permissionInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     Delete a permission
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="permission"></param>
+    /// <param name="cancellationToken"></param>
+    public static Task DeletePermissionAsync(
+        this IManagementClient source,
+        Permission permission,
+        CancellationToken cancellationToken = default
+    ) => source.DeletePermissionAsync(permission.Vhost, permission.User, cancellationToken);
 
     /// <summary>
     ///     Delete a permission
@@ -725,18 +1105,32 @@ public static class ManagementClientExtensions
     ///     Create a topic permission
     /// </summary>
     /// <param name="source"></param>
-    /// <param name="topicPermissionInfo">The topic permission to create</param>
+    /// <param name="vhostName"></param>
+    /// <param name="topicPermissionInfo"></param>
     /// <param name="cancellationToken"></param>
     public static void CreateTopicPermission(
         this IManagementClient source,
+        string vhostName,
         TopicPermissionInfo topicPermissionInfo,
         CancellationToken cancellationToken = default
     )
     {
-        source.CreateTopicPermissionAsync(topicPermissionInfo, cancellationToken)
+        source.CreateTopicPermissionAsync(vhostName, topicPermissionInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     Delete a topic permission
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="permission">The topic permission to delete</param>
+    /// <param name="cancellationToken"></param>
+    public static Task DeleteTopicPermissionAsync(
+        this IManagementClient source,
+        TopicPermission permission,
+        CancellationToken cancellationToken = default
+    ) => source.DeleteTopicPermissionAsync(permission.Vhost, permission.User, cancellationToken);
 
     /// <summary>
     ///     Delete a topic permission
@@ -784,6 +1178,22 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="vhost"></param>
     /// <param name="cancellationToken"></param>
+    public static Task<bool> IsAliveAsync(
+        this IManagementClient source,
+        Vhost vhost,
+        CancellationToken cancellationToken = default
+    ) => source.IsAliveAsync(vhost.Name, cancellationToken);
+
+
+    /// <summary>
+    ///     Declares a test queue, then publishes and consumes a message. Intended for use
+    ///     by monitoring tools. If everything is working correctly, will return true.
+    ///     Note: the test queue will not be deleted (to prevent queue churn if this
+    ///     is repeatedly pinged).
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="vhost"></param>
+    /// <param name="cancellationToken"></param>
     public static bool IsAlive(
         this IManagementClient source,
         Vhost vhost,
@@ -794,6 +1204,23 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     Get an individual exchange by name
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="vhost">The virtual host that contains the exchange</param>
+    /// <param name="exchangeName">The name of the exchange</param>
+    /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The exchange</returns>
+    public static Task<Exchange> GetExchangeAsync(
+        this IManagementClient source,
+        Vhost vhost,
+        string exchangeName,
+        GetRatesCriteria? ratesCriteria = null,
+        CancellationToken cancellationToken = default
+    ) => source.GetExchangeAsync(vhost.Name, exchangeName, ratesCriteria, cancellationToken);
 
     /// <summary>
     ///     Get an individual exchange by name
@@ -812,7 +1239,7 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        return source.GetExchangeAsync(exchangeName, vhost, ratesCriteria, cancellationToken)
+        return source.GetExchangeAsync(vhost, exchangeName, ratesCriteria, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
@@ -827,16 +1254,35 @@ public static class ManagementClientExtensions
     /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The Queue</returns>
+    public static Task<Queue> GetQueueAsync(
+        this IManagementClient source,
+        Vhost vhost,
+        string queueName,
+        GetLengthsCriteria? lengthsCriteria = null,
+        GetRatesCriteria? ratesCriteria = null,
+        CancellationToken cancellationToken = default
+    ) => source.GetQueueAsync(vhost.Name, queueName, lengthsCriteria, ratesCriteria, cancellationToken);
+
+    /// <summary>
+    ///     Get an individual queue by name
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="queueName">The name of the queue</param>
+    /// <param name="vhost">The virtual host that contains the queue</param>
+    /// <param name="lengthsCriteria">Criteria for getting samples of queue length data</param>
+    /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The Queue</returns>
     public static Queue GetQueue(
         this IManagementClient source,
-        string queueName,
         Vhost vhost,
+        string queueName,
         GetLengthsCriteria? lengthsCriteria = null,
         GetRatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
-        return source.GetQueueAsync(queueName, vhost, lengthsCriteria, ratesCriteria, cancellationToken)
+        return source.GetQueueAsync(vhost, queueName, lengthsCriteria, ratesCriteria, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
@@ -898,6 +1344,29 @@ public static class ManagementClientExtensions
     /// <param name="source"></param>
     /// <param name="policy">Policy to create</param>
     /// <param name="cancellationToken"></param>
+    public static Task CreatePolicyAsync(
+        this IManagementClient source,
+        Policy policy,
+        CancellationToken cancellationToken = default
+    ) => source.CreatePolicyAsync(
+        policy.Vhost,
+        new PolicyInfo
+        {
+            Name = policy.Name,
+            ApplyTo = policy.ApplyTo,
+            Definition = policy.Definition,
+            Priority = policy.Priority,
+            Pattern = policy.Pattern
+        },
+        cancellationToken
+    );
+
+    /// <summary>
+    ///     Creates a policy on the cluster
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="policy">Policy to create</param>
+    /// <param name="cancellationToken"></param>
     public static void CreatePolicy(
         this IManagementClient source,
         Policy policy,
@@ -913,17 +1382,31 @@ public static class ManagementClientExtensions
     ///     Delete a policy from the cluster
     /// </summary>
     /// <param name="source"></param>
+    /// <param name="vhost">vhost on which the policy resides</param>
+    /// <param name="policyName">Policy name</param>
+    /// <param name="cancellationToken"></param>
+    public static Task DeletePolicyAsync(
+        this IManagementClient source,
+        Vhost vhost,
+        string policyName,
+        CancellationToken cancellationToken = default
+    ) => source.DeletePolicyAsync(vhost.Name, policyName, cancellationToken);
+
+    /// <summary>
+    ///     Delete a policy from the cluster
+    /// </summary>
+    /// <param name="source"></param>
     /// <param name="policyName">Policy name</param>
     /// <param name="vhost">vhost on which the policy resides</param>
     /// <param name="cancellationToken"></param>
     public static void DeletePolicy(
         this IManagementClient source,
-        string policyName,
         Vhost vhost,
+        string policyName,
         CancellationToken cancellationToken = default
     )
     {
-        source.DeletePolicyAsync(policyName, vhost, cancellationToken)
+        source.DeletePolicyAsync(vhost, policyName, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
@@ -942,6 +1425,18 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     Creates a parameter on the cluster
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="parameter">Parameter to create</param>
+    /// <param name="cancellationToken"></param>
+    public static Task CreateParameterAsync(
+        this IManagementClient source,
+        Parameter parameter,
+        CancellationToken cancellationToken = default
+    ) => source.CreateParameterAsync(parameter.Component, parameter.Vhost, parameter.Name, parameter.Value, cancellationToken);
 
     /// <summary>
     ///     Creates a parameter on the cluster
