@@ -425,14 +425,14 @@ public class ManagementClientTests
     }
 
     [Fact]
-    public async Task Should_be_able_to_create_parameter()
+    public async Task Should_be_able_to_create_federation_upstream_parameter()
     {
         await fixture.ManagementClient.CreateParameterAsync(new Parameter
         {
             Component = "federation-upstream",
             Name = "myfakefederationupstream1",
             Vhost = Vhost.Name,
-            Value = new { value = new { uri = $"amqp://{fixture.User}:{fixture.Password}@{fixture.Host}" } }
+            Value = new { Uri = $"amqp://{fixture.User}:{fixture.Password}@{fixture.Host}" }
         });
         Assert.Contains(await fixture.ManagementClient.GetParametersAsync(), p => p.Name == "myfakefederationupstream1");
     }

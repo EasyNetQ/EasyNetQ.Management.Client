@@ -523,7 +523,7 @@ public class ManagementClient : IManagementClient
     {
         return PutAsync(
             Parameters / componentName / vhostName / parameterName,
-            parameterValue,
+            new { Value = parameterValue },
             cancellationToken
         );
     }
