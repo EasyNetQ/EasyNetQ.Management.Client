@@ -23,7 +23,7 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
         tag = $"{Environment.GetEnvironmentVariable("RABBITMQ_VERSION") ?? "3.11"}-management";
     }
 
-    public string Host { get; private set; } = "localhost";
+    public Uri Endpoint { get; private set; } = new("http://localhost:15672");
     public string User { get; private set; } = "guest";
     public string Password { get; private set; } = "guest";
 
@@ -39,8 +39,12 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
         await PullImageAsync(cts.Token);
         var containerId = await RunNewContainerAsync(cts.Token);
         if (dockerEngineOsPlatform == OSPlatform.Windows)
-            Host = await dockerProxy.GetContainerIpAsync(containerId, cts.Token);
-        ManagementClient = new ManagementClient(new Uri($"http://{Host}:15672"), User, Password);
+        {
+            var containerIp = await dockerProxy.GetContainerIpAsync(containerId, cts.Token);
+            Endpoint = new Uri($"http://{containerIp}:15672");
+        }
+
+        ManagementClient = new ManagementClient(Endpoint, User, Password);
         await WaitForRabbitMqReadyAsync(cts.Token);
     }
 

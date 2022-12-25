@@ -29,7 +29,7 @@ public class ScenarioTest
         await fixture.ManagementClient.CreatePermissionAsync(vhost, new PermissionInfo(user.Name));
 
         // now log in again as the new user
-        using var management = new ManagementClient(fixture.Host, user.Name, "topSecret");
+        using var management = new ManagementClient(fixture.Endpoint, user.Name, "topSecret");
 
         // test that everything's OK
         await management.IsAliveAsync(vhost);
