@@ -631,7 +631,7 @@ public class ManagementClient : IManagementClient
     )
     {
         using var request = CreateRequest(HttpMethod.Get, path);
-        using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
         if (trueCondition(response.StatusCode))
             return true;
@@ -676,7 +676,7 @@ public class ManagementClient : IManagementClient
     private async Task DeleteAsync(RelativePath path, CancellationToken cancellationToken = default)
     {
         using var request = CreateRequest(HttpMethod.Delete, path);
-        using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
         await DeserializeResponseAsync(c => c == HttpStatusCode.NoContent, response).ConfigureAwait(false);
     }
@@ -691,7 +691,7 @@ public class ManagementClient : IManagementClient
 
         if (item != default) InsertRequestBody(request, item);
 
-        using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
         await DeserializeResponseAsync(
             s => s is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, response
