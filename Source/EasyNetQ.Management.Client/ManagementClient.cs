@@ -38,6 +38,7 @@ public class ManagementClient : IManagementClient
     private static readonly RelativePath Overview = Api / "overview";
     private static readonly RelativePath Nodes = Api / "nodes";
     private static readonly RelativePath Definitions = Api / "definitions";
+    private static readonly RelativePath Health = Api / "health";
 
     private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new("application/json");
 
@@ -601,15 +602,44 @@ public class ManagementClient : IManagementClient
         return result.Status == "ok";
     }
 
+    public Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default)
+    {
+        return GetAsync<IReadOnlyList<Consumer>>(Consumers, cancellationToken);
+    }
+
+    public Task<bool> HaveHealthCheckClusterAlarmsAsync(CancellationToken cancellationToken = default)
+    {
+        return GetAsync(Health / "checks" / "alarms", c => c == HttpStatusCode.ServiceUnavailable, c => c == HttpStatusCode.OK, cancellationToken);
+    }
+
+    public Task<bool> HaveHealthCheckLocalAlarmsAsync(CancellationToken cancellationToken = default)
+    {
+        return GetAsync(Health / "checks" / "local-alarms", c => c == HttpStatusCode.ServiceUnavailable, c => c == HttpStatusCode.OK, cancellationToken);
+    }
+
     public void Dispose()
     {
         if (disposeHttpClient)
             httpClient.Dispose();
     }
 
-    public Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default)
+    private async Task<bool> GetAsync(
+        RelativePath path,
+        Func<HttpStatusCode, bool> trueCondition,
+        Func<HttpStatusCode, bool> falseCondition,
+        CancellationToken cancellationToken = default
+    )
     {
-        return GetAsync<IReadOnlyList<Consumer>>(Consumers, cancellationToken);
+        using var request = CreateRequest(HttpMethod.Get, path);
+        using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+
+        if (trueCondition(response.StatusCode))
+            return true;
+
+        if (falseCondition(response.StatusCode))
+            return false;
+
+        throw new UnexpectedHttpStatusCodeException(response.StatusCode);
     }
 
     private Task<T> GetAsync<T>(RelativePath path, CancellationToken cancellationToken = default) => GetAsync<T>(path, null, cancellationToken);

@@ -1513,4 +1513,37 @@ public static class ManagementClientExtensions
 
         await client.CreateUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
     }
+
+
+    /// <summary>
+    ///     Returns true if there are any alarms in effect in the cluster
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static bool HaveHealthCheckClusterAlarms(
+        this IManagementClient client,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.HaveHealthCheckClusterAlarmsAsync(cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
+    ///     Returns true if there are any alarms in effect in on a target node
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static bool HaveHealthCheckLocalAlarms(
+        this IManagementClient client,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.HaveHealthCheckLocalAlarmsAsync(cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
 }

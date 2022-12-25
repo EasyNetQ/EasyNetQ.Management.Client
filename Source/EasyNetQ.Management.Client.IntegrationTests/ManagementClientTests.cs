@@ -126,6 +126,20 @@ public class ManagementClientTests
     }
 
     [Fact]
+    public async Task Should_be_able_to_check_cluster_alarms()
+    {
+        var result = await fixture.ManagementClient.HaveHealthCheckClusterAlarmsAsync();
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_check_local_alarms()
+    {
+        var result = await fixture.ManagementClient.HaveHealthCheckLocalAlarmsAsync();
+        result.Should().BeFalse();
+    }
+
+    [Fact]
     public async Task Should_be_able_to_create_a_user()
     {
         var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTags.Administrator);
