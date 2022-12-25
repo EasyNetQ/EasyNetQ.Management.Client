@@ -179,6 +179,25 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Exchange>>(Exchanges, cancellationToken);
     }
 
+    public Task<PageResult<Exchange>> GetExchangesByPageAsync(PageCriteria pageCriteria, CancellationToken cancellationToken = default)
+    {
+        return GetAsync<PageResult<Exchange>>(Exchanges, pageCriteria.ToQueryParameters(), cancellationToken);
+    }
+
+    public Task<IReadOnlyList<Exchange>> GetExchangesAsync(string vhostName, CancellationToken cancellationToken = default)
+    {
+        return GetAsync<IReadOnlyList<Exchange>>(Exchanges / vhostName, cancellationToken);
+    }
+
+    public Task<PageResult<Exchange>> GetExchangesByPageAsync(
+        string vhostName,
+        PageCriteria pageCriteria,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return GetAsync<PageResult<Exchange>>(Exchanges / vhostName, pageCriteria.ToQueryParameters(), cancellationToken);
+    }
+
     public Task<Exchange> GetExchangeAsync(
         string vhostName,
         string exchangeName,

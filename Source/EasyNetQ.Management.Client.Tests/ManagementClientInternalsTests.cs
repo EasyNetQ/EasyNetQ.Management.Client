@@ -15,7 +15,7 @@ public class ManagementClientInternalsTests
     public void GetConnections_CheckDeserializeLargeNumbers()
     {
         //TODO: redesign the ManagementClient by factoring out some of it's responsibilities and use dependency injection
-        //for this test we'd seperate out the deserialization.
+        //for this test we'd separate out the deserialization.
 
         JsonSerializerSettings settings = new JsonSerializerSettings
         {

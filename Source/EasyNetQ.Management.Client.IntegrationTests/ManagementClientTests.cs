@@ -1000,6 +1000,14 @@ public class ManagementClientTests
         foreach (var exchange in exchanges) Console.Out.WriteLine("exchange.Name = {0}", exchange.Name);
     }
 
+    [Fact]
+    public async Task Should_get_exchanges_with_pagination()
+    {
+        var page = await fixture.ManagementClient.GetExchangesByPageAsync(new PageCriteria(1, 7, "amq"));
+
+        page.Items.Count.Should().BeGreaterThan(0);
+    }
+
     [Fact(Skip = "Requires at least an active federation")]
     public async Task Should_get_federations()
     {
@@ -1069,12 +1077,12 @@ public class ManagementClientTests
         var firstPage = await fixture.ManagementClient.GetQueuesByPageAsync(new PageCriteria(1, 1));
         firstPage
             .Should()
-            .BeEquivalentTo(new PageResult<Queue>(2, 1, Array.Empty<Queue>(), 1, 2, 1, 2), x => x.Excluding(x => x.Items));
+            .BeEquivalentTo(new PageResult<Queue>(2, 1, Array.Empty<Queue>(), 1, 2, 1, 2), c => c.Excluding(x => x.Items));
 
         var secondPage = await fixture.ManagementClient.GetQueuesByPageAsync(new PageCriteria(2, 1));
         secondPage
             .Should()
-            .BeEquivalentTo(new PageResult<Queue>(2, 1, Array.Empty<Queue>(), 2, 2, 1, 2), x => x.Excluding(x => x.Items));
+            .BeEquivalentTo(new PageResult<Queue>(2, 1, Array.Empty<Queue>(), 2, 2, 1, 2), c => c.Excluding(x => x.Items));
     }
 
     [Fact]
