@@ -86,7 +86,7 @@ public class ManagementClientTests
     public async Task Should_be_able_to_configure_request()
     {
         using var client = new ManagementClient(
-            fixture.Host, fixture.User, fixture.Password, configureHttpRequestMessage: req => req.Headers.Add("x-not-used", "some_value")
+            fixture.Endpoint, fixture.User, fixture.Password, configureHttpRequestMessage: req => req.Headers.Add("x-not-used", "some_value")
         );
 
         await client.GetOverviewAsync();
@@ -446,7 +446,7 @@ public class ManagementClientTests
             Component = "federation-upstream",
             Name = "myfakefederationupstream1",
             Vhost = Vhost.Name,
-            Value = new { Uri = $"amqp://{fixture.User}:{fixture.Password}@{fixture.Host}" }
+            Value = new { Uri = $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}" }
         });
         Assert.Contains(await fixture.ManagementClient.GetParametersAsync(), p => p.Name == "myfakefederationupstream1");
     }
@@ -1027,7 +1027,7 @@ public class ManagementClientTests
     {
         var federations = await fixture.ManagementClient.GetFederationsAsync();
 
-        federations.Single().Node.Should().Be($"rabbit@{fixture.Host}");
+        federations.Single().Node.Should().Be($"rabbit@{fixture.Endpoint}");
     }
 
     [Fact]
