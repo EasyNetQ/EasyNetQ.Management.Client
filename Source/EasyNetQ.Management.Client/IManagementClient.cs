@@ -667,4 +667,18 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<IReadOnlyList<Federation>> GetFederationsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Returns true if there are any alarms in effect in the cluster
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<bool> HaveHealthCheckClusterAlarmsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Returns true if there are any alarms in effect in on a target node
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<bool> HaveHealthCheckLocalAlarmsAsync(CancellationToken cancellationToken = default);
 }
