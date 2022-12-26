@@ -99,7 +99,7 @@ public interface IManagementClient : IDisposable
     Task<IReadOnlyList<Exchange>> GetExchangesAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     A list of exchanges for a page.
+    ///     A list of exchanges for a page for a virtual host.
     /// </summary>
     /// <param name="vhostName"></param>
     /// <param name="pageCriteria"></param>
@@ -115,7 +115,7 @@ public interface IManagementClient : IDisposable
     Task<IReadOnlyList<Queue>> GetQueuesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     A list of all queues.
+    ///     A list of queues for a page.
     /// </summary>
     /// <param name="pageCriteria"></param>
     /// <param name="cancellationToken"></param>
@@ -131,7 +131,7 @@ public interface IManagementClient : IDisposable
     Task<IReadOnlyList<Queue>> GetQueuesAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     A list of all queues for a virtual host.
+    ///     A list of queues for a page for a virtual host.
     /// </summary>
     /// <param name="vhostName"></param>
     /// <param name="pageCriteria"></param>
