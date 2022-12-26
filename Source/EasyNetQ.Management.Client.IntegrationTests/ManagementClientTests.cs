@@ -741,7 +741,10 @@ public class ManagementClientTests
             {
                 { "app_id", "management-test" }
             },
-            TestQueue, "Hello World", "string");
+            TestQueue,
+            "Hello World",
+            PayloadEncoding.String
+        );
 
         await fixture.ManagementClient.PublishAsync(defaultExchange, publishInfo);
 
