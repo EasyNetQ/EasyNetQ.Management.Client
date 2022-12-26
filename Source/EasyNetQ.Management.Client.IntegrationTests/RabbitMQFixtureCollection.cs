@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace EasyNetQ.Management.Client.IntegrationTests;
 
 [CollectionDefinition("RabbitMQ")]

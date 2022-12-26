@@ -1,7 +1,6 @@
 ﻿using EasyNetQ.Management.Client.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model;
 

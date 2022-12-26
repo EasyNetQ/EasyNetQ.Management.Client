@@ -1,9 +1,4 @@
-﻿
-using FluentAssertions;
-
-using Xunit;
-
-namespace EasyNetQ.Management.Client.Tests;
+﻿namespace EasyNetQ.Management.Client.Tests;
 
 public class ManagementClientConstructorTests
 {
