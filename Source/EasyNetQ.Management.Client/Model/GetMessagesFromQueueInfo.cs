@@ -1,12 +1,10 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
-
-public class GetMessagesCriteria
+public class GetMessagesFromQueueInfo
 {
-    public long Count { get; private set; }
-    public AckMode Ackmode { get; private set; }
-    public string Encoding { get; private set; }
+    public long Count { get; }
+    public AckMode Ackmode { get; }
+    public string Encoding { get; }
 
     /// <summary>
     /// Constructor
@@ -17,7 +15,7 @@ public class GetMessagesCriteria
     /// <param name="ackMode">
     /// Determines if the message(s) should be placed back into the queue.
     /// </param>
-    public GetMessagesCriteria(long count, AckMode ackMode)
+    public GetMessagesFromQueueInfo(long count, AckMode ackMode)
     {
         Ackmode = ackMode;
         Count = count;

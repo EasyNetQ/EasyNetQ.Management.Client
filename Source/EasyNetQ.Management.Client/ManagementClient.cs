@@ -125,8 +125,8 @@ public class ManagementClient : IManagementClient
     public Uri Endpoint => httpClient.BaseAddress!;
 
     public Task<Overview> GetOverviewAsync(
-        GetLengthsCriteria? lengthsCriteria = null,
-        GetRatesCriteria? ratesCriteria = null,
+        LengthsCriteria? lengthsCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -168,7 +168,7 @@ public class ManagementClient : IManagementClient
 
     public Task<Channel> GetChannelAsync(
         string channelName,
-        GetRatesCriteria? ratesCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -202,7 +202,7 @@ public class ManagementClient : IManagementClient
     public Task<Exchange> GetExchangeAsync(
         string vhostName,
         string exchangeName,
-        GetRatesCriteria? ratesCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -216,8 +216,8 @@ public class ManagementClient : IManagementClient
     public Task<Queue> GetQueueAsync(
         string vhostName,
         string queueName,
-        GetLengthsCriteria? lengthsCriteria = null,
-        GetRatesCriteria? ratesCriteria = null,
+        LengthsCriteria? lengthsCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -350,13 +350,13 @@ public class ManagementClient : IManagementClient
     public Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(
         string vhostName,
         string queueName,
-        GetMessagesCriteria criteria,
+        GetMessagesFromQueueInfo getMessagesFromQueueInfo,
         CancellationToken cancellationToken = default
     )
     {
-        return PostAsync<GetMessagesCriteria, IReadOnlyList<Message>>(
+        return PostAsync<GetMessagesFromQueueInfo, IReadOnlyList<Message>>(
             Queues / vhostName / queueName / "get",
-            criteria,
+            getMessagesFromQueueInfo,
             cancellationToken
         );
     }

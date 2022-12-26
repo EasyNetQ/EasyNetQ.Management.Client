@@ -14,8 +14,8 @@ public static class ManagementClientExtensions
     /// <returns></returns>
     public static Overview GetOverview(
         this IManagementClient client,
-        GetLengthsCriteria? lengthsCriteria = null,
-        GetRatesCriteria? ratesCriteria = null,
+        LengthsCriteria? lengthsCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -114,7 +114,7 @@ public static class ManagementClientExtensions
     public static Channel GetChannel(
         this IManagementClient client,
         string channelName,
-        GetRatesCriteria? ratesCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -659,15 +659,15 @@ public static class ManagementClientExtensions
     /// </summary>
     /// <param name="client"></param>
     /// <param name="queue">The queue to retrieve from</param>
-    /// <param name="criteria">The criteria for the retrieve</param>
+    /// <param name="getMessagesFromQueueInfo">The criteria for the retrieve</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Messages</returns>
     public static Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(
         this IManagementClient client,
         Queue queue,
-        GetMessagesCriteria criteria,
+        GetMessagesFromQueueInfo getMessagesFromQueueInfo,
         CancellationToken cancellationToken = default
-    ) => client.GetMessagesFromQueueAsync(queue.Vhost, queue.Name, criteria, cancellationToken);
+    ) => client.GetMessagesFromQueueAsync(queue.Vhost, queue.Name, getMessagesFromQueueInfo, cancellationToken);
 
     /// <summary>
     ///     Get messages from a queue.
@@ -678,17 +678,17 @@ public static class ManagementClientExtensions
     /// </summary>
     /// <param name="client"></param>
     /// <param name="queue">The queue to retrieve from</param>
-    /// <param name="criteria">The criteria for the retrieve</param>
+    /// <param name="getMessagesFromQueueInfo">The criteria for the retrieve</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Messages</returns>
     public static IReadOnlyList<Message> GetMessagesFromQueue(
         this IManagementClient client,
         Queue queue,
-        GetMessagesCriteria criteria,
+        GetMessagesFromQueueInfo getMessagesFromQueueInfo,
         CancellationToken cancellationToken = default
     )
     {
-        return client.GetMessagesFromQueueAsync(queue, criteria, cancellationToken)
+        return client.GetMessagesFromQueueAsync(queue, getMessagesFromQueueInfo, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
@@ -1168,7 +1168,6 @@ public static class ManagementClientExtensions
             .GetResult();
     }
 
-
     /// <summary>
     ///     Declares a test queue, then publishes and consumes a message. Intended for use
     ///     by monitoring tools. If everything is working correctly, will return true.
@@ -1183,7 +1182,6 @@ public static class ManagementClientExtensions
         Vhost vhost,
         CancellationToken cancellationToken = default
     ) => client.IsAliveAsync(vhost.Name, cancellationToken);
-
 
     /// <summary>
     ///     Declares a test queue, then publishes and consumes a message. Intended for use
@@ -1218,7 +1216,7 @@ public static class ManagementClientExtensions
         this IManagementClient client,
         Vhost vhost,
         string exchangeName,
-        GetRatesCriteria? ratesCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     ) => client.GetExchangeAsync(vhost.Name, exchangeName, ratesCriteria, cancellationToken);
 
@@ -1235,7 +1233,7 @@ public static class ManagementClientExtensions
         this IManagementClient client,
         string exchangeName,
         Vhost vhost,
-        GetRatesCriteria? ratesCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -1258,8 +1256,8 @@ public static class ManagementClientExtensions
         this IManagementClient client,
         Vhost vhost,
         string queueName,
-        GetLengthsCriteria? lengthsCriteria = null,
-        GetRatesCriteria? ratesCriteria = null,
+        LengthsCriteria? lengthsCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     ) => client.GetQueueAsync(vhost.Name, queueName, lengthsCriteria, ratesCriteria, cancellationToken);
 
@@ -1277,8 +1275,8 @@ public static class ManagementClientExtensions
         this IManagementClient client,
         Vhost vhost,
         string queueName,
-        GetLengthsCriteria? lengthsCriteria = null,
-        GetRatesCriteria? ratesCriteria = null,
+        LengthsCriteria? lengthsCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -1513,7 +1511,6 @@ public static class ManagementClientExtensions
 
         await client.CreateUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
     }
-
 
     /// <summary>
     ///     Returns true if there are any alarms in effect in the cluster
