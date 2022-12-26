@@ -1,33 +1,31 @@
 ﻿using EasyNetQ.Management.Client.Model;
-using FluentAssertions;
 using Newtonsoft.Json;
-using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests.Model;
 
 public class PolicySerializationTests
 {
-    private readonly Policy[] _policy;
+    private readonly Policy[] policies;
 
     public PolicySerializationTests()
     {
-        _policy = ResourceLoader.LoadObjectFromJson<Policy[]>("Policies_ha.json", ManagementClient.SerializerSettings);
+        policies = ResourceLoader.LoadObjectFromJson<Policy[]>("Policies_ha.json", ManagementClient.SerializerSettings);
     }
 
     [Fact]
     public void Should_read_apply_to_properly()
     {
-        var exactlyPolicies = _policy.Where(p => p.Name == "ha-duplicate").ToList();
+        var exactlyPolicies = policies.Where(p => p.Name == "ha-duplicate").ToList();
         Assert.Single(exactlyPolicies);
         var policy = exactlyPolicies.First();
         Assert.Equal(ApplyMode.Queues, policy.ApplyTo);
 
-        exactlyPolicies = _policy.Where(p => p.Name == "mirror_test").ToList();
+        exactlyPolicies = policies.Where(p => p.Name == "mirror_test").ToList();
         Assert.Single(exactlyPolicies);
         policy = exactlyPolicies.First();
         Assert.Equal(ApplyMode.Exchanges, policy.ApplyTo);
 
-        exactlyPolicies = _policy.Where(p => p.Name == "default apply to").ToList();
+        exactlyPolicies = policies.Where(p => p.Name == "default apply to").ToList();
         Assert.Single(exactlyPolicies);
         policy = exactlyPolicies.First();
         Assert.Equal(ApplyMode.All, policy.ApplyTo);
@@ -36,7 +34,7 @@ public class PolicySerializationTests
     [Fact]
     public void Should_read_federation_upstream_properly()
     {
-        var exactlyPolicies = _policy.Where(p => p.Name == "mirror_test").ToList();
+        var exactlyPolicies = policies.Where(p => p.Name == "mirror_test").ToList();
         Assert.Single(exactlyPolicies);
         var policy = exactlyPolicies.First();
         Assert.Equal("test", policy.Definition.FederationUpstream);
@@ -45,8 +43,8 @@ public class PolicySerializationTests
     [Fact]
     public void Should_read_exactly_ha_properly()
     {
-        _policy.Length.Should().Be(3);
-        var exactlyPolicies = _policy.Where(p => p.Name == "ha-duplicate").ToList();
+        policies.Length.Should().Be(3);
+        var exactlyPolicies = policies.Where(p => p.Name == "ha-duplicate").ToList();
         Assert.Single(exactlyPolicies);
         var policy = exactlyPolicies[0];
         Assert.Equal(HaMode.Exactly, policy.Definition.HaMode);
@@ -60,8 +58,8 @@ public class PolicySerializationTests
     [Fact]
     public void Should_read_nodes_ha_properly()
     {
-        _policy.Length.Should().Be(3);
-        var mirrorTestPolicies = _policy.Where(p => p.Name == "mirror_test").ToList();
+        policies.Length.Should().Be(3);
+        var mirrorTestPolicies = policies.Where(p => p.Name == "mirror_test").ToList();
         Assert.Single(mirrorTestPolicies);
         var policy = mirrorTestPolicies.First();
         Assert.Equal(HaMode.Nodes, policy.Definition.HaMode);
@@ -123,7 +121,7 @@ public class PolicySerializationTests
             Pattern = "foo",
             Definition = new PolicyDefinition { HaMode = HaMode.All }
         }, ManagementClient.SerializerSettings);
-        Console.WriteLine(serializedMessage);
+
         Assert.DoesNotContain("ha-params", serializedMessage);
         Assert.DoesNotContain("ha-sync-batch-size", serializedMessage);
         Assert.DoesNotContain("federation-upstream-set", serializedMessage);

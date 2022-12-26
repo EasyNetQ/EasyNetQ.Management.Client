@@ -1,5 +1,4 @@
 ﻿using EasyNetQ.Management.Client.Model;
-using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests;
 

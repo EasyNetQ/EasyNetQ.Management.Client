@@ -2,7 +2,6 @@
 using EasyNetQ.Management.Client.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Xunit;
 
 namespace EasyNetQ.Management.Client.Tests;
 
@@ -17,7 +16,7 @@ public class ManagementClientInternalsTests
         //TODO: redesign the ManagementClient by factoring out some of it's responsibilities and use dependency injection
         //for this test we'd separate out the deserialization.
 
-        JsonSerializerSettings settings = new JsonSerializerSettings
+        var settings = new JsonSerializerSettings
         {
             ContractResolver = new DefaultContractResolver
             {
@@ -27,7 +26,7 @@ public class ManagementClientInternalsTests
 
         settings.Converters.Add(new PropertyConverter());
 
-        String responseBody = GetExampleGetConnectionsJsonResponseBody();
+        var responseBody = GetExampleGetConnectionsJsonResponseBody();
 
         var connections = JsonConvert.DeserializeObject<IEnumerable<Connection>>(responseBody, settings);
     }
@@ -35,7 +34,7 @@ public class ManagementClientInternalsTests
     [Fact]
     public void GetChannels()
     {
-        JsonSerializerSettings settings = new JsonSerializerSettings
+        var settings = new JsonSerializerSettings
         {
             ContractResolver = new DefaultContractResolver
             {
@@ -45,7 +44,7 @@ public class ManagementClientInternalsTests
 
         settings.Converters.Add(new PropertyConverter());
 
-        String responseBody = GetExampleGetChannelsJsonResponseBody();
+        var responseBody = GetExampleGetChannelsJsonResponseBody();
 
         var channels = JsonConvert.DeserializeObject<IEnumerable<Channel>>(responseBody, settings).ToList();
 
@@ -61,7 +60,7 @@ public class ManagementClientInternalsTests
 
     }
 
-    private string GetExampleGetChannelsJsonResponseBody()
+    private static string GetExampleGetChannelsJsonResponseBody()
     {
         return @"
 [{

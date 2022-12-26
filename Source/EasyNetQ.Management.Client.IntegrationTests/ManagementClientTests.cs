@@ -1,6 +1,4 @@
 ﻿using EasyNetQ.Management.Client.Model;
-using FluentAssertions;
-using Xunit;
 
 namespace EasyNetQ.Management.Client.IntegrationTests;
 
@@ -8,19 +6,21 @@ namespace EasyNetQ.Management.Client.IntegrationTests;
 public class ManagementClientTests
 {
     private readonly RabbitMqFixture fixture;
+    private readonly ITestOutputHelper output;
     private static readonly Vhost Vhost = new() { Name = "/", Tracing = false };
 
-    public ManagementClientTests(RabbitMqFixture fixture)
+    public ManagementClientTests(RabbitMqFixture fixture, ITestOutputHelper output)
     {
         this.fixture = fixture;
+        this.output = output;
     }
 
-    private const string testExchange = "management_api_test_exchange";
-    private const string testExchange2 = "management_api_test_exchange2";
-    private const string testExchangetestQueueWithPlusChar = "management_api_test_exchange+plus+test";
-    private const string testQueue = "management_api_test_queue";
-    private const string testQueueWithPlusChar = "management_api_test_queue+plus+test";
-    private const string testUser = "mikey";
+    private const string TestExchange = "management_api_test_exchange";
+    private const string TestExchange2 = "management_api_test_exchange2";
+    private const string TestExchangeTestQueueWithPlusChar = "management_api_test_exchange+plus+test";
+    private const string TestQueue = "management_api_test_queue";
+    private const string TestQueueWithPlusChar = "management_api_test_queue+plus+test";
+    private const string TestUser = "mikey";
 
     private async Task<Exchange> CreateExchange(string exchangeName)
     {
@@ -51,22 +51,22 @@ public class ManagementClientTests
     private async Task<Exchange> EnsureExchangeExists(string exchangeName)
     {
         return (await fixture.ManagementClient.GetExchangesAsync())
-               .SingleOrDefault(x => x.Name == exchangeName) ?? await CreateExchange(exchangeName);
+            .SingleOrDefault(x => x.Name == exchangeName) ?? await CreateExchange(exchangeName);
     }
 
-    private const string testVHost = "management_test_virtual_host";
+    private const string TestVHost = "management_test_virtual_host";
 
     [Fact]
     public async Task Should_be_able_to_change_the_password_of_a_user()
     {
-        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTags.Monitoring).AddTag(UserTags.Management);
+        var userInfo = new UserInfo(TestUser, "topSecret").AddTag(UserTags.Monitoring).AddTag(UserTags.Management);
         await fixture.ManagementClient.CreateUserAsync(userInfo);
 
-        var user = await fixture.ManagementClient.GetUserAsync(testUser);
+        var user = await fixture.ManagementClient.GetUserAsync(TestUser);
 
-        await fixture.ManagementClient.ChangeUserPasswordAsync(testUser, "newPassword");
+        await fixture.ManagementClient.ChangeUserPasswordAsync(TestUser, "newPassword");
 
-        var updatedUser = await fixture.ManagementClient.GetUserAsync(testUser);
+        var updatedUser = await fixture.ManagementClient.GetUserAsync(TestUser);
         updatedUser.Name.Should().Be(user.Name);
         updatedUser.Tags.Should().BeEquivalentTo(user.Tags);
         updatedUser.PasswordHash.Should().NotBe(user.PasswordHash);
@@ -95,10 +95,10 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_a_queue()
     {
-        await fixture.ManagementClient.CreateQueueAsync(new QueueInfo(testQueue), Vhost);
-        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, testQueue);
+        await fixture.ManagementClient.CreateQueueAsync(new QueueInfo(TestQueue), Vhost);
+        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueue);
 
-        queue.Name.Should().Be(testQueue);
+        queue.Name.Should().Be(TestQueue);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class ManagementClientTests
     {
         const string exchangeName = "test-dead-letter-exchange";
         const string argumentKey = "x-dead-letter-exchange";
-        var queueInfo = new QueueInfo($"{testQueue}1");
+        var queueInfo = new QueueInfo($"{TestQueue}1");
         queueInfo.Arguments.Add(argumentKey, exchangeName);
         await fixture.ManagementClient.CreateQueueAsync(queueInfo, Vhost);
         var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, queueInfo.Name);
@@ -117,12 +117,12 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_a_queue_with_plus_char_in_the_name()
     {
-        var queueInfo = new QueueInfo(testQueueWithPlusChar);
+        var queueInfo = new QueueInfo(TestQueueWithPlusChar);
 
         await fixture.ManagementClient.CreateQueueAsync(queueInfo, Vhost);
-        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, testQueueWithPlusChar);
+        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueueWithPlusChar);
 
-        queue.Name.Should().Be(testQueueWithPlusChar);
+        queue.Name.Should().Be(TestQueueWithPlusChar);
     }
 
     [Fact]
@@ -142,12 +142,12 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_a_user()
     {
-        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTags.Administrator);
+        var userInfo = new UserInfo(TestUser, "topSecret").AddTag(UserTags.Administrator);
 
         await fixture.ManagementClient.CreateUserAsync(userInfo);
-        var user = await fixture.ManagementClient.GetUserAsync(testUser);
+        var user = await fixture.ManagementClient.GetUserAsync(TestUser);
 
-        user.Name.Should().Be(testUser);
+        user.Name.Should().Be(TestUser);
         user.Tags.Should().Contain(UserTags.Administrator);
     }
 
@@ -169,12 +169,12 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_a_user_with_the_policymaker_tag()
     {
-        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTags.Policymaker);
+        var userInfo = new UserInfo(TestUser, "topSecret").AddTag(UserTags.Policymaker);
 
         await fixture.ManagementClient.CreateUserAsync(userInfo);
-        var user = await fixture.ManagementClient.GetUserAsync(testUser);
+        var user = await fixture.ManagementClient.GetUserAsync(TestUser);
 
-        user.Name.Should().Be(testUser);
+        user.Name.Should().Be(TestUser);
     }
 
     [Fact]
@@ -260,19 +260,19 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_an_exchange()
     {
-        var exchange = await CreateExchange(testExchange);
-        exchange.Name.Should().Be(testExchange);
+        var exchange = await CreateExchange(TestExchange);
+        exchange.Name.Should().Be(TestExchange);
     }
 
     [Fact]
     public async Task Should_be_able_to_create_an_exchange_with_plus_char_in_the_name()
     {
-        var exchangeInfo = new ExchangeInfo(testExchangetestQueueWithPlusChar, "direct");
+        var exchangeInfo = new ExchangeInfo(TestExchangeTestQueueWithPlusChar, "direct");
 
         await fixture.ManagementClient.CreateExchangeAsync(exchangeInfo, Vhost);
-        var exchange = await fixture.ManagementClient.GetExchangeAsync(Vhost, testExchangetestQueueWithPlusChar);
+        var exchange = await fixture.ManagementClient.GetExchangeAsync(Vhost, TestExchangeTestQueueWithPlusChar);
 
-        exchange.Name.Should().Be(testExchangetestQueueWithPlusChar);
+        exchange.Name.Should().Be(TestExchangeTestQueueWithPlusChar);
     }
 
     [Fact]
@@ -454,13 +454,13 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_permissions()
     {
-        var user = (await fixture.ManagementClient.GetUsersAsync()).SingleOrDefault(x => x.Name == testUser);
+        var user = (await fixture.ManagementClient.GetUsersAsync()).SingleOrDefault(x => x.Name == TestUser);
         if (user == null)
-            throw new EasyNetQTestException($"user '{testUser}' hasn't been created");
+            throw new EasyNetQTestException($"user '{TestUser}' hasn't been created");
 
-        var vhost = (await fixture.ManagementClient.GetVhostsAsync()).SingleOrDefault(x => x.Name == testVHost);
+        var vhost = (await fixture.ManagementClient.GetVhostsAsync()).SingleOrDefault(x => x.Name == TestVHost);
         if (vhost == null)
-            throw new EasyNetQTestException($"Test vhost: '{testVHost}' has not been created");
+            throw new EasyNetQTestException($"Test vhost: '{TestVHost}' has not been created");
 
         var permissionInfo = new PermissionInfo(user.Name);
         await fixture.ManagementClient.CreatePermissionAsync(vhost, permissionInfo);
@@ -469,17 +469,13 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_permissions_in_default_Vhost()
     {
-        var user = (await fixture.ManagementClient.GetUsersAsync()).SingleOrDefault(x => x.Name == testUser);
-        if (user == null)
-        {
-            //create user if it does not exists
-            var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTags.Administrator);
-            user = await fixture.ManagementClient.GetUserAsync(testUser);
-        }
+        //create user if it does not exists
+        var user = (await fixture.ManagementClient.GetUsersAsync()).SingleOrDefault(x => x.Name == TestUser)
+                   ?? await fixture.ManagementClient.GetUserAsync(TestUser);
 
         var vhost = (await fixture.ManagementClient.GetVhostsAsync()).SingleOrDefault(x => x.Name == Vhost.Name);
         if (vhost == null)
-            throw new EasyNetQTestException($"Default vhost: '{testVHost}' has not been created");
+            throw new EasyNetQTestException($"Default vhost: '{TestVHost}' has not been created");
 
         var permissionInfo = new PermissionInfo(user.Name);
         await fixture.ManagementClient.CreatePermissionAsync(vhost, permissionInfo);
@@ -541,14 +537,14 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_delete_a_queue()
     {
-        var queue = await CreateTestQueue(testQueue);
+        var queue = await CreateTestQueue(TestQueue);
         await fixture.ManagementClient.DeleteQueueAsync(queue);
     }
 
     [Fact]
     public async Task Should_be_able_to_delete_a_user()
     {
-        var user = await fixture.ManagementClient.GetUserAsync(testUser);
+        var user = await fixture.ManagementClient.GetUserAsync(TestUser);
         await fixture.ManagementClient.DeleteUserAsync(user);
     }
 
@@ -564,26 +560,26 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_delete_an_exchange_with_pluses()
     {
-        var exchange = await CreateExchange(testExchangetestQueueWithPlusChar);
+        var exchange = await CreateExchange(TestExchangeTestQueueWithPlusChar);
         await fixture.ManagementClient.DeleteExchangeAsync(exchange);
     }
 
     [Fact]
     public async Task Should_be_able_to_delete_permissions()
     {
-        var userInfo = new UserInfo(testUser, "topSecret").AddTag(UserTags.Monitoring).AddTag(UserTags.Management);
+        var userInfo = new UserInfo(TestUser, "topSecret").AddTag(UserTags.Monitoring).AddTag(UserTags.Management);
         await fixture.ManagementClient.CreateUserAsync(userInfo);
-        var user = await fixture.ManagementClient.GetUserAsync(testUser);
-        await fixture.ManagementClient.CreateVhostAsync(testVHost);
-        var vhost = await fixture.ManagementClient.GetVhostAsync(testVHost);
+        var user = await fixture.ManagementClient.GetUserAsync(TestUser);
+        await fixture.ManagementClient.CreateVhostAsync(TestVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
         var permissionInfo = new PermissionInfo(user.Name);
         await fixture.ManagementClient.CreatePermissionAsync(vhost, permissionInfo);
 
         var permission = (await fixture.ManagementClient.GetPermissionsAsync())
-            .SingleOrDefault(x => x.User == testUser && x.Vhost == testVHost);
+            .SingleOrDefault(x => x.User == TestUser && x.Vhost == TestVHost);
 
         if (permission == null)
-            throw new EasyNetQTestException($"No permission for vhost: {testVHost} and user: {testUser}");
+            throw new EasyNetQTestException($"No permission for vhost: {TestVHost} and user: {TestUser}");
 
         await fixture.ManagementClient.DeletePermissionAsync(permission);
     }
@@ -617,9 +613,9 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_get_a_list_of_bindings_between_an_exchange_and_a_queue()
     {
-        var queue = await EnsureQueueExists(testQueue);
+        var queue = await EnsureQueueExists(TestQueue);
 
-        var exchange = await EnsureExchangeExists(testExchange);
+        var exchange = await EnsureExchangeExists(TestExchange);
 
         var bindings = (await fixture.ManagementClient.GetQueueBindingsAsync(exchange, queue)).ToArray();
 
@@ -629,8 +625,8 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_get_a_list_of_bindings_between_an_exchange_and_an_exchange()
     {
-        var exchange1 = await EnsureExchangeExists(testExchange);
-        var exchange2 = await EnsureExchangeExists(testExchange2);
+        var exchange1 = await EnsureExchangeExists(TestExchange);
+        var exchange2 = await EnsureExchangeExists(TestExchange2);
 
         var bindings = await fixture.ManagementClient.GetExchangeBindingsAsync(exchange1, exchange2);
 
@@ -640,9 +636,9 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_get_a_queue_by_name()
     {
-        await CreateTestQueue(testQueue);
-        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, testQueue);
-        queue.Name.Should().Be(testQueue);
+        await CreateTestQueue(TestQueue);
+        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueue);
+        queue.Name.Should().Be(TestQueue);
     }
 
     [Fact]
@@ -650,17 +646,17 @@ public class ManagementClientTests
     {
         const int age = 10;
         const int increment = 1;
-        await CreateTestQueue(testQueue);
+        await CreateTestQueue(TestQueue);
         await Task.Delay(TimeSpan.FromSeconds(10));
 
         var queue = await fixture.ManagementClient.GetQueueAsync(
             Vhost,
-            testQueue,
+            TestQueue,
             new GetLengthsCriteria(age, increment),
             new GetRatesCriteria(age, increment)
         );
 
-        queue.Name.Should().Be(testQueue);
+        queue.Name.Should().Be(TestQueue);
         queue.MessagesDetails.Samples.Count.Should().BeGreaterThan(0);
         queue.MessagesReadyDetails.Samples.Count.Should().BeGreaterThan(0);
         queue.MessagesUnacknowledgedDetails.Samples.Count.Should().BeGreaterThan(0);
@@ -671,12 +667,12 @@ public class ManagementClientTests
     {
         const int age = 10;
         const int increment = 1;
-        await CreateTestQueue(testQueue);
+        await CreateTestQueue(TestQueue);
         await Task.Delay(TimeSpan.FromSeconds(10));
 
-        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, testQueue, new GetLengthsCriteria(age, increment));
+        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueue, new GetLengthsCriteria(age, increment));
 
-        queue.Name.Should().Be(testQueue);
+        queue.Name.Should().Be(TestQueue);
         queue.MessagesDetails.Samples.Count.Should().BeGreaterThan(0);
         queue.MessagesReadyDetails.Samples.Count.Should().BeGreaterThan(0);
         queue.MessagesUnacknowledgedDetails.Samples.Count.Should().BeGreaterThan(0);
@@ -687,31 +683,31 @@ public class ManagementClientTests
     {
         const int age = 60;
         const int increment = 10;
-        await CreateTestQueue(testQueue);
-        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, testQueue, ratesCriteria: new GetRatesCriteria(age, increment));
-        queue.Name.Should().Be(testQueue);
+        await CreateTestQueue(TestQueue);
+        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueue, ratesCriteria: new GetRatesCriteria(age, increment));
+        queue.Name.Should().Be(TestQueue);
     }
 
     [Fact]
     public async Task Should_be_able_to_get_a_queue_by_name_with_plus_char()
     {
-        await CreateTestQueue(testQueueWithPlusChar);
-        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, testQueueWithPlusChar);
-        queue.Name.Should().Be(testQueueWithPlusChar);
+        await CreateTestQueue(TestQueueWithPlusChar);
+        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueueWithPlusChar);
+        queue.Name.Should().Be(TestQueueWithPlusChar);
     }
 
     [Fact]
     public async Task Should_be_able_to_get_a_user_by_name()
     {
-        var userInfo = new UserInfo(testUser, "topSecret");
+        var userInfo = new UserInfo(TestUser, "topSecret");
         await fixture.ManagementClient.CreateUserAsync(userInfo);
-        (await fixture.ManagementClient.GetUserAsync(testUser)).Name.Should().Be(testUser);
+        (await fixture.ManagementClient.GetUserAsync(TestUser)).Name.Should().Be(TestUser);
     }
 
     [Fact]
     public async Task Should_be_able_to_get_all_the_bindings_for_a_queue()
     {
-        var queue = await CreateTestQueue(testQueue);
+        var queue = await CreateTestQueue(TestQueue);
         var bindings = await fixture.ManagementClient.GetBindingsForQueueAsync(queue);
         Assert.NotEmpty(bindings.ToList());
     }
@@ -720,32 +716,32 @@ public class ManagementClientTests
     public async Task Should_be_able_to_get_an_individual_exchange_by_name()
     {
         var vhost = new Vhost { Name = Vhost.Name };
-        var exchange = await fixture.ManagementClient.GetExchangeAsync(vhost, testExchange);
+        var exchange = await fixture.ManagementClient.GetExchangeAsync(vhost, TestExchange);
 
-        exchange.Name.Should().Be(testExchange);
+        exchange.Name.Should().Be(TestExchange);
     }
 
     [Fact]
     public async Task Should_be_able_to_get_an_individual_vhost()
     {
-        await fixture.ManagementClient.CreateVhostAsync(testVHost);
-        var vhost = await fixture.ManagementClient.GetVhostAsync(testVHost);
-        vhost.Name.Should().Be(testVHost);
+        await fixture.ManagementClient.CreateVhostAsync(TestVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
+        vhost.Name.Should().Be(TestVHost);
     }
 
     [Fact]
     public async Task Should_be_able_to_get_messages_from_a_queue()
     {
-        var queue = await CreateTestQueue(testQueue);
+        var queue = await CreateTestQueue(TestQueue);
 
         var defaultExchange = new Exchange { Name = "amq.default", Vhost = Vhost.Name };
 
         var publishInfo = new PublishInfo(
             new Dictionary<string, object>
             {
-                {"app_id", "management-test"}
+                { "app_id", "management-test" }
             },
-            testQueue, "Hello World", "string");
+            TestQueue, "Hello World", "string");
 
         await fixture.ManagementClient.PublishAsync(defaultExchange, publishInfo);
 
@@ -775,9 +771,9 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_publish_to_an_exchange()
     {
-        var exchange = await CreateExchange(testExchange);
+        var exchange = await CreateExchange(TestExchange);
 
-        var publishInfo = new PublishInfo(testQueue, "Hello World");
+        var publishInfo = new PublishInfo(TestQueue, "Hello World");
         var result = await fixture.ManagementClient.PublishAsync(exchange, publishInfo);
 
         // the testExchange isn't bound to a queue
@@ -787,9 +783,9 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_check_that_the_broker_is_alive()
     {
-        await fixture.ManagementClient.CreateVhostAsync(testVHost);
-        var vhost = await fixture.ManagementClient.GetVhostAsync(testVHost);
-        var user = (await fixture.ManagementClient.GetUsersAsync()).SingleOrDefault(x => x.Name == fixture.User);
+        await fixture.ManagementClient.CreateVhostAsync(TestVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
+        var user = (await fixture.ManagementClient.GetUsersAsync()).Single(x => x.Name == fixture.User);
         var permissionInfo = new PermissionInfo(user.Name);
         await fixture.ManagementClient.CreatePermissionAsync(vhost, permissionInfo);
         (await fixture.ManagementClient.IsAliveAsync(vhost)).Should().BeTrue();
@@ -798,19 +794,19 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_create_a_virtual_host()
     {
-        await fixture.ManagementClient.CreateVhostAsync(testVHost);
-        var vhost = await fixture.ManagementClient.GetVhostAsync(testVHost);
-        vhost.Name.Should().Be(testVHost);
+        await fixture.ManagementClient.CreateVhostAsync(TestVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
+        vhost.Name.Should().Be(TestVHost);
     }
 
     [Fact]
     public async Task Should_create_binding()
     {
         var vhost = await fixture.ManagementClient.GetVhostAsync(Vhost.Name);
-        var queue = await fixture.ManagementClient.GetQueueAsync(vhost, testQueue);
-        var exchange = await fixture.ManagementClient.GetExchangeAsync(vhost, testExchange);
+        var queue = await fixture.ManagementClient.GetQueueAsync(vhost, TestQueue);
+        var exchange = await fixture.ManagementClient.GetExchangeAsync(vhost, TestExchange);
 
-        var bindingInfo = new BindingInfo(testQueue);
+        var bindingInfo = new BindingInfo(TestQueue);
 
         await fixture.ManagementClient.CreateQueueBindingAsync(exchange, queue, bindingInfo);
     }
@@ -846,7 +842,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_delete_a_virtual_host()
     {
-        var vhost = await fixture.ManagementClient.GetVhostAsync(testVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
         await fixture.ManagementClient.DeleteVhostAsync(vhost);
     }
 
@@ -854,7 +850,7 @@ public class ManagementClientTests
     public async Task Should_delete_binding()
     {
         var sourceXchange = await CreateExchange("sourceXcg");
-        var queue = await CreateTestQueue(testQueue);
+        var queue = await CreateTestQueue(TestQueue);
         var bindingInfo = new BindingInfo("#");
         await fixture.ManagementClient.CreateQueueBindingAsync(sourceXchange, queue, bindingInfo);
         var binding = (await fixture.ManagementClient.GetQueueBindingsAsync(sourceXchange, queue))[0];
@@ -981,20 +977,15 @@ public class ManagementClientTests
     {
         foreach (var connection in await fixture.ManagementClient.GetConnectionsAsync())
         {
-            Console.Out.WriteLine("connection.Name = {0}", connection.Name);
-
-            var clientProperties = connection.ClientProperties;
-
-            Console.WriteLine("User:\t{0}", clientProperties.User);
-            Console.WriteLine("Application:\t{0}", clientProperties.Application);
-            Console.WriteLine("ClientApi:\t{0}", clientProperties.ClientApi);
-            Console.WriteLine("ApplicationLocation:\t{0}", clientProperties.ApplicationLocation);
-            Console.WriteLine("Connected:\t{0}", clientProperties.Connected);
-            Console.WriteLine("EasynetqVersion:\t{0}", clientProperties.EasynetqVersion);
-            Console.WriteLine("MachineName:\t{0}", clientProperties.MachineName);
-
-            //Test the dynamic nature
-            Console.WriteLine("Copyright:\t{0}", ((dynamic)clientProperties).Copyright);
+            output.WriteLine("Connection.Name: {0}", connection.Name);
+            output.WriteLine("User: {0}", connection.ClientProperties.User);
+            output.WriteLine("Application: {0}", connection.ClientProperties.Application);
+            output.WriteLine("ClientApi: {0}", connection.ClientProperties.ClientApi);
+            output.WriteLine("ApplicationLocation: {0}", connection.ClientProperties.ApplicationLocation);
+            output.WriteLine("Connected: {0}", connection.ClientProperties.Connected);
+            output.WriteLine("EasynetqVersion: {0}", connection.ClientProperties.EasynetqVersion);
+            output.WriteLine("MachineName: {0}", connection.ClientProperties.MachineName);
+            output.WriteLine("Copyright: {0}", ((dynamic)connection.ClientProperties).Copyright);
         }
     }
 
@@ -1074,7 +1065,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_get_queues()
     {
-        await CreateTestQueue(testQueue);
+        await CreateTestQueue(TestQueue);
         (await fixture.ManagementClient.GetQueuesAsync()).Count.Should().BeGreaterThan(0);
     }
 
@@ -1102,11 +1093,11 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_get_queues_by_vhost()
     {
-        await fixture.ManagementClient.CreateVhostAsync(testVHost);
-        var vhost = await fixture.ManagementClient.GetVhostAsync(testVHost);
-        vhost.Name.Should().Be(testVHost);
+        await fixture.ManagementClient.CreateVhostAsync(TestVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
+        vhost.Name.Should().Be(TestVHost);
 
-        await CreateTestQueueInVhost($"{testVHost}_{testQueue}", vhost);
+        await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}", vhost);
         (await fixture.ManagementClient.GetQueuesAsync(vhost)).Count.Should().BeGreaterThan(0);
     }
 
@@ -1129,7 +1120,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_purge_a_queue()
     {
-        var queue = await CreateTestQueue(testQueue);
+        var queue = await CreateTestQueue(TestQueue);
         await fixture.ManagementClient.PurgeAsync(queue);
     }
 
