@@ -13,64 +13,74 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: Lint & Test
+  lint-and-tests:
+    name: Lint & Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
-
-    strategy:
-      max-parallel: 2
-      matrix:
-        rabbitmq: ['3.9', '3.10', '3.11']
-        dotnet: ['7.x']
-      fail-fast: true
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-
-    - name: Setup .NET Core ${{ matrix.dotnet }}
+    - name: Setup .NET Core 7.x
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: ${{ matrix.dotnet }}
-
+        dotnet-version: '7.x'
     - name: Install dependencies
       run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
-
     - name: Check formatting
       run: dotnet format --no-restore --verify-no-changes --severity warn ./Source/EasyNetQ.Management.Client.sln || (echo "Run 'dotnet format' to fix issues" && exit 1)
-
     - name: Build
       run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
-
     - name: Tests
       run: |
         cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.Tests
         dotnet test --configuration Release --no-build
-
-    - name: Integration Tests
-      run: |
-        cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.IntegrationTests
-        export RABBITMQ_VERSION=${{ matrix.rabbitmq }}
-        dotnet test --configuration Release --no-build
-
     - name: Approval Tests
       run: |
         cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.ApprovalTests
         dotnet test --configuration Release --no-build
 
+  integration-tests:
+    name: Integrations Tests
+    runs-on: ubuntu-latest
+    needs: lint-and-tests
+    timeout-minutes: 15
+    strategy:
+      max-parallel: 3
+      matrix:
+        rabbitmq: ['3.9', '3.10', '3.11']
+      fail-fast: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup .NET Core 7.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.x
+      - name: Install dependencies
+        run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
+      - name: Build
+        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
+      - name: Integration Tests
+        run: |
+          cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.IntegrationTests
+          export RABBITMQ_VERSION=${{ matrix.rabbitmq }}
+          dotnet test --configuration Release --no-build
+
   publish-to-nuget:
     name: Publish to NuGet
     runs-on: ubuntu-latest
-    needs: test
+    needs: [lint-and-tests, integration-tests]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Setup .NET Core ${{ matrix.dotnet }}
+      - name: Setup .NET Core 7.x
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '7.x'
