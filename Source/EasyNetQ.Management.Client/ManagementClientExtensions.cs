@@ -1576,4 +1576,20 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     Rebalances all queues in all vhosts. This operation is asynchronous therefore please check the RabbitMQ log file for messages regarding the success or failure of the operation.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static void RebalanceQueues(
+        this IManagementClient client,
+        CancellationToken cancellationToken = default
+    )
+    {
+        client.RebalanceQueuesAsync(cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
 }

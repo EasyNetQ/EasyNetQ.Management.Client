@@ -154,6 +154,12 @@ public class ManagementClientTests
     }
 
     [Fact]
+    public async Task Should_be_able_to_rebalance_queues()
+    {
+        await fixture.ManagementClient.RebalanceQueuesAsync();
+    }
+
+    [Fact]
     public async Task Should_be_able_to_create_a_user()
     {
         var userInfo = new UserInfo(TestUser, "topSecret").AddTag(UserTags.Administrator);

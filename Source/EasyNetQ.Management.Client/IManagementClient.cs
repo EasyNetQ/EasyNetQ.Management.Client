@@ -695,4 +695,11 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<bool> HaveAnyQuorumQueuesInCriticalStateAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Rebalances all queues in all vhosts. This operation is asynchronous therefore please check the RabbitMQ log file for messages regarding the success or failure of the operation.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task RebalanceQueuesAsync(CancellationToken cancellationToken = default);
 }
