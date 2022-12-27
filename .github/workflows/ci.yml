@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  lint-and-test:
+  lint-and-tests:
     name: Lint & Test
     runs-on: ubuntu-latest
     timeout-minutes: 15
