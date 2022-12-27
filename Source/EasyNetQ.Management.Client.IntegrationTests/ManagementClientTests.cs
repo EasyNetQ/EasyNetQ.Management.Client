@@ -652,8 +652,8 @@ public class ManagementClientTests
         var queue = await fixture.ManagementClient.GetQueueAsync(
             Vhost,
             TestQueue,
-            new GetLengthsCriteria(age, increment),
-            new GetRatesCriteria(age, increment)
+            new LengthsCriteria(age, increment),
+            new RatesCriteria(age, increment)
         );
 
         queue.Name.Should().Be(TestQueue);
@@ -670,7 +670,7 @@ public class ManagementClientTests
         await CreateTestQueue(TestQueue);
         await Task.Delay(TimeSpan.FromSeconds(10));
 
-        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueue, new GetLengthsCriteria(age, increment));
+        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueue, new LengthsCriteria(age, increment));
 
         queue.Name.Should().Be(TestQueue);
         queue.MessagesDetails.Samples.Count.Should().BeGreaterThan(0);
@@ -684,7 +684,7 @@ public class ManagementClientTests
         const int age = 60;
         const int increment = 10;
         await CreateTestQueue(TestQueue);
-        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueue, ratesCriteria: new GetRatesCriteria(age, increment));
+        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueue, ratesCriteria: new RatesCriteria(age, increment));
         queue.Name.Should().Be(TestQueue);
     }
 
@@ -748,7 +748,7 @@ public class ManagementClientTests
 
         await fixture.ManagementClient.PublishAsync(defaultExchange, publishInfo);
 
-        var messages = await fixture.ManagementClient.GetMessagesFromQueueAsync(queue, new GetMessagesCriteria(1, AckMode.AckRequeueFalse));
+        var messages = await fixture.ManagementClient.GetMessagesFromQueueAsync(queue, new GetMessagesFromQueueInfo(1, AckMode.AckRequeueFalse));
         foreach (var message in messages)
         {
             Console.Out.WriteLine("message.Payload = {0}", message.Payload);

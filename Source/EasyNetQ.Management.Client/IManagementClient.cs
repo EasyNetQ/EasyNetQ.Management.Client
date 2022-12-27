@@ -17,8 +17,8 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<Overview> GetOverviewAsync(
-        GetLengthsCriteria? lengthsCriteria = null,
-        GetRatesCriteria? ratesCriteria = null,
+        LengthsCriteria? lengthsCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 
@@ -71,7 +71,7 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     Task<Channel> GetChannelAsync(
         string channelName,
-        GetRatesCriteria? ratesCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 
@@ -316,13 +316,13 @@ public interface IManagementClient : IDisposable
     /// </summary>
     /// <param name="vhostName"></param>
     /// <param name="queueName">The queue to retrieve from</param>
-    /// <param name="criteria">The criteria for the retrieve</param>
+    /// <param name="getMessagesFromQueueInfo">The criteria for the retrieve</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Messages</returns>
     Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(
         string vhostName,
         string queueName,
-        GetMessagesCriteria criteria,
+        GetMessagesFromQueueInfo getMessagesFromQueueInfo,
         CancellationToken cancellationToken = default
     );
 
@@ -552,7 +552,7 @@ public interface IManagementClient : IDisposable
     Task<Exchange> GetExchangeAsync(
         string vhostName,
         string exchangeName,
-        GetRatesCriteria? ratesCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 
@@ -568,8 +568,8 @@ public interface IManagementClient : IDisposable
     Task<Queue> GetQueueAsync(
         string vhostName,
         string queueName,
-        GetLengthsCriteria? lengthsCriteria = null,
-        GetRatesCriteria? ratesCriteria = null,
+        LengthsCriteria? lengthsCriteria = null,
+        RatesCriteria? ratesCriteria = null,
         CancellationToken cancellationToken = default
     );
 
