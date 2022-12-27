@@ -596,10 +596,9 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Federation>>(FederationLinks, cancellationToken);
     }
 
-    public async Task<bool> IsAliveAsync(string vhostName, CancellationToken cancellationToken = default)
+    public Task<bool> IsAliveAsync(string vhostName, CancellationToken cancellationToken = default)
     {
-        var result = await GetAsync<AlivenessTestResult>(AlivenessTest / vhostName, cancellationToken).ConfigureAwait(false);
-        return result.Status == "ok";
+        return GetAsync(AlivenessTest / vhostName, c => c == HttpStatusCode.OK, c => c == HttpStatusCode.ServiceUnavailable, cancellationToken);
     }
 
     public Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default)
