@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   lint-and-tests:
-    name: Lint & Test
+    name: Lint & Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
