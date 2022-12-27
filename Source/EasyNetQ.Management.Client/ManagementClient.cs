@@ -41,8 +41,6 @@ public class ManagementClient : IManagementClient
     private static readonly RelativePath Health = Api / "health";
     private static readonly RelativePath Rebalance = Api / "rebalance";
 
-    private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new("application/json");
-
     internal static readonly JsonSerializerSettings SerializerSettings;
 
     private readonly HttpClient httpClient;
@@ -463,7 +461,7 @@ public class ManagementClient : IManagementClient
 
     public Task CreateVhostAsync(string vhostName, CancellationToken cancellationToken = default)
     {
-        return PutAsync<string>(Vhosts / vhostName, cancellationToken: cancellationToken);
+        return PutAsync(Vhosts / vhostName, cancellationToken);
     }
 
     public Task DeleteVhostAsync(string vhostName, CancellationToken cancellationToken = default)
@@ -688,7 +686,7 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Get, path, queryParameters);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-        return await DeserializeResponseAsync<T>(c => c == HttpStatusCode.OK, response).ConfigureAwait(false);
+        return await DeserializeResponseAsync<T>(statusCode => statusCode == HttpStatusCode.OK, response).ConfigureAwait(false);
     }
 
     private async Task<TResult> PostAsync<TItem, TResult>(
@@ -697,14 +695,12 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        using var request = CreateRequest(HttpMethod.Post, path);
-
-        InsertRequestBody(request, item);
-
+        using var requestContent = CreateRequestContent(item);
+        using var request = CreateRequest(HttpMethod.Post, path, null, requestContent);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         return await DeserializeResponseAsync<TResult>(
-            c => c is HttpStatusCode.OK or HttpStatusCode.Created, response
+            c => c is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, response
         ).ConfigureAwait(false);
     }
 
@@ -716,7 +712,7 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Post, path);
         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
-        await DeserializeResponseAsync(c => c is HttpStatusCode.NoContent, response).ConfigureAwait(false);
+        await DeserializeResponseAsync(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, response).ConfigureAwait(false);
     }
 
     private async Task DeleteAsync(RelativePath path, CancellationToken cancellationToken = default)
@@ -724,24 +720,52 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Delete, path);
         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
-        await DeserializeResponseAsync(c => c == HttpStatusCode.NoContent, response).ConfigureAwait(false);
+        await DeserializeResponseAsync(statusCode => statusCode == HttpStatusCode.NoContent, response).ConfigureAwait(false);
     }
 
     private async Task PutAsync<T>(
         RelativePath path,
-        T? item = default,
+        T item,
         CancellationToken cancellationToken = default
-    ) where T : class
+    )
     {
-        using var request = CreateRequest(HttpMethod.Put, path);
-
-        if (item != default) InsertRequestBody(request, item);
-
+        using var requestContent = CreateRequestContent(item);
+        using var request = CreateRequest(HttpMethod.Put, path, null, requestContent);
         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
         await DeserializeResponseAsync(
-            s => s is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, response
+            statusCode => statusCode is HttpStatusCode.Created or HttpStatusCode.NoContent, response
         ).ConfigureAwait(false);
+    }
+
+    private async Task PutAsync(RelativePath path, CancellationToken cancellationToken = default)
+    {
+        using var request = CreateRequest(HttpMethod.Put, path);
+        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+
+        await DeserializeResponseAsync(
+            statusCode => statusCode is HttpStatusCode.Created or HttpStatusCode.NoContent, response
+        ).ConfigureAwait(false);
+    }
+
+    private HttpRequestMessage CreateRequest(
+        HttpMethod httpMethod,
+        in RelativePath path,
+        IReadOnlyDictionary<string, string>? queryParameters = null,
+        HttpContent? content = null
+    )
+    {
+        var request = new HttpRequestMessage(httpMethod, QueryStringHelpers.AddQueryString(path.Build(), queryParameters));
+        request.Headers.Authorization = basicAuthHeader;
+        request.Content = content;
+        configureHttpRequestMessage?.Invoke(request);
+        return request;
+    }
+
+    private static HttpContent CreateRequestContent<T>(T item)
+    {
+        var json = JsonConvert.SerializeObject(item, SerializerSettings);
+        return new StringContent(json, null, "application/json");
     }
 
     private static Task DeserializeResponseAsync(Func<HttpStatusCode, bool> success, HttpResponseMessage response)
@@ -751,36 +775,16 @@ public class ManagementClient : IManagementClient
             : Task.FromException(new UnexpectedHttpStatusCodeException(response.StatusCode));
     }
 
-    private static async Task<T> DeserializeResponseAsync<T>(Func<HttpStatusCode, bool> success, HttpResponseMessage response)
+    private static async Task<T> DeserializeResponseAsync<T>(
+        Func<HttpStatusCode, bool> success,
+        HttpResponseMessage response
+    )
     {
         if (!success(response.StatusCode))
             throw new UnexpectedHttpStatusCodeException(response.StatusCode);
 
         var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         return JsonConvert.DeserializeObject<T>(content, SerializerSettings)!;
-    }
-
-    private static void InsertRequestBody<T>(HttpRequestMessage request, T item)
-    {
-        if (!request.Headers.Accept.Contains(JsonMediaTypeHeaderValue))
-            request.Headers.Accept.Add(JsonMediaTypeHeaderValue);
-
-        var body = JsonConvert.SerializeObject(item, SerializerSettings);
-        var content = new StringContent(body);
-        content.Headers.ContentType = JsonMediaTypeHeaderValue;
-        request.Content = content;
-    }
-
-    private HttpRequestMessage CreateRequest(
-        HttpMethod httpMethod,
-        in RelativePath path,
-        IReadOnlyDictionary<string, string>? queryParameters = null
-    )
-    {
-        var request = new HttpRequestMessage(httpMethod, QueryStringHelpers.AddQueryString(path.Build(), queryParameters));
-        request.Headers.Authorization = basicAuthHeader;
-        configureHttpRequestMessage?.Invoke(request);
-        return request;
     }
 
     private static IReadOnlyDictionary<string, string>? MergeQueryParameters(params IReadOnlyDictionary<string, string>?[]? multipleQueryParameters)
