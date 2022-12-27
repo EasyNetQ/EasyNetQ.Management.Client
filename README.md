@@ -9,7 +9,7 @@
 
 EasyNetQ.Management.Client is a .NET client for the RabbitMQ Management API. This lets you control all aspects for your
 RabbitMQ broker from .NET code, including creating virtual hosts and users; setting permissions; monitoring queues, 
-connections and channels; and setting up exchanges, queues and bindings. It is part of the [EasyNetQ](http://easynetq.com) project.
+connections and channels; and setting up exchanges, queues and bindings.
 
 See the **[documentation](https://github.com/EasyNetQ/EasyNetQ/wiki/Management-API-Introduction)**.
 
