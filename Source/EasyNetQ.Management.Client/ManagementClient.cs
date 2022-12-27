@@ -39,6 +39,7 @@ public class ManagementClient : IManagementClient
     private static readonly RelativePath Nodes = Api / "nodes";
     private static readonly RelativePath Definitions = Api / "definitions";
     private static readonly RelativePath Health = Api / "health";
+    private static readonly RelativePath Rebalance = Api / "rebalance";
 
     private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new("application/json");
 
@@ -646,6 +647,11 @@ public class ManagementClient : IManagementClient
         );
     }
 
+    public Task RebalanceQueuesAsync(CancellationToken cancellationToken = default)
+    {
+        return PostAsync(Rebalance / "queues", cancellationToken);
+    }
+
     public void Dispose()
     {
         if (disposeHttpClient)
@@ -700,6 +706,17 @@ public class ManagementClient : IManagementClient
         return await DeserializeResponseAsync<TResult>(
             c => c is HttpStatusCode.OK or HttpStatusCode.Created, response
         ).ConfigureAwait(false);
+    }
+
+    private async Task PostAsync(
+        RelativePath path,
+        CancellationToken cancellationToken = default
+    )
+    {
+        using var request = CreateRequest(HttpMethod.Post, path);
+        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+
+        await DeserializeResponseAsync(c => c is HttpStatusCode.NoContent, response).ConfigureAwait(false);
     }
 
     private async Task DeleteAsync(RelativePath path, CancellationToken cancellationToken = default)
