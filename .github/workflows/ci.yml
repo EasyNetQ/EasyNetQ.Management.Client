@@ -55,6 +55,11 @@ jobs:
         export RABBITMQ_VERSION=${{ matrix.rabbitmq }}
         dotnet test --configuration Release --no-build
 
+    - name: Approval Tests
+      run: |
+        cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.ApprovalTests
+        dotnet test --configuration Release --no-build
+
   publish-to-nuget:
     name: Publish to NuGet
     runs-on: ubuntu-latest
