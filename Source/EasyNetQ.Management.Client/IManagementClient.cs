@@ -673,12 +673,26 @@ public interface IManagementClient : IDisposable
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<bool> HaveHealthCheckClusterAlarmsAsync(CancellationToken cancellationToken = default);
+    Task<bool> HaveAnyClusterAlarmsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Returns true if there are any alarms in effect in on a target node
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<bool> HaveHealthCheckLocalAlarmsAsync(CancellationToken cancellationToken = default);
+    Task<bool> HaveAnyLocalAlarmsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Returns true if there are classic mirrored queues without synchronised mirrors online (queues that would potentially lose data if the target node is shut down).
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<bool> HaveAnyClassicQueuesWithoutSynchronisedMirrorsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Returns true if there are quorum queues with minimum online quorum (queues that would lose their quorum and availability if the target node is shut down)
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<bool> HaveAnyQuorumQueuesInCriticalStateAsync(CancellationToken cancellationToken = default);
 }

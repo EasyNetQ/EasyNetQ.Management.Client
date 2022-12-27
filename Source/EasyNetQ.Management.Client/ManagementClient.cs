@@ -606,14 +606,44 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Consumer>>(Consumers, cancellationToken);
     }
 
-    public Task<bool> HaveHealthCheckClusterAlarmsAsync(CancellationToken cancellationToken = default)
+    public Task<bool> HaveAnyClusterAlarmsAsync(CancellationToken cancellationToken = default)
     {
-        return GetAsync(Health / "checks" / "alarms", c => c == HttpStatusCode.ServiceUnavailable, c => c == HttpStatusCode.OK, cancellationToken);
+        return GetAsync(
+            Health / "checks" / "alarms",
+            c => c == HttpStatusCode.ServiceUnavailable,
+            c => c == HttpStatusCode.OK,
+            cancellationToken
+        );
     }
 
-    public Task<bool> HaveHealthCheckLocalAlarmsAsync(CancellationToken cancellationToken = default)
+    public Task<bool> HaveAnyLocalAlarmsAsync(CancellationToken cancellationToken = default)
     {
-        return GetAsync(Health / "checks" / "local-alarms", c => c == HttpStatusCode.ServiceUnavailable, c => c == HttpStatusCode.OK, cancellationToken);
+        return GetAsync(
+            Health / "checks" / "local-alarms",
+            c => c == HttpStatusCode.ServiceUnavailable,
+            c => c == HttpStatusCode.OK,
+            cancellationToken
+        );
+    }
+
+    public Task<bool> HaveAnyClassicQueuesWithoutSynchronisedMirrorsAsync(CancellationToken cancellationToken = default)
+    {
+        return GetAsync(
+            Health / "checks" / "node-is-mirror-sync-critical",
+            c => c == HttpStatusCode.ServiceUnavailable,
+            c => c == HttpStatusCode.OK,
+            cancellationToken
+        );
+    }
+
+    public Task<bool> HaveAnyQuorumQueuesInCriticalStateAsync(CancellationToken cancellationToken = default)
+    {
+        return GetAsync(
+            Health / "checks" / "node-is-quorum-critical",
+            c => c == HttpStatusCode.ServiceUnavailable,
+            c => c == HttpStatusCode.OK,
+            cancellationToken
+        );
     }
 
     public void Dispose()

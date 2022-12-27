@@ -1518,12 +1518,12 @@ public static class ManagementClientExtensions
     /// <param name="client"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static bool HaveHealthCheckClusterAlarms(
+    public static bool HaveAnyClusterAlarms(
         this IManagementClient client,
         CancellationToken cancellationToken = default
     )
     {
-        return client.HaveHealthCheckClusterAlarmsAsync(cancellationToken)
+        return client.HaveAnyClusterAlarmsAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
@@ -1534,12 +1534,45 @@ public static class ManagementClientExtensions
     /// <param name="client"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static bool HaveHealthCheckLocalAlarms(
+    public static bool HaveAnyLocalAlarms(
         this IManagementClient client,
         CancellationToken cancellationToken = default
     )
     {
-        return client.HaveHealthCheckLocalAlarmsAsync(cancellationToken)
+        return client.HaveAnyLocalAlarmsAsync(cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+
+    /// <summary>
+    ///     Returns true if there are classic mirrored queues without synchronised mirrors online (queues that would potentially lose data if the target node is shut down).
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static bool HaveAnyClassicQueuesWithoutSynchronisedMirrorsAsync(
+        this IManagementClient client,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.HaveAnyClassicQueuesWithoutSynchronisedMirrorsAsync(cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
+    ///     Returns true if there are quorum queues with minimum online quorum (queues that would lose their quorum and availability if the target node is shut down)
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static bool HaveAnyQuorumQueuesInCriticalStateAsync(
+        this IManagementClient client,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.HaveAnyQuorumQueuesInCriticalStateAsync(cancellationToken)
             .GetAwaiter()
             .GetResult();
     }

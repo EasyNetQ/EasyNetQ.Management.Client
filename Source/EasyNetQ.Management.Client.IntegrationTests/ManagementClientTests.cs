@@ -128,14 +128,28 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_check_cluster_alarms()
     {
-        var result = await fixture.ManagementClient.HaveHealthCheckClusterAlarmsAsync();
+        var result = await fixture.ManagementClient.HaveAnyClusterAlarmsAsync();
         result.Should().BeFalse();
     }
 
     [Fact]
     public async Task Should_be_able_to_check_local_alarms()
     {
-        var result = await fixture.ManagementClient.HaveHealthCheckLocalAlarmsAsync();
+        var result = await fixture.ManagementClient.HaveAnyClusterAlarmsAsync();
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_check_classic_queues_without_synchronised_mirrors()
+    {
+        var result = await fixture.ManagementClient.HaveAnyClassicQueuesWithoutSynchronisedMirrorsAsync();
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_check_quorum_queues_is_critical_state()
+    {
+        var result = await fixture.ManagementClient.HaveAnyQuorumQueuesInCriticalStateAsync();
         result.Should().BeFalse();
     }
 
