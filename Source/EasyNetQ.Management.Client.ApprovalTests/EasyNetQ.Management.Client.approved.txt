@@ -408,7 +408,6 @@ namespace EasyNetQ.Management.Client.Model
         public string LastBlockedBy { get; set; }
         public string Name { get; set; }
         public string Node { get; set; }
-        public string PeerAddress { get; set; }
         public string PeerCertIssuer { get; set; }
         public string PeerCertSubject { get; set; }
         public string PeerCertValidity { get; set; }
