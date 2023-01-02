@@ -15,12 +15,12 @@ public class StringObjectReadOnlyDictionaryConverter : JsonConverter<IReadOnlyDi
             case { ValueKind: JsonValueKind.Array }:
                 return new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>());
             case { ValueKind: JsonValueKind.Object }:
-            {
-                var dictionary = new Dictionary<string, object?>();
-                foreach (var property in jsonElement.EnumerateObject())
-                    dictionary.Add(property.Name, property.Value.GetObjectValue());
-                return new ReadOnlyDictionary<string, object?>(dictionary);
-            }
+                {
+                    var dictionary = new Dictionary<string, object?>();
+                    foreach (var property in jsonElement.EnumerateObject())
+                        dictionary.Add(property.Name, property.Value.GetObjectValue());
+                    return new ReadOnlyDictionary<string, object?>(dictionary);
+                }
             default:
                 throw new JsonException($"Expected array or object, but was {jsonElement.ValueKind}");
         }

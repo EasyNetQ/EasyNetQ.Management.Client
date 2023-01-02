@@ -13,12 +13,12 @@ internal class ObjectReadOnlyListConverter : JsonConverter<IReadOnlyList<object?
         switch (jsonElement)
         {
             case { ValueKind: JsonValueKind.Array }:
-            {
-                var list = new List<object?>();
-                foreach(var item in jsonElement.EnumerateArray())
-                    list.Add(item.GetObjectValue());
-                return new ReadOnlyCollection<object?>(list);
-            }
+                {
+                    var list = new List<object?>(jsonElement.GetArrayLength());
+                    foreach (var item in jsonElement.EnumerateArray())
+                        list.Add(item.GetObjectValue());
+                    return new ReadOnlyCollection<object?>(list);
+                }
             default:
                 throw new JsonException($"Expected array or object, but was {jsonElement.ValueKind}");
         }

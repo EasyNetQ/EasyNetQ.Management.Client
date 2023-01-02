@@ -50,19 +50,19 @@ internal static class ObjectHelpers
         switch (jsonElement)
         {
             case { ValueKind: JsonValueKind.Array }:
-            {
-                var list = new List<object?>();
-                foreach (var item in jsonElement.EnumerateArray())
-                    list.Add(GetObjectValue(item));
-                return new ReadOnlyCollection<object?>(list);
-            }
+                {
+                    var list = new List<object?>(jsonElement.GetArrayLength());
+                    foreach (var item in jsonElement.EnumerateArray())
+                        list.Add(GetObjectValue(item));
+                    return new ReadOnlyCollection<object?>(list);
+                }
             case { ValueKind: JsonValueKind.Object }:
-            {
-                var dictionary = new Dictionary<string, object?>();
-                foreach (var property in jsonElement.EnumerateObject())
-                    dictionary.Add(property.Name, GetObjectValue(property.Value));
-                return new ReadOnlyDictionary<string, object?>(dictionary);
-            }
+                {
+                    var dictionary = new Dictionary<string, object?>();
+                    foreach (var property in jsonElement.EnumerateObject())
+                        dictionary.Add(property.Name, GetObjectValue(property.Value));
+                    return new ReadOnlyDictionary<string, object?>(dictionary);
+                }
             case { ValueKind: JsonValueKind.True }:
                 return true;
             case { ValueKind: JsonValueKind.False }:
@@ -70,11 +70,10 @@ internal static class ObjectHelpers
             case { ValueKind: JsonValueKind.Number }:
                 return jsonElement.TryGetInt64(out var longValue) ? longValue : jsonElement.GetDouble();
             case { ValueKind: JsonValueKind.String }:
-            {
-                var stringValue = jsonElement.GetString();
-                if (DateTime.TryParse(stringValue, out var datetimeValue)) return datetimeValue;
-                return stringValue;
-            }
+                {
+                    var stringValue = jsonElement.GetString();
+                    return DateTime.TryParse(stringValue, out var datetimeValue) ? datetimeValue : stringValue;
+                }
             case { ValueKind: JsonValueKind.Null }:
                 return null;
             default:
