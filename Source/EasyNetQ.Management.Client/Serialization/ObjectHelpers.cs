@@ -24,6 +24,9 @@ internal static class ObjectHelpers
             case int intValue:
                 writer.WriteNumberValue(intValue);
                 return;
+            case DateTime dateTimeValue:
+                writer.WriteStringValue(dateTimeValue);
+                return;
             case IDictionary<string, object?> dictionaryValue:
                 writer.WriteStartObject();
                 foreach (var kvp in dictionaryValue)
