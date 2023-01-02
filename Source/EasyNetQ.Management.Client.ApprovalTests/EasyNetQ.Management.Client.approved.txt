@@ -450,13 +450,14 @@ namespace EasyNetQ.Management.Client.Model
         public string PeerHost { get; set; }
         public int PeerPort { get; set; }
     }
-    public class Consumer
+    public class Consumer : System.IEquatable<EasyNetQ.Management.Client.Model.Consumer>
     {
-        public Consumer() { }
+        public Consumer(System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments, bool AckRequired, bool Active, string ActivityStatus, EasyNetQ.Management.Client.Model.ChannelDetail ChannelDetails, string ConsumerTag, bool Exclusive, int PrefetchCount, EasyNetQ.Management.Client.Model.QueueName Queue) { }
         public bool AckRequired { get; set; }
         public bool Active { get; set; }
         public string ActivityStatus { get; set; }
-        public System.Collections.Generic.Dictionary<string, object> Arguments { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments { get; set; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.EmptyArrayAsDefaultConverter<EasyNetQ.Management.Client.Model.ChannelDetail>))]
         public EasyNetQ.Management.Client.Model.ChannelDetail ChannelDetails { get; set; }
         public string ConsumerTag { get; set; }
@@ -538,9 +539,9 @@ namespace EasyNetQ.Management.Client.Model
         public bool Enabled { get; set; }
         public string Name { get; set; }
     }
-    public class Federation
+    public class Federation : System.IEquatable<EasyNetQ.Management.Client.Model.Federation>
     {
-        public Federation() { }
+        public Federation(string Node, string Exchange, string UpstreamExchange, string Type, string Vhost, string Upstream, string Id, EasyNetQ.Management.Client.Model.FederationStatus Status, string LocalConnection, string Uri, string Timestamp) { }
         public string Exchange { get; set; }
         public string Id { get; set; }
         public string LocalConnection { get; set; }
