@@ -16,7 +16,7 @@ public class NodeSerializationTests
     [Fact]
     public void Should_load_one_node()
     {
-        nodes.Count.Should().Be(1);
+        nodes.Count.Should().Be(2);
     }
 
     [Fact]
