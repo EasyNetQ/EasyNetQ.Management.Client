@@ -345,18 +345,36 @@ namespace EasyNetQ.Management.Client.Model
         public System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments { get; set; }
         public string RoutingKey { get; set; }
     }
-    public class Channel
+    public class Channel : System.IEquatable<EasyNetQ.Management.Client.Model.Channel>
     {
-        public Channel() { }
+        public Channel(
+                    System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails,
+                    EasyNetQ.Management.Client.Model.ConnectionDetails? ConnectionDetails,
+                    EasyNetQ.Management.Client.Model.MessageStats? MessageStats,
+                    string? IdleSince,
+                    bool Transactional,
+                    bool Confirm,
+                    int ConsumerCount,
+                    int MessagesUnacknowledged,
+                    int MessagesUnconfirmed,
+                    int MessagesUncommitted,
+                    int AcksUncommitted,
+                    int PrefetchCount,
+                    bool ClientFlowBlocked,
+                    string Node,
+                    string Name,
+                    int Number,
+                    string User,
+                    string Vhost) { }
         public int AcksUncommitted { get; set; }
         public bool ClientFlowBlocked { get; set; }
         public bool Confirm { get; set; }
-        public EasyNetQ.Management.Client.Model.ConnectionDetails ConnectionDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.ConnectionDetails? ConnectionDetails { get; set; }
         public int ConsumerCount { get; set; }
-        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail> ConsumerDetails { get; set; }
-        public string IdleSince { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails { get; set; }
+        public string? IdleSince { get; set; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.EmptyArrayAsDefaultConverter<EasyNetQ.Management.Client.Model.MessageStats>))]
-        public EasyNetQ.Management.Client.Model.MessageStats MessageStats { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageStats? MessageStats { get; set; }
         public int MessagesUnacknowledged { get; set; }
         public int MessagesUncommitted { get; set; }
         public int MessagesUnconfirmed { get; set; }

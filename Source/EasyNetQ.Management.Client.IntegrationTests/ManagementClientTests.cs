@@ -990,6 +990,9 @@ public class ManagementClientTests
         await Task.Delay(TimeSpan.FromSeconds(10));
 
         await bus.Advanced.ConnectAsync();
+        await bus.Advanced.PublishAsync(Topology.Exchange.Default, "#", false, new MessageProperties(), ReadOnlyMemory<byte>.Empty);
+
+        await Task.Delay(TimeSpan.FromSeconds(10));
 
         var connections = await fixture.ManagementClient.GetConnectionsAsync();
         foreach (var connection in connections)
