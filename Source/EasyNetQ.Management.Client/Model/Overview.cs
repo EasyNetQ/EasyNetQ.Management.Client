@@ -1,28 +1,22 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
+public record Overview(
+    string ManagementVersion,
+    IReadOnlyList<ExchangeTypeSpec> ExchangeTypes,
+    string RabbitmqVersion,
+    string ErlangVersion,
+    MessageStats MessageStats,
+    QueueTotals QueueTotals,
+    ObjectTotals ObjectTotals,
+    string Node,
+    IReadOnlyList<Listener> Listeners,
+    IReadOnlyList<Context> Contexts
+);
 
-public class Overview
-{
-    public string ManagementVersion { get; set; }
-    public string StatisticsLevel { get; set; }
-    public List<ExchangeType> ExchangeTypes { get; set; }
-    public string RabbitmqVersion { get; set; }
-    public string ErlangVersion { get; set; }
-    public MessageStats MessageStats { get; set; }
-    public QueueTotals QueueTotals { get; set; }
-    public ObjectTotals ObjectTotals { get; set; }
-    public string Node { get; set; }
-    public string StatisticsDbNode { get; set; }
-    public List<Listener> Listeners { get; set; }
-    public List<Context> Contexts { get; set; }
-}
-
-public class ObjectTotals
-{
-    public int Consumers { get; set; }
-    public int Queues { get; set; }
-    public int Exchanges { get; set; }
-    public int Connections { get; set; }
-    public int Channels { get; set; }
-}
+public record ObjectTotals(
+    int Consumers,
+    int Queues,
+    int Exchanges,
+    int Connections,
+    int Channels
+);

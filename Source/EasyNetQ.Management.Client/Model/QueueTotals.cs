@@ -1,13 +1,10 @@
 namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
-
-public class QueueTotals
-{
-    public int Messages { get; set; }
-    public int MessagesReady { get; set; }
-    public int MessagesUnacknowledged { get; set; }
-    public LengthsDetails MessagesDetails { get; set; }
-    public LengthsDetails MessagesReadyDetails { get; set; }
-    public LengthsDetails MessagesUnacknowledgedDetails { get; set; }
-}
+public record QueueTotals(
+    long Messages = 0,
+    long MessagesReady = 0,
+    long MessagesUnacknowledged = 0,
+    LengthsDetails? MessagesDetails = null,
+    LengthsDetails? MessagesReadyDetails = null,
+    LengthsDetails? MessagesUnacknowledgedDetails = null
+);

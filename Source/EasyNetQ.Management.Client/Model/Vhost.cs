@@ -1,9 +1,3 @@
 namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
-
-public class Vhost
-{
-    public string Name { get; set; }
-    public bool Tracing { get; set; }
-}
+public record Vhost(string Name, bool Tracing = false);

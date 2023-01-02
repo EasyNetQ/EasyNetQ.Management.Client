@@ -1,5 +1,5 @@
-﻿using EasyNetQ.Management.Client.Serialization;
-using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
+using EasyNetQ.Management.Client.Serialization;
 
 namespace EasyNetQ.Management.Client.Model;
 
@@ -7,9 +7,12 @@ namespace EasyNetQ.Management.Client.Model;
 
 public class Channel
 {
-    public List<ConsumerDetail> ConsumerDetails { get; set; }
+    public IReadOnlyList<ConsumerDetail> ConsumerDetails { get; set; }
     public ConnectionDetails ConnectionDetails { get; set; }
+
+    [JsonConverter(typeof(EmptyArrayAsDefaultConverter<MessageStats>))]
     public MessageStats MessageStats { get; set; }
+
     public string IdleSince { get; set; }
     public bool Transactional { get; set; }
     public bool Confirm { get; set; }
@@ -27,27 +30,27 @@ public class Channel
     public string Vhost { get; set; }
 }
 
-public class ConsumerDetail
-{
-    public Queue Queue { get; set; }
-    public string ConsumerTag { get; set; }
-    public bool Exclusive { get; set; }
-    public bool AckRequired { get; set; }
-    [JsonConverter(typeof(ObjectOrEmptyArrayConverter<ConsumerArguments>))]
-    public ConsumerArguments Arguments { get; set; }
-    [JsonConverter(typeof(ObjectOrEmptyArrayConverter<ChannelDetail>))]
-    public ChannelDetail ChannelDetails { get; set; }
-}
+#nullable enable
 
-public class ChannelDetail
-{
-    public string Name { get; set; }
-    [JsonConverter(typeof(TolerantInt32Converter))]
-    public int Number { get; set; }
-    public string User { get; set; }
-    public string ConnectionName { get; set; }
-    [JsonConverter(typeof(TolerantInt32Converter))]
-    public int PeerPort { get; set; }
-    public string PeerHost { get; set; }
-    public string Node { get; set; }
-}
+public record ConsumerDetail(
+    QueueName Queue,
+    string ConsumerTag,
+    bool Exclusive,
+    bool AckRequired,
+    [property: JsonConverter(typeof(EmptyArrayAsDefaultConverter<ConsumerArguments>))]
+    ConsumerArguments? Arguments,
+    [property: JsonConverter(typeof(EmptyArrayAsDefaultConverter<ChannelDetail>))]
+    ChannelDetail? ChannelDetails
+);
+
+public record ChannelDetail(
+    string Name,
+    [property: JsonConverter(typeof(TolerantInt32Converter))]
+    int Number,
+    string User,
+    string ConnectionName,
+    [property: JsonConverter(typeof(TolerantInt32Converter))]
+    int PeerPort,
+    string PeerHost,
+    string? Node
+);

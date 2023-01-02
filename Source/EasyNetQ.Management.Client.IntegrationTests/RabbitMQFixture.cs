@@ -5,7 +5,7 @@ namespace EasyNetQ.Management.Client.IntegrationTests;
 
 public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
 {
-    private static readonly Vhost VirtualHost = new() { Name = "/", Tracing = false };
+    private static readonly Vhost VirtualHost = new(Name: "/");
     private static readonly TimeSpan InitializationTimeout = TimeSpan.FromMinutes(2);
 
     private const string ContainerName = "easynetq.management.tests";
@@ -80,8 +80,10 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
     {
         var portMappings = new Dictionary<string, ISet<string>>
         {
-            {"15671", new HashSet<string> {"15671"}},
-            {"15672", new HashSet<string> {"15672"}},
+            { "5671", new HashSet<string> { "5671" } },
+            { "5672", new HashSet<string> { "5672" } },
+            { "15671", new HashSet<string> { "15671" } },
+            { "15672", new HashSet<string> { "15672" } },
         };
         var envVars = new List<string> { "RABBITMQ_DEFAULT_VHOST=/" };
         var containerId = await dockerProxy.CreateContainerAsync(

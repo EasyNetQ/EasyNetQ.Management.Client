@@ -12,14 +12,14 @@ public class UserInfoTests
 
     public UserInfoTests()
     {
-        userInfo = new UserInfo(userName, password);
+        userInfo = UserInfo.ByPassword(userName, password);
     }
 
     [Fact]
     public void Should_be_able_to_add_tags()
     {
-        userInfo.AddTag(UserTags.Administrator).AddTag(UserTags.Management).AddTag("Hey");
-        userInfo.Tags.Should().BeEquivalentTo(UserTags.Administrator, UserTags.Management, "Hey");
+        var modifiedUser = userInfo.AddTag(UserTags.Administrator).AddTag(UserTags.Management).AddTag("Hey");
+        modifiedUser.Tags.Should().BeEquivalentTo(UserTags.Administrator, UserTags.Management, "Hey");
     }
 
     [Fact]

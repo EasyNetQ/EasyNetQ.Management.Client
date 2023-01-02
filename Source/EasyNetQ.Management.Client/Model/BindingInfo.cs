@@ -1,20 +1,10 @@
-﻿namespace EasyNetQ.Management.Client.Model;
+﻿using System.Text.Json.Serialization;
+using EasyNetQ.Management.Client.Serialization;
 
-#nullable disable
+namespace EasyNetQ.Management.Client.Model;
 
-public class BindingInfo
-{
-    public string RoutingKey { get; set; }
-    public Dictionary<string, object> Arguments { get; set; }
-
-    public BindingInfo(string routingKey, Dictionary<string, object> arguments)
-    {
-        RoutingKey = routingKey;
-        Arguments = arguments;
-    }
-
-    public BindingInfo(string routingKey)
-        : this(routingKey, new Dictionary<string, object>())
-    {
-    }
-}
+public record BindingInfo(
+    string RoutingKey,
+    [property: JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]
+    IReadOnlyDictionary<string, object>? Arguments = null
+);

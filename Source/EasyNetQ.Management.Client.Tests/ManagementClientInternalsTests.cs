@@ -1,7 +1,5 @@
-﻿using EasyNetQ.Management.Client.Model;
-using EasyNetQ.Management.Client.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using System.Text.Json;
+using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.Tests;
 
@@ -16,37 +14,17 @@ public class ManagementClientInternalsTests
         //TODO: redesign the ManagementClient by factoring out some of it's responsibilities and use dependency injection
         //for this test we'd separate out the deserialization.
 
-        var settings = new JsonSerializerSettings
-        {
-            ContractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy(true, true)
-            }
-        };
-
-        settings.Converters.Add(new PropertyConverter());
-
         var responseBody = GetExampleGetConnectionsJsonResponseBody();
 
-        var connections = JsonConvert.DeserializeObject<IEnumerable<Connection>>(responseBody, settings);
+        var connections = JsonSerializer.Deserialize<IEnumerable<Connection>>(responseBody, ManagementClient.SerializerOptions);
     }
 
     [Fact]
     public void GetChannels()
     {
-        var settings = new JsonSerializerSettings
-        {
-            ContractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy(true, true)
-            }
-        };
-
-        settings.Converters.Add(new PropertyConverter());
-
         var responseBody = GetExampleGetChannelsJsonResponseBody();
 
-        var channels = JsonConvert.DeserializeObject<IEnumerable<Channel>>(responseBody, settings).ToList();
+        var channels = JsonSerializer.Deserialize<IEnumerable<Channel>>(responseBody, ManagementClient.SerializerOptions).ToList();
 
         Assert.Equal(2, channels.Count);
 

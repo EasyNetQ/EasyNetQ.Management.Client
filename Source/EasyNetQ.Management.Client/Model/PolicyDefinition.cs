@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Model;
 
@@ -6,30 +6,30 @@ namespace EasyNetQ.Management.Client.Model;
 
 public class PolicyDefinition
 {
-    [JsonProperty("ha-mode")]
+    [JsonPropertyName("ha-mode")]
     public HaMode? HaMode { get; set; }
-    [JsonProperty("ha-params")]
+    [JsonPropertyName("ha-params")]
     public HaParams HaParams { get; set; }
-    [JsonProperty("ha-sync-mode")]
+    [JsonPropertyName("ha-sync-mode")]
     public HaSyncMode? HaSyncMode { get; set; }
-    [JsonProperty("ha-sync-batch-size")]
+    [JsonPropertyName("ha-sync-batch-size")]
     public int? HaSyncBatchSize { get; set; }
-    [JsonProperty("federation-upstream")]
+    [JsonPropertyName("federation-upstream")]
     public string FederationUpstream { get; set; }
-    [JsonProperty("federation-upstream-set")]
+    [JsonPropertyName("federation-upstream-set")]
     public string FederationUpstreamSet { get; set; }
-    [JsonProperty("alternate-exchange")]
+    [JsonPropertyName("alternate-exchange")]
     public string AlternateExchange { get; set; }
-    [JsonProperty("dead-letter-exchange")]
+    [JsonPropertyName("dead-letter-exchange")]
     public string DeadLetterExchange { get; set; }
-    [JsonProperty("dead-letter-routing-key")]
+    [JsonPropertyName("dead-letter-routing-key")]
     public string DeadLetterRoutingKey { get; set; }
-    [JsonProperty("queue-mode")]
+    [JsonPropertyName("queue-mode")]
     public string QueueMode { get; set; }
-    [JsonProperty("message-ttl")]
+    [JsonPropertyName("message-ttl")]
     public uint? MessageTtl { get; set; }
-    [JsonProperty("expires")]
+    [JsonPropertyName("expires")]
     public uint? Expires { get; set; }
-    [JsonProperty("max-length")]
+    [JsonPropertyName("max-length")]
     public uint? MaxLength { get; set; }
 }

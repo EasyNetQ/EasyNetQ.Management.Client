@@ -1,56 +1,23 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
-
-public class PermissionInfo
+public record PermissionInfo(string UserName)
 {
     private const string DenyAll = "^$";
     private const string AllowAll = ".*";
 
-    public string UserName { get; private set; }
-    public string Configure { get; private set; }
-    public string Write { get; private set; }
-    public string Read { get; private set; }
+    public string Configure { get; private init; } = AllowAll;
+    public string Write { get; private init; } = AllowAll;
+    public string Read { get; private init; } = AllowAll;
 
-    public PermissionInfo(string userName)
-    {
-        UserName = userName;
-        Configure = Write = Read = AllowAll;
-    }
+    public PermissionInfo SetConfigure(string resourcesToAllow) => this with { Configure = resourcesToAllow };
 
-    public PermissionInfo SetConfigure(string resourcesToAllow)
-    {
-        Configure = resourcesToAllow;
-        return this;
-    }
+    public PermissionInfo SetWrite(string resourcesToAllow) => this with { Write = resourcesToAllow };
 
-    public PermissionInfo SetWrite(string resourcedToAllow)
-    {
-        Write = resourcedToAllow;
-        return this;
-    }
+    public PermissionInfo SetRead(string resourcesToAllow) => this with { Read = resourcesToAllow };
 
-    public PermissionInfo SetRead(string resourcesToAllow)
-    {
-        Read = resourcesToAllow;
-        return this;
-    }
+    public PermissionInfo DenyAllConfigure() => this with { Configure = DenyAll };
 
-    public PermissionInfo DenyAllConfigure()
-    {
-        Configure = DenyAll;
-        return this;
-    }
+    public PermissionInfo DenyAllWrite() => this with { Write = DenyAll };
 
-    public PermissionInfo DenyAllWrite()
-    {
-        Write = DenyAll;
-        return this;
-    }
-
-    public PermissionInfo DenyAllRead()
-    {
-        Read = DenyAll;
-        return this;
-    }
+    public PermissionInfo DenyAllRead() => this with { Read = DenyAll };
 }

@@ -9,7 +9,8 @@ public abstract class PropertyExpando : DynamicObject
         Properties = properties ?? throw new ArgumentNullException(nameof(properties), "The argument properties must not be null");
     }
 
-    public override bool TryGetMember(GetMemberBinder binder, out object? result) => Properties.TryGetValue(binder.Name, out result);
+    public override bool TryGetMember(GetMemberBinder binder, out object? result)
+        => Properties.TryGetValue(binder.Name, out result);
 
     public override bool TrySetMember(SetMemberBinder binder, object? value)
     {

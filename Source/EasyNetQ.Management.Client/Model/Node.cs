@@ -32,8 +32,8 @@ public class Node
     public long Uptime { get; set; }
     public int RunQueue { get; set; }
     public int Processors { get; set; }
-    public List<ExchangeType> ExchangeTypes { get; set; }
-    public List<AuthMechanism> AuthMechanisms { get; set; }
-    public List<Application> Applications { get; set; }
-    public List<string> Partitions { get; set; }
+    public IReadOnlyList<ExchangeTypeSpec> ExchangeTypes { get; set; }
+    public IReadOnlyList<AuthMechanism> AuthMechanisms { get; set; }
+    public IReadOnlyList<Application> Applications { get; set; }
+    public IReadOnlyList<string> Partitions { get; set; }
 }

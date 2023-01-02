@@ -858,8 +858,8 @@ public static class ManagementClientExtensions
     {
         return binding.DestinationType switch
         {
-            "queue" => client.DeleteQueueBindingAsync(binding.Vhost, binding.Source, binding.Destination, binding.PropertiesKey, cancellationToken),
-            "exchange" => client.DeleteExchangeBindingAsync(binding.Vhost, binding.Source, binding.Destination, binding.PropertiesKey, cancellationToken),
+            "queue" => client.DeleteQueueBindingAsync(binding.Vhost, binding.Source, binding.Destination, binding.PropertiesKey!, cancellationToken),
+            "exchange" => client.DeleteExchangeBindingAsync(binding.Vhost, binding.Source, binding.Destination, binding.PropertiesKey!, cancellationToken),
             _ => throw new ArgumentOutOfRangeException(nameof(binding.DestinationType), binding.DestinationType, null)
         };
     }
@@ -933,14 +933,14 @@ public static class ManagementClientExtensions
     /// <param name="client"></param>
     /// <param name="vhost">The virtual host on which to enable tracing</param>
     /// <param name="cancellationToken"></param>
-    public static async Task EnableTracingAsync(
+    public static async Task<Vhost> EnableTracingAsync(
         this IManagementClient client,
         Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
         await client.EnableTracingAsync(vhost.Name, cancellationToken).ConfigureAwait(false);
-        vhost.Tracing = true;
+        return vhost with { Tracing = true };
     }
 
     /// <summary>
@@ -966,14 +966,14 @@ public static class ManagementClientExtensions
     /// <param name="client"></param>
     /// <param name="vhost">The virtual host on which to disable tracing</param>
     /// <param name="cancellationToken"></param>
-    public static async Task DisableTracingAsync(
+    public static async Task<Vhost> DisableTracingAsync(
         this IManagementClient client,
         Vhost vhost,
         CancellationToken cancellationToken = default
     )
     {
         await client.DisableTracingAsync(vhost.Name, cancellationToken).ConfigureAwait(false);
-        vhost.Tracing = false;
+        return vhost with { Tracing = false };
     }
 
     /// <summary>
@@ -1506,8 +1506,7 @@ public static class ManagementClientExtensions
     {
         var user = await client.GetUserAsync(userName, cancellationToken).ConfigureAwait(false);
 
-        var userInfo = new UserInfo(userName, newPassword);
-        foreach (var tag in user.Tags) userInfo.AddTag(tag);
+        var userInfo = new UserInfo(userName, newPassword, null, user.Tags);
 
         await client.CreateUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
     }

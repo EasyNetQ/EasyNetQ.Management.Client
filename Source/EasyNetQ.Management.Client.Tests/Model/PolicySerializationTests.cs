@@ -1,5 +1,5 @@
-﻿using EasyNetQ.Management.Client.Model;
-using Newtonsoft.Json;
+﻿using System.Text.Json;
+using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.Tests.Model;
 
@@ -9,7 +9,7 @@ public class PolicySerializationTests
 
     public PolicySerializationTests()
     {
-        policies = ResourceLoader.LoadObjectFromJson<Policy[]>("Policies_ha.json", ManagementClient.SerializerSettings);
+        policies = ResourceLoader.LoadObjectFromJson<Policy[]>("Policies_ha.json", ManagementClient.SerializerOptions);
     }
 
     [Fact]
@@ -73,41 +73,41 @@ public class PolicySerializationTests
     [Fact]
     public void Should_write_apply_to_properly()
     {
-        var serializedMessage = JsonConvert.SerializeObject(new Policy
+        var serializedMessage = JsonSerializer.Serialize(new Policy
         {
             Name = "bob",
             Pattern = "foo"
-        }, ManagementClient.SerializerSettings);
+        }, ManagementClient.SerializerOptions);
 
         Assert.Contains("\"apply-to\":\"all\"", serializedMessage);
 
-        serializedMessage = JsonConvert.SerializeObject(new Policy
+        serializedMessage = JsonSerializer.Serialize(new Policy
         {
             Name = "bob",
             Pattern = "foo",
             ApplyTo = ApplyMode.Exchanges
-        }, ManagementClient.SerializerSettings);
+        }, ManagementClient.SerializerOptions);
 
         Assert.Contains("\"apply-to\":\"exchanges\"", serializedMessage);
 
-        serializedMessage = JsonConvert.SerializeObject(new Policy
+        serializedMessage = JsonSerializer.Serialize(new Policy
         {
             Name = "bob",
             Pattern = "foo",
             ApplyTo = ApplyMode.Queues
-        }, ManagementClient.SerializerSettings);
+        }, ManagementClient.SerializerOptions);
         Assert.Contains("\"apply-to\":\"queues\"", serializedMessage);
     }
 
     [Fact]
     public void Should_write_federation_upstream_properly()
     {
-        var serializedMessage = JsonConvert.SerializeObject(new Policy
+        var serializedMessage = JsonSerializer.Serialize(new Policy
         {
             Name = "bob",
             Pattern = "foo",
             Definition = new PolicyDefinition { FederationUpstream = "my-upstream" }
-        }, ManagementClient.SerializerSettings);
+        }, ManagementClient.SerializerOptions);
 
         Assert.Contains("\"federation-upstream\":\"my-upstream\"", serializedMessage);
     }
@@ -115,12 +115,12 @@ public class PolicySerializationTests
     [Fact]
     public void Should_write_all_ha_policy_without_param()
     {
-        var serializedMessage = JsonConvert.SerializeObject(new Policy
+        var serializedMessage = JsonSerializer.Serialize(new Policy
         {
             Name = "bob",
             Pattern = "foo",
             Definition = new PolicyDefinition { HaMode = HaMode.All }
-        }, ManagementClient.SerializerSettings);
+        }, ManagementClient.SerializerOptions);
 
         Assert.DoesNotContain("ha-params", serializedMessage);
         Assert.DoesNotContain("ha-sync-batch-size", serializedMessage);

@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace EasyNetQ.Management.Client.Model;
 
 #nullable disable
@@ -14,10 +12,9 @@ public class Federation
     public string Upstream { get; set; }
 
     public string Id { get; set; }
-    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
     public FederationStatus Status { get; set; }
     public string LocalConnection { get; set; }
     public string Uri { get; set; }
 
-    public DateTime Timestamp { get; set; }
+    public string Timestamp { get; set; }
 }

@@ -1,17 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
+public record ConsumerArguments(
+    [property: JsonPropertyName("x-credit")] CreditArgument? Credit
+);
 
-public class ConsumerArguments
-{
-    [JsonProperty(PropertyName = "x-credit")]
-    public CreditArgument Credit { get; set; }
-}
-
-public class CreditArgument
-{
-    public int Credit { get; set; }
-    public bool Drain { get; set; }
-}
+public record CreditArgument(int Credit, bool Drain);
