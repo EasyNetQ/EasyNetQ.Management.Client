@@ -290,14 +290,30 @@ namespace EasyNetQ.Management.Client.Model
         public bool Enabled { get; set; }
         public string Name { get; set; }
     }
-    public class BackingQueueStatus
+    public class BackingQueueStatus : System.IEquatable<EasyNetQ.Management.Client.Model.BackingQueueStatus>
     {
-        public BackingQueueStatus() { }
+        public BackingQueueStatus(
+                    int Q1,
+                    int Q2,
+                    System.Collections.Generic.IReadOnlyList<object?> Delta,
+                    int Q3,
+                    int Q4,
+                    int Len,
+                    int PendingAcks,
+                    string TargetRamCount,
+                    int RamMsgCount,
+                    int RamAckCount,
+                    long NextSeqId,
+                    int PersistentCount,
+                    double AvgIngressRate,
+                    double AvgEgressRate,
+                    double AvgAckIngressRate,
+                    double AvgAckEgressRate) { }
         public double AvgAckEgressRate { get; set; }
         public double AvgAckIngressRate { get; set; }
         public double AvgEgressRate { get; set; }
         public double AvgIngressRate { get; set; }
-        public System.Collections.Generic.List<object> Delta { get; set; }
+        public System.Collections.Generic.IReadOnlyList<object?> Delta { get; set; }
         public int Len { get; set; }
         public long NextSeqId { get; set; }
         public int PendingAcks { get; set; }

@@ -1,23 +1,22 @@
 namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
-
-public class BackingQueueStatus
-{
-    public int Q1 { get; set; }
-    public int Q2 { get; set; }
-    public List<object> Delta { get; set; }
-    public int Q3 { get; set; }
-    public int Q4 { get; set; }
-    public int Len { get; set; }
-    public int PendingAcks { get; set; }
-    public string TargetRamCount { get; set; }
-    public int RamMsgCount { get; set; }
-    public int RamAckCount { get; set; }
-    public long NextSeqId { get; set; }
-    public int PersistentCount { get; set; }
-    public double AvgIngressRate { get; set; }
-    public double AvgEgressRate { get; set; }
-    public double AvgAckIngressRate { get; set; }
-    public double AvgAckEgressRate { get; set; }
-}
+public record BackingQueueStatus
+(
+    int Q1,
+    int Q2,
+    // TODO Custom converter is needed
+    IReadOnlyList<object?> Delta,
+    int Q3,
+    int Q4,
+    int Len,
+    int PendingAcks,
+    string TargetRamCount,
+    int RamMsgCount,
+    int RamAckCount,
+    long NextSeqId,
+    int PersistentCount,
+    double AvgIngressRate,
+    double AvgEgressRate,
+    double AvgAckIngressRate,
+    double AvgAckEgressRate
+);
