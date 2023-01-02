@@ -313,6 +313,7 @@ namespace EasyNetQ.Management.Client.Model
         public double AvgAckIngressRate { get; set; }
         public double AvgEgressRate { get; set; }
         public double AvgIngressRate { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.ObjectReadOnlyListConverter))]
         public System.Collections.Generic.IReadOnlyList<object?> Delta { get; set; }
         public int Len { get; set; }
         public long NextSeqId { get; set; }
