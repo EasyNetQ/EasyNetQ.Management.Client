@@ -865,9 +865,9 @@ namespace EasyNetQ.Management.Client.Model
         public EasyNetQ.Management.Client.Model.PermissionInfo SetRead(string resourcesToAllow) { }
         public EasyNetQ.Management.Client.Model.PermissionInfo SetWrite(string resourcesToAllow) { }
     }
-    public class Policy
+    public class Policy : System.IEquatable<EasyNetQ.Management.Client.Model.Policy>
     {
-        public Policy() { }
+        public Policy(string Name, string Pattern, EasyNetQ.Management.Client.Model.PolicyDefinition Definition, string Vhost = "/", EasyNetQ.Management.Client.Model.ApplyMode ApplyTo = 0, int Priority = 0) { }
         [System.Text.Json.Serialization.JsonPropertyName("apply-to")]
         public EasyNetQ.Management.Client.Model.ApplyMode ApplyTo { get; set; }
         public EasyNetQ.Management.Client.Model.PolicyDefinition Definition { get; set; }
@@ -876,25 +876,25 @@ namespace EasyNetQ.Management.Client.Model
         public int Priority { get; set; }
         public string Vhost { get; set; }
     }
-    public class PolicyDefinition
+    public class PolicyDefinition : System.IEquatable<EasyNetQ.Management.Client.Model.PolicyDefinition>
     {
-        public PolicyDefinition() { }
+        public PolicyDefinition(EasyNetQ.Management.Client.Model.HaMode? HaMode = default, EasyNetQ.Management.Client.Model.HaParams? HaParams = null, EasyNetQ.Management.Client.Model.HaSyncMode? HaSyncMode = default, int? HaSyncBatchSize = default, string? FederationUpstream = null, string? FederationUpstreamSet = null, string? AlternateExchange = null, string? DeadLetterExchange = null, string? DeadLetterRoutingKey = null, string? QueueMode = null, uint? MessageTtl = default, uint? Expires = default, uint? MaxLength = default) { }
         [System.Text.Json.Serialization.JsonPropertyName("alternate-exchange")]
-        public string AlternateExchange { get; set; }
+        public string? AlternateExchange { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("dead-letter-exchange")]
-        public string DeadLetterExchange { get; set; }
+        public string? DeadLetterExchange { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("dead-letter-routing-key")]
-        public string DeadLetterRoutingKey { get; set; }
+        public string? DeadLetterRoutingKey { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("expires")]
         public uint? Expires { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("federation-upstream")]
-        public string FederationUpstream { get; set; }
+        public string? FederationUpstream { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("federation-upstream-set")]
-        public string FederationUpstreamSet { get; set; }
+        public string? FederationUpstreamSet { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("ha-mode")]
         public EasyNetQ.Management.Client.Model.HaMode? HaMode { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("ha-params")]
-        public EasyNetQ.Management.Client.Model.HaParams HaParams { get; set; }
+        public EasyNetQ.Management.Client.Model.HaParams? HaParams { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("ha-sync-batch-size")]
         public int? HaSyncBatchSize { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("ha-sync-mode")]
@@ -904,11 +904,11 @@ namespace EasyNetQ.Management.Client.Model
         [System.Text.Json.Serialization.JsonPropertyName("message-ttl")]
         public uint? MessageTtl { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("queue-mode")]
-        public string QueueMode { get; set; }
+        public string? QueueMode { get; set; }
     }
-    public class PolicyInfo
+    public class PolicyInfo : System.IEquatable<EasyNetQ.Management.Client.Model.PolicyInfo>
     {
-        public PolicyInfo() { }
+        public PolicyInfo(string Name, string Pattern, EasyNetQ.Management.Client.Model.PolicyDefinition Definition, EasyNetQ.Management.Client.Model.ApplyMode ApplyTo, int Priority) { }
         [System.Text.Json.Serialization.JsonPropertyName("apply-to")]
         public EasyNetQ.Management.Client.Model.ApplyMode ApplyTo { get; set; }
         public EasyNetQ.Management.Client.Model.PolicyDefinition Definition { get; set; }

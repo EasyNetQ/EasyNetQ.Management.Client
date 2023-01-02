@@ -73,41 +73,52 @@ public class PolicySerializationTests
     [Fact]
     public void Should_write_apply_to_properly()
     {
-        var serializedMessage = JsonSerializer.Serialize(new Policy
-        {
-            Name = "bob",
-            Pattern = "foo"
-        }, ManagementClient.SerializerOptions);
+        var serializedMessage = JsonSerializer.Serialize(
+            new Policy(
+                Name: "bob",
+                Pattern: "foo",
+                Definition: new PolicyDefinition()
+            ),
+            ManagementClient.SerializerOptions
+        );
 
         Assert.Contains("\"apply-to\":\"all\"", serializedMessage);
 
-        serializedMessage = JsonSerializer.Serialize(new Policy
-        {
-            Name = "bob",
-            Pattern = "foo",
-            ApplyTo = ApplyMode.Exchanges
-        }, ManagementClient.SerializerOptions);
+        serializedMessage = JsonSerializer.Serialize(
+            new Policy(
+                Name: "bob",
+                Pattern: "foo",
+                Definition: new PolicyDefinition(),
+                ApplyTo: ApplyMode.Exchanges
+            ),
+            ManagementClient.SerializerOptions
+        );
 
         Assert.Contains("\"apply-to\":\"exchanges\"", serializedMessage);
 
-        serializedMessage = JsonSerializer.Serialize(new Policy
-        {
-            Name = "bob",
-            Pattern = "foo",
-            ApplyTo = ApplyMode.Queues
-        }, ManagementClient.SerializerOptions);
+        serializedMessage = JsonSerializer.Serialize(
+            new Policy(
+                Name: "bob",
+                Pattern: "foo",
+                Definition: new PolicyDefinition(),
+                ApplyTo: ApplyMode.Queues
+            ),
+            ManagementClient.SerializerOptions
+        );
         Assert.Contains("\"apply-to\":\"queues\"", serializedMessage);
     }
 
     [Fact]
     public void Should_write_federation_upstream_properly()
     {
-        var serializedMessage = JsonSerializer.Serialize(new Policy
-        {
-            Name = "bob",
-            Pattern = "foo",
-            Definition = new PolicyDefinition { FederationUpstream = "my-upstream" }
-        }, ManagementClient.SerializerOptions);
+        var serializedMessage = JsonSerializer.Serialize(
+            new Policy(
+                Name: "bob",
+                Pattern: "foo",
+                Definition: new PolicyDefinition { FederationUpstream = "my-upstream" }
+            ),
+            ManagementClient.SerializerOptions
+        );
 
         Assert.Contains("\"federation-upstream\":\"my-upstream\"", serializedMessage);
     }
@@ -115,12 +126,14 @@ public class PolicySerializationTests
     [Fact]
     public void Should_write_all_ha_policy_without_param()
     {
-        var serializedMessage = JsonSerializer.Serialize(new Policy
-        {
-            Name = "bob",
-            Pattern = "foo",
-            Definition = new PolicyDefinition { HaMode = HaMode.All }
-        }, ManagementClient.SerializerOptions);
+        var serializedMessage = JsonSerializer.Serialize(
+            new Policy(
+                Name: "bob",
+                Pattern: "foo",
+                Definition: new PolicyDefinition { HaMode = HaMode.All }
+            ),
+            ManagementClient.SerializerOptions
+        );
 
         Assert.DoesNotContain("ha-params", serializedMessage);
         Assert.DoesNotContain("ha-sync-batch-size", serializedMessage);

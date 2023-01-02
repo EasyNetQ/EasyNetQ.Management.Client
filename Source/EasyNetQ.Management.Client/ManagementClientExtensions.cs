@@ -1348,14 +1348,13 @@ public static class ManagementClientExtensions
         CancellationToken cancellationToken = default
     ) => client.CreatePolicyAsync(
         policy.Vhost,
-        new PolicyInfo
-        {
-            Name = policy.Name,
-            ApplyTo = policy.ApplyTo,
-            Definition = policy.Definition,
-            Priority = policy.Priority,
-            Pattern = policy.Pattern
-        },
+        new PolicyInfo(
+            Name: policy.Name,
+            ApplyTo: policy.ApplyTo,
+            Definition: policy.Definition,
+            Priority: policy.Priority,
+            Pattern: policy.Pattern
+        ),
         cancellationToken
     );
 

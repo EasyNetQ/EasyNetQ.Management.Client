@@ -2,15 +2,12 @@
 
 namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
-
-public class Policy
-{
-    public string Vhost { get; set; }
-    public string Name { get; set; }
-    public string Pattern { get; set; }
-    public PolicyDefinition Definition { get; set; }
-    [JsonPropertyName("apply-to")]
-    public ApplyMode ApplyTo { get; set; }
-    public int Priority { get; set; }
-}
+public record Policy(
+    string Name,
+    string Pattern,
+    PolicyDefinition Definition,
+    string Vhost = "/",
+    [property: JsonPropertyName("apply-to")]
+    ApplyMode ApplyTo = ApplyMode.All,
+    int Priority = 0
+);
