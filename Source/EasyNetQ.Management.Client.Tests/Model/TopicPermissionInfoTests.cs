@@ -53,7 +53,7 @@ public class TopicPermissionInfoTests
     [Fact]
     public void Should_be_able_to_set_arbitrary_exchange()
     {
-        var topicPermissions = topicPermissionInfo.SetExchangeType("amq.topic");
+        var topicPermissions = topicPermissionInfo.SetExchange("amq.topic");
 
         topicPermissions.Exchange.Should().Be("amq.topic");
     }

@@ -853,11 +853,11 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class PermissionInfo : System.IEquatable<EasyNetQ.Management.Client.Model.PermissionInfo>
     {
-        public PermissionInfo(string UserName) { }
-        public string Configure { get; }
-        public string Read { get; }
+        public PermissionInfo(string UserName, string Configure = ".*", string Write = ".*", string Read = ".*") { }
+        public string Configure { get; set; }
+        public string Read { get; set; }
         public string UserName { get; set; }
-        public string Write { get; }
+        public string Write { get; set; }
         public EasyNetQ.Management.Client.Model.PermissionInfo DenyAllConfigure() { }
         public EasyNetQ.Management.Client.Model.PermissionInfo DenyAllRead() { }
         public EasyNetQ.Management.Client.Model.PermissionInfo DenyAllWrite() { }
@@ -1025,18 +1025,18 @@ namespace EasyNetQ.Management.Client.Model
         public string Vhost { get; set; }
         public string Write { get; set; }
     }
-    public class TopicPermissionInfo
+    public class TopicPermissionInfo : System.IEquatable<EasyNetQ.Management.Client.Model.TopicPermissionInfo>
     {
-        public TopicPermissionInfo(string userName) { }
-        public string Exchange { get; }
-        public string Read { get; }
-        public string UserName { get; }
-        public string Write { get; }
+        public TopicPermissionInfo(string UserName, string? Exchange = null, string Write = ".*", string Read = ".*") { }
+        public string? Exchange { get; set; }
+        public string Read { get; set; }
+        public string UserName { get; set; }
+        public string Write { get; set; }
         public EasyNetQ.Management.Client.Model.TopicPermissionInfo DenyAllRead() { }
         public EasyNetQ.Management.Client.Model.TopicPermissionInfo DenyAllWrite() { }
-        public EasyNetQ.Management.Client.Model.TopicPermissionInfo SetExchangeType(string exchangeType) { }
+        public EasyNetQ.Management.Client.Model.TopicPermissionInfo SetExchange(string? exchange) { }
         public EasyNetQ.Management.Client.Model.TopicPermissionInfo SetRead(string resourcesToAllow) { }
-        public EasyNetQ.Management.Client.Model.TopicPermissionInfo SetWrite(string resourcedToAllow) { }
+        public EasyNetQ.Management.Client.Model.TopicPermissionInfo SetWrite(string resourcesToAllow) { }
     }
     public class User : System.IEquatable<EasyNetQ.Management.Client.Model.User>
     {

@@ -1,13 +1,9 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
-public record PermissionInfo(string UserName)
+public record PermissionInfo(string UserName, string Configure = ".*", string Write = ".*", string Read = ".*")
 {
     private const string DenyAll = "^$";
     private const string AllowAll = ".*";
-
-    public string Configure { get; private init; } = AllowAll;
-    public string Write { get; private init; } = AllowAll;
-    public string Read { get; private init; } = AllowAll;
 
     public PermissionInfo SetConfigure(string resourcesToAllow) => this with { Configure = resourcesToAllow };
 
