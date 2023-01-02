@@ -757,13 +757,13 @@ public class ManagementClientTests
         var queue = await CreateTestQueue(TestQueue);
 
         var publishInfo = new PublishInfo(
+            TestQueue,
+            "Hello World",
+            PayloadEncoding.String,
             new Dictionary<string, object>
             {
                 { "app_id", "management-test" }
-            },
-            TestQueue,
-            "Hello World",
-            PayloadEncoding.String
+            }
         );
 
         await fixture.ManagementClient.PublishAsync("/", "amq.default", publishInfo);

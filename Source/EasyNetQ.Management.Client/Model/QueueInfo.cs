@@ -8,5 +8,5 @@ public record QueueInfo(
     bool AutoDelete = false,
     bool Durable = true,
     [property: JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]
-    IReadOnlyDictionary<string, object>? Arguments = null
+    IReadOnlyDictionary<string, object?>? Arguments = null
 );

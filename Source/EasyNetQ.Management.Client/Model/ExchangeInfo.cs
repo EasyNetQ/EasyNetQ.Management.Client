@@ -10,5 +10,5 @@ public record ExchangeInfo(
     bool Durable = true,
     bool Internal = false,
     [property: JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]
-    IReadOnlyDictionary<string, object>? Arguments = null
+    IReadOnlyDictionary<string, object?>? Arguments = null
 );

@@ -340,9 +340,9 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class BindingInfo : System.IEquatable<EasyNetQ.Management.Client.Model.BindingInfo>
     {
-        public BindingInfo(string RoutingKey, System.Collections.Generic.IReadOnlyDictionary<string, object>? Arguments = null) { }
+        public BindingInfo(string RoutingKey, System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments = null) { }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object>? Arguments { get; set; }
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments { get; set; }
         public string RoutingKey { get; set; }
     }
     public class Channel
@@ -528,9 +528,9 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class ExchangeInfo : System.IEquatable<EasyNetQ.Management.Client.Model.ExchangeInfo>
     {
-        public ExchangeInfo(string Name, string Type, bool AutoDelete = false, bool Durable = true, bool Internal = false, System.Collections.Generic.IReadOnlyDictionary<string, object>? Arguments = null) { }
+        public ExchangeInfo(string Name, string Type, bool AutoDelete = false, bool Durable = true, bool Internal = false, System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments = null) { }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object>? Arguments { get; set; }
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments { get; set; }
         public bool AutoDelete { get; set; }
         public bool Durable { get; set; }
         public bool Internal { get; set; }
@@ -916,15 +916,14 @@ namespace EasyNetQ.Management.Client.Model
         public string Pattern { get; set; }
         public int Priority { get; set; }
     }
-    public class PublishInfo
+    public class PublishInfo : System.IEquatable<EasyNetQ.Management.Client.Model.PublishInfo>
     {
-        public PublishInfo(string routingKey, string payload) { }
-        public PublishInfo(System.Collections.Generic.IReadOnlyDictionary<string, object?> properties, string routingKey, string payload, EasyNetQ.Management.Client.Model.PayloadEncoding payloadEncoding) { }
-        public string Payload { get; }
-        public EasyNetQ.Management.Client.Model.PayloadEncoding PayloadEncoding { get; }
+        public PublishInfo(string RoutingKey, string Payload, EasyNetQ.Management.Client.Model.PayloadEncoding PayloadEncoding = 0, System.Collections.Generic.IReadOnlyDictionary<string, object?>? Properties = null) { }
+        public string Payload { get; set; }
+        public EasyNetQ.Management.Client.Model.PayloadEncoding PayloadEncoding { get; set; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object?> Properties { get; }
-        public string RoutingKey { get; }
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?> Properties { get; set; }
+        public string RoutingKey { get; set; }
     }
     public class PublishResult : System.IEquatable<EasyNetQ.Management.Client.Model.PublishResult>
     {
@@ -986,9 +985,9 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class QueueInfo : System.IEquatable<EasyNetQ.Management.Client.Model.QueueInfo>
     {
-        public QueueInfo(string Name, bool AutoDelete = false, bool Durable = true, System.Collections.Generic.IReadOnlyDictionary<string, object>? Arguments = null) { }
+        public QueueInfo(string Name, bool AutoDelete = false, bool Durable = true, System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments = null) { }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object>? Arguments { get; set; }
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments { get; set; }
         public bool AutoDelete { get; set; }
         public bool Durable { get; set; }
         public string Name { get; set; }
