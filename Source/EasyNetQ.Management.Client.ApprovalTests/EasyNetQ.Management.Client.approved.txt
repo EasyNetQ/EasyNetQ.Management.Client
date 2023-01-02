@@ -376,9 +376,40 @@ namespace EasyNetQ.Management.Client.Model
         public int PeerPort { get; set; }
         public string User { get; set; }
     }
-    public class Connection
+    public class Connection : System.IEquatable<EasyNetQ.Management.Client.Model.Connection>
     {
-        public Connection() { }
+        public Connection(
+                    long RecvOct,
+                    long RecvCnt,
+                    long SendOct,
+                    long SendCnt,
+                    long SendPend,
+                    string State,
+                    string? LastBlockedBy,
+                    string? LastBlockedAge,
+                    long Channels,
+                    string Type,
+                    string Node,
+                    string Name,
+                    string? Address,
+                    int Port,
+                    string PeerHost,
+                    int PeerPort,
+                    bool Ssl,
+                    string? PeerCertSubject,
+                    string? PeerCertIssuer,
+                    string? PeerCertValidity,
+                    string AuthMechanism,
+                    string? SslProtocol,
+                    string? SslKeyExchange,
+                    string? SslCipher,
+                    string? SslHash,
+                    string Protocol,
+                    string User,
+                    string Vhost,
+                    long Timeout,
+                    long FrameMax,
+                    System.Collections.Generic.IReadOnlyDictionary<string, object?> ClientProperties) { }
         public string? Address { get; set; }
         public string AuthMechanism { get; set; }
         public long Channels { get; set; }
@@ -412,9 +443,9 @@ namespace EasyNetQ.Management.Client.Model
         public string User { get; set; }
         public string Vhost { get; set; }
     }
-    public class ConnectionDetails
+    public class ConnectionDetails : System.IEquatable<EasyNetQ.Management.Client.Model.ConnectionDetails>
     {
-        public ConnectionDetails() { }
+        public ConnectionDetails(string Name, string PeerHost, int PeerPort) { }
         public string Name { get; set; }
         public string PeerHost { get; set; }
         public int PeerPort { get; set; }

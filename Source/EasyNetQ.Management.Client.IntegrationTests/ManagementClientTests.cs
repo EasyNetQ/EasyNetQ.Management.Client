@@ -1156,10 +1156,9 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_throw_when_trying_to_close_unknown_connection()
     {
-        var connection = new Connection { Name = "unknown" };
         try
         {
-            await fixture.ManagementClient.CloseConnectionAsync(connection);
+            await fixture.ManagementClient.CloseConnectionAsync("unknown");
         }
         catch (Exception e)
         {
