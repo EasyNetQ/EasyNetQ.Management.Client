@@ -563,12 +563,12 @@ namespace EasyNetQ.Management.Client.Model
     {
         Running = 0,
     }
-    public class GetMessagesFromQueueInfo
+    public class GetMessagesFromQueueInfo : System.IEquatable<EasyNetQ.Management.Client.Model.GetMessagesFromQueueInfo>
     {
-        public GetMessagesFromQueueInfo(long count, EasyNetQ.Management.Client.Model.AckMode ackMode) { }
-        public EasyNetQ.Management.Client.Model.AckMode Ackmode { get; }
-        public long Count { get; }
-        public string Encoding { get; }
+        public GetMessagesFromQueueInfo(long Count, EasyNetQ.Management.Client.Model.AckMode Ackmode, string Encoding = "auto") { }
+        public EasyNetQ.Management.Client.Model.AckMode Ackmode { get; set; }
+        public long Count { get; set; }
+        public string Encoding { get; set; }
     }
     public enum HaMode
     {
@@ -698,18 +698,47 @@ namespace EasyNetQ.Management.Client.Model
         public long Return { get; set; }
         public EasyNetQ.Management.Client.Model.MessageRateDetails? ReturnDetails { get; set; }
     }
-    public class Node
+    public class Node : System.IEquatable<EasyNetQ.Management.Client.Model.Node>
     {
-        public Node() { }
-        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Application> Applications { get; set; }
-        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.AuthMechanism> AuthMechanisms { get; set; }
+        public Node(
+                    string Name,
+                    string Type,
+                    bool Running,
+                    string? OsPid,
+                    long MemEts,
+                    long MemBinary,
+                    long MemProc,
+                    long MemProcUsed,
+                    long MemAtom,
+                    long MemAtomUsed,
+                    long MemCode,
+                    long FdUsed,
+                    long FdTotal,
+                    long SocketsUsed,
+                    long SocketsTotal,
+                    long MemUsed,
+                    long MemLimit,
+                    bool MemAlarm,
+                    long DiskFreeLimit,
+                    long DiskFree,
+                    bool DiskFreeAlarm,
+                    long ProcUsed,
+                    long ProcTotal,
+                    long Uptime,
+                    long RunQueue,
+                    long Processors,
+                    System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec>? ExchangeTypes,
+                    System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.AuthMechanism>? AuthMechanisms,
+                    System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Application>? Applications,
+                    System.Collections.Generic.IReadOnlyList<string>? Partitions) { }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Application>? Applications { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.AuthMechanism>? AuthMechanisms { get; set; }
         public long DiskFree { get; set; }
         public bool DiskFreeAlarm { get; set; }
         public long DiskFreeLimit { get; set; }
-        public string ErlangVersion { get; set; }
-        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec> ExchangeTypes { get; set; }
-        public int FdTotal { get; set; }
-        public string FdUsed { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec>? ExchangeTypes { get; set; }
+        public long FdTotal { get; set; }
+        public long FdUsed { get; set; }
         public bool MemAlarm { get; set; }
         public long MemAtom { get; set; }
         public long MemAtomUsed { get; set; }
@@ -721,16 +750,15 @@ namespace EasyNetQ.Management.Client.Model
         public long MemProcUsed { get; set; }
         public long MemUsed { get; set; }
         public string Name { get; set; }
-        public string OsPid { get; set; }
-        public System.Collections.Generic.IReadOnlyList<string> Partitions { get; set; }
-        public int ProcTotal { get; set; }
-        public int ProcUsed { get; set; }
-        public int Processors { get; set; }
-        public int RunQueue { get; set; }
+        public string? OsPid { get; set; }
+        public System.Collections.Generic.IReadOnlyList<string>? Partitions { get; set; }
+        public long ProcTotal { get; set; }
+        public long ProcUsed { get; set; }
+        public long Processors { get; set; }
+        public long RunQueue { get; set; }
         public bool Running { get; set; }
-        public int SocketsTotal { get; set; }
-        public int SocketsUsed { get; set; }
-        public string StatisticsLevel { get; set; }
+        public long SocketsTotal { get; set; }
+        public long SocketsUsed { get; set; }
         public string Type { get; set; }
         public long Uptime { get; set; }
     }
