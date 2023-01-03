@@ -1,14 +1,5 @@
 namespace EasyNetQ.Management.Client
 {
-    [System.Serializable]
-    public class EasyNetQManagementException : System.Exception
-    {
-        public EasyNetQManagementException() { }
-        public EasyNetQManagementException(string message) { }
-        protected EasyNetQManagementException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
-        public EasyNetQManagementException(string format, params object[] args) { }
-        public EasyNetQManagementException(string message, System.Exception inner) { }
-    }
     public interface IManagementClient : System.IDisposable
     {
         System.Uri Endpoint { get; }
