@@ -8,7 +8,7 @@ public class FederationSerializationTests
 
     public FederationSerializationTests()
     {
-        federations = ResourceLoader.LoadObjectFromJson<List<Federation>>("Federations.json", ManagementClient.SerializerSettings);
+        federations = ResourceLoader.LoadObjectFromJson<List<Federation>>("Federations.json", ManagementClient.SerializerOptions);
     }
 
     [Fact]

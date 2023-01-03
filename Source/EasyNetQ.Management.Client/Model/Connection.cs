@@ -1,38 +1,39 @@
-﻿namespace EasyNetQ.Management.Client.Model;
+﻿using System.Text.Json.Serialization;
+using EasyNetQ.Management.Client.Serialization;
 
-#nullable disable
+namespace EasyNetQ.Management.Client.Model;
 
-public class Connection
-{
-    public long RecvOct { get; set; }
-    public long RecvCnt { get; set; }
-    public long SendOct { get; set; }
-    public long SendCnt { get; set; }
-    public long SendPend { get; set; }
-    public string State { get; set; }
-    public string LastBlockedBy { get; set; }
-    public string LastBlockedAge { get; set; }
-    public long Channels { get; set; }
-    public string Type { get; set; }
-    public string Node { get; set; }
-    public string Name { get; set; }
-    public string Address { get; set; }
-    public int Port { get; set; }
-    public string PeerHost { get; set; }
-    public int PeerPort { get; set; }
-    public bool Ssl { get; set; }
-    public string PeerCertSubject { get; set; }
-    public string PeerCertIssuer { get; set; }
-    public string PeerCertValidity { get; set; }
-    public string AuthMechanism { get; set; }
-    public string SslProtocol { get; set; }
-    public string SslKeyExchange { get; set; }
-    public string SslCipher { get; set; }
-    public string SslHash { get; set; }
-    public string Protocol { get; set; }
-    public string User { get; set; }
-    public string Vhost { get; set; }
-    public long Timeout { get; set; }
-    public long FrameMax { get; set; }
-    public ClientProperties ClientProperties { get; set; }
-}
+public record Connection(
+    long RecvOct,
+    long RecvCnt,
+    long SendOct,
+    long SendCnt,
+    long SendPend,
+    string State,
+    string? LastBlockedBy,
+    string? LastBlockedAge,
+    long Channels,
+    string Type,
+    string Node,
+    string Name,
+    string? Address,
+    int Port,
+    string PeerHost,
+    int PeerPort,
+    bool Ssl,
+    string? PeerCertSubject,
+    string? PeerCertIssuer,
+    string? PeerCertValidity,
+    string AuthMechanism,
+    string? SslProtocol,
+    string? SslKeyExchange,
+    string? SslCipher,
+    string? SslHash,
+    string Protocol,
+    string User,
+    string Vhost,
+    long Timeout,
+    long FrameMax,
+    [property: JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]
+    IReadOnlyDictionary<string, object?> ClientProperties
+);

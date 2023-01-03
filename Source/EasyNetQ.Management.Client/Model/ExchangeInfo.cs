@@ -1,28 +1,14 @@
-﻿namespace EasyNetQ.Management.Client.Model;
+﻿using System.Text.Json.Serialization;
+using EasyNetQ.Management.Client.Serialization;
 
-public class ExchangeInfo
-{
-    public string Name { get; }
-    public string Type { get; }
-    public bool AutoDelete { get; }
-    public bool Durable { get; }
-    public bool Internal { get; }
-    public Dictionary<string, string> Arguments { get; }
+namespace EasyNetQ.Management.Client.Model;
 
-    public ExchangeInfo(
-        string name,
-        string type,
-        bool autoDelete = false,
-        bool durable = true,
-        bool @internal = false,
-        Dictionary<string, string>? arguments = null
-    )
-    {
-        Name = name;
-        Type = type;
-        AutoDelete = autoDelete;
-        Durable = durable;
-        Internal = @internal;
-        Arguments = arguments ?? new Dictionary<string, string>();
-    }
-}
+public record ExchangeInfo(
+    string Name,
+    string Type,
+    bool AutoDelete = false,
+    bool Durable = true,
+    bool Internal = false,
+    [property: JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]
+    IReadOnlyDictionary<string, object?>? Arguments = null
+);

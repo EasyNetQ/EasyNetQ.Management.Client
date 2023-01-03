@@ -1,12 +1,12 @@
 using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using EasyNetQ.Management.Client.Internals;
 using EasyNetQ.Management.Client.Model;
 using EasyNetQ.Management.Client.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 
 #if NET6_0
 using HttpHandler = System.Net.Http.SocketsHttpHandler;
@@ -18,6 +18,7 @@ namespace EasyNetQ.Management.Client;
 
 public class ManagementClient : IManagementClient
 {
+    private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new("application/json");
     private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(20);
 
     private static readonly RelativePath Api = new("api");
@@ -41,7 +42,7 @@ public class ManagementClient : IManagementClient
     private static readonly RelativePath Health = Api / "health";
     private static readonly RelativePath Rebalance = Api / "rebalance";
 
-    internal static readonly JsonSerializerSettings SerializerSettings;
+    internal static readonly JsonSerializerOptions SerializerOptions;
 
     private readonly HttpClient httpClient;
     private readonly Action<HttpRequestMessage>? configureHttpRequestMessage;
@@ -50,20 +51,17 @@ public class ManagementClient : IManagementClient
 
     static ManagementClient()
     {
-        SerializerSettings = new JsonSerializerSettings
+        var namingPolicy = new JsonSnakeCaseNamingPolicy();
+        SerializerOptions = new JsonSerializerOptions
         {
-            ContractResolver = new DefaultContractResolver
+            PropertyNamingPolicy = namingPolicy,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Converters =
             {
-                NamingStrategy = new SnakeCaseNamingStrategy(true, true)
-            },
-            NullValueHandling = NullValueHandling.Ignore
+                new JsonStringEnumConverter(namingPolicy),
+                new HaParamsConverter()
+            }
         };
-
-        SerializerSettings.Converters.Add(new PropertyConverter());
-        SerializerSettings.Converters.Add(new MessageStatsOrEmptyArrayConverter());
-        SerializerSettings.Converters.Add(new QueueTotalsOrEmptyArrayConverter());
-        SerializerSettings.Converters.Add(new StringEnumConverter { NamingStrategy = new SnakeCaseNamingStrategy(true, true) });
-        SerializerSettings.Converters.Add(new HaParamsConverter());
     }
 
     [Obsolete("Please use another constructor")]
@@ -373,7 +371,7 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        return PostAsync<BindingInfo, object>(
+        return PostAsync(
             Bindings / vhostName / "e" / exchangeName / "q" / queueName,
             bindingInfo,
             cancellationToken
@@ -388,7 +386,7 @@ public class ManagementClient : IManagementClient
         CancellationToken cancellationToken = default
     )
     {
-        return PostAsync<BindingInfo, object>(
+        return PostAsync(
             Bindings / vhostName / "e" / sourceExchangeName / "e" / destinationExchangeName,
             bindingInfo,
             cancellationToken
@@ -686,7 +684,11 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Get, path, queryParameters);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-        return await DeserializeResponseAsync<T>(statusCode => statusCode == HttpStatusCode.OK, response).ConfigureAwait(false);
+        return await DeserializeResponseAsync<T>(
+            statusCode => statusCode == HttpStatusCode.OK,
+            response,
+            cancellationToken
+        ).ConfigureAwait(false);
     }
 
     private async Task<TResult> PostAsync<TItem, TResult>(
@@ -700,7 +702,25 @@ public class ManagementClient : IManagementClient
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         return await DeserializeResponseAsync<TResult>(
-            c => c is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, response
+            statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent,
+            response,
+            cancellationToken
+        ).ConfigureAwait(false);
+    }
+
+    private async Task PostAsync<TItem>(
+        RelativePath path,
+        TItem item,
+        CancellationToken cancellationToken = default
+    )
+    {
+        using var requestContent = CreateRequestContent(item);
+        using var request = CreateRequest(HttpMethod.Post, path, null, requestContent);
+        using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+
+        await DeserializeResponseAsync(
+            statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent,
+            response
         ).ConfigureAwait(false);
     }
 
@@ -712,7 +732,8 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Post, path);
         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
-        await DeserializeResponseAsync(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, response).ConfigureAwait(false);
+        await DeserializeResponseAsync(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, response)
+            .ConfigureAwait(false);
     }
 
     private async Task DeleteAsync(RelativePath path, CancellationToken cancellationToken = default)
@@ -762,11 +783,7 @@ public class ManagementClient : IManagementClient
         return request;
     }
 
-    private static HttpContent CreateRequestContent<T>(T item)
-    {
-        var json = JsonConvert.SerializeObject(item, SerializerSettings);
-        return new StringContent(json, null, "application/json");
-    }
+    private static HttpContent CreateRequestContent<T>(T item) => JsonContent.Create(item, JsonMediaTypeHeaderValue, SerializerOptions);
 
     private static Task DeserializeResponseAsync(Func<HttpStatusCode, bool> success, HttpResponseMessage response)
     {
@@ -777,14 +794,14 @@ public class ManagementClient : IManagementClient
 
     private static async Task<T> DeserializeResponseAsync<T>(
         Func<HttpStatusCode, bool> success,
-        HttpResponseMessage response
+        HttpResponseMessage response,
+        CancellationToken cancellationToken
     )
     {
         if (!success(response.StatusCode))
             throw new UnexpectedHttpStatusCodeException(response.StatusCode);
 
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-        return JsonConvert.DeserializeObject<T>(content, SerializerSettings)!;
+        return (await response.Content.ReadFromJsonAsync<T>(SerializerOptions, cancellationToken))!;
     }
 
     private static IReadOnlyDictionary<string, string>? MergeQueryParameters(params IReadOnlyDictionary<string, string>?[]? multipleQueryParameters)

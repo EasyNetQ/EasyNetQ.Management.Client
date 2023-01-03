@@ -1,11 +1,12 @@
+using System.Text.Json.Serialization;
+using EasyNetQ.Management.Client.Serialization;
+
 namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
-
-public class Context
-{
-    public string Node { get; set; }
-    public string Description { get; set; }
-    public string Path { get; set; }
-    public int Port { get; set; }
-}
+public record Context(
+    string Node,
+    string Description,
+    string Path,
+    [property: JsonConverter(typeof(TolerantInt32Converter))]
+    int Port
+);

@@ -1,22 +1,15 @@
-﻿namespace EasyNetQ.Management.Client.Model;
+﻿using System.Text.Json.Serialization;
+using EasyNetQ.Management.Client.Serialization;
 
-public class PublishInfo
+namespace EasyNetQ.Management.Client.Model;
+
+public record PublishInfo(
+    string RoutingKey,
+    string Payload,
+    PayloadEncoding PayloadEncoding = PayloadEncoding.String,
+    IReadOnlyDictionary<string, object?>? Properties = null
+)
 {
-    public IDictionary<string, object> Properties { get; }
-    public string RoutingKey { get; }
-    public string Payload { get; }
-    public PayloadEncoding PayloadEncoding { get; }
-
-    public PublishInfo(IDictionary<string, object> properties, string routingKey, string payload, PayloadEncoding payloadEncoding)
-    {
-        Properties = properties;
-        RoutingKey = routingKey;
-        Payload = payload;
-        PayloadEncoding = payloadEncoding;
-    }
-
-    public PublishInfo(string routingKey, string payload)
-        : this(new Dictionary<string, object>(), routingKey, payload, PayloadEncoding.String)
-    {
-    }
+    [JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]
+    public IReadOnlyDictionary<string, object?> Properties { get; init; } = Properties ?? new Dictionary<string, object?>();
 }

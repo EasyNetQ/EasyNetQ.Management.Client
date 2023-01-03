@@ -52,8 +52,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.*" />
     <PackageReference Include="NullGuard.Fody" Version="3.1.0" PrivateAssets="All" />
+    <PackageReference Include="System.Text.Json" Version="6.0.*" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

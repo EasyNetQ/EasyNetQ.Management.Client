@@ -1,14 +1,15 @@
+using System.Text.Json.Serialization;
+using EasyNetQ.Management.Client.Serialization;
+
 namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
-
-public class Exchange
-{
-    public string Name { get; set; }
-    public string Vhost { get; set; }
-    public string Type { get; set; }
-    public bool Durable { get; set; }
-    public bool AutoDelete { get; set; }
-    public bool Internal { get; set; }
-    public Dictionary<string, string> Arguments { get; set; }
-}
+public record Exchange(
+    string Name,
+    string Vhost,
+    string Type,
+    bool Durable = true,
+    bool AutoDelete = false,
+    bool Internal = false,
+    [property: JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]
+    IReadOnlyDictionary<string, object>? Arguments = null
+);

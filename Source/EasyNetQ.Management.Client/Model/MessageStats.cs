@@ -1,31 +1,28 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
-
-public class MessageStats
-{
-    public long Ack { get; set; }
-    public MessageRateDetails AckDetails { get; set; }
-    public long DeliverGet { get; set; }
-    public MessageRateDetails DeliverGetDetails { get; set; }
-    public long DeliverNoAck { get; set; }
-    public MessageRateDetails DeliverNoAckDetails { get; set; }
-    public long Publish { get; set; }
-    public MessageRateDetails PublishDetails { get; set; }
-    public long PublishIn { get; set; }
-    public MessageRateDetails PublishInDetails { get; set; }
-    public long PublishOut { get; set; }
-    public MessageRateDetails PublishOutDetails { get; set; }
-    public long Redeliver { get; set; }
-    public MessageRateDetails RedeliverDetails { get; set; }
-    public long Return { get; set; }
-    public MessageRateDetails ReturnDetails { get; set; }
-    public long Get { get; set; }
-    public MessageRateDetails GetDetails { get; set; }
-    public long GetNoAck { get; set; }
-    public MessageRateDetails GetNoAckDetails { get; set; }
-    public long Deliver { get; set; }
-    public MessageRateDetails DeliverDetails { get; set; }
-    public long Confirm { get; set; }
-    public MessageRateDetails ConfirmDetails { get; set; }
-}
+public record MessageStats(
+    long Ack = 0,
+    MessageRateDetails? AckDetails = null,
+    long DeliverGet = 0,
+    MessageRateDetails? DeliverGetDetails = null,
+    long DeliverNoAck = 0,
+    MessageRateDetails? DeliverNoAckDetails = null,
+    long Publish = 0,
+    MessageRateDetails? PublishDetails = null,
+    long PublishIn = 0,
+    MessageRateDetails? PublishInDetails = null,
+    long PublishOut = 0,
+    MessageRateDetails? PublishOutDetails = null,
+    long Redeliver = 0,
+    MessageRateDetails? RedeliverDetails = null,
+    long Return = 0,
+    MessageRateDetails? ReturnDetails = null,
+    long Get = 0,
+    MessageRateDetails? GetDetails = null,
+    long GetNoAck = 0,
+    MessageRateDetails? GetNoAckDetails = null,
+    long Deliver = 0,
+    MessageRateDetails? DeliverDetails = null,
+    long Confirm = 0,
+    MessageRateDetails? ConfirmDetails = null
+);

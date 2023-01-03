@@ -1,25 +1,5 @@
-namespace EasyNetQ.Management.Client.Dynamic
-{
-    public abstract class PropertyExpando : System.Dynamic.DynamicObject
-    {
-        protected PropertyExpando(System.Collections.Generic.IDictionary<string, object?> properties) { }
-        protected System.Collections.Generic.IDictionary<string, object?> Properties { get; }
-        protected T? GetPropertyOrDefault<T>(string propertyName) { }
-        public override bool TryGetMember(System.Dynamic.GetMemberBinder binder, out object? result) { }
-        public override bool TrySetMember(System.Dynamic.SetMemberBinder binder, object? value) { }
-    }
-}
 namespace EasyNetQ.Management.Client
 {
-    [System.Serializable]
-    public class EasyNetQManagementException : System.Exception
-    {
-        public EasyNetQManagementException() { }
-        public EasyNetQManagementException(string message) { }
-        protected EasyNetQManagementException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
-        public EasyNetQManagementException(string format, params object[] args) { }
-        public EasyNetQManagementException(string message, System.Exception inner) { }
-    }
     public interface IManagementClient : System.IDisposable
     {
         System.Uri Endpoint { get; }
@@ -205,9 +185,9 @@ namespace EasyNetQ.Management.Client
         public static void DeleteVhost(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task DeleteVhostAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
         public static void DisableTracing(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
-        public static System.Threading.Tasks.Task DisableTracingAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.Vhost> DisableTracingAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
         public static void EnableTracing(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
-        public static System.Threading.Tasks.Task EnableTracingAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.Vhost> EnableTracingAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding> GetBindings(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding> GetBindingsForQueue(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Queue queue, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding>> GetBindingsForQueueAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Queue queue, System.Threading.CancellationToken cancellationToken = default) { }
@@ -281,9 +261,9 @@ namespace EasyNetQ.Management.Client.Model
         RejectRequeueFalse = 2,
         RejectRequeueTrue = 3,
     }
-    public class Application
+    public class Application : System.IEquatable<EasyNetQ.Management.Client.Model.Application>
     {
-        public Application() { }
+        public Application(string Name, string Description, string Version) { }
         public string Description { get; set; }
         public string Name { get; set; }
         public string Version { get; set; }
@@ -294,21 +274,38 @@ namespace EasyNetQ.Management.Client.Model
         Queues = 1,
         Exchanges = 2,
     }
-    public class AuthMechanism
+    public class AuthMechanism : System.IEquatable<EasyNetQ.Management.Client.Model.AuthMechanism>
     {
-        public AuthMechanism() { }
+        public AuthMechanism(string Name, string Description, bool Enabled) { }
         public string Description { get; set; }
         public bool Enabled { get; set; }
         public string Name { get; set; }
     }
-    public class BackingQueueStatus
+    public class BackingQueueStatus : System.IEquatable<EasyNetQ.Management.Client.Model.BackingQueueStatus>
     {
-        public BackingQueueStatus() { }
+        public BackingQueueStatus(
+                    int Q1,
+                    int Q2,
+                    System.Collections.Generic.IReadOnlyList<object?> Delta,
+                    int Q3,
+                    int Q4,
+                    int Len,
+                    int PendingAcks,
+                    string TargetRamCount,
+                    int RamMsgCount,
+                    int RamAckCount,
+                    long NextSeqId,
+                    int PersistentCount,
+                    double AvgIngressRate,
+                    double AvgEgressRate,
+                    double AvgAckIngressRate,
+                    double AvgAckEgressRate) { }
         public double AvgAckEgressRate { get; set; }
         public double AvgAckIngressRate { get; set; }
         public double AvgEgressRate { get; set; }
         public double AvgIngressRate { get; set; }
-        public System.Collections.Generic.List<object> Delta { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.ObjectReadOnlyListConverter))]
+        public System.Collections.Generic.IReadOnlyList<object?> Delta { get; set; }
         public int Len { get; set; }
         public long NextSeqId { get; set; }
         public int PendingAcks { get; set; }
@@ -321,43 +318,55 @@ namespace EasyNetQ.Management.Client.Model
         public int RamMsgCount { get; set; }
         public string TargetRamCount { get; set; }
     }
-    public class Binding
+    public class Binding : System.IEquatable<EasyNetQ.Management.Client.Model.Binding>
     {
-        public Binding() { }
-        public System.Collections.Generic.Dictionary<string, string> Arguments { get; set; }
+        public Binding(string Source, string Vhost, string Destination, string DestinationType, string RoutingKey, System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments, string? PropertiesKey) { }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments { get; set; }
         public string Destination { get; set; }
         public string DestinationType { get; set; }
-        public string PropertiesKey { get; set; }
+        public string? PropertiesKey { get; set; }
         public string RoutingKey { get; set; }
         public string Source { get; set; }
         public string Vhost { get; set; }
     }
-    public class BindingInfo
+    public class BindingInfo : System.IEquatable<EasyNetQ.Management.Client.Model.BindingInfo>
     {
-        public BindingInfo(string routingKey) { }
-        public BindingInfo(string routingKey, System.Collections.Generic.Dictionary<string, object> arguments) { }
-        public System.Collections.Generic.Dictionary<string, object> Arguments { get; set; }
+        public BindingInfo(string RoutingKey, System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments = null) { }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments { get; set; }
         public string RoutingKey { get; set; }
     }
-    public class Capabilities : EasyNetQ.Management.Client.Dynamic.PropertyExpando
+    public class Channel : System.IEquatable<EasyNetQ.Management.Client.Model.Channel>
     {
-        public Capabilities(System.Collections.Generic.IDictionary<string, object?> properties) { }
-        public bool BasicNack { get; }
-        public bool ConsumerCancelNotify { get; }
-        public bool ExchangeExchangeBindings { get; }
-        public bool PublisherConfirms { get; }
-    }
-    public class Channel
-    {
-        public Channel() { }
+        public Channel(
+                    System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails,
+                    EasyNetQ.Management.Client.Model.ConnectionDetails? ConnectionDetails,
+                    EasyNetQ.Management.Client.Model.MessageStats? MessageStats,
+                    string? IdleSince,
+                    bool Transactional,
+                    bool Confirm,
+                    int ConsumerCount,
+                    int MessagesUnacknowledged,
+                    int MessagesUnconfirmed,
+                    int MessagesUncommitted,
+                    int AcksUncommitted,
+                    int PrefetchCount,
+                    bool ClientFlowBlocked,
+                    string Node,
+                    string Name,
+                    int Number,
+                    string User,
+                    string Vhost) { }
         public int AcksUncommitted { get; set; }
         public bool ClientFlowBlocked { get; set; }
         public bool Confirm { get; set; }
-        public EasyNetQ.Management.Client.Model.ConnectionDetails ConnectionDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.ConnectionDetails? ConnectionDetails { get; set; }
         public int ConsumerCount { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.ConsumerDetail> ConsumerDetails { get; set; }
-        public string IdleSince { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageStats MessageStats { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails { get; set; }
+        public string? IdleSince { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.EmptyArrayAsDefaultConverter<EasyNetQ.Management.Client.Model.MessageStats>))]
+        public EasyNetQ.Management.Client.Model.MessageStats? MessageStats { get; set; }
         public int MessagesUnacknowledged { get; set; }
         public int MessagesUncommitted { get; set; }
         public int MessagesUnconfirmed { get; set; }
@@ -369,48 +378,66 @@ namespace EasyNetQ.Management.Client.Model
         public string User { get; set; }
         public string Vhost { get; set; }
     }
-    public class ChannelDetail
+    public class ChannelDetail : System.IEquatable<EasyNetQ.Management.Client.Model.ChannelDetail>
     {
-        public ChannelDetail() { }
+        public ChannelDetail(string Name, int Number, string User, string ConnectionName, int PeerPort, string PeerHost, string? Node) { }
         public string ConnectionName { get; set; }
         public string Name { get; set; }
-        public string Node { get; set; }
-        [Newtonsoft.Json.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.TolerantInt32Converter))]
+        public string? Node { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.TolerantInt32Converter))]
         public int Number { get; set; }
         public string PeerHost { get; set; }
-        [Newtonsoft.Json.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.TolerantInt32Converter))]
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.TolerantInt32Converter))]
         public int PeerPort { get; set; }
         public string User { get; set; }
     }
-    [Newtonsoft.Json.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.ClientPropertiesJsonConverter?))]
-    public class ClientProperties : EasyNetQ.Management.Client.Dynamic.PropertyExpando
+    public class Connection : System.IEquatable<EasyNetQ.Management.Client.Model.Connection>
     {
-        public ClientProperties(System.Collections.Generic.IDictionary<string, object?> properties) { }
-        public string? Application { get; }
-        public string? ApplicationLocation { get; }
-        public EasyNetQ.Management.Client.Model.Capabilities? Capabilities { get; }
-        public string? ClientApi { get; }
-        public System.DateTime Connected { get; }
-        public string? EasynetqVersion { get; }
-        public string? MachineName { get; }
-        public System.Collections.Generic.IDictionary<string, object?> PropertiesDictionary { get; }
-        public string? User { get; }
-    }
-    public class Connection
-    {
-        public Connection() { }
-        public string Address { get; set; }
+        public Connection(
+                    long RecvOct,
+                    long RecvCnt,
+                    long SendOct,
+                    long SendCnt,
+                    long SendPend,
+                    string State,
+                    string? LastBlockedBy,
+                    string? LastBlockedAge,
+                    long Channels,
+                    string Type,
+                    string Node,
+                    string Name,
+                    string? Address,
+                    int Port,
+                    string PeerHost,
+                    int PeerPort,
+                    bool Ssl,
+                    string? PeerCertSubject,
+                    string? PeerCertIssuer,
+                    string? PeerCertValidity,
+                    string AuthMechanism,
+                    string? SslProtocol,
+                    string? SslKeyExchange,
+                    string? SslCipher,
+                    string? SslHash,
+                    string Protocol,
+                    string User,
+                    string Vhost,
+                    long Timeout,
+                    long FrameMax,
+                    System.Collections.Generic.IReadOnlyDictionary<string, object?> ClientProperties) { }
+        public string? Address { get; set; }
         public string AuthMechanism { get; set; }
         public long Channels { get; set; }
-        public EasyNetQ.Management.Client.Model.ClientProperties ClientProperties { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?> ClientProperties { get; set; }
         public long FrameMax { get; set; }
-        public string LastBlockedAge { get; set; }
-        public string LastBlockedBy { get; set; }
+        public string? LastBlockedAge { get; set; }
+        public string? LastBlockedBy { get; set; }
         public string Name { get; set; }
         public string Node { get; set; }
-        public string PeerCertIssuer { get; set; }
-        public string PeerCertSubject { get; set; }
-        public string PeerCertValidity { get; set; }
+        public string? PeerCertIssuer { get; set; }
+        public string? PeerCertSubject { get; set; }
+        public string? PeerCertValidity { get; set; }
         public string PeerHost { get; set; }
         public int PeerPort { get; set; }
         public int Port { get; set; }
@@ -421,83 +448,87 @@ namespace EasyNetQ.Management.Client.Model
         public long SendOct { get; set; }
         public long SendPend { get; set; }
         public bool Ssl { get; set; }
-        public string SslCipher { get; set; }
-        public string SslHash { get; set; }
-        public string SslKeyExchange { get; set; }
-        public string SslProtocol { get; set; }
+        public string? SslCipher { get; set; }
+        public string? SslHash { get; set; }
+        public string? SslKeyExchange { get; set; }
+        public string? SslProtocol { get; set; }
         public string State { get; set; }
         public long Timeout { get; set; }
         public string Type { get; set; }
         public string User { get; set; }
         public string Vhost { get; set; }
     }
-    public class ConnectionDetails
+    public class ConnectionDetails : System.IEquatable<EasyNetQ.Management.Client.Model.ConnectionDetails>
     {
-        public ConnectionDetails() { }
+        public ConnectionDetails(string Name, string PeerHost, int PeerPort) { }
         public string Name { get; set; }
         public string PeerHost { get; set; }
         public int PeerPort { get; set; }
     }
-    public class Consumer
+    public class Consumer : System.IEquatable<EasyNetQ.Management.Client.Model.Consumer>
     {
-        public Consumer() { }
+        public Consumer(System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments, bool AckRequired, bool Active, string ActivityStatus, EasyNetQ.Management.Client.Model.ChannelDetail ChannelDetails, string ConsumerTag, bool Exclusive, int PrefetchCount, EasyNetQ.Management.Client.Model.QueueName Queue) { }
         public bool AckRequired { get; set; }
         public bool Active { get; set; }
         public string ActivityStatus { get; set; }
-        public System.Collections.Generic.Dictionary<string, string> Arguments { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.EmptyArrayAsDefaultConverter<EasyNetQ.Management.Client.Model.ChannelDetail>))]
         public EasyNetQ.Management.Client.Model.ChannelDetail ChannelDetails { get; set; }
         public string ConsumerTag { get; set; }
         public bool Exclusive { get; set; }
         public int PrefetchCount { get; set; }
         public EasyNetQ.Management.Client.Model.QueueName Queue { get; set; }
     }
-    public class ConsumerArguments
+    public class ConsumerArguments : System.IEquatable<EasyNetQ.Management.Client.Model.ConsumerArguments>
     {
-        public ConsumerArguments() { }
-        [Newtonsoft.Json.JsonProperty(PropertyName="x-credit")]
-        public EasyNetQ.Management.Client.Model.CreditArgument Credit { get; set; }
+        public ConsumerArguments(EasyNetQ.Management.Client.Model.CreditArgument? Credit) { }
+        [System.Text.Json.Serialization.JsonPropertyName("x-credit")]
+        public EasyNetQ.Management.Client.Model.CreditArgument? Credit { get; set; }
     }
-    public class ConsumerDetail
+    public class ConsumerDetail : System.IEquatable<EasyNetQ.Management.Client.Model.ConsumerDetail>
     {
-        public ConsumerDetail() { }
+        public ConsumerDetail(EasyNetQ.Management.Client.Model.QueueName Queue, string ConsumerTag, bool Exclusive, bool AckRequired, EasyNetQ.Management.Client.Model.ConsumerArguments? Arguments, EasyNetQ.Management.Client.Model.ChannelDetail? ChannelDetails) { }
         public bool AckRequired { get; set; }
-        [Newtonsoft.Json.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.ObjectOrEmptyArrayConverter<EasyNetQ.Management.Client.Model.ConsumerArguments>))]
-        public EasyNetQ.Management.Client.Model.ConsumerArguments Arguments { get; set; }
-        [Newtonsoft.Json.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.ObjectOrEmptyArrayConverter<EasyNetQ.Management.Client.Model.ChannelDetail>))]
-        public EasyNetQ.Management.Client.Model.ChannelDetail ChannelDetails { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.EmptyArrayAsDefaultConverter<EasyNetQ.Management.Client.Model.ConsumerArguments>))]
+        public EasyNetQ.Management.Client.Model.ConsumerArguments? Arguments { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.EmptyArrayAsDefaultConverter<EasyNetQ.Management.Client.Model.ChannelDetail>))]
+        public EasyNetQ.Management.Client.Model.ChannelDetail? ChannelDetails { get; set; }
         public string ConsumerTag { get; set; }
         public bool Exclusive { get; set; }
-        public EasyNetQ.Management.Client.Model.Queue Queue { get; set; }
+        public EasyNetQ.Management.Client.Model.QueueName Queue { get; set; }
     }
-    public class Context
+    public class Context : System.IEquatable<EasyNetQ.Management.Client.Model.Context>
     {
-        public Context() { }
+        public Context(string Node, string Description, string Path, int Port) { }
         public string Description { get; set; }
         public string Node { get; set; }
         public string Path { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.TolerantInt32Converter))]
         public int Port { get; set; }
     }
-    public class CreditArgument
+    public class CreditArgument : System.IEquatable<EasyNetQ.Management.Client.Model.CreditArgument>
     {
-        public CreditArgument() { }
+        public CreditArgument(int Credit, bool Drain) { }
         public int Credit { get; set; }
         public bool Drain { get; set; }
     }
-    public class Definitions
+    public class Definitions : System.IEquatable<EasyNetQ.Management.Client.Model.Definitions>
     {
-        public Definitions() { }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.Binding> Bindings { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.Exchange> Exchanges { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.Permission> Permissions { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.Queue> Queues { get; set; }
+        public Definitions(string RabbitVersion, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User> Users, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Vhost> Vhosts, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Permission> Permissions, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue> Queues, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Exchange> Exchanges, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding> Bindings) { }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding> Bindings { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Exchange> Exchanges { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Permission> Permissions { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue> Queues { get; set; }
         public string RabbitVersion { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.User> Users { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.Vhost> Vhosts { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User> Users { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Vhost> Vhosts { get; set; }
     }
-    public class Exchange
+    public class Exchange : System.IEquatable<EasyNetQ.Management.Client.Model.Exchange>
     {
-        public Exchange() { }
-        public System.Collections.Generic.Dictionary<string, string> Arguments { get; set; }
+        public Exchange(string Name, string Vhost, string Type, bool Durable = true, bool AutoDelete = false, bool Internal = false, System.Collections.Generic.IReadOnlyDictionary<string, object>? Arguments = null) { }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object>? Arguments { get; set; }
         public bool AutoDelete { get; set; }
         public bool Durable { get; set; }
         public bool Internal { get; set; }
@@ -505,33 +536,33 @@ namespace EasyNetQ.Management.Client.Model
         public string Type { get; set; }
         public string Vhost { get; set; }
     }
-    public class ExchangeInfo
+    public class ExchangeInfo : System.IEquatable<EasyNetQ.Management.Client.Model.ExchangeInfo>
     {
-        public ExchangeInfo(string name, string type, bool autoDelete = false, bool durable = true, bool internal = false, System.Collections.Generic.Dictionary<string, string>? arguments = null) { }
-        public System.Collections.Generic.Dictionary<string, string> Arguments { get; }
-        public bool AutoDelete { get; }
-        public bool Durable { get; }
-        public bool Internal { get; }
-        public string Name { get; }
-        public string Type { get; }
+        public ExchangeInfo(string Name, string Type, bool AutoDelete = false, bool Durable = true, bool Internal = false, System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments = null) { }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments { get; set; }
+        public bool AutoDelete { get; set; }
+        public bool Durable { get; set; }
+        public bool Internal { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
     }
-    public class ExchangeType
+    public class ExchangeTypeSpec : System.IEquatable<EasyNetQ.Management.Client.Model.ExchangeTypeSpec>
     {
-        public ExchangeType() { }
+        public ExchangeTypeSpec(string Name, string Description, bool Enabled) { }
         public string Description { get; set; }
         public bool Enabled { get; set; }
         public string Name { get; set; }
     }
-    public class Federation
+    public class Federation : System.IEquatable<EasyNetQ.Management.Client.Model.Federation>
     {
-        public Federation() { }
+        public Federation(string Node, string Exchange, string UpstreamExchange, string Type, string Vhost, string Upstream, string Id, EasyNetQ.Management.Client.Model.FederationStatus Status, string LocalConnection, string Uri, string Timestamp) { }
         public string Exchange { get; set; }
         public string Id { get; set; }
         public string LocalConnection { get; set; }
         public string Node { get; set; }
-        [Newtonsoft.Json.JsonProperty(DefaultValueHandling=Newtonsoft.Json.DefaultValueHandling.Include)]
         public EasyNetQ.Management.Client.Model.FederationStatus Status { get; set; }
-        public System.DateTime Timestamp { get; set; }
+        public string Timestamp { get; set; }
         public string Type { get; set; }
         public string Upstream { get; set; }
         public string UpstreamExchange { get; set; }
@@ -542,12 +573,12 @@ namespace EasyNetQ.Management.Client.Model
     {
         Running = 0,
     }
-    public class GetMessagesFromQueueInfo
+    public class GetMessagesFromQueueInfo : System.IEquatable<EasyNetQ.Management.Client.Model.GetMessagesFromQueueInfo>
     {
-        public GetMessagesFromQueueInfo(long count, EasyNetQ.Management.Client.Model.AckMode ackMode) { }
-        public EasyNetQ.Management.Client.Model.AckMode Ackmode { get; }
-        public long Count { get; }
-        public string Encoding { get; }
+        public GetMessagesFromQueueInfo(long Count, EasyNetQ.Management.Client.Model.AckMode Ackmode, string Encoding = "auto") { }
+        public EasyNetQ.Management.Client.Model.AckMode Ackmode { get; set; }
+        public long Count { get; set; }
+        public string Encoding { get; set; }
     }
     public enum HaMode
     {
@@ -555,115 +586,169 @@ namespace EasyNetQ.Management.Client.Model
         Exactly = 1,
         Nodes = 2,
     }
-    public class HaParams
+    public class HaParams : System.IEquatable<EasyNetQ.Management.Client.Model.HaParams>
     {
-        public HaParams() { }
+        public HaParams(EasyNetQ.Management.Client.Model.HaMode AssociatedHaMode, long? ExactlyCount = default, System.Collections.Generic.IReadOnlyList<string>? Nodes = null) { }
         public EasyNetQ.Management.Client.Model.HaMode AssociatedHaMode { get; set; }
-        public long ExactlyCount { get; set; }
-        public string[] Nodes { get; set; }
+        public long? ExactlyCount { get; set; }
+        public System.Collections.Generic.IReadOnlyList<string>? Nodes { get; set; }
     }
     public enum HaSyncMode
     {
         Manual = 0,
         Automatic = 1,
     }
-    public class LengthsCriteria
+    public class LengthsCriteria : System.IEquatable<EasyNetQ.Management.Client.Model.LengthsCriteria>
     {
-        public LengthsCriteria(int age, int increment) { }
-        public int LengthsAge { get; }
-        public int LengthsIncr { get; }
+        public LengthsCriteria(int LengthsAge, int LengthsIncr) { }
+        public int LengthsAge { get; set; }
+        public int LengthsIncr { get; set; }
         public System.Collections.Generic.IReadOnlyDictionary<string, string> ToQueryParameters() { }
     }
-    public class LengthsDetails
+    public class LengthsDetails : System.IEquatable<EasyNetQ.Management.Client.Model.LengthsDetails>
     {
-        public LengthsDetails() { }
+        public LengthsDetails(double Rate, double AvgRate, double Avg, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.LengthsSample>? Samples = null) { }
         public double Avg { get; set; }
         public double AvgRate { get; set; }
         public double Rate { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.LengthsSample> Samples { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.LengthsSample>? Samples { get; set; }
     }
-    public class LengthsSample
+    public class LengthsSample : System.IEquatable<EasyNetQ.Management.Client.Model.LengthsSample>
     {
-        public LengthsSample() { }
+        public LengthsSample(long Sample, System.DateTime Timestamp) { }
         public long Sample { get; set; }
-        [Newtonsoft.Json.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.UnixMsDateTimeConverter))]
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.UnixMsDateTimeConverter))]
         public System.DateTime Timestamp { get; set; }
     }
-    public class Listener
+    public class Listener : System.IEquatable<EasyNetQ.Management.Client.Model.Listener>
     {
-        public Listener() { }
+        public Listener(string Node, string Protocol, string IpAddress, int Port) { }
         public string IpAddress { get; set; }
         public string Node { get; set; }
         public int Port { get; set; }
         public string Protocol { get; set; }
     }
-    public class Message
+    public class Message : System.IEquatable<EasyNetQ.Management.Client.Model.Message>
     {
-        public Message() { }
+        public Message(int PayloadBytes, bool Redelivered, string Exchange, string RoutingKey, int MessageCount, System.Collections.Generic.IReadOnlyDictionary<string, object?> Properties, string Payload, string PayloadEncoding) { }
         public string Exchange { get; set; }
         public int MessageCount { get; set; }
         public string Payload { get; set; }
         public int PayloadBytes { get; set; }
         public string PayloadEncoding { get; set; }
-        public EasyNetQ.Management.Client.Model.Properties Properties { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?> Properties { get; set; }
         public bool Redelivered { get; set; }
         public string RoutingKey { get; set; }
     }
-    public class MessageRateDetails
+    public class MessageRateDetails : System.IEquatable<EasyNetQ.Management.Client.Model.MessageRateDetails>
     {
-        public MessageRateDetails() { }
+        public MessageRateDetails(double Rate, double AvgRate, double Avg, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.MessageRateSample>? Samples) { }
         public double Avg { get; set; }
         public double AvgRate { get; set; }
         public double Rate { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.MessageRateSample> Samples { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.MessageRateSample>? Samples { get; set; }
     }
-    public class MessageRateSample
+    public class MessageRateSample : System.IEquatable<EasyNetQ.Management.Client.Model.MessageRateSample>
     {
-        public MessageRateSample() { }
+        public MessageRateSample(long Sample, System.DateTime Timestamp) { }
         public long Sample { get; set; }
-        [Newtonsoft.Json.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.UnixMsDateTimeConverter))]
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.UnixMsDateTimeConverter))]
         public System.DateTime Timestamp { get; set; }
     }
-    public class MessageStats
+    public class MessageStats : System.IEquatable<EasyNetQ.Management.Client.Model.MessageStats>
     {
-        public MessageStats() { }
+        public MessageStats(
+                    long Ack = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? AckDetails = null,
+                    long DeliverGet = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverGetDetails = null,
+                    long DeliverNoAck = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverNoAckDetails = null,
+                    long Publish = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? PublishDetails = null,
+                    long PublishIn = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? PublishInDetails = null,
+                    long PublishOut = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? PublishOutDetails = null,
+                    long Redeliver = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? RedeliverDetails = null,
+                    long Return = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? ReturnDetails = null,
+                    long Get = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? GetDetails = null,
+                    long GetNoAck = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? GetNoAckDetails = null,
+                    long Deliver = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverDetails = null,
+                    long Confirm = 0,
+                    EasyNetQ.Management.Client.Model.MessageRateDetails? ConfirmDetails = null) { }
         public long Ack { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails AckDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? AckDetails { get; set; }
         public long Confirm { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails ConfirmDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? ConfirmDetails { get; set; }
         public long Deliver { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails DeliverDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverDetails { get; set; }
         public long DeliverGet { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails DeliverGetDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverGetDetails { get; set; }
         public long DeliverNoAck { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails DeliverNoAckDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverNoAckDetails { get; set; }
         public long Get { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails GetDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? GetDetails { get; set; }
         public long GetNoAck { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails GetNoAckDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? GetNoAckDetails { get; set; }
         public long Publish { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails PublishDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? PublishDetails { get; set; }
         public long PublishIn { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails PublishInDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? PublishInDetails { get; set; }
         public long PublishOut { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails PublishOutDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? PublishOutDetails { get; set; }
         public long Redeliver { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails RedeliverDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? RedeliverDetails { get; set; }
         public long Return { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails ReturnDetails { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? ReturnDetails { get; set; }
     }
-    public class Node
+    public class Node : System.IEquatable<EasyNetQ.Management.Client.Model.Node>
     {
-        public Node() { }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.Application> Applications { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.AuthMechanism> AuthMechanisms { get; set; }
+        public Node(
+                    string Name,
+                    string Type,
+                    bool Running,
+                    string? OsPid,
+                    long MemEts,
+                    long MemBinary,
+                    long MemProc,
+                    long MemProcUsed,
+                    long MemAtom,
+                    long MemAtomUsed,
+                    long MemCode,
+                    long FdUsed,
+                    long FdTotal,
+                    long SocketsUsed,
+                    long SocketsTotal,
+                    long MemUsed,
+                    long MemLimit,
+                    bool MemAlarm,
+                    long DiskFreeLimit,
+                    long DiskFree,
+                    bool DiskFreeAlarm,
+                    long ProcUsed,
+                    long ProcTotal,
+                    long Uptime,
+                    long RunQueue,
+                    long Processors,
+                    System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec>? ExchangeTypes,
+                    System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.AuthMechanism>? AuthMechanisms,
+                    System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Application>? Applications,
+                    System.Collections.Generic.IReadOnlyList<string>? Partitions) { }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Application>? Applications { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.AuthMechanism>? AuthMechanisms { get; set; }
         public long DiskFree { get; set; }
         public bool DiskFreeAlarm { get; set; }
         public long DiskFreeLimit { get; set; }
-        public string ErlangVersion { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.ExchangeType> ExchangeTypes { get; set; }
-        public int FdTotal { get; set; }
-        public string FdUsed { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec>? ExchangeTypes { get; set; }
+        public long FdTotal { get; set; }
+        public long FdUsed { get; set; }
         public bool MemAlarm { get; set; }
         public long MemAtom { get; set; }
         public long MemAtomUsed { get; set; }
@@ -675,94 +760,91 @@ namespace EasyNetQ.Management.Client.Model
         public long MemProcUsed { get; set; }
         public long MemUsed { get; set; }
         public string Name { get; set; }
-        public string OsPid { get; set; }
-        public System.Collections.Generic.List<string> Partitions { get; set; }
-        public int ProcTotal { get; set; }
-        public int ProcUsed { get; set; }
-        public int Processors { get; set; }
-        public int RunQueue { get; set; }
+        public string? OsPid { get; set; }
+        public System.Collections.Generic.IReadOnlyList<string>? Partitions { get; set; }
+        public long ProcTotal { get; set; }
+        public long ProcUsed { get; set; }
+        public long Processors { get; set; }
+        public long RunQueue { get; set; }
         public bool Running { get; set; }
-        public int SocketsTotal { get; set; }
-        public int SocketsUsed { get; set; }
-        public string StatisticsLevel { get; set; }
+        public long SocketsTotal { get; set; }
+        public long SocketsUsed { get; set; }
         public string Type { get; set; }
         public long Uptime { get; set; }
     }
-    public class ObjectTotals
+    public class ObjectTotals : System.IEquatable<EasyNetQ.Management.Client.Model.ObjectTotals>
     {
-        public ObjectTotals() { }
+        public ObjectTotals(int Consumers, int Queues, int Exchanges, int Connections, int Channels) { }
         public int Channels { get; set; }
         public int Connections { get; set; }
         public int Consumers { get; set; }
         public int Exchanges { get; set; }
         public int Queues { get; set; }
     }
-    public class Overview
+    public class Overview : System.IEquatable<EasyNetQ.Management.Client.Model.Overview>
     {
-        public Overview() { }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.Context> Contexts { get; set; }
+        public Overview(string ManagementVersion, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec> ExchangeTypes, string RabbitmqVersion, string ErlangVersion, EasyNetQ.Management.Client.Model.MessageStats MessageStats, EasyNetQ.Management.Client.Model.QueueTotals QueueTotals, EasyNetQ.Management.Client.Model.ObjectTotals ObjectTotals, string Node, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Listener> Listeners, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Context> Contexts) { }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Context> Contexts { get; set; }
         public string ErlangVersion { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.ExchangeType> ExchangeTypes { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.Listener> Listeners { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec> ExchangeTypes { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Listener> Listeners { get; set; }
         public string ManagementVersion { get; set; }
         public EasyNetQ.Management.Client.Model.MessageStats MessageStats { get; set; }
         public string Node { get; set; }
         public EasyNetQ.Management.Client.Model.ObjectTotals ObjectTotals { get; set; }
         public EasyNetQ.Management.Client.Model.QueueTotals QueueTotals { get; set; }
         public string RabbitmqVersion { get; set; }
-        public string StatisticsDbNode { get; set; }
-        public string StatisticsLevel { get; set; }
     }
-    public class PageCriteria
+    public class PageCriteria : System.IEquatable<EasyNetQ.Management.Client.Model.PageCriteria>
     {
-        public PageCriteria(int page, int pageSize, string? name = null, bool useRegex = false) { }
-        public string? Name { get; }
-        public int Page { get; }
-        public int PageSize { get; }
-        public bool UseRegex { get; }
+        public PageCriteria(int Page, int PageSize, string? Name = null, bool UseRegex = false) { }
+        public string? Name { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
+        public bool UseRegex { get; set; }
         public System.Collections.Generic.IReadOnlyDictionary<string, string> ToQueryParameters() { }
     }
-    public class PageResult<T>
+    public class PageResult<T> : System.IEquatable<EasyNetQ.Management.Client.Model.PageResult<T>>
     {
-        public PageResult(int filteredCount, int itemCount, T[] items, int page, int pageCount, int pageSize, int totalCount) { }
-        public int FilteredCount { get; }
-        public int ItemCount { get; }
-        public System.Collections.Generic.IReadOnlyList<T> Items { get; }
-        public int Page { get; }
-        public int PageCount { get; }
-        public int PageSize { get; }
-        public int TotalCount { get; }
+        public PageResult(int FilteredCount, int ItemCount, System.Collections.Generic.IReadOnlyList<T> Items, int Page, int PageCount, int PageSize, int TotalCount) { }
+        public int FilteredCount { get; set; }
+        public int ItemCount { get; set; }
+        public System.Collections.Generic.IReadOnlyList<T> Items { get; set; }
+        public int Page { get; set; }
+        public int PageCount { get; set; }
+        public int PageSize { get; set; }
+        public int TotalCount { get; set; }
     }
-    public class Parameter
+    public class Parameter : System.IEquatable<EasyNetQ.Management.Client.Model.Parameter>
     {
-        public Parameter() { }
+        public Parameter(string Vhost, string Component, string Name, object Value) { }
         public string Component { get; set; }
         public string Name { get; set; }
         public object Value { get; set; }
         public string Vhost { get; set; }
     }
-    public class ParameterShovelValue
+    public class ParameterShovelValue : System.IEquatable<EasyNetQ.Management.Client.Model.ParameterShovelValue>
     {
-        public ParameterShovelValue() { }
-        [Newtonsoft.Json.JsonProperty(PropertyName="ack-mode")]
+        public ParameterShovelValue(string SrcUri, string SrcExchange, string SrcExchangeKey, string SrcQueue, string SrcDeleteAfter, string DestUri, string DestExchange, string DestQueue, string AckMode, string AddForwardHeaders) { }
+        [System.Text.Json.Serialization.JsonPropertyName("ack-mode")]
         public string AckMode { get; set; }
-        [Newtonsoft.Json.JsonProperty(PropertyName="add-forward-headers")]
+        [System.Text.Json.Serialization.JsonPropertyName("add-forward-headers")]
         public string AddForwardHeaders { get; set; }
-        [Newtonsoft.Json.JsonProperty(PropertyName="dest-exchange")]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-exchange")]
         public string DestExchange { get; set; }
-        [Newtonsoft.Json.JsonProperty(PropertyName="dest-queue")]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-queue")]
         public string DestQueue { get; set; }
-        [Newtonsoft.Json.JsonProperty(PropertyName="dest-uri")]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-uri")]
         public string DestUri { get; set; }
-        [Newtonsoft.Json.JsonProperty(PropertyName="src-delete-after")]
+        [System.Text.Json.Serialization.JsonPropertyName("src-delete-after")]
         public string SrcDeleteAfter { get; set; }
-        [Newtonsoft.Json.JsonProperty(PropertyName="src-exchange")]
+        [System.Text.Json.Serialization.JsonPropertyName("src-exchange")]
         public string SrcExchange { get; set; }
-        [Newtonsoft.Json.JsonProperty(PropertyName="src-exchange-key")]
+        [System.Text.Json.Serialization.JsonPropertyName("src-exchange-key")]
         public string SrcExchangeKey { get; set; }
-        [Newtonsoft.Json.JsonProperty(PropertyName="src-queue")]
+        [System.Text.Json.Serialization.JsonPropertyName("src-queue")]
         public string SrcQueue { get; set; }
-        [Newtonsoft.Json.JsonProperty(PropertyName="src-uri")]
+        [System.Text.Json.Serialization.JsonPropertyName("src-uri")]
         public string SrcUri { get; set; }
     }
     public enum PayloadEncoding
@@ -770,33 +852,33 @@ namespace EasyNetQ.Management.Client.Model
         String = 0,
         Base64 = 1,
     }
-    public class Permission
+    public class Permission : System.IEquatable<EasyNetQ.Management.Client.Model.Permission>
     {
-        public Permission() { }
+        public Permission(string User, string Vhost, string Configure, string Write, string Read) { }
         public string Configure { get; set; }
         public string Read { get; set; }
         public string User { get; set; }
         public string Vhost { get; set; }
         public string Write { get; set; }
     }
-    public class PermissionInfo
+    public class PermissionInfo : System.IEquatable<EasyNetQ.Management.Client.Model.PermissionInfo>
     {
-        public PermissionInfo(string userName) { }
-        public string Configure { get; }
-        public string Read { get; }
-        public string UserName { get; }
-        public string Write { get; }
+        public PermissionInfo(string UserName, string Configure = ".*", string Write = ".*", string Read = ".*") { }
+        public string Configure { get; set; }
+        public string Read { get; set; }
+        public string UserName { get; set; }
+        public string Write { get; set; }
         public EasyNetQ.Management.Client.Model.PermissionInfo DenyAllConfigure() { }
         public EasyNetQ.Management.Client.Model.PermissionInfo DenyAllRead() { }
         public EasyNetQ.Management.Client.Model.PermissionInfo DenyAllWrite() { }
         public EasyNetQ.Management.Client.Model.PermissionInfo SetConfigure(string resourcesToAllow) { }
         public EasyNetQ.Management.Client.Model.PermissionInfo SetRead(string resourcesToAllow) { }
-        public EasyNetQ.Management.Client.Model.PermissionInfo SetWrite(string resourcedToAllow) { }
+        public EasyNetQ.Management.Client.Model.PermissionInfo SetWrite(string resourcesToAllow) { }
     }
-    public class Policy
+    public class Policy : System.IEquatable<EasyNetQ.Management.Client.Model.Policy>
     {
-        public Policy() { }
-        [Newtonsoft.Json.JsonProperty("apply-to", DefaultValueHandling=Newtonsoft.Json.DefaultValueHandling.Include)]
+        public Policy(string Name, string Pattern, EasyNetQ.Management.Client.Model.PolicyDefinition Definition, string Vhost = "/", EasyNetQ.Management.Client.Model.ApplyMode ApplyTo = 0, int Priority = 0) { }
+        [System.Text.Json.Serialization.JsonPropertyName("apply-to")]
         public EasyNetQ.Management.Client.Model.ApplyMode ApplyTo { get; set; }
         public EasyNetQ.Management.Client.Model.PolicyDefinition Definition { get; set; }
         public string Name { get; set; }
@@ -804,162 +886,184 @@ namespace EasyNetQ.Management.Client.Model
         public int Priority { get; set; }
         public string Vhost { get; set; }
     }
-    public class PolicyDefinition
+    public class PolicyDefinition : System.IEquatable<EasyNetQ.Management.Client.Model.PolicyDefinition>
     {
-        public PolicyDefinition() { }
-        [Newtonsoft.Json.JsonProperty("alternate-exchange")]
-        public string AlternateExchange { get; set; }
-        [Newtonsoft.Json.JsonProperty("dead-letter-exchange")]
-        public string DeadLetterExchange { get; set; }
-        [Newtonsoft.Json.JsonProperty("dead-letter-routing-key")]
-        public string DeadLetterRoutingKey { get; set; }
-        [Newtonsoft.Json.JsonProperty("expires")]
+        public PolicyDefinition(EasyNetQ.Management.Client.Model.HaMode? HaMode = default, EasyNetQ.Management.Client.Model.HaParams? HaParams = null, EasyNetQ.Management.Client.Model.HaSyncMode? HaSyncMode = default, int? HaSyncBatchSize = default, string? FederationUpstream = null, string? FederationUpstreamSet = null, string? AlternateExchange = null, string? DeadLetterExchange = null, string? DeadLetterRoutingKey = null, string? QueueMode = null, uint? MessageTtl = default, uint? Expires = default, uint? MaxLength = default) { }
+        [System.Text.Json.Serialization.JsonPropertyName("alternate-exchange")]
+        public string? AlternateExchange { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("dead-letter-exchange")]
+        public string? DeadLetterExchange { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("dead-letter-routing-key")]
+        public string? DeadLetterRoutingKey { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("expires")]
         public uint? Expires { get; set; }
-        [Newtonsoft.Json.JsonProperty("federation-upstream")]
-        public string FederationUpstream { get; set; }
-        [Newtonsoft.Json.JsonProperty("federation-upstream-set")]
-        public string FederationUpstreamSet { get; set; }
-        [Newtonsoft.Json.JsonProperty("ha-mode")]
+        [System.Text.Json.Serialization.JsonPropertyName("federation-upstream")]
+        public string? FederationUpstream { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("federation-upstream-set")]
+        public string? FederationUpstreamSet { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("ha-mode")]
         public EasyNetQ.Management.Client.Model.HaMode? HaMode { get; set; }
-        [Newtonsoft.Json.JsonProperty("ha-params")]
-        public EasyNetQ.Management.Client.Model.HaParams HaParams { get; set; }
-        [Newtonsoft.Json.JsonProperty("ha-sync-batch-size")]
+        [System.Text.Json.Serialization.JsonPropertyName("ha-params")]
+        public EasyNetQ.Management.Client.Model.HaParams? HaParams { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("ha-sync-batch-size")]
         public int? HaSyncBatchSize { get; set; }
-        [Newtonsoft.Json.JsonProperty("ha-sync-mode")]
+        [System.Text.Json.Serialization.JsonPropertyName("ha-sync-mode")]
         public EasyNetQ.Management.Client.Model.HaSyncMode? HaSyncMode { get; set; }
-        [Newtonsoft.Json.JsonProperty("max-length")]
+        [System.Text.Json.Serialization.JsonPropertyName("max-length")]
         public uint? MaxLength { get; set; }
-        [Newtonsoft.Json.JsonProperty("message-ttl")]
+        [System.Text.Json.Serialization.JsonPropertyName("message-ttl")]
         public uint? MessageTtl { get; set; }
-        [Newtonsoft.Json.JsonProperty("queue-mode")]
-        public string QueueMode { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("queue-mode")]
+        public string? QueueMode { get; set; }
     }
-    public class PolicyInfo
+    public class PolicyInfo : System.IEquatable<EasyNetQ.Management.Client.Model.PolicyInfo>
     {
-        public PolicyInfo() { }
-        [Newtonsoft.Json.JsonProperty("apply-to", DefaultValueHandling=Newtonsoft.Json.DefaultValueHandling.Include)]
+        public PolicyInfo(string Name, string Pattern, EasyNetQ.Management.Client.Model.PolicyDefinition Definition, EasyNetQ.Management.Client.Model.ApplyMode ApplyTo, int Priority) { }
+        [System.Text.Json.Serialization.JsonPropertyName("apply-to")]
         public EasyNetQ.Management.Client.Model.ApplyMode ApplyTo { get; set; }
         public EasyNetQ.Management.Client.Model.PolicyDefinition Definition { get; set; }
         public string Name { get; set; }
         public string Pattern { get; set; }
         public int Priority { get; set; }
     }
-    public class Properties : System.Collections.Generic.Dictionary<string, string>
+    public class PublishInfo : System.IEquatable<EasyNetQ.Management.Client.Model.PublishInfo>
     {
-        public Properties() { }
-        public System.Collections.Generic.Dictionary<string, string> Headers { get; set; }
+        public PublishInfo(string RoutingKey, string Payload, EasyNetQ.Management.Client.Model.PayloadEncoding PayloadEncoding = 0, System.Collections.Generic.IReadOnlyDictionary<string, object?>? Properties = null) { }
+        public string Payload { get; set; }
+        public EasyNetQ.Management.Client.Model.PayloadEncoding PayloadEncoding { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?> Properties { get; set; }
+        public string RoutingKey { get; set; }
     }
-    public class PublishInfo
+    public class PublishResult : System.IEquatable<EasyNetQ.Management.Client.Model.PublishResult>
     {
-        public PublishInfo(string routingKey, string payload) { }
-        public PublishInfo(System.Collections.Generic.IDictionary<string, object> properties, string routingKey, string payload, EasyNetQ.Management.Client.Model.PayloadEncoding payloadEncoding) { }
-        public string Payload { get; }
-        public EasyNetQ.Management.Client.Model.PayloadEncoding PayloadEncoding { get; }
-        public System.Collections.Generic.IDictionary<string, object> Properties { get; }
-        public string RoutingKey { get; }
-    }
-    public class PublishResult
-    {
-        public PublishResult() { }
+        public PublishResult(bool Routed) { }
         public bool Routed { get; set; }
     }
-    public class Queue
+    public class Queue : System.IEquatable<EasyNetQ.Management.Client.Model.Queue>
     {
-        public Queue() { }
-        public int ActiveConsumers { get; set; }
-        public System.Collections.Generic.Dictionary<string, string> Arguments { get; set; }
+        public Queue(
+                    long Memory,
+                    string? IdleSince,
+                    string? Policy,
+                    string? ExclusiveConsumerTag,
+                    long MessagesReady,
+                    long MessagesUnacknowledged,
+                    long Messages,
+                    long Consumers,
+                    long ActiveConsumers,
+                    EasyNetQ.Management.Client.Model.BackingQueueStatus? BackingQueueStatus,
+                    System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails,
+                    long? HeadMessageTimestamp,
+                    string Name,
+                    string Vhost,
+                    bool Durable,
+                    bool Exclusive,
+                    bool AutoDelete,
+                    System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments,
+                    string? Node,
+                    System.Collections.Generic.IReadOnlyList<string>? SlaveNodes,
+                    System.Collections.Generic.IReadOnlyList<string>? SynchronisedSlaveNodes,
+                    EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails,
+                    EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails,
+                    EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails) { }
+        public long ActiveConsumers { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments { get; set; }
         public bool AutoDelete { get; set; }
-        public EasyNetQ.Management.Client.Model.BackingQueueStatus BackingQueueStatus { get; set; }
-        public System.Collections.Generic.List<EasyNetQ.Management.Client.Model.ConsumerDetail> ConsumerDetails { get; set; }
-        public int Consumers { get; set; }
+        public EasyNetQ.Management.Client.Model.BackingQueueStatus? BackingQueueStatus { get; set; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails { get; set; }
+        public long Consumers { get; set; }
         public bool Durable { get; set; }
         public bool Exclusive { get; set; }
-        public string ExclusiveConsumerTag { get; set; }
+        public string? ExclusiveConsumerTag { get; set; }
         public long? HeadMessageTimestamp { get; set; }
-        public string IdleSince { get; set; }
+        public string? IdleSince { get; set; }
         public long Memory { get; set; }
-        public EasyNetQ.Management.Client.Model.MessageStats MessageStats { get; set; }
-        public int Messages { get; set; }
-        public EasyNetQ.Management.Client.Model.LengthsDetails MessagesDetails { get; set; }
-        public int MessagesReady { get; set; }
-        public EasyNetQ.Management.Client.Model.LengthsDetails MessagesReadyDetails { get; set; }
-        public int MessagesUnacknowledged { get; set; }
-        public EasyNetQ.Management.Client.Model.LengthsDetails MessagesUnacknowledgedDetails { get; set; }
+        public long Messages { get; set; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails { get; set; }
+        public long MessagesReady { get; set; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails { get; set; }
+        public long MessagesUnacknowledged { get; set; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails { get; set; }
         public string Name { get; set; }
-        public string Node { get; set; }
-        public string Policy { get; set; }
-        public System.Collections.Generic.List<string> SlaveNodes { get; set; }
-        public System.Collections.Generic.List<string> SynchronisedSlaveNodes { get; set; }
+        public string? Node { get; set; }
+        public string? Policy { get; set; }
+        public System.Collections.Generic.IReadOnlyList<string>? SlaveNodes { get; set; }
+        public System.Collections.Generic.IReadOnlyList<string>? SynchronisedSlaveNodes { get; set; }
         public string Vhost { get; set; }
     }
-    public class QueueInfo
+    public class QueueInfo : System.IEquatable<EasyNetQ.Management.Client.Model.QueueInfo>
     {
-        public QueueInfo(string name, bool autoDelete = false, bool durable = true, System.Collections.Generic.Dictionary<string, object>? arguments = null) { }
-        public System.Collections.Generic.Dictionary<string, object> Arguments { get; }
-        public bool AutoDelete { get; }
-        public bool Durable { get; }
-        public string Name { get; }
-    }
-    public class QueueName
-    {
-        public QueueName() { }
+        public QueueInfo(string Name, bool AutoDelete = false, bool Durable = true, System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments = null) { }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments { get; set; }
+        public bool AutoDelete { get; set; }
+        public bool Durable { get; set; }
         public string Name { get; set; }
-        public string VHost { get; set; }
     }
-    public class QueueTotals
+    public class QueueName : System.IEquatable<EasyNetQ.Management.Client.Model.QueueName>
     {
-        public QueueTotals() { }
-        public int Messages { get; set; }
-        public EasyNetQ.Management.Client.Model.LengthsDetails MessagesDetails { get; set; }
-        public int MessagesReady { get; set; }
-        public EasyNetQ.Management.Client.Model.LengthsDetails MessagesReadyDetails { get; set; }
-        public int MessagesUnacknowledged { get; set; }
-        public EasyNetQ.Management.Client.Model.LengthsDetails MessagesUnacknowledgedDetails { get; set; }
+        public QueueName(string Name, string Vhost) { }
+        public string Name { get; set; }
+        public string Vhost { get; set; }
     }
-    public class RatesCriteria
+    public class QueueTotals : System.IEquatable<EasyNetQ.Management.Client.Model.QueueTotals>
     {
-        public RatesCriteria(int age, int increment) { }
-        public int MsgRatesAge { get; }
-        public int MsgRatesIncr { get; }
+        public QueueTotals(long Messages = 0, long MessagesReady = 0, long MessagesUnacknowledged = 0, EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails = null, EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails = null, EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails = null) { }
+        public long Messages { get; set; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails { get; set; }
+        public long MessagesReady { get; set; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails { get; set; }
+        public long MessagesUnacknowledged { get; set; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails { get; set; }
+    }
+    public class RatesCriteria : System.IEquatable<EasyNetQ.Management.Client.Model.RatesCriteria>
+    {
+        public RatesCriteria(int MsgRatesAge, int MsgRatesIncr) { }
+        public int MsgRatesAge { get; set; }
+        public int MsgRatesIncr { get; set; }
         public System.Collections.Generic.IReadOnlyDictionary<string, string> ToQueryParameters() { }
     }
-    public class TopicPermission
+    public class TopicPermission : System.IEquatable<EasyNetQ.Management.Client.Model.TopicPermission>
     {
-        public TopicPermission() { }
+        public TopicPermission(string User, string Vhost, string Exchange, string Write, string Read) { }
         public string Exchange { get; set; }
         public string Read { get; set; }
         public string User { get; set; }
         public string Vhost { get; set; }
         public string Write { get; set; }
     }
-    public class TopicPermissionInfo
+    public class TopicPermissionInfo : System.IEquatable<EasyNetQ.Management.Client.Model.TopicPermissionInfo>
     {
-        public TopicPermissionInfo(string userName) { }
-        public string Exchange { get; }
-        public string Read { get; }
-        public string UserName { get; }
-        public string Write { get; }
+        public TopicPermissionInfo(string UserName, string? Exchange = null, string Write = ".*", string Read = ".*") { }
+        public string? Exchange { get; set; }
+        public string Read { get; set; }
+        public string UserName { get; set; }
+        public string Write { get; set; }
         public EasyNetQ.Management.Client.Model.TopicPermissionInfo DenyAllRead() { }
         public EasyNetQ.Management.Client.Model.TopicPermissionInfo DenyAllWrite() { }
-        public EasyNetQ.Management.Client.Model.TopicPermissionInfo SetExchangeType(string exchangeType) { }
+        public EasyNetQ.Management.Client.Model.TopicPermissionInfo SetExchange(string? exchange) { }
         public EasyNetQ.Management.Client.Model.TopicPermissionInfo SetRead(string resourcesToAllow) { }
-        public EasyNetQ.Management.Client.Model.TopicPermissionInfo SetWrite(string resourcedToAllow) { }
+        public EasyNetQ.Management.Client.Model.TopicPermissionInfo SetWrite(string resourcesToAllow) { }
     }
-    public class User
+    public class User : System.IEquatable<EasyNetQ.Management.Client.Model.User>
     {
-        public User() { }
+        public User(string Name, string PasswordHash, System.Collections.Generic.IReadOnlyList<string> Tags) { }
         public string Name { get; set; }
         public string PasswordHash { get; set; }
-        public System.Collections.Generic.List<string> Tags { get; set; }
+        public System.Collections.Generic.IReadOnlyList<string> Tags { get; set; }
     }
-    public class UserInfo
+    public class UserInfo : System.IEquatable<EasyNetQ.Management.Client.Model.UserInfo>
     {
-        public UserInfo(string name, string password, bool isHashed = false) { }
+        public UserInfo(string Name, string? Password, string? PasswordHash, System.Collections.Generic.IReadOnlyList<string> Tags) { }
         public string Name { get; set; }
-        public string Password { get; set; }
-        public string PasswordHash { get; set; }
-        public System.Collections.Generic.List<string> Tags { get; set; }
+        public string? Password { get; set; }
+        public string? PasswordHash { get; set; }
+        public System.Collections.Generic.IReadOnlyList<string> Tags { get; set; }
         public EasyNetQ.Management.Client.Model.UserInfo AddTag(string tag) { }
+        public static EasyNetQ.Management.Client.Model.UserInfo ByPassword(string name, string password) { }
+        public static EasyNetQ.Management.Client.Model.UserInfo ByPasswordHash(string name, string passwordHash) { }
     }
     public static class UserTags
     {
@@ -969,48 +1073,10 @@ namespace EasyNetQ.Management.Client.Model
         public const string Monitoring = "monitoring";
         public const string Policymaker = "policymaker";
     }
-    public class Vhost
+    public class Vhost : System.IEquatable<EasyNetQ.Management.Client.Model.Vhost>
     {
-        public Vhost() { }
+        public Vhost(string Name, bool Tracing = false) { }
         public string Name { get; set; }
         public bool Tracing { get; set; }
-    }
-}
-namespace EasyNetQ.Management.Client.Serialization
-{
-    public class ClientPropertiesJsonConverter : Newtonsoft.Json.JsonConverter
-    {
-        public ClientPropertiesJsonConverter() { }
-        public override bool CanWrite { get; }
-        public override bool CanConvert(System.Type objectType) { }
-        public override object ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object? existingValue, Newtonsoft.Json.JsonSerializer serializer) { }
-        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object? value, Newtonsoft.Json.JsonSerializer serializer) { }
-    }
-    public class HaParamsConverter : Newtonsoft.Json.JsonConverter
-    {
-        public HaParamsConverter() { }
-        public override bool CanConvert(System.Type objectType) { }
-        public override object? ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object? existingValue, Newtonsoft.Json.JsonSerializer serializer) { }
-        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object? value, Newtonsoft.Json.JsonSerializer serializer) { }
-    }
-    public class PropertyConverter : Newtonsoft.Json.JsonConverter
-    {
-        public PropertyConverter() { }
-        public override bool CanConvert(System.Type objectType) { }
-        public override object ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object? existingValue, Newtonsoft.Json.JsonSerializer serializer) { }
-        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object? value, Newtonsoft.Json.JsonSerializer serializer) { }
-    }
-    public class TolerantInt32Converter : Newtonsoft.Json.JsonConverter
-    {
-        public TolerantInt32Converter() { }
-        public override bool CanConvert(System.Type objectType) { }
-        public override object ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object? existingValue, Newtonsoft.Json.JsonSerializer serializer) { }
-        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object? value, Newtonsoft.Json.JsonSerializer serializer) { }
-    }
-    public class UnixMsDateTimeConverter : Newtonsoft.Json.Converters.DateTimeConverterBase
-    {
-        public UnixMsDateTimeConverter() { }
-        public override object ReadJson(Newtonsoft.Json.JsonReader reader, System.Type objectType, object? existingValue, Newtonsoft.Json.JsonSerializer serializer) { }
-        public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object? value, Newtonsoft.Json.JsonSerializer serializer) { }
     }
 }

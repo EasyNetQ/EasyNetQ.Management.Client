@@ -1,21 +1,21 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Serialization;
 
-public class TolerantInt32Converter : JsonConverter
+internal sealed class TolerantInt32Converter : JsonConverter<int>
 {
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+    public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.Number)
+            return reader.GetInt32();
+        if (reader.TokenType == JsonTokenType.String && int.TryParse(reader.GetString(), out var intValue))
+            return intValue;
+        return default;
+    }
+
+    public override void Write(Utf8JsonWriter writer, int value, JsonSerializerOptions options)
     {
         throw new NotImplementedException();
-    }
-
-    public override bool CanConvert(Type objectType)
-    {
-        return objectType == typeof(int);
-    }
-
-    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-    {
-        return reader.TokenType == JsonToken.Integer ? Convert.ToInt32(reader.Value) : default;
     }
 }

@@ -10,13 +10,13 @@ public class NodeSerializationTests
 
     public NodeSerializationTests()
     {
-        nodes = ResourceLoader.LoadObjectFromJson<List<Node>>("Nodes.json", ManagementClient.SerializerSettings);
+        nodes = ResourceLoader.LoadObjectFromJson<List<Node>>("Nodes.json", ManagementClient.SerializerOptions);
     }
 
     [Fact]
     public void Should_load_one_node()
     {
-        nodes.Count.Should().Be(1);
+        nodes.Count.Should().Be(2);
     }
 
     [Fact]

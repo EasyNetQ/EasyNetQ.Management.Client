@@ -1,16 +1,18 @@
-﻿namespace EasyNetQ.Management.Client.Model;
+﻿using System.Text.Json.Serialization;
+using EasyNetQ.Management.Client.Serialization;
 
-#nullable disable
+namespace EasyNetQ.Management.Client.Model;
 
-public class Consumer
-{
-    public Dictionary<string, string> Arguments { get; set; }
-    public bool AckRequired { get; set; }
-    public bool Active { get; set; }
-    public string ActivityStatus { get; set; }
-    public ChannelDetail ChannelDetails { get; set; }
-    public string ConsumerTag { get; set; }
-    public bool Exclusive { get; set; }
-    public int PrefetchCount { get; set; }
-    public QueueName Queue { get; set; }
-}
+public record Consumer(
+    [property: JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]
+    IReadOnlyDictionary<string, object?> Arguments,
+    bool AckRequired,
+    bool Active,
+    string ActivityStatus,
+    [property: JsonConverter(typeof(EmptyArrayAsDefaultConverter<ChannelDetail>))]
+    ChannelDetail ChannelDetails,
+    string ConsumerTag,
+    bool Exclusive,
+    int PrefetchCount,
+    QueueName Queue
+);

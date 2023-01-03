@@ -1,14 +1,11 @@
 ﻿namespace EasyNetQ.Management.Client.Model;
 
-#nullable disable
-
-public class Definitions
-{
-    public string RabbitVersion { get; set; }
-    public List<User> Users { get; set; }
-    public List<Vhost> Vhosts { get; set; }
-    public List<Permission> Permissions { get; set; }
-    public List<Queue> Queues { get; set; }
-    public List<Exchange> Exchanges { get; set; }
-    public List<Binding> Bindings { get; set; }
-}
+public record Definitions(
+    string RabbitVersion,
+    IReadOnlyList<User> Users,
+    IReadOnlyList<Vhost> Vhosts,
+    IReadOnlyList<Permission> Permissions,
+    IReadOnlyList<Queue> Queues,
+    IReadOnlyList<Exchange> Exchanges,
+    IReadOnlyList<Binding> Bindings
+);

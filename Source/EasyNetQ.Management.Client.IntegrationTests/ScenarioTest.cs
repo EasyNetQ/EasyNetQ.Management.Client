@@ -21,7 +21,7 @@ public class ScenarioTest
         var vhost = await fixture.ManagementClient.GetVhostAsync("my_virtual_host");
 
         // next create a user for that virtual host
-        await fixture.ManagementClient.CreateUserAsync(new UserInfo("mike", "topSecret").AddTag(UserTags.Administrator));
+        await fixture.ManagementClient.CreateUserAsync(UserInfo.ByPassword("mike", "topSecret").AddTag(UserTags.Administrator));
         var user = await fixture.ManagementClient.GetUserAsync("mike");
 
         // give the new user all permissions on the virtual host
@@ -42,7 +42,7 @@ public class ScenarioTest
         var queue = await fixture.ManagementClient.GetQueueAsync(vhost, "my_queue");
 
         // bind the exchange to the queue
-        await management.CreateQueueBindingAsync(exchange, queue, new BindingInfo("my_routing_key"));
+        await management.CreateQueueBindingAsync(exchange, queue, new BindingInfo(RoutingKey: "my_routing_key"));
 
         // publish a test message
         await management.PublishAsync(exchange, new PublishInfo("my_routing_key", "Hello World!"));

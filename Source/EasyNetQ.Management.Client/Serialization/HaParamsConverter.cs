@@ -1,65 +1,49 @@
-﻿using EasyNetQ.Management.Client.Model;
-using Newtonsoft.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.Serialization;
 
-public class HaParamsConverter : JsonConverter
+internal sealed class HaParamsConverter : JsonConverter<HaParams>
 {
     // Support serializing/deserializing ha-params according to http://www.rabbitmq.com/ha.html#genesis for 3.1.3
-
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+    public override HaParams Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var valueToSerialize = value as HaParams;
-        if (valueToSerialize is { AssociatedHaMode: HaMode.Exactly })
-        {
-            serializer.Serialize(writer, valueToSerialize.ExactlyCount);
-        }
-        else if (valueToSerialize is { AssociatedHaMode: HaMode.Nodes, Nodes: { } })
-        {
-            serializer.Serialize(writer, valueToSerialize.Nodes);
-        }
-        else
-        {
-            throw new JsonSerializationException("Could not serialize ha-params object");
-        }
-    }
+        if (reader.TokenType == JsonTokenType.Number)
+            return new HaParams(AssociatedHaMode: HaMode.Exactly, ExactlyCount: reader.GetInt64());
 
-    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-    {
-        HaParams? returnValue = null;
-        var deserializationErrorMessage = "Could not read ha-params value";
-        if (reader.TokenType == JsonToken.Integer)
+        if (reader.TokenType == JsonTokenType.StartArray)
         {
-            returnValue = new HaParams { AssociatedHaMode = HaMode.Exactly, ExactlyCount = (long)reader.Value! };
-        }
-        else if (reader.TokenType == JsonToken.StartArray)
-        {
-            var potentialReturnValue = new HaParams { AssociatedHaMode = HaMode.Nodes };
-            var nodesList = new List<string>();
-            do
+            reader.Read();
+
+            var nodes = new List<string>();
+
+            while (reader.TokenType == JsonTokenType.String)
             {
+                var node = reader.GetString();
+                if (node != null)
+                    nodes.Add(node);
                 reader.Read();
-                if (!new[] { JsonToken.EndArray, JsonToken.String }.Contains(reader.TokenType))
-                {
-                    deserializationErrorMessage = "Could not read ha-params array value";
-                }
-                else if (reader.TokenType == JsonToken.String)
-                {
-                    nodesList.Add((reader.Value as string)!);
-                }
-            } while (reader.TokenType == JsonToken.String);
-            potentialReturnValue.Nodes = nodesList.ToArray();
-            returnValue = potentialReturnValue;
+            }
+
+            return new HaParams(AssociatedHaMode: HaMode.Nodes, Nodes: nodes);
         }
-        if (returnValue != null)
-        {
-            return returnValue;
-        }
-        throw new JsonSerializationException(deserializationErrorMessage);
+
+        throw new JsonException("Failed to deserialize");
     }
 
-    public override bool CanConvert(Type objectType)
+    public override void Write(Utf8JsonWriter writer, HaParams value, JsonSerializerOptions options)
     {
-        return objectType == typeof(HaParams);
+        if (value is { AssociatedHaMode: HaMode.Exactly })
+        {
+            writer.WriteNumberValue(value.ExactlyCount ?? 0);
+        }
+        else if (value is { AssociatedHaMode: HaMode.Nodes })
+        {
+            writer.WriteStartArray();
+            foreach (var node in value.Nodes ?? Array.Empty<string>())
+                writer.WriteStringValue(node);
+            writer.WriteEndArray();
+        }
     }
 }

@@ -1,25 +1,16 @@
-﻿namespace EasyNetQ.Management.Client.Model;
+﻿using System.Text.Json.Serialization;
+using EasyNetQ.Management.Client.Serialization;
 
-#nullable disable
+namespace EasyNetQ.Management.Client.Model;
 
-public class Properties : Dictionary<string, string>
-{
-    public Properties()
-    {
-        Headers = new Dictionary<string, string>();
-    }
-
-    public Dictionary<string, string> Headers { get; set; }
-}
-
-public class Message
-{
-    public int PayloadBytes { get; set; }
-    public bool Redelivered { get; set; }
-    public string Exchange { get; set; }
-    public string RoutingKey { get; set; }
-    public int MessageCount { get; set; }
-    public Properties Properties { get; set; }
-    public string Payload { get; set; }
-    public string PayloadEncoding { get; set; }
-}
+public record Message(
+    int PayloadBytes,
+    bool Redelivered,
+    string Exchange,
+    string RoutingKey,
+    int MessageCount,
+    [property: JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]
+    IReadOnlyDictionary<string, object?> Properties,
+    string Payload,
+    string PayloadEncoding
+);

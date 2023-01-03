@@ -8,7 +8,6 @@
     "messages": 1,
     "consumers": 0,
     "slave_nodes": [
-
     ],
     "backing_queue_status": {
       "q1": 0,
@@ -359,5 +358,25 @@
     "exclusive": false,
     "arguments": { },
     "node": "node_name"
+  },
+  {
+    "garbage_collection": {
+      "max_heap_size": -1,
+      "min_bin_vheap_size": -1,
+      "min_heap_size": -1,
+      "fullsweep_after": -1,
+      "minor_gcs": -1
+    },
+    "consumer_details": [],
+    "arguments": {},
+    "auto_delete": false,
+    "deliveries": [],
+    "durable": true,
+    "exclusive": false,
+    "incoming": [],
+    "name": "test",
+    "node": "rabbit@localhost",
+    "type": "classic",
+    "vhost": "/"
   }
 ]

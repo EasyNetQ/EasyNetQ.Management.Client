@@ -2,6 +2,7 @@
 
 using EasyNetQ.Management.Client.Model;
 using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace EasyNetQ.Management.Client.Tests.Model;
 
@@ -15,12 +16,12 @@ public class MessageSerializationTests
                             @"""properties"":{""delivery_mode"":2,""headers"":{""key"":""value""}},""payload"":""Hello World""," +
                             @"""payload_encoding"":""string""}";
 
-        var message = JsonConvert.DeserializeObject<Message>(json, ManagementClient.SerializerSettings);
+        var message = JsonSerializer.Deserialize<Message>(json, ManagementClient.SerializerOptions);
 
-        message.Properties.Count.Should().Be(1);
+        message.Properties.Count.Should().Be(2);
         message.Payload.Should().Be("Hello World");
-        message.Properties["delivery_mode"].Should().Be("2");
-        message.Properties.Headers["key"].Should().Be("value");
+        message.Properties["delivery_mode"].Should().Be(2);
+        (message.Properties["headers"] as IReadOnlyDictionary<string, object>)["key"].Should().Be("value");
     }
 
     [Fact]
@@ -31,7 +32,7 @@ public class MessageSerializationTests
                             @"""properties"":[],""payload"":""Hello World""," +
                             @"""payload_encoding"":""string""}";
 
-        var message = JsonConvert.DeserializeObject<Message>(json, ManagementClient.SerializerSettings);
+        var message = JsonSerializer.Deserialize<Message>(json, ManagementClient.SerializerOptions);
 
         message.Properties.Count.Should().Be(0);
     }
