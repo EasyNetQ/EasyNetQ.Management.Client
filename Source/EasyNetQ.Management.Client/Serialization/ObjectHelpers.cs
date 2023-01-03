@@ -32,15 +32,14 @@ internal static class ObjectHelpers
                 foreach (var kvp in dictionaryValue)
                 {
                     writer.WritePropertyName(kvp.Key);
-                    WriteObjectValue(writer, kvp.Value);
+                    writer.WriteObjectValue(kvp.Value);
                 }
-
                 writer.WriteEndObject();
                 return;
             case IList<object?> listValue:
                 writer.WriteStartArray();
                 foreach (var item in listValue)
-                    WriteObjectValue(writer, item);
+                    writer.WriteObjectValue(item);
                 writer.WriteEndArray();
                 return;
             default:
@@ -56,14 +55,14 @@ internal static class ObjectHelpers
                 {
                     var list = new List<object?>(jsonElement.GetArrayLength());
                     foreach (var item in jsonElement.EnumerateArray())
-                        list.Add(GetObjectValue(item));
+                        list.Add(item.GetObjectValue());
                     return new ReadOnlyCollection<object?>(list);
                 }
             case { ValueKind: JsonValueKind.Object }:
                 {
                     var dictionary = new Dictionary<string, object?>();
                     foreach (var property in jsonElement.EnumerateObject())
-                        dictionary.Add(property.Name, GetObjectValue(property.Value));
+                        dictionary.Add(property.Name, property.Value.GetObjectValue());
                     return new ReadOnlyDictionary<string, object?>(dictionary);
                 }
             case { ValueKind: JsonValueKind.True }:

@@ -1091,28 +1091,10 @@ namespace EasyNetQ.Management.Client.Model
 }
 namespace EasyNetQ.Management.Client.Serialization
 {
-    public class HaParamsConverter : System.Text.Json.Serialization.JsonConverter<EasyNetQ.Management.Client.Model.HaParams>
-    {
-        public HaParamsConverter() { }
-        public override EasyNetQ.Management.Client.Model.HaParams? Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options) { }
-        public override void Write(System.Text.Json.Utf8JsonWriter writer, EasyNetQ.Management.Client.Model.HaParams value, System.Text.Json.JsonSerializerOptions options) { }
-    }
     public class StringObjectReadOnlyDictionaryConverter : System.Text.Json.Serialization.JsonConverter<System.Collections.Generic.IReadOnlyDictionary<string, object?>>
     {
         public StringObjectReadOnlyDictionaryConverter() { }
         public override System.Collections.Generic.IReadOnlyDictionary<string, object?> Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options) { }
         public override void Write(System.Text.Json.Utf8JsonWriter writer, System.Collections.Generic.IReadOnlyDictionary<string, object?> value, System.Text.Json.JsonSerializerOptions options) { }
-    }
-    public class TolerantInt32Converter : System.Text.Json.Serialization.JsonConverter<int>
-    {
-        public TolerantInt32Converter() { }
-        public override int Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options) { }
-        public override void Write(System.Text.Json.Utf8JsonWriter writer, int value, System.Text.Json.JsonSerializerOptions options) { }
-    }
-    public class UnixMsDateTimeConverter : System.Text.Json.Serialization.JsonConverter<System.DateTime>
-    {
-        public UnixMsDateTimeConverter() { }
-        public override System.DateTime Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options) { }
-        public override void Write(System.Text.Json.Utf8JsonWriter writer, System.DateTime value, System.Text.Json.JsonSerializerOptions options) { }
     }
 }

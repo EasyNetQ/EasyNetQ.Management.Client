@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.Json;
 
+namespace EasyNetQ.Management.Client.Serialization;
+
 internal class JsonSnakeCaseNamingPolicy : JsonNamingPolicy
 {
     private const string Separator = "_";

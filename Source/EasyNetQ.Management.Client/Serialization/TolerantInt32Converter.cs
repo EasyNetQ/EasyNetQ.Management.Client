@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Serialization;
 
-public class TolerantInt32Converter : JsonConverter<int>
+internal class TolerantInt32Converter : JsonConverter<int>
 {
     public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
