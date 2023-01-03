@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Serialization;
 
-internal class EmptyArrayAsDefaultConverter<T> : JsonConverter<T>
+internal sealed class EmptyArrayAsDefaultConverter<T> : JsonConverter<T>
 {
     // From http://stackoverflow.com/questions/17171737/how-to-deserialize-json-data-which-sometimes-is-an-empty-array-and-sometimes-a-s
     public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

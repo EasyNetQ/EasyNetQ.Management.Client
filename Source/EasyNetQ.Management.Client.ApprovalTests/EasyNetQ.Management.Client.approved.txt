@@ -1089,12 +1089,3 @@ namespace EasyNetQ.Management.Client.Model
         public bool Tracing { get; set; }
     }
 }
-namespace EasyNetQ.Management.Client.Serialization
-{
-    public class StringObjectReadOnlyDictionaryConverter : System.Text.Json.Serialization.JsonConverter<System.Collections.Generic.IReadOnlyDictionary<string, object?>>
-    {
-        public StringObjectReadOnlyDictionaryConverter() { }
-        public override System.Collections.Generic.IReadOnlyDictionary<string, object?> Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options) { }
-        public override void Write(System.Text.Json.Utf8JsonWriter writer, System.Collections.Generic.IReadOnlyDictionary<string, object?> value, System.Text.Json.JsonSerializerOptions options) { }
-    }
-}

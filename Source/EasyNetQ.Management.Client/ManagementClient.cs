@@ -51,13 +51,14 @@ public class ManagementClient : IManagementClient
 
     static ManagementClient()
     {
+        var namingPolicy = new JsonSnakeCaseNamingPolicy();
         SerializerOptions = new JsonSerializerOptions
         {
-            PropertyNamingPolicy = new JsonSnakeCaseNamingPolicy(),
+            PropertyNamingPolicy = namingPolicy,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             Converters =
             {
-                new JsonStringEnumConverter(new JsonSnakeCaseNamingPolicy()),
+                new JsonStringEnumConverter(namingPolicy),
                 new HaParamsConverter()
             }
         };

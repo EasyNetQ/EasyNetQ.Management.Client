@@ -3,13 +3,13 @@ using System.Text.Json;
 
 namespace EasyNetQ.Management.Client.Serialization;
 
-internal class JsonSnakeCaseNamingPolicy : JsonNamingPolicy
+internal sealed class JsonSnakeCaseNamingPolicy : JsonNamingPolicy
 {
-    private const string Separator = "_";
+    private const char Separator = '_';
 
     public override string ConvertName(string name)
     {
-        if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name)) return string.Empty;
+        if (string.IsNullOrWhiteSpace(name)) return string.Empty;
 
         var spanName = name.Trim();
 
@@ -23,7 +23,7 @@ internal class JsonSnakeCaseNamingPolicy : JsonNamingPolicy
         var isNextUpper = false;
         var isNextSpace = false;
 
-        for (int position = 0; position < spanName.Length; position++)
+        for (var position = 0; position < spanName.Length; position++)
         {
             if (position != 0)
             {

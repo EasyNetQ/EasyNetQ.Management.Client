@@ -8,7 +8,7 @@ namespace EasyNetQ.Management.Client.Serialization;
 /// Converts Unix time in ms to DateTime and vice versa - based on
 /// http://stackapps.com/questions/1175/how-to-convert-unix-timestamp-to-net-datetime/1176#1176
 /// </summary>
-internal class UnixMsDateTimeConverter : JsonConverter<DateTime>
+internal sealed class UnixMsDateTimeConverter : JsonConverter<DateTime>
 {
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

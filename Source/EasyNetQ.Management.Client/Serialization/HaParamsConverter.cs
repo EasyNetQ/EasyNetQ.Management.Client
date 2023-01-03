@@ -4,7 +4,7 @@ using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.Serialization;
 
-internal class HaParamsConverter : JsonConverter<HaParams>
+internal sealed class HaParamsConverter : JsonConverter<HaParams>
 {
     // Support serializing/deserializing ha-params according to http://www.rabbitmq.com/ha.html#genesis for 3.1.3
     public override HaParams Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

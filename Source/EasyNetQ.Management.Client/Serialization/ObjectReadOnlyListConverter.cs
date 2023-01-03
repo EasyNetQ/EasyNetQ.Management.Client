@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Serialization;
 
-internal class ObjectReadOnlyListConverter : JsonConverter<IReadOnlyList<object?>>
+internal sealed class ObjectReadOnlyListConverter : JsonConverter<IReadOnlyList<object?>>
 {
     public override IReadOnlyList<object?> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
