@@ -1,6 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
-
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.Tests.Model;
 
@@ -187,5 +185,3 @@ public class OverviewSerializationTests
         );
     }
 }
-
-// ReSharper restore InconsistentNaming

@@ -1,6 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
-
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.Tests.Model;
 
@@ -28,5 +26,3 @@ public class UserInfoTests
         userInfo.Tags.Should().BeEmpty();
     }
 }
-
-// ReSharper restore InconsistentNaming

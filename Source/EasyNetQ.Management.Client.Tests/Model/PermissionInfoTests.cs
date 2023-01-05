@@ -1,6 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
-
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.Tests.Model;
 
@@ -47,5 +45,3 @@ public class PermissionInfoTests
         permissions.Read.Should().Be("def");
     }
 }
-
-// ReSharper restore InconsistentNaming

@@ -1,6 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
-
-using System.Text.Json;
+﻿using System.Text.Json;
 using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.Tests.Model;

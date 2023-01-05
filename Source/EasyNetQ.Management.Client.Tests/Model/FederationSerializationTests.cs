@@ -27,5 +27,3 @@ public class FederationSerializationTests
         federation.Type.Should().Be("exchange");
     }
 }
-
-// ReSharper restore InconsistentNaming

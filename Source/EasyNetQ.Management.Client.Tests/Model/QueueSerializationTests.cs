@@ -1,6 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
-
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.Tests.Model;
 
@@ -58,5 +56,3 @@ public class QueueSerializationTests
         queue.ConsumerDetails[0].ChannelDetails.Number.Should().Be(1);
     }
 }
-
-// ReSharper restore InconsistentNaming

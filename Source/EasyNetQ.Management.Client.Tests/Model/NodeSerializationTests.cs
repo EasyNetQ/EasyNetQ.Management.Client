@@ -1,6 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
-
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.Tests.Model;
 
@@ -28,5 +26,3 @@ public class NodeSerializationTests
         node.Uptime.Should().Be(11463012619);
     }
 }
-
-// ReSharper restore InconsistentNaming

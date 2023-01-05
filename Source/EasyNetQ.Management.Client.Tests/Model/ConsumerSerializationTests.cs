@@ -26,5 +26,3 @@ public class ConsumerSerializationTests
         consumer.ChannelDetails.Node.Should().Be("rabbit@LOCALHOST");
     }
 }
-
-// ReSharper restore InconsistentNaming

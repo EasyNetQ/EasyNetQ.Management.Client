@@ -1,6 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
-
-using EasyNetQ.Management.Client.Model;
+﻿using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.Tests.Model;
 
@@ -14,5 +12,3 @@ public class ExchangeInfoTests
         exchangeInfo.Name.Should().Be(expectedName);
     }
 }
-
-// ReSharper restore InconsistentNaming
