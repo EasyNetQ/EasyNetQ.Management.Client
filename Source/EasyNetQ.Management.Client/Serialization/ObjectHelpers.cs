@@ -5,6 +5,9 @@ namespace EasyNetQ.Management.Client.Serialization;
 
 internal static class ObjectHelpers
 {
+    private static readonly object False = false;
+    private static readonly object True = true;
+
     public static void WriteObjectValue(this Utf8JsonWriter writer, object? value)
     {
         switch (value)
@@ -43,7 +46,7 @@ internal static class ObjectHelpers
                 writer.WriteEndArray();
                 return;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(value), value, null);
         }
     }
 
@@ -66,9 +69,9 @@ internal static class ObjectHelpers
                     return new ReadOnlyDictionary<string, object?>(dictionary);
                 }
             case { ValueKind: JsonValueKind.True }:
-                return true;
+                return True;
             case { ValueKind: JsonValueKind.False }:
-                return false;
+                return False;
             case { ValueKind: JsonValueKind.Number }:
                 return jsonElement.TryGetInt64(out var longValue) ? longValue : jsonElement.GetDouble();
             case { ValueKind: JsonValueKind.String }:
@@ -79,7 +82,7 @@ internal static class ObjectHelpers
             case { ValueKind: JsonValueKind.Null }:
                 return null;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(jsonElement), jsonElement, null);
         }
     }
 }

@@ -12,6 +12,8 @@ internal sealed class StringObjectReadOnlyDictionaryConverter : JsonConverter<IR
 
         switch (jsonElement)
         {
+            case { ValueKind: JsonValueKind.Array } when jsonElement.GetArrayLength() > 0:
+                throw new JsonException("Empty array is required");
             case { ValueKind: JsonValueKind.Array }:
                 return new ReadOnlyDictionary<string, object?>(new Dictionary<string, object?>());
             case { ValueKind: JsonValueKind.Object }:
