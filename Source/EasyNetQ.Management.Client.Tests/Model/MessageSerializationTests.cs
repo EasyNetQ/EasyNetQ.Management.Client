@@ -1,8 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 
+using System.Text.Json;
 using EasyNetQ.Management.Client.Model;
-using Newtonsoft.Json;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace EasyNetQ.Management.Client.Tests.Model;
 
