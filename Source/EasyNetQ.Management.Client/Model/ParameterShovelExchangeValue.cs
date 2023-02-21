@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Model;
 
@@ -9,13 +8,13 @@ namespace EasyNetQ.Management.Client.Model;
 public record ParameterShovelExchangeValue(
     [property: JsonPropertyName("src-uri")]
     string SrcUri,
-    [property: JsonPropertyName("src-exchange"), AllowNull]
+    [property: JsonPropertyName("src-exchange")]
     string SrcExchange,
     [property: JsonPropertyName("src-delete-after")]
     string SrcDeleteAfter,
     [property: JsonPropertyName("dest-uri")]
     string DestUri,
-    [property: JsonPropertyName("dest-exchange"), AllowNull]
+    [property: JsonPropertyName("dest-exchange")]
     string DestExchange,
     [property: JsonPropertyName("ack-mode")]
     string AckMode,

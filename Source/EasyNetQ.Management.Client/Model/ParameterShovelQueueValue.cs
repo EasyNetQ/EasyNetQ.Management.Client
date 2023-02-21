@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Model;
 
@@ -9,13 +8,13 @@ namespace EasyNetQ.Management.Client.Model;
 public record ParameterShovelQueueValue(
     [property: JsonPropertyName("src-uri")]
     string SrcUri,
-    [property: JsonPropertyName("src-queue"), AllowNull]
+    [property: JsonPropertyName("src-queue")]
     string SrcQueue,
     [property: JsonPropertyName("src-delete-after")]
     string SrcDeleteAfter,
     [property: JsonPropertyName("dest-uri")]
     string DestUri,
-    [property: JsonPropertyName("dest-queue"), AllowNull]
+    [property: JsonPropertyName("dest-queue")]
     string DestQueue,
     [property: JsonPropertyName("ack-mode")]
     string AckMode,
