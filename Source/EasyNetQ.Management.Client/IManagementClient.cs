@@ -702,4 +702,32 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task RebalanceQueuesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Creates a shovel for a queue in a specific vhost
+    /// </summary>
+    /// <param name="vHostName"></param>
+    /// <param name="name"></param>
+    /// <param name="parameters"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task CreateQueueShovelAsync(
+        string vHostName,
+        string name,
+        ParameterShovelQueueValue parameters,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Creates a shovel for an exchange in a specific vhost
+    /// </summary>
+    /// <param name="vHostName"></param>
+    /// <param name="name"></param>
+    /// <param name="parameters"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task CreateExchangeShovelAsync(
+        string vHostName,
+        string name,
+        ParameterShovelExchangeValue parameters,
+        CancellationToken cancellationToken = default);
 }
