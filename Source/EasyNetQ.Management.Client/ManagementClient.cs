@@ -649,18 +649,18 @@ public class ManagementClient : IManagementClient
     }
 
     public Task CreateShovelAsync(
-        string vHostName,
+        string vhostName,
         string name,
         ParameterShovelValue parameters,
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(vHostName))
+        if (string.IsNullOrEmpty(vhostName))
         {
-            vHostName = "/";
+            vhostName = "/";
         }
 
         return PutAsync(
-            Parameters / "shovel" / vHostName / name,
+            Parameters / "shovel" / vhostName / name,
             new { Value = parameters },
             cancellationToken);
     }

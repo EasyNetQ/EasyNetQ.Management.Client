@@ -11,7 +11,7 @@ namespace EasyNetQ.Management.Client
         System.Threading.Tasks.Task CreatePolicyAsync(string vhostName, EasyNetQ.Management.Client.Model.PolicyInfo policyInfo, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task CreateQueueAsync(string vhostName, EasyNetQ.Management.Client.Model.QueueInfo queueInfo, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task CreateQueueBindingAsync(string vhostName, string exchangeName, string queueName, EasyNetQ.Management.Client.Model.BindingInfo bindingInfo, System.Threading.CancellationToken cancellationToken = default);
-        System.Threading.Tasks.Task CreateShovelAsync(string vHostName, string name, EasyNetQ.Management.Client.Model.ParameterShovelValue parameters, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task CreateShovelAsync(string vhostName, string name, EasyNetQ.Management.Client.Model.ParameterShovelValue parameters, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task CreateTopicPermissionAsync(string vhostName, EasyNetQ.Management.Client.Model.TopicPermissionInfo topicPermissionInfo, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task CreateUserAsync(EasyNetQ.Management.Client.Model.UserInfo userInfo, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task CreateVhostAsync(string vhostName, System.Threading.CancellationToken cancellationToken = default);
@@ -85,7 +85,7 @@ namespace EasyNetQ.Management.Client
         public System.Threading.Tasks.Task CreatePolicyAsync(string vhostName, EasyNetQ.Management.Client.Model.PolicyInfo policyInfo, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task CreateQueueAsync(string vhostName, EasyNetQ.Management.Client.Model.QueueInfo queueInfo, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task CreateQueueBindingAsync(string vhostName, string exchangeName, string queueName, EasyNetQ.Management.Client.Model.BindingInfo bindingInfo, System.Threading.CancellationToken cancellationToken = default) { }
-        public System.Threading.Tasks.Task CreateShovelAsync(string vHostName, string name, EasyNetQ.Management.Client.Model.ParameterShovelValue parameters, System.Threading.CancellationToken cancellationToken = default) { }
+        public System.Threading.Tasks.Task CreateShovelAsync(string vhostName, string name, EasyNetQ.Management.Client.Model.ParameterShovelValue parameters, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task CreateTopicPermissionAsync(string vhostName, EasyNetQ.Management.Client.Model.TopicPermissionInfo topicPermissionInfo, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task CreateUserAsync(EasyNetQ.Management.Client.Model.UserInfo userInfo, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task CreateVhostAsync(string vhostName, System.Threading.CancellationToken cancellationToken = default) { }
