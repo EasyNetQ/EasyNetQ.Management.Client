@@ -1173,7 +1173,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_shovel_parameter_on_queue()
     {
-        await fixture.ManagementClient.CreateQueueShovelAsync(
+        await fixture.ManagementClient.CreateShovelAsync(
             vHostName: "",
             name: "queue-shovel",
             new ParameterShovelValue
@@ -1201,7 +1201,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_shovel_parameter_on_exchange()
     {
-        await fixture.ManagementClient.CreateExchangeShovelAsync(
+        await fixture.ManagementClient.CreateShovelAsync(
             vHostName: "",
             name: "exchange-shovel",
             new ParameterShovelValue

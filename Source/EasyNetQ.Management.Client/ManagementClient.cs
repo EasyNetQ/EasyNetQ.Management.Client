@@ -648,24 +648,7 @@ public class ManagementClient : IManagementClient
         return PostAsync(Rebalance / "queues", cancellationToken);
     }
 
-    public Task CreateQueueShovelAsync(
-        string vHostName,
-        string name,
-        ParameterShovelValue parameters,
-        CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrEmpty(vHostName))
-        {
-            vHostName = "/";
-        }
-
-        return PutAsync(
-            Parameters / "shovel" / vHostName / name,
-            new { Value = parameters },
-            cancellationToken);
-    }
-
-    public Task CreateExchangeShovelAsync(
+    public Task CreateShovelAsync(
         string vHostName,
         string name,
         ParameterShovelValue parameters,

@@ -704,28 +704,14 @@ public interface IManagementClient : IDisposable
     Task RebalanceQueuesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Creates a shovel for a queue in a specific vhost
+    ///     Creates a shovel in a specific vhost
     /// </summary>
     /// <param name="vHostName"></param>
     /// <param name="name"></param>
     /// <param name="parameters"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task CreateQueueShovelAsync(
-        string vHostName,
-        string name,
-        ParameterShovelValue parameters,
-        CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Creates a shovel for an exchange in a specific vhost
-    /// </summary>
-    /// <param name="vHostName"></param>
-    /// <param name="name"></param>
-    /// <param name="parameters"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task CreateExchangeShovelAsync(
+    Task CreateShovelAsync(
         string vHostName,
         string name,
         ParameterShovelValue parameters,
