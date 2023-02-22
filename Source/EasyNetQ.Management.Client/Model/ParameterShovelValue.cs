@@ -6,24 +6,28 @@ namespace EasyNetQ.Management.Client.Model;
 /// About shovel parameters: https://www.rabbitmq.com/shovel-dynamic.html
 /// </summary>
 public record ParameterShovelValue(
+    [property: JsonPropertyName("src-protocol")]
+    string SrcProtocol,
     [property: JsonPropertyName("src-uri")]
     string SrcUri,
     [property: JsonPropertyName("src-exchange")]
-    string SrcExchange,
+    string? SrcExchange,
     [property: JsonPropertyName("src-exchange-key")]
-    string SrcExchangeKey,
+    string? SrcExchangeKey,
     [property: JsonPropertyName("src-queue")]
-    string SrcQueue,
+    string? SrcQueue,
     [property: JsonPropertyName("src-delete-after")]
     string SrcDeleteAfter,
+    [property: JsonPropertyName("dest-protocol")]
+    string DestProtocol,
     [property: JsonPropertyName("dest-uri")]
     string DestUri,
     [property: JsonPropertyName("dest-exchange")]
-    string DestExchange,
+    string? DestExchange,
     [property: JsonPropertyName("dest-queue")]
-    string DestQueue,
+    string? DestQueue,
     [property: JsonPropertyName("ack-mode")]
     string AckMode,
     [property: JsonPropertyName("add-forward-headers")]
-    string AddForwardHeaders
+    bool AddForwardHeaders
 );

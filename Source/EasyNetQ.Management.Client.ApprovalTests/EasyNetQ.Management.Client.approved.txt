@@ -11,6 +11,7 @@ namespace EasyNetQ.Management.Client
         System.Threading.Tasks.Task CreatePolicyAsync(string vhostName, EasyNetQ.Management.Client.Model.PolicyInfo policyInfo, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task CreateQueueAsync(string vhostName, EasyNetQ.Management.Client.Model.QueueInfo queueInfo, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task CreateQueueBindingAsync(string vhostName, string exchangeName, string queueName, EasyNetQ.Management.Client.Model.BindingInfo bindingInfo, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task CreateShovelAsync(string vhostName, string name, EasyNetQ.Management.Client.Model.ParameterShovelValue parameters, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task CreateTopicPermissionAsync(string vhostName, EasyNetQ.Management.Client.Model.TopicPermissionInfo topicPermissionInfo, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task CreateUserAsync(EasyNetQ.Management.Client.Model.UserInfo userInfo, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task CreateVhostAsync(string vhostName, System.Threading.CancellationToken cancellationToken = default);
@@ -84,6 +85,7 @@ namespace EasyNetQ.Management.Client
         public System.Threading.Tasks.Task CreatePolicyAsync(string vhostName, EasyNetQ.Management.Client.Model.PolicyInfo policyInfo, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task CreateQueueAsync(string vhostName, EasyNetQ.Management.Client.Model.QueueInfo queueInfo, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task CreateQueueBindingAsync(string vhostName, string exchangeName, string queueName, EasyNetQ.Management.Client.Model.BindingInfo bindingInfo, System.Threading.CancellationToken cancellationToken = default) { }
+        public System.Threading.Tasks.Task CreateShovelAsync(string vhostName, string name, EasyNetQ.Management.Client.Model.ParameterShovelValue parameters, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task CreateTopicPermissionAsync(string vhostName, EasyNetQ.Management.Client.Model.TopicPermissionInfo topicPermissionInfo, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task CreateUserAsync(EasyNetQ.Management.Client.Model.UserInfo userInfo, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task CreateVhostAsync(string vhostName, System.Threading.CancellationToken cancellationToken = default) { }
@@ -260,6 +262,11 @@ namespace EasyNetQ.Management.Client.Model
         AckRequeueTrue = 1,
         RejectRequeueFalse = 2,
         RejectRequeueTrue = 3,
+    }
+    public static class AmqpProtocol
+    {
+        public const string AMQP091 = "amqp091";
+        public const string AMQP10 = "amqp10";
     }
     public class Application : System.IEquatable<EasyNetQ.Management.Client.Model.Application>
     {
@@ -825,25 +832,29 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class ParameterShovelValue : System.IEquatable<EasyNetQ.Management.Client.Model.ParameterShovelValue>
     {
-        public ParameterShovelValue(string SrcUri, string SrcExchange, string SrcExchangeKey, string SrcQueue, string SrcDeleteAfter, string DestUri, string DestExchange, string DestQueue, string AckMode, string AddForwardHeaders) { }
+        public ParameterShovelValue(string SrcProtocol, string SrcUri, string? SrcExchange, string? SrcExchangeKey, string? SrcQueue, string SrcDeleteAfter, string DestProtocol, string DestUri, string? DestExchange, string? DestQueue, string AckMode, bool AddForwardHeaders) { }
         [System.Text.Json.Serialization.JsonPropertyName("ack-mode")]
         public string AckMode { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("add-forward-headers")]
-        public string AddForwardHeaders { get; set; }
+        public bool AddForwardHeaders { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("dest-exchange")]
-        public string DestExchange { get; set; }
+        public string? DestExchange { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("dest-protocol")]
+        public string DestProtocol { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("dest-queue")]
-        public string DestQueue { get; set; }
+        public string? DestQueue { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("dest-uri")]
         public string DestUri { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-delete-after")]
         public string SrcDeleteAfter { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-exchange")]
-        public string SrcExchange { get; set; }
+        public string? SrcExchange { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-exchange-key")]
-        public string SrcExchangeKey { get; set; }
+        public string? SrcExchangeKey { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("src-protocol")]
+        public string SrcProtocol { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-queue")]
-        public string SrcQueue { get; set; }
+        public string? SrcQueue { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-uri")]
         public string SrcUri { get; set; }
     }

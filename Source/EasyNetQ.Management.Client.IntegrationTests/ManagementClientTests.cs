@@ -1169,4 +1169,60 @@ public class ManagementClientTests
             Assert.IsType<UnexpectedHttpStatusCodeException>(e);
         }
     }
+
+    [Fact]
+    public async Task Should_be_able_to_create_shovel_parameter_on_queue()
+    {
+        await fixture.ManagementClient.CreateShovelAsync(
+            vhostName: "/",
+            name: "queue-shovel",
+            new ParameterShovelValue
+            (
+                SrcProtocol: AmqpProtocol.AMQP091,
+                SrcUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}",
+                SrcQueue: "test-queue-src",
+                SrcExchange: null,
+                SrcExchangeKey: null,
+                SrcDeleteAfter: "never",
+                DestProtocol: AmqpProtocol.AMQP091,
+                DestUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}-1",
+                DestQueue: "test-queue-dest",
+                DestExchange: null,
+                AckMode: "on-confirm",
+                AddForwardHeaders: false
+            )
+        );
+
+        var parameters = await fixture.ManagementClient.GetParametersAsync();
+
+        Assert.Contains(parameters, p => p.Name == "queue-shovel");
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_create_shovel_parameter_on_exchange()
+    {
+        await fixture.ManagementClient.CreateShovelAsync(
+            vhostName: "/",
+            name: "exchange-shovel",
+            new ParameterShovelValue
+            (
+                SrcProtocol: AmqpProtocol.AMQP091,
+                SrcUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}",
+                SrcExchange: "test-exchange-src",
+                SrcExchangeKey: null,
+                SrcQueue: null,
+                SrcDeleteAfter: "never",
+                DestProtocol: AmqpProtocol.AMQP091,
+                DestUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}-1",
+                DestExchange: "test-exchange-dest",
+                DestQueue: null,
+                AckMode: "on-confirm",
+                AddForwardHeaders: false
+            )
+        );
+
+        var parameters = await fixture.ManagementClient.GetParametersAsync();
+
+        Assert.Contains(parameters, p => p.Name == "exchange-shovel");
+    }
 }
