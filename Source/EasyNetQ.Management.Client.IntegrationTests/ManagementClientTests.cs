@@ -1175,7 +1175,7 @@ public class ManagementClientTests
     {
         await fixture.ManagementClient.CreateShovelAsync(
             vhostName: "/",
-            name: "queue-shovel",
+            shovelName: "queue-shovel",
             new ParameterShovelValue
             (
                 SrcProtocol: AmqpProtocol.AMQP091,
@@ -1203,7 +1203,7 @@ public class ManagementClientTests
     {
         await fixture.ManagementClient.CreateShovelAsync(
             vhostName: "/",
-            name: "exchange-shovel",
+            shovelName: "exchange-shovel",
             new ParameterShovelValue
             (
                 SrcProtocol: AmqpProtocol.AMQP091,

@@ -858,8 +858,10 @@ public static class ManagementClientExtensions
     {
         return binding.DestinationType switch
         {
-            "queue" => client.DeleteQueueBindingAsync(binding.Vhost, binding.Source, binding.Destination, binding.PropertiesKey!, cancellationToken),
-            "exchange" => client.DeleteExchangeBindingAsync(binding.Vhost, binding.Source, binding.Destination, binding.PropertiesKey!, cancellationToken),
+            "queue" => client.DeleteQueueBindingAsync(binding.Vhost, binding.Source, binding.Destination,
+                binding.PropertiesKey!, cancellationToken),
+            "exchange" => client.DeleteExchangeBindingAsync(binding.Vhost, binding.Source, binding.Destination,
+                binding.PropertiesKey!, cancellationToken),
             _ => throw new ArgumentOutOfRangeException(nameof(binding.DestinationType), binding.DestinationType, null)
         };
     }
@@ -1433,7 +1435,8 @@ public static class ManagementClientExtensions
         this IManagementClient client,
         Parameter parameter,
         CancellationToken cancellationToken = default
-    ) => client.CreateParameterAsync(parameter.Component, parameter.Vhost, parameter.Name, parameter.Value, cancellationToken);
+    ) => client.CreateParameterAsync(parameter.Component, parameter.Vhost, parameter.Name, parameter.Value,
+        cancellationToken);
 
     /// <summary>
     ///     Creates a parameter on the cluster
@@ -1587,6 +1590,45 @@ public static class ManagementClientExtensions
     )
     {
         client.RebalanceQueuesAsync(cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
+    ///     Creates a shovel in a specific vhost
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="shovelName"></param>
+    /// <param name="shovelDescription"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task CreateShovelAsync(
+        this IManagementClient client,
+        string vhostName,
+        string shovelName,
+        ParameterShovelValue shovelDescription,
+        CancellationToken cancellationToken = default
+    ) => client.CreateParameterAsync("shovel", vhostName, shovelName, shovelDescription, cancellationToken);
+
+    /// <summary>
+    ///     Creates a shovel in a specific vhost
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="shovelName"></param>
+    /// <param name="shovelDescription"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static void CreateShovel(
+        this IManagementClient client,
+        string vhostName,
+        string shovelName,
+        ParameterShovelValue shovelDescription,
+        CancellationToken cancellationToken = default
+    )
+    {
+        client.CreateParameterAsync("shovel", vhostName, shovelName, shovelDescription, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }

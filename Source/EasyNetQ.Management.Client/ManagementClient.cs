@@ -648,18 +648,6 @@ public class ManagementClient : IManagementClient
         return PostAsync(Rebalance / "queues", cancellationToken);
     }
 
-    public Task CreateShovelAsync(
-        string vhostName,
-        string name,
-        ParameterShovelValue parameters,
-        CancellationToken cancellationToken = default)
-    {
-        return PutAsync(
-            Parameters / "shovel" / vhostName / name,
-            new { Value = parameters },
-            cancellationToken);
-    }
-
     public void Dispose()
     {
         if (disposeHttpClient)
