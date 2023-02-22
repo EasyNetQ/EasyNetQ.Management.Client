@@ -1,4 +1,5 @@
-﻿using NullGuard;
+﻿using EasyNetQ.Management.Client.Serialization;
+using NullGuard;
 using System.Text.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Model;
@@ -12,11 +13,11 @@ public record ParameterShovelValue(
     string SrcProtocol,
     [property: JsonPropertyName("src-uri")]
     string SrcUri,
-    [property: JsonPropertyName("src-exchange")]
+    [property: JsonPropertyName("src-exchange"), JsonConverter(typeof(TolerantStringConverter))]
     string SrcExchange,
-    [property: JsonPropertyName("src-exchange-key")]
+    [property: JsonPropertyName("src-exchange-key"), JsonConverter(typeof(TolerantStringConverter))]
     string SrcExchangeKey,
-    [property: JsonPropertyName("src-queue")]
+    [property: JsonPropertyName("src-queue"), JsonConverter(typeof(TolerantStringConverter))]
     string SrcQueue,
     [property: JsonPropertyName("src-delete-after")]
     string SrcDeleteAfter,
@@ -24,9 +25,9 @@ public record ParameterShovelValue(
     string DestProtocol,
     [property: JsonPropertyName("dest-uri")]
     string DestUri,
-    [property: JsonPropertyName("dest-exchange")]
+    [property: JsonPropertyName("dest-exchange"), JsonConverter(typeof(TolerantStringConverter))]
     string DestExchange,
-    [property: JsonPropertyName("dest-queue")]
+    [property: JsonPropertyName("dest-queue"), JsonConverter(typeof(TolerantStringConverter))]
     string DestQueue,
     [property: JsonPropertyName("ack-mode")]
     string AckMode,
