@@ -651,7 +651,7 @@ public class ManagementClient : IManagementClient
     public Task CreateQueueShovelAsync(
         string vHostName,
         string name,
-        ParameterShovelQueueValue parameters,
+        ParameterShovelValue parameters,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(vHostName))
@@ -668,7 +668,7 @@ public class ManagementClient : IManagementClient
     public Task CreateExchangeShovelAsync(
         string vHostName,
         string name,
-        ParameterShovelExchangeValue parameters,
+        ParameterShovelValue parameters,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(vHostName))

@@ -1176,13 +1176,18 @@ public class ManagementClientTests
         await fixture.ManagementClient.CreateQueueShovelAsync(
             vHostName: "",
             name: "queue-shovel",
-            new ParameterShovelQueueValue
+            new ParameterShovelValue
             (
+                SrcProtocol: "amqp091",
                 SrcUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}",
                 SrcQueue: "test-queue-src",
+                SrcExchange: null,
+                SrcExchangeKey: null,
                 SrcDeleteAfter: "never",
+                DestProtocol: "amqp091",
                 DestUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}-1",
                 DestQueue: "test-queue-dest",
+                DestExchange: null,
                 AckMode: "on-confirm",
                 AddForwardHeaders: false
             )
@@ -1199,13 +1204,18 @@ public class ManagementClientTests
         await fixture.ManagementClient.CreateExchangeShovelAsync(
             vHostName: "",
             name: "exchange-shovel",
-            new ParameterShovelExchangeValue
+            new ParameterShovelValue
             (
+                SrcProtocol: "amqp091",
                 SrcUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}",
                 SrcExchange: "test-exchange-src",
+                SrcExchangeKey: null,
+                SrcQueue: null,
                 SrcDeleteAfter: "never",
+                DestProtocol: "amqp091",
                 DestUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}-1",
                 DestExchange: "test-exchange-dest",
+                DestQueue: null,
                 AckMode: "on-confirm",
                 AddForwardHeaders: false
             )

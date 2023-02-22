@@ -68,6 +68,8 @@ namespace EasyNetQ.Management.Client
         System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PublishResult> PublishAsync(string vhostName, string exchangeName, EasyNetQ.Management.Client.Model.PublishInfo publishInfo, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task PurgeAsync(string vhostName, string queueName, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task RebalanceQueuesAsync(System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task CreateQueueShovelAsync(string vHostName, string name, ParameterShovelValue parameters, CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task CreateExchangeShovelAsync(string vHostName, string name, ParameterShovelValue parameters, CancellationToken cancellationToken = default);
     }
     public class ManagementClient : EasyNetQ.Management.Client.IManagementClient, System.IDisposable
     {
@@ -836,6 +838,8 @@ namespace EasyNetQ.Management.Client.Model
         public string DestQueue { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("dest-uri")]
         public string DestUri { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("dest-protocol")]
+        public string DestProtocol { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-delete-after")]
         public string SrcDeleteAfter { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-exchange")]
@@ -846,6 +850,8 @@ namespace EasyNetQ.Management.Client.Model
         public string SrcQueue { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-uri")]
         public string SrcUri { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("src-protocol")]
+        public string SrcProtocol { get; set; }
     }
     public enum PayloadEncoding
     {

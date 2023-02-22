@@ -714,7 +714,7 @@ public interface IManagementClient : IDisposable
     Task CreateQueueShovelAsync(
         string vHostName,
         string name,
-        ParameterShovelQueueValue parameters,
+        ParameterShovelValue parameters,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -728,6 +728,6 @@ public interface IManagementClient : IDisposable
     Task CreateExchangeShovelAsync(
         string vHostName,
         string name,
-        ParameterShovelExchangeValue parameters,
+        ParameterShovelValue parameters,
         CancellationToken cancellationToken = default);
 }
