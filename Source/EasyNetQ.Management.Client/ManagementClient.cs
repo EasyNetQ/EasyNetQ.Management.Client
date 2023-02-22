@@ -654,11 +654,6 @@ public class ManagementClient : IManagementClient
         ParameterShovelValue parameters,
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(vhostName))
-        {
-            vhostName = "/";
-        }
-
         return PutAsync(
             Parameters / "shovel" / vhostName / name,
             new { Value = parameters },
