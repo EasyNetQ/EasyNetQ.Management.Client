@@ -475,6 +475,19 @@ public class ManagementClientTests
     }
 
     [Fact]
+    public async Task Should_be_able_to_create_federation_upstream_parameter_with_extension_method()
+    {
+        var amqpUri = new AmqpUri(fixture.Endpoint.Host, fixture.Endpoint.Port, fixture.User, fixture.Password);
+
+        await fixture.ManagementClient.CreateFederationUpstreamAsync(
+            vhostName: Vhost.Name,
+            federationUpstreamName: "myfakefederationupstream-extension",
+            federationUpstreamDescription: new ParameterFederationValue(amqpUri, Expires: 3600000)
+        );
+        Assert.Contains(await fixture.ManagementClient.GetParametersAsync(), p => p.Name == "myfakefederationupstream-extension");
+    }
+
+    [Fact]
     public async Task Should_be_able_to_create_permissions()
     {
         var user = (await fixture.ManagementClient.GetUsersAsync()).SingleOrDefault(x => x.Name == TestUser);

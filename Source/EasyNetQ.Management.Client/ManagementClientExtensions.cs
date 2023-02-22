@@ -1629,4 +1629,41 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     Creates a federation upstream in a specific vhost
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="federationUpstreamName"></param>
+    /// <param name="federationUpstreamDescription"></param>
+    /// <param name="cancellationToken"></param>
+    public static Task CreateFederationUpstreamAsync(
+        this IManagementClient client,
+        string vhostName,
+        string federationUpstreamName,
+        ParameterFederationValue federationUpstreamDescription,
+        CancellationToken cancellationToken = default
+    ) => client.CreateParameterAsync("federation-upstream", vhostName, federationUpstreamName, federationUpstreamDescription, cancellationToken);
+
+    /// <summary>
+    ///     Creates a federation upstream in a specific vhost
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="federationUpstreamName"></param>
+    /// <param name="federationUpstreamDescription"></param>
+    /// <param name="cancellationToken"></param>
+    public static void CreateFederationUpstream(
+        this IManagementClient client,
+        string vhostName,
+        string federationUpstreamName,
+        ParameterFederationValue federationUpstreamDescription,
+        CancellationToken cancellationToken = default
+    )
+    {
+        client.CreateParameterAsync("federation-upstream", vhostName, federationUpstreamName, federationUpstreamDescription, cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
 }
