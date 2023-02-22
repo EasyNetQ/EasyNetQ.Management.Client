@@ -858,10 +858,8 @@ public static class ManagementClientExtensions
     {
         return binding.DestinationType switch
         {
-            "queue" => client.DeleteQueueBindingAsync(binding.Vhost, binding.Source, binding.Destination,
-                binding.PropertiesKey!, cancellationToken),
-            "exchange" => client.DeleteExchangeBindingAsync(binding.Vhost, binding.Source, binding.Destination,
-                binding.PropertiesKey!, cancellationToken),
+            "queue" => client.DeleteQueueBindingAsync(binding.Vhost, binding.Source, binding.Destination, binding.PropertiesKey!, cancellationToken),
+            "exchange" => client.DeleteExchangeBindingAsync(binding.Vhost, binding.Source, binding.Destination, binding.PropertiesKey!, cancellationToken),
             _ => throw new ArgumentOutOfRangeException(nameof(binding.DestinationType), binding.DestinationType, null)
         };
     }
@@ -1435,8 +1433,7 @@ public static class ManagementClientExtensions
         this IManagementClient client,
         Parameter parameter,
         CancellationToken cancellationToken = default
-    ) => client.CreateParameterAsync(parameter.Component, parameter.Vhost, parameter.Name, parameter.Value,
-        cancellationToken);
+    ) => client.CreateParameterAsync(parameter.Component, parameter.Vhost, parameter.Name, parameter.Value, cancellationToken);
 
     /// <summary>
     ///     Creates a parameter on the cluster
