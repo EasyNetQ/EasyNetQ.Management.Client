@@ -1590,4 +1590,43 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     Creates a shovel in a specific vhost
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="shovelName"></param>
+    /// <param name="shovelDescription"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task CreateShovelAsync(
+        this IManagementClient client,
+        string vhostName,
+        string shovelName,
+        ParameterShovelValue shovelDescription,
+        CancellationToken cancellationToken = default
+    ) => client.CreateParameterAsync("shovel", vhostName, shovelName, shovelDescription, cancellationToken);
+
+    /// <summary>
+    ///     Creates a shovel in a specific vhost
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="shovelName"></param>
+    /// <param name="shovelDescription"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static void CreateShovel(
+        this IManagementClient client,
+        string vhostName,
+        string shovelName,
+        ParameterShovelValue shovelDescription,
+        CancellationToken cancellationToken = default
+    )
+    {
+        client.CreateParameterAsync("shovel", vhostName, shovelName, shovelDescription, cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
 }
