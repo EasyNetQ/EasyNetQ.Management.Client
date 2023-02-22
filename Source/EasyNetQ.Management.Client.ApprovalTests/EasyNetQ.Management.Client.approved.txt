@@ -827,34 +827,29 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class ParameterShovelValue : System.IEquatable<EasyNetQ.Management.Client.Model.ParameterShovelValue>
     {
-        public ParameterShovelValue(string SrcProtocol, string SrcUri, string SrcExchange, string SrcExchangeKey, string SrcQueue, string SrcDeleteAfter, string DestProtocol, string DestUri, string DestExchange, string DestQueue, string AckMode, bool AddForwardHeaders) { }
+        public ParameterShovelValue(string SrcProtocol, string SrcUri, string? SrcExchange, string? SrcExchangeKey, string? SrcQueue, string SrcDeleteAfter, string DestProtocol, string DestUri, string? DestExchange, string? DestQueue, string AckMode, bool AddForwardHeaders) { }
         [System.Text.Json.Serialization.JsonPropertyName("ack-mode")]
         public string AckMode { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("add-forward-headers")]
         public bool AddForwardHeaders { get; set; }
-        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.TolerantStringConverter))]
         [System.Text.Json.Serialization.JsonPropertyName("dest-exchange")]
-        public string DestExchange { get; set; }
+        public string? DestExchange { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("dest-protocol")]
         public string DestProtocol { get; set; }
-        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.TolerantStringConverter))]
         [System.Text.Json.Serialization.JsonPropertyName("dest-queue")]
-        public string DestQueue { get; set; }
+        public string? DestQueue { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("dest-uri")]
         public string DestUri { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-delete-after")]
         public string SrcDeleteAfter { get; set; }
-        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.TolerantStringConverter))]
         [System.Text.Json.Serialization.JsonPropertyName("src-exchange")]
-        public string SrcExchange { get; set; }
-        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.TolerantStringConverter))]
+        public string? SrcExchange { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-exchange-key")]
-        public string SrcExchangeKey { get; set; }
+        public string? SrcExchangeKey { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-protocol")]
         public string SrcProtocol { get; set; }
-        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.TolerantStringConverter))]
         [System.Text.Json.Serialization.JsonPropertyName("src-queue")]
-        public string SrcQueue { get; set; }
+        public string? SrcQueue { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("src-uri")]
         public string SrcUri { get; set; }
     }
