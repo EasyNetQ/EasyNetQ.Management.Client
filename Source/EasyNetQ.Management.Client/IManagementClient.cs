@@ -715,5 +715,6 @@ public interface IManagementClient : IDisposable
         string vhostName,
         string name,
         ParameterShovelValue parameters,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default
+    );
 }
