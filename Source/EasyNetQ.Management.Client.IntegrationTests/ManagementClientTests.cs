@@ -1178,13 +1178,13 @@ public class ManagementClientTests
             name: "queue-shovel",
             new ParameterShovelValue
             (
-                SrcProtocol: "amqp091",
+                SrcProtocol: AmqpProtocol.AMQP091,
                 SrcUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}",
                 SrcQueue: "test-queue-src",
                 SrcExchange: null,
                 SrcExchangeKey: null,
                 SrcDeleteAfter: "never",
-                DestProtocol: "amqp091",
+                DestProtocol: AmqpProtocol.AMQP091,
                 DestUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}-1",
                 DestQueue: "test-queue-dest",
                 DestExchange: null,
