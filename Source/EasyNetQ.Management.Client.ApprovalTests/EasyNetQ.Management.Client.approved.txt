@@ -154,6 +154,8 @@ namespace EasyNetQ.Management.Client
         public static System.Threading.Tasks.Task CreateExchangeAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.ExchangeInfo exchangeInfo, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
         public static void CreateExchangeBinding(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Exchange sourceExchange, EasyNetQ.Management.Client.Model.Exchange destinationExchange, EasyNetQ.Management.Client.Model.BindingInfo bindingInfo, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task CreateExchangeBindingAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Exchange sourceExchange, EasyNetQ.Management.Client.Model.Exchange destinationExchange, EasyNetQ.Management.Client.Model.BindingInfo bindingInfo, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void CreateFederationUpstream(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string federationUpstreamName, EasyNetQ.Management.Client.Model.ParameterFederationValue federationUpstreamDescription, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task CreateFederationUpstreamAsync(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string federationUpstreamName, EasyNetQ.Management.Client.Model.ParameterFederationValue federationUpstreamDescription, System.Threading.CancellationToken cancellationToken = default) { }
         public static void CreateParameter(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Parameter parameter, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task CreateParameterAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Parameter parameter, System.Threading.CancellationToken cancellationToken = default) { }
         public static void CreatePermission(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, EasyNetQ.Management.Client.Model.PermissionInfo permissionInfo, System.Threading.CancellationToken cancellationToken = default) { }
@@ -267,6 +269,17 @@ namespace EasyNetQ.Management.Client.Model
     {
         public const string AMQP091 = "amqp091";
         public const string AMQP10 = "amqp10";
+    }
+    public class AmqpUri
+    {
+        public AmqpUri(string hostName) { }
+        public AmqpUri(string hostName, int? port) { }
+        public AmqpUri(string hostName, int? port, string? username, string? password) { }
+        public string HostName { get; set; }
+        public string? Password { get; set; }
+        public int? Port { get; set; }
+        public string? Username { get; set; }
+        public override string ToString() { }
     }
     public class Application : System.IEquatable<EasyNetQ.Management.Client.Model.Application>
     {
@@ -829,6 +842,13 @@ namespace EasyNetQ.Management.Client.Model
         public string Name { get; set; }
         public object Value { get; set; }
         public string Vhost { get; set; }
+    }
+    public class ParameterFederationValue : System.IEquatable<EasyNetQ.Management.Client.Model.ParameterFederationValue>
+    {
+        public ParameterFederationValue(EasyNetQ.Management.Client.Model.AmqpUri Uri, int Expires) { }
+        public int Expires { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.ObjectToStringConverter<EasyNetQ.Management.Client.Model.AmqpUri>))]
+        public EasyNetQ.Management.Client.Model.AmqpUri Uri { get; set; }
     }
     public class ParameterShovelValue : System.IEquatable<EasyNetQ.Management.Client.Model.ParameterShovelValue>
     {
