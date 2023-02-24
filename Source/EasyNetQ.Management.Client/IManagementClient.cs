@@ -626,6 +626,20 @@ public interface IManagementClient : IDisposable
     );
 
     /// <summary>
+    ///     Get specific parameters on the cluster
+    /// </summary>
+    /// <param name="vhostName"></param>
+    /// <param name="componentName"></param>
+    /// <param name="parameterName"></param>
+    /// <param name="cancellationToken"></param>
+    public Task<Parameter> GetParameterAsync(
+        string vhostName,
+        string componentName,
+        string parameterName,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
     ///     Get all parameters on the cluster
     /// </summary>
     /// <param name="cancellationToken"></param>

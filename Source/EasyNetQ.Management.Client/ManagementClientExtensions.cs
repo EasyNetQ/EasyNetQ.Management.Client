@@ -1631,6 +1631,41 @@ public static class ManagementClientExtensions
     }
 
     /// <summary>
+    ///     Get specific shovel parameters from a specific vhost
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="shovelName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task<Parameter> GetShovelAsync(
+        this IManagementClient client,
+        string vhostName,
+        string shovelName,
+        CancellationToken cancellationToken = default
+    ) => client.GetParameterAsync(vhostName, "shovel", shovelName, cancellationToken);
+
+    /// <summary>
+    ///     Get specific shovel parameters from a specific vhost
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="shovelName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Parameter GetShovel(
+        this IManagementClient client,
+        string vhostName,
+        string shovelName,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.GetParameterAsync(vhostName, "shovel", shovelName, cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
     ///     Creates a federation upstream in a specific vhost
     /// </summary>
     /// <param name="client"></param>
@@ -1663,6 +1698,39 @@ public static class ManagementClientExtensions
     )
     {
         client.CreateParameterAsync("federation-upstream", vhostName, federationUpstreamName, federationUpstreamDescription, cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
+    ///     Get a specific federation upstream in a specific vhost
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="federationUpstreamName"></param>
+    /// <param name="cancellationToken"></param>
+    public static Task<Parameter> GetFederationUpstreamAsync(
+        this IManagementClient client,
+        string vhostName,
+        string federationUpstreamName,
+        CancellationToken cancellationToken = default
+    ) => client.GetParameterAsync(vhostName, "federation-upstream", federationUpstreamName, cancellationToken);
+
+    /// <summary>
+    ///     Get a specific federation upstream in a specific vhost
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="federationUpstreamName"></param>
+    /// <param name="cancellationToken"></param>
+    public static Parameter GetFederationUpstream(
+        this IManagementClient client,
+        string vhostName,
+        string federationUpstreamName,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.GetParameterAsync(vhostName, "federation-upstream", federationUpstreamName, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }

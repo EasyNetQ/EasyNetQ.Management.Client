@@ -484,7 +484,9 @@ public class ManagementClientTests
             federationUpstreamName: "myfakefederationupstream-extension",
             federationUpstreamDescription: new ParameterFederationValue(amqpUri, Expires: 3600000)
         );
-        Assert.Contains(await fixture.ManagementClient.GetParametersAsync(), p => p.Name == "myfakefederationupstream-extension");
+
+        var parameter = await fixture.ManagementClient.GetFederationUpstreamAsync(Vhost.Name, "myfakefederationupstream-extension");
+        Assert.Equal("myfakefederationupstream-extension", parameter.Name);
     }
 
     [Fact]
@@ -1186,19 +1188,24 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_shovel_parameter_on_queue()
     {
+        var srcUri = new AmqpUri(fixture.Endpoint.Host, fixture.Endpoint.Port, fixture.User, fixture.Password);
+        var destUri = new AmqpUri($"{fixture.Endpoint.Host}-1", fixture.Endpoint.Port, fixture.User, fixture.Password);
+
+        var shovelName = "queue-shovel";
+
         await fixture.ManagementClient.CreateShovelAsync(
-            vhostName: "/",
-            shovelName: "queue-shovel",
+            vhostName: Vhost.Name,
+            shovelName,
             new ParameterShovelValue
             (
                 SrcProtocol: AmqpProtocol.AMQP091,
-                SrcUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}",
+                SrcUri: srcUri.ToString(),
                 SrcQueue: "test-queue-src",
                 SrcExchange: null,
                 SrcExchangeKey: null,
                 SrcDeleteAfter: "never",
                 DestProtocol: AmqpProtocol.AMQP091,
-                DestUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}-1",
+                DestUri: destUri.ToString(),
                 DestQueue: "test-queue-dest",
                 DestExchange: null,
                 AckMode: "on-confirm",
@@ -1206,27 +1213,32 @@ public class ManagementClientTests
             )
         );
 
-        var parameters = await fixture.ManagementClient.GetParametersAsync();
+        var parameter = await fixture.ManagementClient.GetShovelAsync(Vhost.Name, shovelName);
 
-        Assert.Contains(parameters, p => p.Name == "queue-shovel");
+        Assert.Equal(shovelName, parameter.Name);
     }
 
     [Fact]
     public async Task Should_be_able_to_create_shovel_parameter_on_exchange()
     {
+        var srcUri = new AmqpUri(fixture.Endpoint.Host, fixture.Endpoint.Port, fixture.User, fixture.Password);
+        var destUri = new AmqpUri($"{fixture.Endpoint.Host}-1", fixture.Endpoint.Port, fixture.User, fixture.Password);
+
+        var shovelName = "exchange-shovel";
+
         await fixture.ManagementClient.CreateShovelAsync(
-            vhostName: "/",
-            shovelName: "exchange-shovel",
+            vhostName: Vhost.Name,
+            shovelName,
             new ParameterShovelValue
             (
                 SrcProtocol: AmqpProtocol.AMQP091,
-                SrcUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}",
+                SrcUri: srcUri.ToString(),
                 SrcExchange: "test-exchange-src",
                 SrcExchangeKey: null,
                 SrcQueue: null,
                 SrcDeleteAfter: "never",
                 DestProtocol: AmqpProtocol.AMQP091,
-                DestUri: $"amqp://{fixture.User}:{fixture.Password}@{fixture.Endpoint.Host}-1",
+                DestUri: destUri.ToString(),
                 DestExchange: "test-exchange-dest",
                 DestQueue: null,
                 AckMode: "on-confirm",
@@ -1236,6 +1248,45 @@ public class ManagementClientTests
 
         var parameters = await fixture.ManagementClient.GetParametersAsync();
 
-        Assert.Contains(parameters, p => p.Name == "exchange-shovel");
+        Assert.Contains(parameters, p => p.Name == shovelName);
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_throw_on_non_existant_shovel()
+    {
+        await Assert.ThrowsAsync<UnexpectedHttpStatusCodeException>(async ()
+            => await fixture.ManagementClient.GetShovelAsync(Vhost.Name, "non-existant-shovel"));
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_get_existant_shovel()
+    {
+        var srcUri = new AmqpUri(fixture.Endpoint.Host, fixture.Endpoint.Port, fixture.User, fixture.Password);
+        var destUri = new AmqpUri($"{fixture.Endpoint.Host}-1", fixture.Endpoint.Port, fixture.User, fixture.Password);
+
+        var shovelName = "exchange-shovel";
+
+        await fixture.ManagementClient.CreateShovelAsync(
+            vhostName: Vhost.Name,
+            shovelName: shovelName,
+            new ParameterShovelValue
+            (
+                SrcProtocol: AmqpProtocol.AMQP091,
+                SrcUri: srcUri.ToString(),
+                SrcExchange: "test-exchange-src",
+                SrcExchangeKey: null,
+                SrcQueue: null,
+                SrcDeleteAfter: "never",
+                DestProtocol: AmqpProtocol.AMQP091,
+                DestUri: destUri.ToString(),
+                DestExchange: "test-exchange-dest",
+                DestQueue: null,
+                AckMode: "on-confirm",
+                AddForwardHeaders: false
+            )
+        );
+
+        var shovel = await fixture.ManagementClient.GetShovelAsync(Vhost.Name, shovelName);
+        Assert.Contains(shovelName, shovel.Name);
     }
 }
