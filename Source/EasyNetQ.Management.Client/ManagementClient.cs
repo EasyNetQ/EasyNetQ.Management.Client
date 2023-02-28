@@ -506,6 +506,16 @@ public class ManagementClient : IManagementClient
         return DeleteAsync(Policies / vhostName / policyName, cancellationToken);
     }
 
+    public Task<Parameter> GetParameterAsync(
+        string vhostName,
+        string componentName,
+        string parameterName,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return GetAsync<Parameter>(Parameters / componentName / vhostName / parameterName, cancellationToken);
+    }
+
     public Task<IReadOnlyList<Parameter>> GetParametersAsync(CancellationToken cancellationToken = default)
     {
         return GetAsync<IReadOnlyList<Parameter>>(Parameters, cancellationToken);
