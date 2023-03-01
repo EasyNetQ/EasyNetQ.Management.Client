@@ -1003,7 +1003,8 @@ namespace EasyNetQ.Management.Client.Model
                     System.Collections.Generic.IReadOnlyList<string>? SynchronisedSlaveNodes,
                     EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails,
                     EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails,
-                    EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails) { }
+                    EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails,
+                    EasyNetQ.Management.Client.Model.MessageStats? MessageStats) { }
         public long ActiveConsumers { get; set; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments { get; set; }
@@ -1017,6 +1018,7 @@ namespace EasyNetQ.Management.Client.Model
         public long? HeadMessageTimestamp { get; set; }
         public string? IdleSince { get; set; }
         public long Memory { get; set; }
+        public EasyNetQ.Management.Client.Model.MessageStats? MessageStats { get; set; }
         public long Messages { get; set; }
         public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails { get; set; }
         public long MessagesReady { get; set; }
