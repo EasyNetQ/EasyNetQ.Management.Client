@@ -28,5 +28,6 @@ public record Queue(
     IReadOnlyList<string>? SynchronisedSlaveNodes,
     LengthsDetails? MessagesDetails,
     LengthsDetails? MessagesReadyDetails,
-    LengthsDetails? MessagesUnacknowledgedDetails
+    LengthsDetails? MessagesUnacknowledgedDetails,
+    MessageStats? MessageStats
 );
