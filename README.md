@@ -14,3 +14,11 @@ connections and channels; and setting up exchanges, queues and bindings.
 See the **[documentation](https://github.com/EasyNetQ/EasyNetQ/wiki/Management-API-Introduction)**.
 
 The announcement blog post is [here](http://mikehadlow.blogspot.co.uk/2012/11/a-c-net-client-proxy-for-rabbitmq.html)
+
+## Contributors
+
+Thanks to all the people who already contributed!
+
+<a href="https://github.com/EasyNetQ/EasyNetQ.Management.Client/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=EasyNetQ/EasyNetQ.Management.Client" />
+</a>
