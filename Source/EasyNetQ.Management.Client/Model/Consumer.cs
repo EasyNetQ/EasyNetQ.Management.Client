@@ -10,7 +10,7 @@ public record Consumer(
     bool Active,
     string ActivityStatus,
     [property: JsonConverter(typeof(EmptyArrayAsDefaultConverter<ChannelDetail>))]
-    ChannelDetail ChannelDetails,
+    ChannelDetail? ChannelDetails,
     string ConsumerTag,
     bool Exclusive,
     int PrefetchCount,
