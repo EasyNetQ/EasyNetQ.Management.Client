@@ -45,6 +45,14 @@ public interface IManagementClient : IDisposable
     Task<IReadOnlyList<Connection>> GetConnectionsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    ///     A list of all open connections on the specified VHost.
+    /// </summary>
+    /// <param name="vhostName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<Connection>> GetConnectionsAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     A list of all open channels.
     /// </summary>
     /// <param name="cancellationToken"></param>
@@ -147,6 +155,14 @@ public interface IManagementClient : IDisposable
     Task<IReadOnlyList<Binding>> GetBindingsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    ///     A list of all bindings within the specified VHost.
+    /// </summary>
+    /// <param name="vhostName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<Binding>> GetBindingsAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     A list of all vhosts.
     /// </summary>
     /// <param name="cancellationToken"></param>
@@ -180,6 +196,14 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all consumers for the specified VHost.
+    /// </summary>
+    /// <param name="vhostName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<Consumer>> GetConsumersAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Closes the given connection

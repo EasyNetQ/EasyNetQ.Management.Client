@@ -148,6 +148,11 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Connection>>(Connections, cancellationToken);
     }
 
+    public Task<IReadOnlyList<Connection>> GetConnectionsAsync(string vhostName, CancellationToken cancellationToken = default)
+    {
+        return GetAsync<IReadOnlyList<Connection>>(Vhosts / vhostName / "connections", cancellationToken);
+    }
+
     public Task CloseConnectionAsync(string connectionName, CancellationToken cancellationToken = default)
     {
         return DeleteAsync(Connections / connectionName, cancellationToken);
@@ -361,6 +366,11 @@ public class ManagementClient : IManagementClient
     public Task<IReadOnlyList<Binding>> GetBindingsAsync(CancellationToken cancellationToken = default)
     {
         return GetAsync<IReadOnlyList<Binding>>(Bindings, cancellationToken);
+    }
+
+    public Task<IReadOnlyList<Binding>> GetBindingsAsync(string vhostName, CancellationToken cancellationToken = default)
+    {
+        return GetAsync<IReadOnlyList<Binding>>(Bindings / vhostName, cancellationToken);
     }
 
     public Task CreateQueueBindingAsync(
@@ -611,6 +621,11 @@ public class ManagementClient : IManagementClient
     public Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default)
     {
         return GetAsync<IReadOnlyList<Consumer>>(Consumers, cancellationToken);
+    }
+
+    public Task<IReadOnlyList<Consumer>> GetConsumersAsync(string vhostName, CancellationToken cancellationToken = default)
+    {
+        return GetAsync<IReadOnlyList<Consumer>>(Consumers / vhostName, cancellationToken);
     }
 
     public Task<bool> HaveAnyClusterAlarmsAsync(CancellationToken cancellationToken = default)
