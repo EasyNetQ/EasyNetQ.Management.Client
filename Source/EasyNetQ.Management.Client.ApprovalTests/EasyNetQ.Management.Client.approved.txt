@@ -499,14 +499,14 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class Consumer : System.IEquatable<EasyNetQ.Management.Client.Model.Consumer>
     {
-        public Consumer(System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments, bool AckRequired, bool Active, string ActivityStatus, EasyNetQ.Management.Client.Model.ChannelDetail ChannelDetails, string ConsumerTag, bool Exclusive, int PrefetchCount, EasyNetQ.Management.Client.Model.QueueName Queue) { }
+        public Consumer(System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments, bool AckRequired, bool Active, string ActivityStatus, EasyNetQ.Management.Client.Model.ChannelDetail? ChannelDetails, string ConsumerTag, bool Exclusive, int PrefetchCount, EasyNetQ.Management.Client.Model.QueueName Queue) { }
         public bool AckRequired { get; init; }
         public bool Active { get; init; }
         public string ActivityStatus { get; init; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments { get; init; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.EmptyArrayAsDefaultConverter<EasyNetQ.Management.Client.Model.ChannelDetail>))]
-        public EasyNetQ.Management.Client.Model.ChannelDetail ChannelDetails { get; init; }
+        public EasyNetQ.Management.Client.Model.ChannelDetail? ChannelDetails { get; init; }
         public string ConsumerTag { get; init; }
         public bool Exclusive { get; init; }
         public int PrefetchCount { get; init; }
