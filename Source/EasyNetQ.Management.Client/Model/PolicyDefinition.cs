@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+using EasyNetQ.Management.Client.Serialization;
+using System.Text.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Model;
 
@@ -9,7 +10,7 @@ public record PolicyDefinition
     uint? MaxLength = null,
     [property: JsonPropertyName("max-length-bytes")]
     long? MaxLengthBytes = null,
-    [property: JsonPropertyName("overflow")]
+    [property: JsonPropertyName("overflow"), JsonConverter(typeof(JsonStringEnumConverterEx<Overflow>))]
     Overflow? Overflow = null,
     [property: JsonPropertyName("expires")]
     uint? Expires = null,
@@ -31,21 +32,21 @@ public record PolicyDefinition
     HaSyncMode? HaSyncMode = null,
     [property: JsonPropertyName("ha-sync-batch-size")]
     int? HaSyncBatchSize = null,
-    [property: JsonPropertyName("ha-promote-on-shutdown")]
+    [property: JsonPropertyName("ha-promote-on-shutdown"), JsonConverter(typeof(JsonStringEnumConverterEx<HaPromote>))]
     HaPromote? HaPromoteOnShutdown = null,
-    [property: JsonPropertyName("ha-promote-on-failure")]
+    [property: JsonPropertyName("ha-promote-on-failure"), JsonConverter(typeof(JsonStringEnumConverterEx<HaPromote>))]
     HaPromote? HaPromoteOnFailure = null,
     [property: JsonPropertyName("queue-version")]
     uint? QueueVersion = null,
-    [property: JsonPropertyName("queue-master-locator")]
+    [property: JsonPropertyName("queue-master-locator"), JsonConverter(typeof(JsonStringEnumConverterEx<QueueLocator>))]
     QueueLocator? QueueMasterLocator = null,
 
     // Queues [Quorum]
     [property: JsonPropertyName("delivery-limit")]
     uint? DeliveryLimit = null,
-    [property: JsonPropertyName("dead-letter-strategy")]
+    [property: JsonPropertyName("dead-letter-strategy"), JsonConverter(typeof(JsonStringEnumConverterEx<DeadLetterStrategy>))]
     DeadLetterStrategy? DeadLetterStrategy = null,
-    [property: JsonPropertyName("queue-leader-locator")]
+    [property: JsonPropertyName("queue-leader-locator"), JsonConverter(typeof(JsonStringEnumConverterEx<QueueLocator>))]
     QueueLocator? QueueLeaderLocator = null,
 
     // Streams
