@@ -1,4 +1,4 @@
-﻿using EasyNetQ.Management.Client.Model;
+using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client.IntegrationTests;
 
@@ -216,12 +216,24 @@ public class ManagementClientTests
         const int priority = 999;
         const HaMode haMode = HaMode.All;
         const HaSyncMode haSyncMode = HaSyncMode.Automatic;
+        const HaPromote haPromoteOnFailure = HaPromote.Always;
+        const HaPromote haPromoteOnShutdown = HaPromote.WhenSynced;
+        const uint queueVersion = 1;
+        const QueueLocator queueMasterLocator = QueueLocator.ClientLocal;
+        const uint deliveryLimit = 3;
+        const Model.DeadLetterStrategy deadLetterStrategy = Model.DeadLetterStrategy.AtLeastOnce;
+        const QueueLocator queueLeaderLocator = QueueLocator.Balanced;
+        const string maxAge = "1h";
+        const uint streamMaxSegmentSizeBytes = 50000;
         const string alternateExchange = "a-sample-alternate-exchange";
         const string deadLetterExchange = "a-sample-dead-letter-exchange";
         const string deadLetterRoutingKey = "a-sample-dead-letter-exchange-key";
         const uint messageTtl = 5000;
         const uint expires = 10000;
         const uint maxLength = 500;
+        const long maxLengthBytes = 5000;
+        const Overflow overflow = Overflow.RejectPublish;
+        uint? consumerTimeout = fixture.RabbitmqVersion >= new Version("3.12") ? 3600000 : null;
 
         await fixture.ManagementClient.CreatePolicyAsync(
             new Policy(
@@ -231,12 +243,28 @@ public class ManagementClientTests
                 Definition: new PolicyDefinition(
                     HaMode: haMode,
                     HaSyncMode: haSyncMode,
+                    HaPromoteOnFailure: haPromoteOnFailure,
+                    HaPromoteOnShutdown: haPromoteOnShutdown,
+                    QueueVersion: queueVersion,
+                    QueueMasterLocator: queueMasterLocator,
+
+                    DeliveryLimit: deliveryLimit,
+                    DeadLetterStrategy: deadLetterStrategy,
+                    QueueLeaderLocator: queueLeaderLocator,
+
+                    MaxAge: maxAge,
+                    StreamMaxSegmentSizeBytes: streamMaxSegmentSizeBytes,
+
                     AlternateExchange: alternateExchange,
+
                     DeadLetterExchange: deadLetterExchange,
                     DeadLetterRoutingKey: deadLetterRoutingKey,
                     MessageTtl: messageTtl,
                     Expires: expires,
-                    MaxLength: maxLength
+                    MaxLength: maxLength,
+                    MaxLengthBytes: maxLengthBytes,
+                    Overflow: overflow,
+                    ConsumerTimeout: consumerTimeout
                 ),
                 Priority: priority
             )
@@ -247,12 +275,24 @@ public class ManagementClientTests
                  && p.Priority == priority
                  && p.Definition.HaMode == haMode
                  && p.Definition.HaSyncMode == haSyncMode
+                 && p.Definition.HaPromoteOnFailure == haPromoteOnFailure
+                 && p.Definition.HaPromoteOnShutdown == haPromoteOnShutdown
+                 && p.Definition.QueueVersion == queueVersion
+                 && p.Definition.QueueMasterLocator == queueMasterLocator
+                 && p.Definition.DeliveryLimit == deliveryLimit
+                 && p.Definition.DeadLetterStrategy == deadLetterStrategy
+                 && p.Definition.QueueLeaderLocator == queueLeaderLocator
+                 && p.Definition.MaxAge == maxAge
+                 && p.Definition.StreamMaxSegmentSizeBytes == streamMaxSegmentSizeBytes
                  && p.Definition.AlternateExchange == alternateExchange
                  && p.Definition.DeadLetterExchange == deadLetterExchange
                  && p.Definition.DeadLetterRoutingKey == deadLetterRoutingKey
                  && p.Definition.MessageTtl == messageTtl
                  && p.Definition.Expires == expires
-                 && p.Definition.MaxLength == maxLength)
+                 && p.Definition.MaxLength == maxLength
+                 && p.Definition.MaxLengthBytes == maxLengthBytes
+                 && p.Definition.Overflow == overflow
+                 && p.Definition.ConsumerTimeout == consumerTimeout)
         );
     }
 
@@ -435,6 +475,55 @@ public class ManagementClientTests
                  && p.Vhost == Vhost.Name
                  && p.Definition.MaxLength == maxLength)
         );
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_create_max_length_bytes_policy()
+    {
+        const string policyName = "a-sample-max-length-bytes";
+        const uint maxLengthBytes = 500;
+        await fixture.ManagementClient.CreatePolicyAsync(
+            new Policy(
+                Name: policyName,
+                Pattern: "averyuncommonpattern",
+                Vhost: Vhost.Name,
+                Definition: new PolicyDefinition(
+                    MaxLengthBytes: maxLengthBytes
+                )
+            )
+        );
+        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
+            p => p.Name == policyName
+                 && p.Vhost == Vhost.Name
+                 && p.Definition.MaxLengthBytes == maxLengthBytes)
+        );
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_create_overflow_policy()
+    {
+        foreach (Overflow overflow in Enum.GetValues(typeof(Overflow)))
+        {
+            const string policyName = "a-sample-overflow";
+            const uint maxLengthBytes = 500;
+            await fixture.ManagementClient.CreatePolicyAsync(
+                new Policy(
+                    Name: policyName,
+                    Pattern: "averyuncommonpattern",
+                    Vhost: Vhost.Name,
+                    Definition: new PolicyDefinition(
+                        MaxLengthBytes: maxLengthBytes,
+                        Overflow: overflow
+                    )
+                )
+            );
+            Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
+                p => p.Name == policyName
+                     && p.Vhost == Vhost.Name
+                     && p.Definition.MaxLengthBytes == maxLengthBytes
+                     && p.Definition.Overflow == overflow)
+            );
+        }
     }
 
     [Fact]
