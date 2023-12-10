@@ -28,6 +28,8 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
 
     public IManagementClient ManagementClient { get; private set; }
 
+    public Version RabbitmqVersion { get; private set; }
+
     public async Task InitializeAsync()
     {
         using var cts = new CancellationTokenSource(InitializationTimeout);
@@ -45,6 +47,9 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
 
         ManagementClient = new ManagementClient(Endpoint, User, Password);
         await WaitForRabbitMqReadyAsync(cts.Token);
+
+        var overview = await ManagementClient.GetOverviewAsync();
+        RabbitmqVersion = new Version(overview.RabbitmqVersion);
     }
 
     public async Task DisposeAsync()
