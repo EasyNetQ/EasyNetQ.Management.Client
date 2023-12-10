@@ -1,4 +1,6 @@
-﻿namespace EasyNetQ.Management.Client.Model;
+﻿using System.Runtime.Serialization;
+
+namespace EasyNetQ.Management.Client.Model;
 
 public enum Overflow
 {
