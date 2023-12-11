@@ -36,8 +36,8 @@ public record PolicyDefinition
     HaPromote? HaPromoteOnShutdown = null,
     [property: JsonPropertyName("ha-promote-on-failure"), JsonConverter(typeof(JsonStringEnumConverterEx<HaPromote>))]
     HaPromote? HaPromoteOnFailure = null,
-    [property: JsonPropertyName("queue-version")]
-    uint? QueueVersion = null,
+    [property: JsonPropertyName("queue-version"), JsonConverter(typeof(JsonNumberEnumConverter<QueueVersion>))]
+    QueueVersion? QueueVersion = null,
     [property: JsonPropertyName("queue-master-locator"), JsonConverter(typeof(JsonStringEnumConverterEx<QueueLocator>))]
     QueueLocator? QueueMasterLocator = null,
 
