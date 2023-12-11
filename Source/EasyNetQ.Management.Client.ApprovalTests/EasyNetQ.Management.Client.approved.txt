@@ -545,6 +545,13 @@ namespace EasyNetQ.Management.Client.Model
         public int Credit { get; init; }
         public bool Drain { get; init; }
     }
+    public enum DeadLetterStrategy
+    {
+        [System.Runtime.Serialization.EnumMember(Value="at-most-once")]
+        AtMostOnce = 0,
+        [System.Runtime.Serialization.EnumMember(Value="at-least-once")]
+        AtLeastOnce = 1,
+    }
     public class Definitions : System.IEquatable<EasyNetQ.Management.Client.Model.Definitions>
     {
         public Definitions(string RabbitVersion, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User> Users, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Vhost> Vhosts, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Permission> Permissions, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue> Queues, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Exchange> Exchanges, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding> Bindings) { }
@@ -624,6 +631,13 @@ namespace EasyNetQ.Management.Client.Model
         public EasyNetQ.Management.Client.Model.HaMode AssociatedHaMode { get; init; }
         public long? ExactlyCount { get; init; }
         public System.Collections.Generic.IReadOnlyList<string>? Nodes { get; init; }
+    }
+    public enum HaPromote
+    {
+        [System.Runtime.Serialization.EnumMember(Value="when-synced")]
+        WhenSynced = 0,
+        [System.Runtime.Serialization.EnumMember(Value="always")]
+        Always = 1,
     }
     public enum HaSyncMode
     {
@@ -813,6 +827,15 @@ namespace EasyNetQ.Management.Client.Model
         public int Exchanges { get; init; }
         public int Queues { get; init; }
     }
+    public enum Overflow
+    {
+        [System.Runtime.Serialization.EnumMember(Value="drop-head")]
+        DropHead = 0,
+        [System.Runtime.Serialization.EnumMember(Value="reject-publish")]
+        RejectPublish = 1,
+        [System.Runtime.Serialization.EnumMember(Value="reject-publish-dlx")]
+        RejectPublishDlx = 2,
+    }
     public class Overview : System.IEquatable<EasyNetQ.Management.Client.Model.Overview>
     {
         public Overview(string ManagementVersion, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec> ExchangeTypes, string RabbitmqVersion, string ErlangVersion, EasyNetQ.Management.Client.Model.MessageStats MessageStats, EasyNetQ.Management.Client.Model.QueueTotals QueueTotals, EasyNetQ.Management.Client.Model.ObjectTotals ObjectTotals, string Node, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Listener> Listeners, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Context> Contexts) { }
@@ -931,13 +954,45 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class PolicyDefinition : System.IEquatable<EasyNetQ.Management.Client.Model.PolicyDefinition>
     {
-        public PolicyDefinition(EasyNetQ.Management.Client.Model.HaMode? HaMode = default, EasyNetQ.Management.Client.Model.HaParams? HaParams = null, EasyNetQ.Management.Client.Model.HaSyncMode? HaSyncMode = default, int? HaSyncBatchSize = default, string? FederationUpstream = null, string? FederationUpstreamSet = null, string? AlternateExchange = null, string? DeadLetterExchange = null, string? DeadLetterRoutingKey = null, string? QueueMode = null, uint? MessageTtl = default, uint? Expires = default, uint? MaxLength = default) { }
+        public PolicyDefinition(
+                    uint? MaxLength = default,
+                    long? MaxLengthBytes = default,
+                    EasyNetQ.Management.Client.Model.Overflow? Overflow = default,
+                    uint? Expires = default,
+                    string? DeadLetterExchange = null,
+                    string? DeadLetterRoutingKey = null,
+                    uint? MessageTtl = default,
+                    uint? ConsumerTimeout = default,
+                    EasyNetQ.Management.Client.Model.HaMode? HaMode = default,
+                    EasyNetQ.Management.Client.Model.HaParams? HaParams = null,
+                    EasyNetQ.Management.Client.Model.HaSyncMode? HaSyncMode = default,
+                    int? HaSyncBatchSize = default,
+                    EasyNetQ.Management.Client.Model.HaPromote? HaPromoteOnShutdown = default,
+                    EasyNetQ.Management.Client.Model.HaPromote? HaPromoteOnFailure = default,
+                    EasyNetQ.Management.Client.Model.QueueVersion? QueueVersion = default,
+                    EasyNetQ.Management.Client.Model.QueueLocator? QueueMasterLocator = default,
+                    uint? DeliveryLimit = default,
+                    EasyNetQ.Management.Client.Model.DeadLetterStrategy? DeadLetterStrategy = default,
+                    EasyNetQ.Management.Client.Model.QueueLocator? QueueLeaderLocator = default,
+                    string? MaxAge = null,
+                    uint? StreamMaxSegmentSizeBytes = default,
+                    string? AlternateExchange = null,
+                    string? FederationUpstream = null,
+                    string? FederationUpstreamSet = null,
+                    string? QueueMode = null) { }
         [System.Text.Json.Serialization.JsonPropertyName("alternate-exchange")]
         public string? AlternateExchange { get; init; }
+        [System.Text.Json.Serialization.JsonPropertyName("consumer-timeout")]
+        public uint? ConsumerTimeout { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("dead-letter-exchange")]
         public string? DeadLetterExchange { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("dead-letter-routing-key")]
         public string? DeadLetterRoutingKey { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.JsonStringEnumConverterEx<EasyNetQ.Management.Client.Model.DeadLetterStrategy>?))]
+        [System.Text.Json.Serialization.JsonPropertyName("dead-letter-strategy")]
+        public EasyNetQ.Management.Client.Model.DeadLetterStrategy? DeadLetterStrategy { get; init; }
+        [System.Text.Json.Serialization.JsonPropertyName("delivery-limit")]
+        public uint? DeliveryLimit { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("expires")]
         public uint? Expires { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("federation-upstream-set")]
@@ -948,16 +1003,40 @@ namespace EasyNetQ.Management.Client.Model
         public EasyNetQ.Management.Client.Model.HaMode? HaMode { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("ha-params")]
         public EasyNetQ.Management.Client.Model.HaParams? HaParams { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.JsonStringEnumConverterEx<EasyNetQ.Management.Client.Model.HaPromote>?))]
+        [System.Text.Json.Serialization.JsonPropertyName("ha-promote-on-failure")]
+        public EasyNetQ.Management.Client.Model.HaPromote? HaPromoteOnFailure { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.JsonStringEnumConverterEx<EasyNetQ.Management.Client.Model.HaPromote>?))]
+        [System.Text.Json.Serialization.JsonPropertyName("ha-promote-on-shutdown")]
+        public EasyNetQ.Management.Client.Model.HaPromote? HaPromoteOnShutdown { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("ha-sync-batch-size")]
         public int? HaSyncBatchSize { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("ha-sync-mode")]
         public EasyNetQ.Management.Client.Model.HaSyncMode? HaSyncMode { get; init; }
+        [System.Text.Json.Serialization.JsonPropertyName("max-age")]
+        public string? MaxAge { get; init; }
+        [System.Text.Json.Serialization.JsonPropertyName("max-length-bytes")]
+        public long? MaxLengthBytes { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("max-length")]
         public uint? MaxLength { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("message-ttl")]
         public uint? MessageTtl { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.JsonStringEnumConverterEx<EasyNetQ.Management.Client.Model.Overflow>?))]
+        [System.Text.Json.Serialization.JsonPropertyName("overflow")]
+        public EasyNetQ.Management.Client.Model.Overflow? Overflow { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.JsonStringEnumConverterEx<EasyNetQ.Management.Client.Model.QueueLocator>?))]
+        [System.Text.Json.Serialization.JsonPropertyName("queue-leader-locator")]
+        public EasyNetQ.Management.Client.Model.QueueLocator? QueueLeaderLocator { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.JsonStringEnumConverterEx<EasyNetQ.Management.Client.Model.QueueLocator>?))]
+        [System.Text.Json.Serialization.JsonPropertyName("queue-master-locator")]
+        public EasyNetQ.Management.Client.Model.QueueLocator? QueueMasterLocator { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("queue-mode")]
         public string? QueueMode { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonNumberEnumConverter<EasyNetQ.Management.Client.Model.QueueVersion>?))]
+        [System.Text.Json.Serialization.JsonPropertyName("queue-version")]
+        public EasyNetQ.Management.Client.Model.QueueVersion? QueueVersion { get; init; }
+        [System.Text.Json.Serialization.JsonPropertyName("stream-max-segment-size-bytes")]
+        public uint? StreamMaxSegmentSizeBytes { get; init; }
     }
     public class PolicyInfo : System.IEquatable<EasyNetQ.Management.Client.Model.PolicyInfo>
     {
@@ -1047,6 +1126,13 @@ namespace EasyNetQ.Management.Client.Model
         public bool Durable { get; init; }
         public string Name { get; init; }
     }
+    public enum QueueLocator
+    {
+        [System.Runtime.Serialization.EnumMember(Value="client-local")]
+        ClientLocal = 0,
+        [System.Runtime.Serialization.EnumMember(Value="balanced")]
+        Balanced = 1,
+    }
     public class QueueName : System.IEquatable<EasyNetQ.Management.Client.Model.QueueName>
     {
         public QueueName(string Name, string Vhost) { }
@@ -1062,6 +1148,11 @@ namespace EasyNetQ.Management.Client.Model
         public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails { get; init; }
         public long MessagesUnacknowledged { get; init; }
         public long Messages { get; init; }
+    }
+    public enum QueueVersion
+    {
+        V1 = 1,
+        V2 = 2,
     }
     public class RatesCriteria : System.IEquatable<EasyNetQ.Management.Client.Model.RatesCriteria>
     {
