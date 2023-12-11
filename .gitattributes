@@ -1,1 +1,1 @@
-*.approved.txt whitespace=-blank-at-eof
+*.approved.txt text -blank-at-eof
