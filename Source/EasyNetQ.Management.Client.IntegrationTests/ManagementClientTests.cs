@@ -218,7 +218,7 @@ public class ManagementClientTests
         const HaSyncMode haSyncMode = HaSyncMode.Automatic;
         const HaPromote haPromoteOnFailure = HaPromote.Always;
         const HaPromote haPromoteOnShutdown = HaPromote.WhenSynced;
-        const uint queueVersion = 1;
+        QueueVersion queueVersion = fixture.RabbitmqVersion >= new Version("3.12") ? QueueVersion.V2 : QueueVersion.V1;
         const QueueLocator queueMasterLocator = QueueLocator.ClientLocal;
         const uint deliveryLimit = 3;
         const Model.DeadLetterStrategy deadLetterStrategy = Model.DeadLetterStrategy.AtLeastOnce;
