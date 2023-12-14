@@ -42,6 +42,11 @@ public class ManagementClient : IManagementClient
     private static readonly RelativePath Health = Api / "health";
     private static readonly RelativePath Rebalance = Api / "rebalance";
 
+    private static readonly Dictionary<string, string> GetQueuesWithoutStatsQueryParameters = new Dictionary<string, string> {
+        { "disable_stats", "true" },
+        { "enable_queue_totals", "true" }
+    };
+
     internal static readonly JsonSerializerOptions SerializerOptions;
 
     private readonly HttpClient httpClient;
@@ -311,6 +316,11 @@ public class ManagementClient : IManagementClient
     public Task<PageResult<Queue>> GetQueuesByPageAsync(string vhostName, PageCriteria pageCriteria, CancellationToken cancellationToken = default)
     {
         return GetAsync<PageResult<Queue>>(Queues / vhostName, pageCriteria.ToQueryParameters(), cancellationToken);
+    }
+
+    public Task<IReadOnlyList<QueueWithoutStats>> GetQueuesWithoutStatsAsync(CancellationToken cancellationToken = default)
+    {
+        return GetAsync<IReadOnlyList<QueueWithoutStats>>(Queues, GetQueuesWithoutStatsQueryParameters, cancellationToken);
     }
 
     public Task CreateQueueAsync(
