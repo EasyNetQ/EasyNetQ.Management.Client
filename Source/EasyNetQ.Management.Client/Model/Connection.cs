@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using EasyNetQ.Management.Client.Serialization;
 
 namespace EasyNetQ.Management.Client.Model;
@@ -9,7 +9,7 @@ public record Connection(
     long SendOct,
     long SendCnt,
     long SendPend,
-    string State,
+    string? State,
     string? LastBlockedBy,
     string? LastBlockedAge,
     long Channels,
@@ -18,13 +18,13 @@ public record Connection(
     string Name,
     string? Address,
     int Port,
-    string PeerHost,
+    string? PeerHost,
     int PeerPort,
     bool Ssl,
     string? PeerCertSubject,
     string? PeerCertIssuer,
     string? PeerCertValidity,
-    string AuthMechanism,
+    string? AuthMechanism,
     string? SslProtocol,
     string? SslKeyExchange,
     string? SslCipher,
