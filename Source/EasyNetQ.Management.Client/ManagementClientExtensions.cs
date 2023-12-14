@@ -24,7 +24,6 @@ public static class ManagementClientExtensions
             .GetResult();
     }
 
-
     /// <summary>
     ///     A list of nodes in the RabbitMQ cluster.
     /// </summary>
@@ -75,6 +74,24 @@ public static class ManagementClientExtensions
     }
 
     /// <summary>
+    ///     A list of all open connections on the specified VHost.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static IReadOnlyList<Connection> GetConnections(
+        this IManagementClient client,
+        string vhostName,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.GetConnectionsAsync(vhostName, cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
     ///     A list of all open channels.
     /// </summary>
     /// <param name="client"></param>
@@ -91,7 +108,25 @@ public static class ManagementClientExtensions
     }
 
     /// <summary>
-    ///     A list of all open channels.
+    ///     A list of all open channels for the given connection.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="connectionName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static IReadOnlyList<Channel> GetChannels(
+        this IManagementClient client,
+        string connectionName,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.GetChannelsAsync(connectionName, cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
+    ///     A list of all open channels for the given connection.
     /// </summary>
     /// <param name="client"></param>
     /// <param name="connection"></param>
@@ -102,6 +137,24 @@ public static class ManagementClientExtensions
         Connection connection,
         CancellationToken cancellationToken = default
     ) => client.GetChannelsAsync(connection.Name, cancellationToken);
+
+    /// <summary>
+    ///     A list of all open channels for the given connection.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="connection"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static IReadOnlyList<Channel> GetChannels(
+        this IManagementClient client,
+        Connection connection,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.GetChannelsAsync(connection, cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
 
     /// <summary>
     ///     Gets the channel. This returns more detail, including consumers than the GetChannels method.
@@ -140,6 +193,24 @@ public static class ManagementClientExtensions
     }
 
     /// <summary>
+    ///     A list of all exchanges for a virtual host.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static IReadOnlyList<Exchange> GetExchanges(
+        this IManagementClient client,
+        string vhostName, 
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.GetExchangesAsync(vhostName, cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
     ///     A list of all queues.
     /// </summary>
     /// <param name="client"></param>
@@ -151,6 +222,24 @@ public static class ManagementClientExtensions
     )
     {
         return client.GetQueuesAsync(cancellationToken)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    /// <summary>
+    ///     A list of all queues for a virtual host.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static IReadOnlyList<Queue> GetQueues(
+        this IManagementClient client,
+        string vhostName,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.GetQueuesAsync(vhostName, cancellationToken)
             .GetAwaiter()
             .GetResult();
     }
@@ -238,6 +327,17 @@ public static class ManagementClientExtensions
             .GetAwaiter()
             .GetResult();
     }
+
+    /// <summary>
+    ///     A list of all queues without stats.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static IReadOnlyList<QueueWithoutStats> GetQueuesWithoutStats(
+        this IManagementClient client,
+        CancellationToken cancellationToken = default
+    ) => client.GetQueuesWithoutStatsAsync(cancellationToken).GetAwaiter().GetResult();
 
     /// <summary>
     ///     A list of all bindings.

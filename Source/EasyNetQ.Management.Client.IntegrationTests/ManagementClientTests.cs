@@ -234,6 +234,7 @@ public class ManagementClientTests
         const long maxLengthBytes = 5000;
         const Overflow overflow = Overflow.RejectPublish;
         uint? consumerTimeout = fixture.RabbitmqVersion >= new Version("3.12") ? 3600000 : null;
+        Dictionary<string, object> extensionData = new Dictionary<string, object> { { "max-in-memory-length", 1000000 } };
 
         await fixture.ManagementClient.CreatePolicyAsync(
             new Policy(
@@ -265,7 +266,7 @@ public class ManagementClientTests
                     MaxLengthBytes: maxLengthBytes,
                     Overflow: overflow,
                     ConsumerTimeout: consumerTimeout
-                ),
+                ) { ExtensionData = extensionData },
                 Priority: priority
             )
         );
@@ -292,7 +293,8 @@ public class ManagementClientTests
                  && p.Definition.MaxLength == maxLength
                  && p.Definition.MaxLengthBytes == maxLengthBytes
                  && p.Definition.Overflow == overflow
-                 && p.Definition.ConsumerTimeout == consumerTimeout)
+                 && p.Definition.ConsumerTimeout == consumerTimeout
+                 && p.Definition.ExtensionData.Keys.Order().SequenceEqual(extensionData.Keys.Order()))
         );
     }
 
@@ -1207,7 +1209,28 @@ public class ManagementClientTests
     public async Task Should_get_queues()
     {
         await CreateTestQueue(TestQueue);
-        (await fixture.ManagementClient.GetQueuesAsync()).Count.Should().BeGreaterThan(0);
+        while (true)
+        {
+            var queues = await fixture.ManagementClient.GetQueuesAsync();
+            queues.Should().NotBeNullOrEmpty();
+            if (queues[0].State != null)
+            {
+                queues[0].ExtensionData.Should().NotBeNullOrEmpty();
+                break;
+            }
+            else
+            {
+                queues[0].ExtensionData.Should().BeNull();
+            }
+        }
+    }
+
+    [Fact]
+    public async Task Should_get_queues_without_stats()
+    {
+        await CreateTestQueue(TestQueue);
+        var queues = await fixture.ManagementClient.GetQueuesWithoutStatsAsync();
+        queues.Count.Should().BeGreaterThan(0);
     }
 
 
