@@ -1230,7 +1230,7 @@ public class ManagementClientTests
     {
         await CreateTestQueue(TestQueue);
         var queues = await fixture.ManagementClient.GetQueuesWithoutStatsAsync();
-        queues.Count.Should().BeGreaterThan(0);
+        queues.Should().NotBeNullOrEmpty();
     }
 
 
