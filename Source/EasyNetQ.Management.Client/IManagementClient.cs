@@ -123,6 +123,13 @@ public interface IManagementClient : IDisposable
     Task<IReadOnlyList<Queue>> GetQueuesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    ///     A list of all queues.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<QueueWithoutStats>> GetQueuesWithoutStatsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     A list of queues for a page.
     /// </summary>
     /// <param name="pageCriteria"></param>
