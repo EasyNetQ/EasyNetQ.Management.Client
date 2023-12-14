@@ -201,7 +201,7 @@ public static class ManagementClientExtensions
     /// <returns></returns>
     public static IReadOnlyList<Exchange> GetExchanges(
         this IManagementClient client,
-        string vhostName, 
+        string vhostName,
         CancellationToken cancellationToken = default
     )
     {

@@ -266,7 +266,8 @@ public class ManagementClientTests
                     MaxLengthBytes: maxLengthBytes,
                     Overflow: overflow,
                     ConsumerTimeout: consumerTimeout
-                ) { ExtensionData = extensionData },
+                )
+                { ExtensionData = extensionData },
                 Priority: priority
             )
         );
