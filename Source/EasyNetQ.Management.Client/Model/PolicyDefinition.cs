@@ -67,4 +67,8 @@ public record PolicyDefinition
 
     [property: JsonPropertyName("queue-mode")]
     string? QueueMode = null
-);
+)
+{
+    [JsonExtensionData()]
+    public Dictionary<string, object>? ExtensionData { get; set; }
+};
