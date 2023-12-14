@@ -99,7 +99,7 @@ public interface IManagementClient : IDisposable
     Task<PageResult<Exchange>> GetExchangesByPageAsync(PageCriteria pageCriteria, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     A list of all exchanges.
+    ///     A list of all exchanges for a virtual host.
     /// </summary>
     /// <param name="vhostName"></param>
     /// <param name="cancellationToken"></param>
@@ -131,13 +131,6 @@ public interface IManagementClient : IDisposable
     Task<PageResult<Queue>> GetQueuesByPageAsync(PageCriteria pageCriteria, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     A list of all queues.
-    /// </summary>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<IReadOnlyList<QueueWithoutStats>> GetQueuesWithoutStatsAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
     ///     A list of all queues for a virtual host.
     /// </summary>
     /// <param name="vhostName"></param>
@@ -153,6 +146,13 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<PageResult<Queue>> GetQueuesByPageAsync(string vhostName, PageCriteria pageCriteria, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all queues.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<QueueWithoutStats>> GetQueuesWithoutStatsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all bindings.
