@@ -1078,7 +1078,7 @@ namespace EasyNetQ.Management.Client.Model
                     string Name,
                     string Vhost,
                     EasyNetQ.Management.Client.Model.QueueType Type,
-                    string Node,
+                    string? Node,
                     string? State,
                     System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments,
                     bool Durable,
@@ -1167,7 +1167,7 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class QueueWithoutStats : EasyNetQ.Management.Client.Model.QueueName, System.IEquatable<EasyNetQ.Management.Client.Model.QueueWithoutStats>
     {
-        public QueueWithoutStats(string Name, string Vhost, EasyNetQ.Management.Client.Model.QueueType Type, string Node, string? State, System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments, bool Durable, bool Exclusive, bool AutoDelete, long MessagesReady, long MessagesUnacknowledged, long Messages) { }
+        public QueueWithoutStats(string Name, string Vhost, EasyNetQ.Management.Client.Model.QueueType Type, string? Node, string? State, System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments, bool Durable, bool Exclusive, bool AutoDelete, long MessagesReady, long MessagesUnacknowledged, long Messages) { }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments { get; init; }
         public bool AutoDelete { get; init; }
@@ -1176,7 +1176,7 @@ namespace EasyNetQ.Management.Client.Model
         public long MessagesReady { get; init; }
         public long MessagesUnacknowledged { get; init; }
         public long Messages { get; init; }
-        public string Node { get; init; }
+        public string? Node { get; init; }
         public string? State { get; init; }
         public EasyNetQ.Management.Client.Model.QueueType Type { get; init; }
     }
