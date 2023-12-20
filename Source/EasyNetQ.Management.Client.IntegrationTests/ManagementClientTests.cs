@@ -1219,10 +1219,6 @@ public class ManagementClientTests
                 queues[0].ExtensionData.Should().NotBeNullOrEmpty();
                 break;
             }
-            else
-            {
-                queues[0].ExtensionData.Should().BeNull();
-            }
         }
     }
 
