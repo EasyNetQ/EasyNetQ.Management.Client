@@ -6,7 +6,7 @@ public record Queue(
     string Name,
     string Vhost,
     QueueType Type,
-    string Node,
+    string? Node,
     string? State,
     IReadOnlyDictionary<string, object?> Arguments,
     bool Durable,

@@ -8,7 +8,7 @@ public record QueueWithoutStats(
     string Vhost,
 
     QueueType Type,
-    string Node,
+    string? Node,
     string? State,
     [property: JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]
     IReadOnlyDictionary<string, object?> Arguments,
