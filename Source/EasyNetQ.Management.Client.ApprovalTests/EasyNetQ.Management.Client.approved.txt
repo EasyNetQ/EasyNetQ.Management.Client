@@ -59,6 +59,7 @@ namespace EasyNetQ.Management.Client
         System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue>> GetQueuesAsync(string vhostName, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.Queue>> GetQueuesByPageAsync(EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.Queue>> GetQueuesByPageAsync(string vhostName, EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.QueueWithoutStats>> GetQueuesWithoutStatsAsync(System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.TopicPermission>> GetTopicPermissionsAsync(System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.User> GetUserAsync(string userName, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User>> GetUsersAsync(System.Threading.CancellationToken cancellationToken = default);
@@ -137,6 +138,7 @@ namespace EasyNetQ.Management.Client
         public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue>> GetQueuesAsync(string vhostName, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.Queue>> GetQueuesByPageAsync(EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.Queue>> GetQueuesByPageAsync(string vhostName, EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default) { }
+        public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.QueueWithoutStats>> GetQueuesWithoutStatsAsync(System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.TopicPermission>> GetTopicPermissionsAsync(System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.User> GetUserAsync(string userName, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User>> GetUsersAsync(System.Threading.CancellationToken cancellationToken = default) { }
@@ -209,14 +211,18 @@ namespace EasyNetQ.Management.Client
         public static System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding>> GetBindingsWithSourceAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Exchange exchange, System.Threading.CancellationToken cancellationToken = default) { }
         public static EasyNetQ.Management.Client.Model.Channel GetChannel(this EasyNetQ.Management.Client.IManagementClient client, string channelName, EasyNetQ.Management.Client.Model.RatesCriteria? ratesCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Channel> GetChannels(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Channel> GetChannels(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Connection connection, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Channel> GetChannels(this EasyNetQ.Management.Client.IManagementClient client, string connectionName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Channel>> GetChannelsAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Connection connection, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Connection> GetConnections(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Connection> GetConnections(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, System.Threading.CancellationToken cancellationToken = default) { }
         public static EasyNetQ.Management.Client.Model.Definitions GetDefinitions(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
         public static EasyNetQ.Management.Client.Model.Exchange GetExchange(this EasyNetQ.Management.Client.IManagementClient client, string exchangeName, EasyNetQ.Management.Client.Model.Vhost vhost, EasyNetQ.Management.Client.Model.RatesCriteria? ratesCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.Exchange> GetExchangeAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, string exchangeName, EasyNetQ.Management.Client.Model.RatesCriteria? ratesCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding> GetExchangeBindings(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Exchange fromExchange, EasyNetQ.Management.Client.Model.Exchange toExchange, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding>> GetExchangeBindingsAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Exchange fromExchange, EasyNetQ.Management.Client.Model.Exchange toExchange, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Exchange> GetExchanges(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Exchange> GetExchanges(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, System.Threading.CancellationToken cancellationToken = default) { }
         public static EasyNetQ.Management.Client.Model.Parameter GetFederationUpstream(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string federationUpstreamName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.Parameter> GetFederationUpstreamAsync(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string federationUpstreamName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Federation> GetFederations(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
@@ -233,10 +239,12 @@ namespace EasyNetQ.Management.Client
         public static System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding>> GetQueueBindingsAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Exchange exchange, EasyNetQ.Management.Client.Model.Queue queue, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue> GetQueues(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue> GetQueues(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue> GetQueues(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue>> GetQueuesAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
         public static EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.Queue> GetQueuesByPage(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default) { }
         public static EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.Queue> GetQueuesByPage(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.Queue>> GetQueuesByPageAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.QueueWithoutStats> GetQueuesWithoutStats(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
         public static EasyNetQ.Management.Client.Model.Parameter GetShovel(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string shovelName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.Parameter> GetShovelAsync(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string shovelName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.TopicPermission> GetTopicPermissions(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
@@ -431,7 +439,7 @@ namespace EasyNetQ.Management.Client.Model
                     long SendOct,
                     long SendCnt,
                     long SendPend,
-                    string State,
+                    string? State,
                     string? LastBlockedBy,
                     string? LastBlockedAge,
                     long Channels,
@@ -440,13 +448,13 @@ namespace EasyNetQ.Management.Client.Model
                     string Name,
                     string? Address,
                     int Port,
-                    string PeerHost,
+                    string? PeerHost,
                     int PeerPort,
                     bool Ssl,
                     string? PeerCertSubject,
                     string? PeerCertIssuer,
                     string? PeerCertValidity,
-                    string AuthMechanism,
+                    string? AuthMechanism,
                     string? SslProtocol,
                     string? SslKeyExchange,
                     string? SslCipher,
@@ -458,7 +466,7 @@ namespace EasyNetQ.Management.Client.Model
                     long FrameMax,
                     System.Collections.Generic.IReadOnlyDictionary<string, object?> ClientProperties) { }
         public string? Address { get; init; }
-        public string AuthMechanism { get; init; }
+        public string? AuthMechanism { get; init; }
         public long Channels { get; init; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?> ClientProperties { get; init; }
@@ -470,7 +478,7 @@ namespace EasyNetQ.Management.Client.Model
         public string? PeerCertIssuer { get; init; }
         public string? PeerCertSubject { get; init; }
         public string? PeerCertValidity { get; init; }
-        public string PeerHost { get; init; }
+        public string? PeerHost { get; init; }
         public int PeerPort { get; init; }
         public int Port { get; init; }
         public string Protocol { get; init; }
@@ -484,7 +492,7 @@ namespace EasyNetQ.Management.Client.Model
         public string? SslKeyExchange { get; init; }
         public string? SslProtocol { get; init; }
         public bool Ssl { get; init; }
-        public string State { get; init; }
+        public string? State { get; init; }
         public long Timeout { get; init; }
         public string Type { get; init; }
         public string User { get; init; }
@@ -980,6 +988,8 @@ namespace EasyNetQ.Management.Client.Model
                     string? FederationUpstream = null,
                     string? FederationUpstreamSet = null,
                     string? QueueMode = null) { }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.Dictionary<string, object>? ExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("alternate-exchange")]
         public string? AlternateExchange { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("consumer-timeout")]
@@ -1062,60 +1072,55 @@ namespace EasyNetQ.Management.Client.Model
         public PublishResult(bool Routed) { }
         public bool Routed { get; init; }
     }
-    public class Queue : System.IEquatable<EasyNetQ.Management.Client.Model.Queue>
+    public class Queue : EasyNetQ.Management.Client.Model.QueueWithoutStats, System.IEquatable<EasyNetQ.Management.Client.Model.Queue>
     {
         public Queue(
+                    string Name,
+                    string Vhost,
+                    EasyNetQ.Management.Client.Model.QueueType Type,
+                    string Node,
+                    string? State,
+                    System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments,
+                    bool Durable,
+                    bool Exclusive,
+                    bool AutoDelete,
+                    long MessagesReady,
+                    long MessagesUnacknowledged,
+                    long Messages,
                     long Memory,
                     string? IdleSince,
                     string? Policy,
                     string? ExclusiveConsumerTag,
-                    long MessagesReady,
-                    long MessagesUnacknowledged,
-                    long Messages,
+                    long MessageBytes,
                     long Consumers,
                     long ActiveConsumers,
                     EasyNetQ.Management.Client.Model.BackingQueueStatus? BackingQueueStatus,
                     System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails,
                     long? HeadMessageTimestamp,
-                    string Name,
-                    string Vhost,
-                    bool Durable,
-                    bool Exclusive,
-                    bool AutoDelete,
-                    System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments,
-                    string? Node,
                     System.Collections.Generic.IReadOnlyList<string>? SlaveNodes,
                     System.Collections.Generic.IReadOnlyList<string>? SynchronisedSlaveNodes,
                     EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails,
                     EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails,
                     EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails,
                     EasyNetQ.Management.Client.Model.MessageStats? MessageStats) { }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.Dictionary<string, object>? ExtensionData { get; set; }
         public long ActiveConsumers { get; init; }
-        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments { get; init; }
-        public bool AutoDelete { get; init; }
         public EasyNetQ.Management.Client.Model.BackingQueueStatus? BackingQueueStatus { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails { get; init; }
         public long Consumers { get; init; }
-        public bool Durable { get; init; }
         public string? ExclusiveConsumerTag { get; init; }
-        public bool Exclusive { get; init; }
         public long? HeadMessageTimestamp { get; init; }
         public string? IdleSince { get; init; }
         public long Memory { get; init; }
+        public long MessageBytes { get; init; }
         public EasyNetQ.Management.Client.Model.MessageStats? MessageStats { get; init; }
         public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails { get; init; }
         public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails { get; init; }
-        public long MessagesReady { get; init; }
         public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails { get; init; }
-        public long MessagesUnacknowledged { get; init; }
-        public long Messages { get; init; }
-        public string Name { get; init; }
-        public string? Node { get; init; }
         public string? Policy { get; init; }
         public System.Collections.Generic.IReadOnlyList<string>? SlaveNodes { get; init; }
         public System.Collections.Generic.IReadOnlyList<string>? SynchronisedSlaveNodes { get; init; }
-        public string Vhost { get; init; }
     }
     public class QueueInfo : System.IEquatable<EasyNetQ.Management.Client.Model.QueueInfo>
     {
@@ -1149,10 +1154,31 @@ namespace EasyNetQ.Management.Client.Model
         public long MessagesUnacknowledged { get; init; }
         public long Messages { get; init; }
     }
+    public enum QueueType
+    {
+        Classic = 0,
+        Quorum = 1,
+        Stream = 2,
+    }
     public enum QueueVersion
     {
         V1 = 1,
         V2 = 2,
+    }
+    public class QueueWithoutStats : EasyNetQ.Management.Client.Model.QueueName, System.IEquatable<EasyNetQ.Management.Client.Model.QueueWithoutStats>
+    {
+        public QueueWithoutStats(string Name, string Vhost, EasyNetQ.Management.Client.Model.QueueType Type, string Node, string? State, System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments, bool Durable, bool Exclusive, bool AutoDelete, long MessagesReady, long MessagesUnacknowledged, long Messages) { }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments { get; init; }
+        public bool AutoDelete { get; init; }
+        public bool Durable { get; init; }
+        public bool Exclusive { get; init; }
+        public long MessagesReady { get; init; }
+        public long MessagesUnacknowledged { get; init; }
+        public long Messages { get; init; }
+        public string Node { get; init; }
+        public string? State { get; init; }
+        public EasyNetQ.Management.Client.Model.QueueType Type { get; init; }
     }
     public class RatesCriteria : System.IEquatable<EasyNetQ.Management.Client.Model.RatesCriteria>
     {
