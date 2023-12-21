@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace EasyNetQ.Management.Client.Serialization;
 
-public static class JsonExtensionDataExtensions
+internal static class JsonExtensionDataExtensions
 {
     public static IReadOnlyDictionary<string, object?>? ToExtensionData(IDictionary<string, JsonElement>? jsonExtensionData)
     {

@@ -49,7 +49,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        rabbitmq: ['3.10', '3.11']
+        rabbitmq: ['3.10', '3.11', '3.12']
       fail-fast: true
     steps:
       - name: Checkout
