@@ -1253,6 +1253,26 @@ public class ManagementClientTests
     }
 
     [Fact]
+    public async Task Should_get_queues_with_pagination_by_vhost()
+    {
+        await fixture.ManagementClient.CreateVhostAsync(TestVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
+        vhost.Name.Should().Be(TestVHost);
+
+        foreach (var queue in await fixture.ManagementClient.GetQueuesAsync(TestVHost))
+            await fixture.ManagementClient.DeleteQueueAsync(queue);
+
+        await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}_1", vhost);
+        await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}_2", vhost);
+
+        var firstPage = await fixture.ManagementClient.GetQueuesByPageAsync(vhost, new PageCriteria(1, 1));
+        firstPage.Items.Count.Should().Be(1);
+
+        var secondPage = await fixture.ManagementClient.GetQueuesByPageAsync(vhost, new PageCriteria(2, 1));
+        secondPage.Items.Count.Should().Be(1);
+    }
+
+    [Fact]
     public async Task Should_get_queues_without_stats()
     {
         await CreateTestQueue(TestQueue);
@@ -1284,7 +1304,27 @@ public class ManagementClientTests
         vhost.Name.Should().Be(TestVHost);
 
         await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}", vhost);
-        (await fixture.ManagementClient.GetQueuesWithoutStatsAsync(vhost)).Should().NotBeNullOrEmpty();
+        (await fixture.ManagementClient.GetQueuesWithoutStatsAsync(vhost.Name)).Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task Should_get_queues_without_stats_with_pagination_by_vhost()
+    {
+        await fixture.ManagementClient.CreateVhostAsync(TestVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
+        vhost.Name.Should().Be(TestVHost);
+
+        foreach (var queue in await fixture.ManagementClient.GetQueuesAsync(TestVHost))
+            await fixture.ManagementClient.DeleteQueueAsync(queue);
+
+        await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}_1", vhost);
+        await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}_2", vhost);
+
+        var firstPage = await fixture.ManagementClient.GetQueuesWithoutStatsByPageAsync(vhost.Name, new PageCriteria(1, 1));
+        firstPage.Items.Count.Should().Be(1);
+
+        var secondPage = await fixture.ManagementClient.GetQueuesWithoutStatsByPageAsync(vhost.Name, new PageCriteria(2, 1));
+        secondPage.Items.Count.Should().Be(1);
     }
 
     [Fact]
