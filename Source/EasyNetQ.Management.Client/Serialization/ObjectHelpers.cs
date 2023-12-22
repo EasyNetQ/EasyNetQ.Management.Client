@@ -73,7 +73,7 @@ internal static class ObjectHelpers
             case { ValueKind: JsonValueKind.False }:
                 return False;
             case { ValueKind: JsonValueKind.Number }:
-                return jsonElement.TryGetInt64(out var longValue) ? longValue : jsonElement.GetDouble();
+                return jsonElement.TryGetInt64(out var longValue) ? (object)longValue : jsonElement.GetDouble();
             case { ValueKind: JsonValueKind.String }:
                 {
                     var stringValue = jsonElement.GetString();
