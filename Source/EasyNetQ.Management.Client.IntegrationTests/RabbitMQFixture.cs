@@ -14,7 +14,7 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
     private readonly string tag;
     private readonly DockerProxy dockerProxy;
     private OSPlatform dockerEngineOsPlatform;
-    private string dockerNetworkName;
+    private string? dockerNetworkName;
 
     public RabbitMqFixture()
     {
@@ -66,13 +66,13 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
     {
         await dockerProxy.StopContainerAsync(ContainerName, cancellationToken);
         await dockerProxy.RemoveContainerAsync(ContainerName, cancellationToken);
-        if (dockerEngineOsPlatform == OSPlatform.Linux || dockerEngineOsPlatform == OSPlatform.OSX)
+        if (dockerNetworkName != null)
             await dockerProxy.DeleteNetworkAsync(dockerNetworkName, cancellationToken);
     }
 
     private async Task CreateNetworkAsync(CancellationToken cancellationToken)
     {
-        if (dockerEngineOsPlatform == OSPlatform.Linux || dockerEngineOsPlatform == OSPlatform.OSX)
+        if (dockerNetworkName != null)
             await dockerProxy.CreateNetworkAsync(dockerNetworkName, cancellationToken);
     }
 
