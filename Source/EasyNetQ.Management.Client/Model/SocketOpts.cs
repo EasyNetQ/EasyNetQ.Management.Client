@@ -4,14 +4,13 @@ using System.Text.Json.Serialization;
 
 namespace EasyNetQ.Management.Client.Model;
 
-public record Listener(
-    string Node,
-    string Protocol,
-    string IpAddress,
-    int Port,
-    [property: JsonConverter(typeof(EmptyArrayAsDefaultConverter<SocketOpts>))]
+public record SocketOpts(
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    SocketOpts? SocketOpts = null
+    int? Backlog = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    bool? Nodelay = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    bool? ExitOnClose = null
 )
 {
     [JsonExtensionData()]
