@@ -6,41 +6,28 @@ internal static class JsonExtensionDataExtensions
 {
     public static IReadOnlyDictionary<string, object?>? ToExtensionData(IDictionary<string, JsonElement>? jsonExtensionData)
     {
-        Dictionary<string, object?>? dictionary;
-        if (jsonExtensionData == null)
-        {
-            dictionary = null;
-        }
-        else
-        {
-            dictionary = new Dictionary<string, object?>();
-            foreach (var property in jsonExtensionData)
-            {
-                dictionary.Add(property.Key, property.Value.GetObjectValue());
-            }
-        }
-        return dictionary;
+        if (jsonExtensionData == null) return null;
+
+        var extensionData = new Dictionary<string, object?>(jsonExtensionData.Count);
+        foreach (var property in jsonExtensionData)
+            extensionData.Add(property.Key, property.Value.GetObjectValue());
+        return extensionData;
     }
+
     public static IDictionary<string, JsonElement>? ToJsonExtensionData(IReadOnlyDictionary<string, object?>? extensionData)
     {
-        IDictionary<string, JsonElement>? dictionary;
-        if (extensionData == null)
+        if (extensionData == null) return null;
+
+        var jsonExtensionData = new Dictionary<string, JsonElement>(extensionData.Count);
+        foreach (var property in extensionData)
         {
-            dictionary = null;
-        }
-        else
-        {
-            dictionary = new Dictionary<string, JsonElement>();
-            foreach (var property in extensionData)
-            {
 #if NET6_0_OR_GREATER
-                dictionary.Add(property.Key, JsonSerializer.SerializeToElement(property.Value));
+            jsonExtensionData.Add(property.Key, JsonSerializer.SerializeToElement(property.Value));
 #else
-                var bytes = JsonSerializer.SerializeToUtf8Bytes(property.Value);
-                dictionary.Add(property.Key, JsonDocument.Parse(bytes).RootElement.Clone());
+            var bytes = JsonSerializer.SerializeToUtf8Bytes(property.Value);
+            jsonExtensionData.Add(property.Key, JsonDocument.Parse(bytes).RootElement.Clone());
 #endif
-            }
         }
-        return dictionary;
+        return jsonExtensionData;
     }
 }
