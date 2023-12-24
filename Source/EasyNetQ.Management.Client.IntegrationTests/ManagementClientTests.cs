@@ -1,6 +1,9 @@
 using EasyNetQ.Management.Client.Model;
+using System.Text.Json;
 
 namespace EasyNetQ.Management.Client.IntegrationTests;
+
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 [Collection("RabbitMQ")]
 public class ManagementClientTests
@@ -106,7 +109,7 @@ public class ManagementClientTests
     {
         const string exchangeName = "test-dead-letter-exchange";
         const string argumentKey = "x-dead-letter-exchange";
-        var queueInfo = new QueueInfo(Name: $"{TestQueue}1", Arguments: new Dictionary<string, object> { { argumentKey, exchangeName } });
+        var queueInfo = new QueueInfo(Name: $"{TestQueue}1", Arguments: new Dictionary<string, object?> { { argumentKey, exchangeName } });
 
         await fixture.ManagementClient.CreateQueueAsync(queueInfo, Vhost);
         var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, queueInfo.Name);
@@ -868,7 +871,7 @@ public class ManagementClientTests
             TestQueue,
             "Hello World",
             PayloadEncoding.String,
-            new Dictionary<string, object>
+            new Dictionary<string, object?>
             {
                 { "app_id", "management-test" }
             }
@@ -1301,30 +1304,39 @@ public class ManagementClientTests
         var destUri = new AmqpUri($"{fixture.Endpoint.Host}-1", fixture.Endpoint.Port, fixture.User, fixture.Password);
 
         var shovelName = "queue-shovel";
-
-        await fixture.ManagementClient.CreateShovelAsync(
-            vhostName: Vhost.Name,
-            shovelName,
-            new ParameterShovelValue
+        var parameterShovelValue = new ParameterShovelValue
             (
                 SrcProtocol: AmqpProtocol.AMQP091,
                 SrcUri: srcUri.ToString(),
                 SrcQueue: "test-queue-src",
-                SrcExchange: null,
-                SrcExchangeKey: null,
+                SrcQueueArguments: new Dictionary<string, object?> { { "x-queue-mode", "lazy" } },
                 SrcDeleteAfter: "never",
+                SrcPrefetchCount: 10,
                 DestProtocol: AmqpProtocol.AMQP091,
                 DestUri: destUri.ToString(),
                 DestQueue: "test-queue-dest",
-                DestExchange: null,
+                DestQueueArguments: new Dictionary<string, object?> { { "x-queue-mode", "lazy" } },
+                DestAddForwardHeaders: false,
+                DestAddTimestampHeader: false,
                 AckMode: "on-confirm",
-                AddForwardHeaders: false
-            )
+                ReconnectDelay: 10
+            );
+
+        await fixture.ManagementClient.CreateShovelAsync(
+            vhostName: Vhost.Name,
+            shovelName,
+            parameterShovelValue
         );
 
         var parameter = await fixture.ManagementClient.GetShovelAsync(Vhost.Name, shovelName);
 
         Assert.Equal(shovelName, parameter.Name);
+        parameter.Value.Should().BeOfType<JsonElement>();
+        if (parameter.Value is JsonElement jsonElement)
+        {
+            var actualParameterShovelValue = JsonSerializer.Deserialize<ParameterShovelValue>(jsonElement.GetRawText());
+            actualParameterShovelValue.Should().BeEquivalentTo(parameterShovelValue);
+        }
     }
 
     [Fact]
@@ -1334,30 +1346,39 @@ public class ManagementClientTests
         var destUri = new AmqpUri($"{fixture.Endpoint.Host}-1", fixture.Endpoint.Port, fixture.User, fixture.Password);
 
         var shovelName = "exchange-shovel";
-
-        await fixture.ManagementClient.CreateShovelAsync(
-            vhostName: Vhost.Name,
-            shovelName,
-            new ParameterShovelValue
+        var parameterShovelValue = new ParameterShovelValue
             (
                 SrcProtocol: AmqpProtocol.AMQP091,
                 SrcUri: srcUri.ToString(),
                 SrcExchange: "test-exchange-src",
-                SrcExchangeKey: null,
-                SrcQueue: null,
+                SrcExchangeKey: "aaa",
                 SrcDeleteAfter: "never",
+                SrcPrefetchCount: 10,
                 DestProtocol: AmqpProtocol.AMQP091,
                 DestUri: destUri.ToString(),
                 DestExchange: "test-exchange-dest",
-                DestQueue: null,
+                DestExchangeKey: "bbb",
+                DestAddForwardHeaders: false,
+                DestAddTimestampHeader: false,
                 AckMode: "on-confirm",
-                AddForwardHeaders: false
-            )
+                ReconnectDelay: 10
+            );
+
+        await fixture.ManagementClient.CreateShovelAsync(
+            vhostName: Vhost.Name,
+            shovelName,
+            parameterShovelValue
         );
 
-        var parameters = await fixture.ManagementClient.GetParametersAsync();
+        var parameter = await fixture.ManagementClient.GetShovelAsync(Vhost.Name, shovelName);
 
-        Assert.Contains(parameters, p => p.Name == shovelName);
+        Assert.Equal(shovelName, parameter.Name);
+        parameter.Value.Should().BeOfType<JsonElement>();
+        if (parameter.Value is JsonElement jsonElement)
+        {
+            var actualParameterShovelValue = JsonSerializer.Deserialize<ParameterShovelValue>(jsonElement.GetRawText());
+            actualParameterShovelValue.Should().BeEquivalentTo(parameterShovelValue);
+        }
     }
 
     [Fact]
@@ -1391,7 +1412,7 @@ public class ManagementClientTests
                 DestExchange: "test-exchange-dest",
                 DestQueue: null,
                 AckMode: "on-confirm",
-                AddForwardHeaders: false
+                DestAddForwardHeaders: false
             )
         );
 

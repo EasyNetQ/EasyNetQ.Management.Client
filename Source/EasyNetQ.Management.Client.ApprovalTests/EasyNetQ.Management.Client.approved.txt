@@ -895,27 +895,79 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class ParameterShovelValue : System.IEquatable<EasyNetQ.Management.Client.Model.ParameterShovelValue>
     {
-        public ParameterShovelValue(string SrcProtocol, string SrcUri, string? SrcExchange, string? SrcExchangeKey, string? SrcQueue, string SrcDeleteAfter, string DestProtocol, string DestUri, string? DestExchange, string? DestQueue, string AckMode, bool AddForwardHeaders) { }
+        public ParameterShovelValue(
+                    string SrcUri,
+                    string DestUri,
+                    string? SrcProtocol = null,
+                    string? SrcQueue = null,
+                    System.Collections.Generic.IReadOnlyDictionary<string, object?>? SrcQueueArguments = null,
+                    string? SrcExchange = null,
+                    string? SrcExchangeKey = null,
+                    string? SrcDeleteAfter = null,
+                    int? SrcPrefetchCount = default,
+                    string? DestProtocol = null,
+                    string? DestQueue = null,
+                    System.Collections.Generic.IReadOnlyDictionary<string, object?>? DestQueueArguments = null,
+                    string? DestExchange = null,
+                    string? DestExchangeKey = null,
+                    bool? DestAddForwardHeaders = default,
+                    bool? DestAddTimestampHeader = default,
+                    string? AckMode = null,
+                    int? ReconnectDelay = default) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("ack-mode")]
-        public string AckMode { get; init; }
-        [System.Text.Json.Serialization.JsonPropertyName("add-forward-headers")]
-        public bool AddForwardHeaders { get; init; }
+        public string? AckMode { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-add-forward-headers")]
+        public bool? DestAddForwardHeaders { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-add-timestamp-header")]
+        public bool? DestAddTimestampHeader { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-exchange-key")]
+        public string? DestExchangeKey { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("dest-exchange")]
         public string? DestExchange { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("dest-protocol")]
-        public string DestProtocol { get; init; }
+        public string? DestProtocol { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-queue-args")]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? DestQueueArguments { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("dest-queue")]
         public string? DestQueue { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("dest-uri")]
         public string DestUri { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("reconnect-delay")]
+        public int? ReconnectDelay { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-delete-after")]
-        public string SrcDeleteAfter { get; init; }
+        public string? SrcDeleteAfter { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-exchange-key")]
         public string? SrcExchangeKey { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-exchange")]
         public string? SrcExchange { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("src-prefetch-count")]
+        public int? SrcPrefetchCount { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-protocol")]
-        public string SrcProtocol { get; init; }
+        public string? SrcProtocol { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("src-queue-args")]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? SrcQueueArguments { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-queue")]
         public string? SrcQueue { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("src-uri")]
