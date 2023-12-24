@@ -109,7 +109,7 @@ public class ManagementClientTests
     {
         const string exchangeName = "test-dead-letter-exchange";
         const string argumentKey = "x-dead-letter-exchange";
-        var queueInfo = new QueueInfo(Name: $"{TestQueue}1", Arguments: new Dictionary<string, object> { { argumentKey, exchangeName } });
+        var queueInfo = new QueueInfo(Name: $"{TestQueue}1", Arguments: new Dictionary<string, object?> { { argumentKey, exchangeName } });
 
         await fixture.ManagementClient.CreateQueueAsync(queueInfo, Vhost);
         var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, queueInfo.Name);
@@ -871,7 +871,7 @@ public class ManagementClientTests
             TestQueue,
             "Hello World",
             PayloadEncoding.String,
-            new Dictionary<string, object>
+            new Dictionary<string, object?>
             {
                 { "app_id", "management-test" }
             }
@@ -1412,7 +1412,7 @@ public class ManagementClientTests
                 DestExchange: "test-exchange-dest",
                 DestQueue: null,
                 AckMode: "on-confirm",
-                AddForwardHeaders: false
+                DestAddForwardHeaders: false
             )
         );
 
