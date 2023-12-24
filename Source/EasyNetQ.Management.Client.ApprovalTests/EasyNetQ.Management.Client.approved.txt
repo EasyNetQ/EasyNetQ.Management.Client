@@ -676,11 +676,18 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class Listener : System.IEquatable<EasyNetQ.Management.Client.Model.Listener>
     {
-        public Listener(string Node, string Protocol, string IpAddress, int Port) { }
+        public Listener(string Node, string Protocol, string IpAddress, int Port, EasyNetQ.Management.Client.Model.SocketOpts? SocketOpts = null) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public string IpAddress { get; init; }
         public string Node { get; init; }
         public int Port { get; init; }
         public string Protocol { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.EmptyArrayAsDefaultConverter<EasyNetQ.Management.Client.Model.SocketOpts>))]
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public EasyNetQ.Management.Client.Model.SocketOpts? SocketOpts { get; init; }
     }
     public class Message : System.IEquatable<EasyNetQ.Management.Client.Model.Message>
     {
@@ -847,6 +854,10 @@ namespace EasyNetQ.Management.Client.Model
     public class Overview : System.IEquatable<EasyNetQ.Management.Client.Model.Overview>
     {
         public Overview(string ManagementVersion, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec> ExchangeTypes, string RabbitmqVersion, string ErlangVersion, EasyNetQ.Management.Client.Model.MessageStats MessageStats, EasyNetQ.Management.Client.Model.QueueTotals QueueTotals, EasyNetQ.Management.Client.Model.ObjectTotals ObjectTotals, string Node, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Listener> Listeners, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Context> Contexts) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Context> Contexts { get; init; }
         public string ErlangVersion { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec> ExchangeTypes { get; init; }
@@ -1238,6 +1249,20 @@ namespace EasyNetQ.Management.Client.Model
         public int MsgRatesAge { get; init; }
         public int MsgRatesIncr { get; init; }
         public System.Collections.Generic.IReadOnlyDictionary<string, string> ToQueryParameters() { }
+    }
+    public class SocketOpts : System.IEquatable<EasyNetQ.Management.Client.Model.SocketOpts>
+    {
+        public SocketOpts(int? Backlog = default, bool? Nodelay = default, bool? ExitOnClose = default) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public int? Backlog { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public bool? ExitOnClose { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public bool? Nodelay { get; init; }
     }
     public class TopicPermission : System.IEquatable<EasyNetQ.Management.Client.Model.TopicPermission>
     {

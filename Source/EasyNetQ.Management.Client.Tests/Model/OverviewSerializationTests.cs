@@ -60,7 +60,8 @@ public class OverviewSerializationTests
                             Node: "rabbit@localhost",
                             Protocol: "amqp",
                             IpAddress: "127.0.0.1",
-                            Port: 5672
+                            Port: 5672,
+                            SocketOpts: new SocketOpts(Backlog: 128, Nodelay: true, ExitOnClose: false)
                         ),
                         new(
                             Node: "rabbit@localhost",
@@ -72,25 +73,29 @@ public class OverviewSerializationTests
                             Node: "rabbit@localhost",
                             Protocol: "http",
                             IpAddress: "::",
-                            Port: 15672
+                            Port: 15672,
+                            SocketOpts: new SocketOpts()
                         ),
                         new(
                             Node: "rabbit@localhost",
                             Protocol: "mqtt",
                             IpAddress: "::",
-                            Port: 1883
+                            Port: 1883,
+                            SocketOpts: new SocketOpts(Backlog: 128, Nodelay: true)
                         ),
                         new(
                             Node: "rabbit@localhost",
                             Protocol: "stomp",
                             IpAddress: "::",
-                            Port: 61613
+                            Port: 61613,
+                            SocketOpts: new SocketOpts(Backlog: 128, Nodelay: true)
                         ),
                         new(
                             Node: "rabbit@localhost",
                             Protocol: "stream",
                             IpAddress: "::",
-                            Port: 5552
+                            Port: 5552,
+                            SocketOpts: new SocketOpts(Backlog: 128, Nodelay: true)
                         )
                     },
                     Contexts: Array.Empty<Context>()
@@ -138,7 +143,8 @@ public class OverviewSerializationTests
                             Node: "rabbit@localhost",
                             Protocol: "amqp",
                             IpAddress: "127.0.0.1",
-                            Port: 5672
+                            Port: 5672,
+                            SocketOpts: new SocketOpts(Backlog: 128, Nodelay: true, ExitOnClose: false)
                         ),
                         new(
                             Node: "rabbit@localhost",
@@ -150,25 +156,29 @@ public class OverviewSerializationTests
                             Node: "rabbit@localhost",
                             Protocol: "http",
                             IpAddress: "::",
-                            Port: 15672
+                            Port: 15672,
+                            SocketOpts: new SocketOpts()
                         ),
                         new(
                             Node: "rabbit@localhost",
                             Protocol: "mqtt",
                             IpAddress: "::",
-                            Port: 1883
+                            Port: 1883,
+                            SocketOpts: new SocketOpts(Backlog: 128, Nodelay: true)
                         ),
                         new(
                             Node: "rabbit@localhost",
                             Protocol: "stomp",
                             IpAddress: "::",
-                            Port: 61613
+                            Port: 61613,
+                            SocketOpts: new SocketOpts(Backlog: 128, Nodelay: true)
                         ),
                         new(
                             Node: "rabbit@localhost",
                             Protocol: "stream",
                             IpAddress: "::",
-                            Port: 5552
+                            Port: 5552,
+                            SocketOpts: new SocketOpts(Backlog: 128, Nodelay: true)
                         )
                     },
                     Contexts: new Context[]
@@ -181,7 +191,14 @@ public class OverviewSerializationTests
                         )
                     }
                 )
-            }
+            },
+            options => options
+                .Excluding(o => o.ExtensionData)
+                .Excluding(o => o.JsonExtensionData)
+                .For(o => o.Listeners).Exclude(l => l.ExtensionData)
+                .For(o => o.Listeners).Exclude(l => l.JsonExtensionData)
+                .For(o => o.Listeners).Exclude(l => l.SocketOpts.ExtensionData)
+                .For(o => o.Listeners).Exclude(l => l.SocketOpts.JsonExtensionData)
         );
     }
 }
