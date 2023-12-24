@@ -51,8 +51,8 @@ public class DockerProxy : IDisposable
         string image,
         string name,
         IDictionary<string, ISet<string>> portMappings,
-        string networkName = null,
-        IList<string> envVars = null,
+        string? networkName = null,
+        IList<string>? envVars = null,
         CancellationToken token = default
     )
     {
