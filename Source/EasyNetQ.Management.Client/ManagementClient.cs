@@ -323,6 +323,21 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<QueueWithoutStats>>(Queues, GetQueuesWithoutStatsQueryParameters, cancellationToken);
     }
 
+    public Task<PageResult<QueueWithoutStats>> GetQueuesWithoutStatsByPageAsync(PageCriteria pageCriteria, CancellationToken cancellationToken = default)
+    {
+        return GetAsync<PageResult<QueueWithoutStats>>(Queues, pageCriteria.ToQueryParameters(GetQueuesWithoutStatsQueryParameters), cancellationToken);
+    }
+
+    public Task<IReadOnlyList<QueueWithoutStats>> GetQueuesWithoutStatsAsync(string vhostName, CancellationToken cancellationToken = default)
+    {
+        return GetAsync<IReadOnlyList<QueueWithoutStats>>(Queues / vhostName, GetQueuesWithoutStatsQueryParameters, cancellationToken);
+    }
+
+    public Task<PageResult<QueueWithoutStats>> GetQueuesWithoutStatsByPageAsync(string vhostName, PageCriteria pageCriteria, CancellationToken cancellationToken = default)
+    {
+        return GetAsync<PageResult<QueueWithoutStats>>(Queues / vhostName, pageCriteria.ToQueryParameters(GetQueuesWithoutStatsQueryParameters), cancellationToken);
+    }
+
     public Task CreateQueueAsync(
         string vhostName,
         QueueInfo queueInfo,

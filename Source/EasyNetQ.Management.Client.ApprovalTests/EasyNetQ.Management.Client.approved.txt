@@ -15,7 +15,7 @@ namespace EasyNetQ.Management.Client
         System.Threading.Tasks.Task CreateUserAsync(EasyNetQ.Management.Client.Model.UserInfo userInfo, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task CreateVhostAsync(string vhostName, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task DeleteExchangeAsync(string vhostName, string exchangeName, System.Threading.CancellationToken cancellationToken = default);
-        System.Threading.Tasks.Task DeleteExchangeBindingAsync(string vhostName, string fromExchangeName, string sourceExchangeName, string propertiesKey, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task DeleteExchangeBindingAsync(string vhostName, string fromExchangeName, string toExchangeName, string propertiesKey, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task DeleteParameterAsync(string componentName, string vhostName, string name, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task DeletePermissionAsync(string vhostName, string userName, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task DeletePolicyAsync(string vhostName, string policyName, System.Threading.CancellationToken cancellationToken = default);
@@ -60,6 +60,9 @@ namespace EasyNetQ.Management.Client
         System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.Queue>> GetQueuesByPageAsync(EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.Queue>> GetQueuesByPageAsync(string vhostName, EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.QueueWithoutStats>> GetQueuesWithoutStatsAsync(System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.QueueWithoutStats>> GetQueuesWithoutStatsAsync(string vhostName, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.QueueWithoutStats>> GetQueuesWithoutStatsByPageAsync(EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.QueueWithoutStats>> GetQueuesWithoutStatsByPageAsync(string vhostName, EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.TopicPermission>> GetTopicPermissionsAsync(System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.User> GetUserAsync(string userName, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User>> GetUsersAsync(System.Threading.CancellationToken cancellationToken = default);
@@ -139,6 +142,9 @@ namespace EasyNetQ.Management.Client
         public System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.Queue>> GetQueuesByPageAsync(EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.Queue>> GetQueuesByPageAsync(string vhostName, EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.QueueWithoutStats>> GetQueuesWithoutStatsAsync(System.Threading.CancellationToken cancellationToken = default) { }
+        public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.QueueWithoutStats>> GetQueuesWithoutStatsAsync(string vhostName, System.Threading.CancellationToken cancellationToken = default) { }
+        public System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.QueueWithoutStats>> GetQueuesWithoutStatsByPageAsync(EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default) { }
+        public System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.PageResult<EasyNetQ.Management.Client.Model.QueueWithoutStats>> GetQueuesWithoutStatsByPageAsync(string vhostName, EasyNetQ.Management.Client.Model.PageCriteria pageCriteria, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.TopicPermission>> GetTopicPermissionsAsync(System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.User> GetUserAsync(string userName, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User>> GetUsersAsync(System.Threading.CancellationToken cancellationToken = default) { }
@@ -676,11 +682,18 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class Listener : System.IEquatable<EasyNetQ.Management.Client.Model.Listener>
     {
-        public Listener(string Node, string Protocol, string IpAddress, int Port) { }
+        public Listener(string Node, string Protocol, string IpAddress, int Port, EasyNetQ.Management.Client.Model.SocketOpts? SocketOpts = null) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public string IpAddress { get; init; }
         public string Node { get; init; }
         public int Port { get; init; }
         public string Protocol { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.EmptyArrayAsDefaultConverter<EasyNetQ.Management.Client.Model.SocketOpts>))]
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public EasyNetQ.Management.Client.Model.SocketOpts? SocketOpts { get; init; }
     }
     public class Message : System.IEquatable<EasyNetQ.Management.Client.Model.Message>
     {
@@ -847,6 +860,10 @@ namespace EasyNetQ.Management.Client.Model
     public class Overview : System.IEquatable<EasyNetQ.Management.Client.Model.Overview>
     {
         public Overview(string ManagementVersion, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec> ExchangeTypes, string RabbitmqVersion, string ErlangVersion, EasyNetQ.Management.Client.Model.MessageStats MessageStats, EasyNetQ.Management.Client.Model.QueueTotals QueueTotals, EasyNetQ.Management.Client.Model.ObjectTotals ObjectTotals, string Node, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Listener> Listeners, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Context> Contexts) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Context> Contexts { get; init; }
         public string ErlangVersion { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec> ExchangeTypes { get; init; }
@@ -866,6 +883,7 @@ namespace EasyNetQ.Management.Client.Model
         public int Page { get; init; }
         public bool UseRegex { get; init; }
         public System.Collections.Generic.IReadOnlyDictionary<string, string> ToQueryParameters() { }
+        public System.Collections.Generic.IReadOnlyDictionary<string, string> ToQueryParameters(System.Collections.Generic.IReadOnlyDictionary<string, string> queryParameters) { }
     }
     public class PageResult<T> : System.IEquatable<EasyNetQ.Management.Client.Model.PageResult<T>>
     {
@@ -895,27 +913,79 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class ParameterShovelValue : System.IEquatable<EasyNetQ.Management.Client.Model.ParameterShovelValue>
     {
-        public ParameterShovelValue(string SrcProtocol, string SrcUri, string? SrcExchange, string? SrcExchangeKey, string? SrcQueue, string SrcDeleteAfter, string DestProtocol, string DestUri, string? DestExchange, string? DestQueue, string AckMode, bool AddForwardHeaders) { }
+        public ParameterShovelValue(
+                    string SrcUri,
+                    string DestUri,
+                    string? SrcProtocol = null,
+                    string? SrcQueue = null,
+                    System.Collections.Generic.IReadOnlyDictionary<string, object?>? SrcQueueArguments = null,
+                    string? SrcExchange = null,
+                    string? SrcExchangeKey = null,
+                    string? SrcDeleteAfter = null,
+                    int? SrcPrefetchCount = default,
+                    string? DestProtocol = null,
+                    string? DestQueue = null,
+                    System.Collections.Generic.IReadOnlyDictionary<string, object?>? DestQueueArguments = null,
+                    string? DestExchange = null,
+                    string? DestExchangeKey = null,
+                    bool? DestAddForwardHeaders = default,
+                    bool? DestAddTimestampHeader = default,
+                    string? AckMode = null,
+                    int? ReconnectDelay = default) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("ack-mode")]
-        public string AckMode { get; init; }
-        [System.Text.Json.Serialization.JsonPropertyName("add-forward-headers")]
-        public bool AddForwardHeaders { get; init; }
+        public string? AckMode { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-add-forward-headers")]
+        public bool? DestAddForwardHeaders { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-add-timestamp-header")]
+        public bool? DestAddTimestampHeader { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-exchange-key")]
+        public string? DestExchangeKey { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("dest-exchange")]
         public string? DestExchange { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("dest-protocol")]
-        public string DestProtocol { get; init; }
+        public string? DestProtocol { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-queue-args")]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? DestQueueArguments { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("dest-queue")]
         public string? DestQueue { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("dest-uri")]
         public string DestUri { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("reconnect-delay")]
+        public int? ReconnectDelay { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-delete-after")]
-        public string SrcDeleteAfter { get; init; }
+        public string? SrcDeleteAfter { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-exchange-key")]
         public string? SrcExchangeKey { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-exchange")]
         public string? SrcExchange { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("src-prefetch-count")]
+        public int? SrcPrefetchCount { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-protocol")]
-        public string SrcProtocol { get; init; }
+        public string? SrcProtocol { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("src-queue-args")]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? SrcQueueArguments { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-queue")]
         public string? SrcQueue { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("src-uri")]
@@ -988,8 +1058,10 @@ namespace EasyNetQ.Management.Client.Model
                     string? FederationUpstream = null,
                     string? FederationUpstreamSet = null,
                     string? QueueMode = null) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.Dictionary<string, object>? ExtensionData { get; set; }
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("alternate-exchange")]
         public string? AlternateExchange { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("consumer-timeout")]
@@ -1103,8 +1175,10 @@ namespace EasyNetQ.Management.Client.Model
                     EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails,
                     EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails,
                     EasyNetQ.Management.Client.Model.MessageStats? MessageStats) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.Dictionary<string, object>? ExtensionData { get; set; }
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public long ActiveConsumers { get; init; }
         public EasyNetQ.Management.Client.Model.BackingQueueStatus? BackingQueueStatus { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails { get; init; }
@@ -1186,6 +1260,20 @@ namespace EasyNetQ.Management.Client.Model
         public int MsgRatesAge { get; init; }
         public int MsgRatesIncr { get; init; }
         public System.Collections.Generic.IReadOnlyDictionary<string, string> ToQueryParameters() { }
+    }
+    public class SocketOpts : System.IEquatable<EasyNetQ.Management.Client.Model.SocketOpts>
+    {
+        public SocketOpts(int? Backlog = default, bool? Nodelay = default, bool? ExitOnClose = default) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public int? Backlog { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public bool? ExitOnClose { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public bool? Nodelay { get; init; }
     }
     public class TopicPermission : System.IEquatable<EasyNetQ.Management.Client.Model.TopicPermission>
     {

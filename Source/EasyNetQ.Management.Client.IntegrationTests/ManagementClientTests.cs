@@ -1,6 +1,9 @@
 using EasyNetQ.Management.Client.Model;
+using System.Text.Json;
 
 namespace EasyNetQ.Management.Client.IntegrationTests;
+
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 [Collection("RabbitMQ")]
 public class ManagementClientTests
@@ -747,9 +750,9 @@ public class ManagementClientTests
 
         var exchange = await EnsureExchangeExists(TestExchange);
 
-        var bindings = (await fixture.ManagementClient.GetQueueBindingsAsync(exchange, queue)).ToArray();
+        var bindings = await fixture.ManagementClient.GetQueueBindingsAsync(exchange, queue);
 
-        bindings.Length.Should().Be(0);
+        bindings.Should().BeEmpty();
     }
 
     [Fact]
@@ -760,7 +763,7 @@ public class ManagementClientTests
 
         var bindings = await fixture.ManagementClient.GetExchangeBindingsAsync(exchange1, exchange2);
 
-        bindings.Count.Should().Be(0);
+        bindings.Should().BeEmpty();
     }
 
     [Fact]
@@ -787,9 +790,9 @@ public class ManagementClientTests
         );
 
         queue.Name.Should().Be(TestQueue);
-        queue.MessagesDetails.Samples.Count.Should().BeGreaterThan(0);
-        queue.MessagesReadyDetails.Samples.Count.Should().BeGreaterThan(0);
-        queue.MessagesUnacknowledgedDetails.Samples.Count.Should().BeGreaterThan(0);
+        queue.MessagesDetails.Samples.Should().NotBeNullOrEmpty();
+        queue.MessagesReadyDetails.Samples.Should().NotBeNullOrEmpty();
+        queue.MessagesUnacknowledgedDetails.Samples.Should().NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -803,9 +806,9 @@ public class ManagementClientTests
         var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueue, new LengthsCriteria(age, increment));
 
         queue.Name.Should().Be(TestQueue);
-        queue.MessagesDetails.Samples.Count.Should().BeGreaterThan(0);
-        queue.MessagesReadyDetails.Samples.Count.Should().BeGreaterThan(0);
-        queue.MessagesUnacknowledgedDetails.Samples.Count.Should().BeGreaterThan(0);
+        queue.MessagesDetails.Samples.Should().NotBeNullOrEmpty();
+        queue.MessagesReadyDetails.Samples.Should().NotBeNullOrEmpty();
+        queue.MessagesUnacknowledgedDetails.Samples.Should().NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -1148,7 +1151,7 @@ public class ManagementClientTests
     {
         var page = await fixture.ManagementClient.GetExchangesByPageAsync(new PageCriteria(1, 7, "amq"));
 
-        page.Items.Count.Should().BeGreaterThan(0);
+        page.Items.Should().NotBeNullOrEmpty();
     }
 
     [Fact(Skip = "Requires at least an active federation")]
@@ -1223,15 +1226,6 @@ public class ManagementClientTests
     }
 
     [Fact]
-    public async Task Should_get_queues_without_stats()
-    {
-        await CreateTestQueue(TestQueue);
-        var queues = await fixture.ManagementClient.GetQueuesWithoutStatsAsync();
-        queues.Should().NotBeNullOrEmpty();
-    }
-
-
-    [Fact]
     public async Task Should_get_queues_with_pagination()
     {
         foreach (var queue in await fixture.ManagementClient.GetQueuesAsync())
@@ -1255,7 +1249,82 @@ public class ManagementClientTests
         vhost.Name.Should().Be(TestVHost);
 
         await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}", vhost);
-        (await fixture.ManagementClient.GetQueuesAsync(vhost)).Count.Should().BeGreaterThan(0);
+        (await fixture.ManagementClient.GetQueuesAsync(vhost)).Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task Should_get_queues_with_pagination_by_vhost()
+    {
+        await fixture.ManagementClient.CreateVhostAsync(TestVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
+        vhost.Name.Should().Be(TestVHost);
+
+        foreach (var queue in await fixture.ManagementClient.GetQueuesAsync(TestVHost))
+            await fixture.ManagementClient.DeleteQueueAsync(queue);
+
+        await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}_1", vhost);
+        await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}_2", vhost);
+
+        var firstPage = await fixture.ManagementClient.GetQueuesByPageAsync(vhost, new PageCriteria(1, 1));
+        firstPage.Items.Count.Should().Be(1);
+
+        var secondPage = await fixture.ManagementClient.GetQueuesByPageAsync(vhost, new PageCriteria(2, 1));
+        secondPage.Items.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task Should_get_queues_without_stats()
+    {
+        await CreateTestQueue(TestQueue);
+        var queues = await fixture.ManagementClient.GetQueuesWithoutStatsAsync();
+        queues.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task Should_get_queues_without_stats_with_pagination()
+    {
+        foreach (var queue in await fixture.ManagementClient.GetQueuesAsync())
+            await fixture.ManagementClient.DeleteQueueAsync(queue);
+
+        await CreateTestQueue("1");
+        await CreateTestQueue("2");
+
+        var firstPage = await fixture.ManagementClient.GetQueuesWithoutStatsByPageAsync(new PageCriteria(1, 1));
+        firstPage.Items.Count.Should().Be(1);
+
+        var secondPage = await fixture.ManagementClient.GetQueuesWithoutStatsByPageAsync(new PageCriteria(2, 1));
+        secondPage.Items.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task Should_get_queues_without_stats_by_vhost()
+    {
+        await fixture.ManagementClient.CreateVhostAsync(TestVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
+        vhost.Name.Should().Be(TestVHost);
+
+        await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}", vhost);
+        (await fixture.ManagementClient.GetQueuesWithoutStatsAsync(vhost.Name)).Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task Should_get_queues_without_stats_with_pagination_by_vhost()
+    {
+        await fixture.ManagementClient.CreateVhostAsync(TestVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
+        vhost.Name.Should().Be(TestVHost);
+
+        foreach (var queue in await fixture.ManagementClient.GetQueuesAsync(TestVHost))
+            await fixture.ManagementClient.DeleteQueueAsync(queue);
+
+        await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}_1", vhost);
+        await CreateTestQueueInVhost($"{TestVHost}_{TestQueue}_2", vhost);
+
+        var firstPage = await fixture.ManagementClient.GetQueuesWithoutStatsByPageAsync(vhost.Name, new PageCriteria(1, 1));
+        firstPage.Items.Count.Should().Be(1);
+
+        var secondPage = await fixture.ManagementClient.GetQueuesWithoutStatsByPageAsync(vhost.Name, new PageCriteria(2, 1));
+        secondPage.Items.Count.Should().Be(1);
     }
 
     [Fact]
@@ -1301,30 +1370,39 @@ public class ManagementClientTests
         var destUri = new AmqpUri($"{fixture.Endpoint.Host}-1", fixture.Endpoint.Port, fixture.User, fixture.Password);
 
         var shovelName = "queue-shovel";
-
-        await fixture.ManagementClient.CreateShovelAsync(
-            vhostName: Vhost.Name,
-            shovelName,
-            new ParameterShovelValue
+        var parameterShovelValue = new ParameterShovelValue
             (
                 SrcProtocol: AmqpProtocol.AMQP091,
                 SrcUri: srcUri.ToString(),
                 SrcQueue: "test-queue-src",
-                SrcExchange: null,
-                SrcExchangeKey: null,
+                SrcQueueArguments: new Dictionary<string, object?> { { "x-queue-mode", "lazy" } },
                 SrcDeleteAfter: "never",
+                SrcPrefetchCount: 10,
                 DestProtocol: AmqpProtocol.AMQP091,
                 DestUri: destUri.ToString(),
                 DestQueue: "test-queue-dest",
-                DestExchange: null,
+                DestQueueArguments: new Dictionary<string, object?> { { "x-queue-mode", "lazy" } },
+                DestAddForwardHeaders: false,
+                DestAddTimestampHeader: false,
                 AckMode: "on-confirm",
-                AddForwardHeaders: false
-            )
+                ReconnectDelay: 10
+            );
+
+        await fixture.ManagementClient.CreateShovelAsync(
+            vhostName: Vhost.Name,
+            shovelName,
+            parameterShovelValue
         );
 
         var parameter = await fixture.ManagementClient.GetShovelAsync(Vhost.Name, shovelName);
 
         Assert.Equal(shovelName, parameter.Name);
+        parameter.Value.Should().BeOfType<JsonElement>();
+        if (parameter.Value is JsonElement jsonElement)
+        {
+            var actualParameterShovelValue = JsonSerializer.Deserialize<ParameterShovelValue>(jsonElement.GetRawText());
+            actualParameterShovelValue.Should().BeEquivalentTo(parameterShovelValue);
+        }
     }
 
     [Fact]
@@ -1334,30 +1412,39 @@ public class ManagementClientTests
         var destUri = new AmqpUri($"{fixture.Endpoint.Host}-1", fixture.Endpoint.Port, fixture.User, fixture.Password);
 
         var shovelName = "exchange-shovel";
-
-        await fixture.ManagementClient.CreateShovelAsync(
-            vhostName: Vhost.Name,
-            shovelName,
-            new ParameterShovelValue
+        var parameterShovelValue = new ParameterShovelValue
             (
                 SrcProtocol: AmqpProtocol.AMQP091,
                 SrcUri: srcUri.ToString(),
                 SrcExchange: "test-exchange-src",
-                SrcExchangeKey: null,
-                SrcQueue: null,
+                SrcExchangeKey: "aaa",
                 SrcDeleteAfter: "never",
+                SrcPrefetchCount: 10,
                 DestProtocol: AmqpProtocol.AMQP091,
                 DestUri: destUri.ToString(),
                 DestExchange: "test-exchange-dest",
-                DestQueue: null,
+                DestExchangeKey: "bbb",
+                DestAddForwardHeaders: false,
+                DestAddTimestampHeader: false,
                 AckMode: "on-confirm",
-                AddForwardHeaders: false
-            )
+                ReconnectDelay: 10
+            );
+
+        await fixture.ManagementClient.CreateShovelAsync(
+            vhostName: Vhost.Name,
+            shovelName,
+            parameterShovelValue
         );
 
-        var parameters = await fixture.ManagementClient.GetParametersAsync();
+        var parameter = await fixture.ManagementClient.GetShovelAsync(Vhost.Name, shovelName);
 
-        Assert.Contains(parameters, p => p.Name == shovelName);
+        Assert.Equal(shovelName, parameter.Name);
+        parameter.Value.Should().BeOfType<JsonElement>();
+        if (parameter.Value is JsonElement jsonElement)
+        {
+            var actualParameterShovelValue = JsonSerializer.Deserialize<ParameterShovelValue>(jsonElement.GetRawText());
+            actualParameterShovelValue.Should().BeEquivalentTo(parameterShovelValue);
+        }
     }
 
     [Fact]
@@ -1391,7 +1478,7 @@ public class ManagementClientTests
                 DestExchange: "test-exchange-dest",
                 DestQueue: null,
                 AckMode: "on-confirm",
-                AddForwardHeaders: false
+                DestAddForwardHeaders: false
             )
         );
 

@@ -148,11 +148,36 @@ public interface IManagementClient : IDisposable
     Task<PageResult<Queue>> GetQueuesByPageAsync(string vhostName, PageCriteria pageCriteria, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     A list of all queues.
+    ///     A list of all queues without stats.
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<IReadOnlyList<QueueWithoutStats>> GetQueuesWithoutStatsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of queues for a page.
+    /// </summary>
+    /// <param name="pageCriteria"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<PageResult<QueueWithoutStats>> GetQueuesWithoutStatsByPageAsync(PageCriteria pageCriteria, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all queues for a virtual host.
+    /// </summary>
+    /// <param name="vhostName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<QueueWithoutStats>> GetQueuesWithoutStatsAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of queues for a page for a virtual host.
+    /// </summary>
+    /// <param name="vhostName"></param>
+    /// <param name="pageCriteria"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<PageResult<QueueWithoutStats>> GetQueuesWithoutStatsByPageAsync(string vhostName, PageCriteria pageCriteria, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all bindings.
@@ -443,13 +468,13 @@ public interface IManagementClient : IDisposable
     /// </summary>
     /// <param name="vhostName"></param>
     /// <param name="fromExchangeName"></param>
-    /// <param name="sourceExchangeName"></param>
+    /// <param name="toExchangeName"></param>
     /// <param name="propertiesKey"></param>
     /// <param name="cancellationToken"></param>
     Task DeleteExchangeBindingAsync(
         string vhostName,
         string fromExchangeName,
-        string sourceExchangeName,
+        string toExchangeName,
         string propertiesKey,
         CancellationToken cancellationToken = default
     );
@@ -562,7 +587,7 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Declares a test queue, then publishes and consumes a message. Intended for use
     ///     by monitoring tools. If everything is working correctly, will return true.
-    ///     Note: the test queue will not be deleted (to to prevent queue churn if this
+    ///     Note: the test queue will not be deleted (to prevent queue churn if this
     ///     is repeatedly pinged).
     /// </summary>
     /// <param name="vhostName"></param>
