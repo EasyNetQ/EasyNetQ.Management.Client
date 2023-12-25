@@ -562,12 +562,23 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class Definitions : System.IEquatable<EasyNetQ.Management.Client.Model.Definitions>
     {
-        public Definitions(string RabbitVersion, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User> Users, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Vhost> Vhosts, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Permission> Permissions, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue> Queues, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Exchange> Exchanges, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding> Bindings) { }
+        public Definitions(string RabbitVersion, string RabbitmqVersion, string ProductName, string ProductVersion, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User> Users, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Vhost> Vhosts, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Permission> Permissions, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.TopicPermission> TopicPermissions, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Parameter> Parameters, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.GlobalParameter> GlobalParameters, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Policy> Policies, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue> Queues, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Exchange> Exchanges, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding> Bindings) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding> Bindings { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Exchange> Exchanges { get; init; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.GlobalParameter> GlobalParameters { get; init; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Parameter> Parameters { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Permission> Permissions { get; init; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Policy> Policies { get; init; }
+        public string ProductName { get; init; }
+        public string ProductVersion { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue> Queues { get; init; }
         public string RabbitVersion { get; init; }
+        public string RabbitmqVersion { get; init; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.TopicPermission> TopicPermissions { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User> Users { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Vhost> Vhosts { get; init; }
     }
@@ -626,6 +637,12 @@ namespace EasyNetQ.Management.Client.Model
         public EasyNetQ.Management.Client.Model.AckMode Ackmode { get; init; }
         public long Count { get; init; }
         public string Encoding { get; init; }
+    }
+    public class GlobalParameter : System.IEquatable<EasyNetQ.Management.Client.Model.GlobalParameter>
+    {
+        public GlobalParameter(string Name, object Value) { }
+        public string Name { get; init; }
+        public object Value { get; init; }
     }
     public enum HaMode
     {
