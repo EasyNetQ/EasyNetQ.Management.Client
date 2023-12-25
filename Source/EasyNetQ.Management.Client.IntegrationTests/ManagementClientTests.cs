@@ -1556,7 +1556,7 @@ public class ManagementClientTests
                         DestQueue: parameterShovelValue.DestQueue,
                         DestExchange: parameterShovelValue.DestExchange,
                         DestExchangeKey: parameterShovelValue.DestExchangeKey,
-                        BlockedStatus: "running"
+                        BlockedStatus: fixture.RabbitmqVersion >= new Version("3.11") ? "running" : null
                     ),
                     options => options.Excluding(ss => ss.Timestamp));
                 break;
