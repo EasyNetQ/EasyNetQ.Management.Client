@@ -324,6 +324,8 @@ namespace EasyNetQ.Management.Client.Model
     public class BackingQueueStatus : System.IEquatable<EasyNetQ.Management.Client.Model.BackingQueueStatus>
     {
         public BackingQueueStatus(
+                    string? Mode,
+                    int Version,
                     int Q1,
                     int Q2,
                     System.Collections.Generic.IReadOnlyList<object?> Delta,
@@ -331,22 +333,29 @@ namespace EasyNetQ.Management.Client.Model
                     int Q4,
                     int Len,
                     int PendingAcks,
-                    string TargetRamCount,
+                    double TargetRamCount,
                     int RamMsgCount,
                     int RamAckCount,
                     long NextSeqId,
+                    long NextDeliverSeqId,
                     int PersistentCount,
                     double AvgIngressRate,
                     double AvgEgressRate,
                     double AvgAckIngressRate,
                     double AvgAckEgressRate) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public double AvgAckEgressRate { get; init; }
         public double AvgAckIngressRate { get; init; }
         public double AvgEgressRate { get; init; }
         public double AvgIngressRate { get; init; }
-        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.ObjectReadOnlyListConverter))]
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.ObjectReadOnlyListConverter?))]
         public System.Collections.Generic.IReadOnlyList<object?> Delta { get; init; }
         public int Len { get; init; }
+        public string? Mode { get; init; }
+        public long NextDeliverSeqId { get; init; }
         public long NextSeqId { get; init; }
         public int PendingAcks { get; init; }
         public int PersistentCount { get; init; }
@@ -356,7 +365,9 @@ namespace EasyNetQ.Management.Client.Model
         public int Q4 { get; init; }
         public int RamAckCount { get; init; }
         public int RamMsgCount { get; init; }
-        public string TargetRamCount { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.DoubleNamedFloatingPointLiteralsConverter?))]
+        public double TargetRamCount { get; init; }
+        public int Version { get; init; }
     }
     public class Binding : System.IEquatable<EasyNetQ.Management.Client.Model.Binding>
     {
