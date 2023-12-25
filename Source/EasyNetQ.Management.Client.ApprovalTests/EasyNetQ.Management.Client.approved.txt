@@ -1260,7 +1260,7 @@ namespace EasyNetQ.Management.Client.Model
                     string Name,
                     string Vhost,
                     string Node,
-                    string Timestamp,
+                    System.DateTime Timestamp,
                     string Type,
                     string State,
                     string? SrcProtocol = null,
@@ -1294,7 +1294,8 @@ namespace EasyNetQ.Management.Client.Model
         public string? SrcQueue { get; init; }
         public string? SrcUri { get; init; }
         public string State { get; init; }
-        public string Timestamp { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.DateTimeConverter?))]
+        public System.DateTime Timestamp { get; init; }
         public string Type { get; init; }
         public string Vhost { get; init; }
     }
