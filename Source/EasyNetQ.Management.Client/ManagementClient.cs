@@ -41,6 +41,7 @@ public class ManagementClient : IManagementClient
     private static readonly RelativePath Definitions = Api / "definitions";
     private static readonly RelativePath Health = Api / "health";
     private static readonly RelativePath Rebalance = Api / "rebalance";
+    private static readonly RelativePath ShovelStatuses = Api / "shovels";
 
     private static readonly Dictionary<string, string> GetQueuesWithoutStatsQueryParameters = new Dictionary<string, string> {
         { "disable_stats", "true" },
@@ -822,5 +823,15 @@ public class ManagementClient : IManagementClient
         }
 
         return mergedQueryParameters;
+    }
+
+    public Task<IReadOnlyList<ShovelStatus>> GetShovelStatusesAsync(CancellationToken cancellationToken = default)
+    {
+        return GetAsync<IReadOnlyList<ShovelStatus>>(ShovelStatuses, cancellationToken);
+    }
+
+    public Task<IReadOnlyList<ShovelStatus>> GetShovelStatusesAsync(string vhostName, CancellationToken cancellationToken = default)
+    {
+        return GetAsync<IReadOnlyList<ShovelStatus>>(ShovelStatuses / vhostName, cancellationToken);
     }
 }

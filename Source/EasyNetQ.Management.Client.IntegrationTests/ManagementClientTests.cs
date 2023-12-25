@@ -1419,4 +1419,148 @@ public class ManagementClientTests
         var shovel = await fixture.ManagementClient.GetShovelAsync(Vhost.Name, shovelName);
         Assert.Contains(shovelName, shovel.Name);
     }
+
+    [Fact]
+    public async Task Should_be_able_to_get_shovel_statuses()
+    {
+        var srcUri = new AmqpUri(fixture.Endpoint.Host, 5672, fixture.User, fixture.Password);
+        var destUri = new AmqpUri(fixture.Endpoint.Host, 5672, fixture.User, fixture.Password);
+
+        var shovelName = "exchange-shovel";
+        var parameterShovelValue = new ParameterShovelValue
+            (
+                SrcProtocol: AmqpProtocol.AMQP091,
+                SrcUri: srcUri.ToString(),
+                SrcExchange: "test-exchange-src",
+                SrcExchangeKey: "aaa",
+                SrcDeleteAfter: "never",
+                SrcPrefetchCount: 10,
+                DestProtocol: AmqpProtocol.AMQP091,
+                DestUri: destUri.ToString(),
+                DestExchange: "test-exchange-dest",
+                DestExchangeKey: "bbb",
+                DestAddForwardHeaders: false,
+                DestAddTimestampHeader: false,
+                AckMode: "on-confirm",
+                ReconnectDelay: 10
+            );
+
+        await fixture.ManagementClient.CreateShovelAsync(
+            vhostName: Vhost.Name,
+            shovelName,
+            parameterShovelValue
+        );
+
+        while (true)
+        {
+            var shovelStatuses = await fixture.ManagementClient.GetShovelStatusesAsync();
+            try
+            {
+                shovelStatuses.Should().ContainEquivalentOf(
+                    new ShovelStatus(
+                        Name: shovelName,
+                        Vhost: Vhost.Name,
+                        Node: "rabbit@easynetq",
+                        Timestamp: default,
+                        Type: "dynamic",
+                        State: "starting"),
+                    options => options.Excluding(ss => ss.Timestamp));
+            }
+            catch
+            {
+                shovelStatuses.Should().ContainEquivalentOf(
+                    new ShovelStatus(
+                        Name: shovelName,
+                        Vhost: Vhost.Name,
+                        Node: "rabbit@easynetq",
+                        Timestamp: default,
+                        Type: "dynamic",
+                        State: "terminated",
+
+                        Reason: "\"needed a restart\""
+                    ),
+                    options => options.Excluding(ss => ss.Timestamp));
+                break;
+            }
+        }
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_get_shovel_statuses_by_vhost()
+    {
+        await fixture.ManagementClient.CreateVhostAsync(TestVHost);
+        var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
+        vhost.Name.Should().Be(TestVHost);
+
+        var srcUri = new AmqpUri(fixture.Endpoint.Host, 5672, fixture.User, fixture.Password);
+        var destUri = new AmqpUri(fixture.Endpoint.Host, 5672, fixture.User, fixture.Password);
+
+        var shovelName = "queue-shovel-vhost";
+        var parameterShovelValue = new ParameterShovelValue
+            (
+                SrcProtocol: AmqpProtocol.AMQP091,
+                SrcUri: srcUri.ToString(),
+                SrcQueue: "test-queue-src",
+                SrcQueueArguments: new Dictionary<string, object?> { { "x-queue-mode", "lazy" } },
+                SrcDeleteAfter: "never",
+                SrcPrefetchCount: 10,
+                DestProtocol: AmqpProtocol.AMQP091,
+                DestUri: destUri.ToString(),
+                DestQueue: "test-queue-dest",
+                DestQueueArguments: new Dictionary<string, object?> { { "x-queue-mode", "lazy" } },
+                DestAddForwardHeaders: false,
+                DestAddTimestampHeader: false,
+                AckMode: "on-confirm",
+                ReconnectDelay: 10
+            );
+
+        await fixture.ManagementClient.CreateShovelAsync(
+            vhostName: vhost.Name,
+            shovelName,
+            parameterShovelValue
+        );
+
+        while (true)
+        {
+            var shovelStatuses = await fixture.ManagementClient.GetShovelStatusesAsync(vhost.Name);
+            try
+            {
+                shovelStatuses.Should().ContainEquivalentOf(
+                    new ShovelStatus(
+                        Name: shovelName,
+                        Vhost: vhost.Name,
+                        Node: "rabbit@easynetq",
+                        Timestamp: default,
+                        Type: "dynamic",
+                        State: "starting"),
+                    options => options.Excluding(ss => ss.Timestamp));
+            }
+            catch
+            {
+                shovelStatuses.Should().ContainEquivalentOf(
+                    new ShovelStatus(
+                        Name: shovelName,
+                        Vhost: vhost.Name,
+                        Node: "rabbit@easynetq",
+                        Timestamp: default,
+                        Type: "dynamic",
+                        State: "running",
+
+                        SrcProtocol: parameterShovelValue.SrcProtocol,
+                        SrcUri: parameterShovelValue.SrcUri,
+                        SrcQueue: parameterShovelValue.SrcQueue,
+                        SrcExchange: parameterShovelValue.SrcExchange,
+                        SrcExchangeKey: parameterShovelValue.SrcExchangeKey,
+                        DestProtocol: parameterShovelValue.DestProtocol,
+                        DestUri: parameterShovelValue.DestUri,
+                        DestQueue: parameterShovelValue.DestQueue,
+                        DestExchange: parameterShovelValue.DestExchange,
+                        DestExchangeKey: parameterShovelValue.DestExchangeKey,
+                        BlockedStatus: "running"
+                    ),
+                    options => options.Excluding(ss => ss.Timestamp));
+                break;
+            }
+        }
+    }
 }
