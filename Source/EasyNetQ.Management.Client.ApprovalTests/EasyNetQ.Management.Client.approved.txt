@@ -1051,8 +1051,10 @@ namespace EasyNetQ.Management.Client.Model
                     string? FederationUpstream = null,
                     string? FederationUpstreamSet = null,
                     string? QueueMode = null) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.Dictionary<string, object>? ExtensionData { get; set; }
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("alternate-exchange")]
         public string? AlternateExchange { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("consumer-timeout")]
@@ -1166,8 +1168,10 @@ namespace EasyNetQ.Management.Client.Model
                     EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails,
                     EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails,
                     EasyNetQ.Management.Client.Model.MessageStats? MessageStats) { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.Dictionary<string, object>? ExtensionData { get; set; }
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public long ActiveConsumers { get; init; }
         public EasyNetQ.Management.Client.Model.BackingQueueStatus? BackingQueueStatus { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails { get; init; }
