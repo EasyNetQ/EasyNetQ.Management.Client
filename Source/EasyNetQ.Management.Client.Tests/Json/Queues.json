@@ -22,7 +22,7 @@
       "q4": 1,
       "len": 1,
       "pending_acks": 0,
-      "target_ram_count": "infinity",
+      "target_ram_count": 0,
       "ram_msg_count": 1,
       "ram_ack_count": 0,
       "next_seq_id": 4,
