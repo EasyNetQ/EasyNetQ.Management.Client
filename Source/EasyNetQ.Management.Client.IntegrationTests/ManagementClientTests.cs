@@ -237,9 +237,9 @@ public class ManagementClientTests
         const long maxLengthBytes = 5000;
         const Overflow overflow = Overflow.RejectPublish;
         uint? consumerTimeout = fixture.RabbitmqVersion >= new Version("3.12") ? 3600000 : null;
-        Dictionary<string, object> extensionData = new Dictionary<string, object> { { "max-in-memory-length", 1000000 } };
+        Dictionary<string, object?> extensionData = new Dictionary<string, object?> { { "max-in-memory-length", 1000000 } };
 
-        await fixture.ManagementClient.CreatePolicyAsync(
+        Policy policy =
             new Policy(
                 Name: policyName,
                 Pattern: "averyuncommonpattern",
@@ -272,34 +272,12 @@ public class ManagementClientTests
                 )
                 { ExtensionData = extensionData },
                 Priority: priority
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Priority == priority
-                 && p.Definition.HaMode == haMode
-                 && p.Definition.HaSyncMode == haSyncMode
-                 && p.Definition.HaPromoteOnFailure == haPromoteOnFailure
-                 && p.Definition.HaPromoteOnShutdown == haPromoteOnShutdown
-                 && p.Definition.QueueVersion == queueVersion
-                 && p.Definition.QueueMasterLocator == queueMasterLocator
-                 && p.Definition.DeliveryLimit == deliveryLimit
-                 && p.Definition.DeadLetterStrategy == deadLetterStrategy
-                 && p.Definition.QueueLeaderLocator == queueLeaderLocator
-                 && p.Definition.MaxAge == maxAge
-                 && p.Definition.StreamMaxSegmentSizeBytes == streamMaxSegmentSizeBytes
-                 && p.Definition.AlternateExchange == alternateExchange
-                 && p.Definition.DeadLetterExchange == deadLetterExchange
-                 && p.Definition.DeadLetterRoutingKey == deadLetterRoutingKey
-                 && p.Definition.MessageTtl == messageTtl
-                 && p.Definition.Expires == expires
-                 && p.Definition.MaxLength == maxLength
-                 && p.Definition.MaxLengthBytes == maxLengthBytes
-                 && p.Definition.Overflow == overflow
-                 && p.Definition.ConsumerTimeout == consumerTimeout
-                 && p.Definition.ExtensionData.Keys.Order().SequenceEqual(extensionData.Keys.Order()))
-        );
+            );
+
+        await fixture.ManagementClient.CreatePolicyAsync(policy);
+
+        var policies = await fixture.ManagementClient.GetPoliciesAsync();
+        policies.Should().ContainEquivalentOf(policy, options => options.Excluding(o => o.Definition.JsonExtensionData));
     }
 
     [Fact]
@@ -790,9 +768,12 @@ public class ManagementClientTests
         );
 
         queue.Name.Should().Be(TestQueue);
-        queue.MessagesDetails.Samples.Count.Should().BeGreaterThan(0);
-        queue.MessagesReadyDetails.Samples.Count.Should().BeGreaterThan(0);
-        queue.MessagesUnacknowledgedDetails.Samples.Count.Should().BeGreaterThan(0);
+        queue.MessagesDetails.Should().NotBeNull();
+        queue.MessagesDetails!.Samples.Should().NotBeNullOrEmpty();
+        queue.MessagesReadyDetails.Should().NotBeNull();
+        queue.MessagesReadyDetails!.Samples.Should().NotBeNullOrEmpty();
+        queue.MessagesUnacknowledgedDetails.Should().NotBeNull();
+        queue.MessagesUnacknowledgedDetails!.Samples.Should().NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -806,9 +787,12 @@ public class ManagementClientTests
         var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueue, new LengthsCriteria(age, increment));
 
         queue.Name.Should().Be(TestQueue);
-        queue.MessagesDetails.Samples.Count.Should().BeGreaterThan(0);
-        queue.MessagesReadyDetails.Samples.Count.Should().BeGreaterThan(0);
-        queue.MessagesUnacknowledgedDetails.Samples.Count.Should().BeGreaterThan(0);
+        queue.MessagesDetails.Should().NotBeNull();
+        queue.MessagesDetails!.Samples.Should().NotBeNullOrEmpty();
+        queue.MessagesReadyDetails.Should().NotBeNull();
+        queue.MessagesReadyDetails!.Samples.Should().NotBeNullOrEmpty();
+        queue.MessagesUnacknowledgedDetails.Should().NotBeNull();
+        queue.MessagesUnacknowledgedDetails!.Samples.Should().NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -1073,9 +1057,13 @@ public class ManagementClientTests
         foreach (var consumer in await fixture.ManagementClient.GetConsumersAsync())
         {
             output.WriteLine("consumer.ConsumerTag = {0}", consumer.ConsumerTag);
-            output.WriteLine("consumer.ChannelDetails.ConnectionName = {0}", consumer.ChannelDetails.ConnectionName);
-            output.WriteLine("consumer.ChannelDetails.ConnectionName = {0}", consumer.ChannelDetails.ConnectionName);
-            output.WriteLine("consumer.ChannelDetails.Node = {0}", consumer.ChannelDetails.Node);
+            consumer.ChannelDetails.Should().NotBeNull();
+            if (consumer.ChannelDetails != null)
+            {
+                output.WriteLine("consumer.ChannelDetails.ConnectionName = {0}", consumer.ChannelDetails.ConnectionName);
+                output.WriteLine("consumer.ChannelDetails.ConnectionName = {0}", consumer.ChannelDetails.ConnectionName);
+                output.WriteLine("consumer.ChannelDetails.Node = {0}", consumer.ChannelDetails.Node);
+            }
         }
     }
 
