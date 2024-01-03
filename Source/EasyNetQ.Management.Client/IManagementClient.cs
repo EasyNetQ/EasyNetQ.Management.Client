@@ -747,4 +747,30 @@ public interface IManagementClient : IDisposable
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task RebalanceQueuesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all shovel statuses.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<ShovelStatus>> GetShovelStatusesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all shovel statuses for a virtual host.
+    /// </summary>
+    /// <param name="vhostName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<ShovelStatus>> GetShovelStatusesAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    // Current implementation in RabbitMQ has a lot of bugs
+    // 
+    // /// <summary>
+    // ///     Get an individual shovel status by name.
+    // /// </summary>
+    // /// <param name="vhostName"></param>
+    // /// <param name="shovelName"></param>
+    // /// <param name="cancellationToken"></param>
+    // /// <returns></returns>
+    // Task<ShovelStatus> GetShovelStatusAsync(string vhostName, string shovelName, CancellationToken cancellationToken = default);
 }
