@@ -15,7 +15,7 @@ public class UnexpectedHttpStatusCodeException : Exception
 
     private const string NoRequest = "<null>";
 
-    public HttpStatusCode StatusCode { get; init; }
+    public HttpStatusCode StatusCode { get; private init; }
     public int StatusCodeNumber => (int)StatusCode;
 
     public UnexpectedHttpStatusCodeException()

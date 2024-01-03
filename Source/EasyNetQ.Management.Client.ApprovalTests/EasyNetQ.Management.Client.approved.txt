@@ -272,6 +272,7 @@ namespace EasyNetQ.Management.Client
     public class UnexpectedHttpStatusCodeException : System.Exception
     {
         public UnexpectedHttpStatusCodeException() { }
+        public UnexpectedHttpStatusCodeException(System.Net.Http.HttpResponseMessage response) { }
         public UnexpectedHttpStatusCodeException(System.Net.HttpStatusCode statusCode) { }
         public UnexpectedHttpStatusCodeException(string message) { }
         protected UnexpectedHttpStatusCodeException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
