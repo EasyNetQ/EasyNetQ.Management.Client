@@ -13,8 +13,10 @@ public class UnexpectedHttpStatusCodeException : Exception
     //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
     //
 
-    public HttpStatusCode StatusCode { get; private set; }
-    public int StatusCodeNumber { get; private set; }
+    private const string NoRequest = "<null>";
+
+    public HttpStatusCode StatusCode { get; private init; }
+    public int StatusCodeNumber => (int)StatusCode;
 
     public UnexpectedHttpStatusCodeException()
     {
@@ -24,7 +26,12 @@ public class UnexpectedHttpStatusCodeException : Exception
         base($"Unexpected Status Code: {(int)statusCode} {statusCode}")
     {
         StatusCode = statusCode;
-        StatusCodeNumber = (int)statusCode;
+    }
+
+    public UnexpectedHttpStatusCodeException(HttpResponseMessage response) :
+        base($"Unexpected Status Code: {(int)response.StatusCode} {response.StatusCode} from request: {response.RequestMessage?.ToString() ?? NoRequest}")
+    {
+        StatusCode = response.StatusCode;
     }
 
     public UnexpectedHttpStatusCodeException(string message) : base(message)
