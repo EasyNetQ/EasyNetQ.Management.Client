@@ -429,13 +429,13 @@ public class ManagementClient : IManagementClient
 
     public Task<IReadOnlyList<Binding>> GetExchangeBindingsAsync(
         string vhostName,
-        string fromExchangeName,
-        string toExchangeName,
+        string sourceExchangeName,
+        string destinationExchangeName,
         CancellationToken cancellationToken = default
     )
     {
         return GetAsync<IReadOnlyList<Binding>>(
-            Bindings / vhostName / "e" / fromExchangeName / "e" / toExchangeName,
+            Bindings / vhostName / "e" / sourceExchangeName / "e" / destinationExchangeName,
             cancellationToken
         );
     }
@@ -456,14 +456,14 @@ public class ManagementClient : IManagementClient
 
     public Task DeleteExchangeBindingAsync(
         string vhostName,
-        string fromExchangeName,
-        string toExchangeName,
+        string sourceExchangeName,
+        string destinationExchangeName,
         string propertiesKey,
         CancellationToken cancellationToken = default
     )
     {
         return DeleteAsync(
-            Bindings / vhostName / "e" / fromExchangeName / "e" / toExchangeName / propertiesKey,
+            Bindings / vhostName / "e" / sourceExchangeName / "e" / destinationExchangeName / propertiesKey,
             cancellationToken
         );
     }
@@ -560,11 +560,11 @@ public class ManagementClient : IManagementClient
     public Task DeleteParameterAsync(
         string componentName,
         string vhostName,
-        string name,
+        string parameterName,
         CancellationToken cancellationToken = default
     )
     {
-        return DeleteAsync(Parameters / componentName / vhostName / name, cancellationToken);
+        return DeleteAsync(Parameters / componentName / vhostName / parameterName, cancellationToken);
     }
 
     public Task CreateUserAsync(UserInfo userInfo, CancellationToken cancellationToken = default)
@@ -706,7 +706,7 @@ public class ManagementClient : IManagementClient
         if (falseCondition(response.StatusCode))
             return false;
 
-        throw new UnexpectedHttpStatusCodeException(response.StatusCode);
+        throw new UnexpectedHttpStatusCodeException(response);
     }
 
     private Task<T> GetAsync<T>(RelativePath path, CancellationToken cancellationToken = default) => GetAsync<T>(path, null, cancellationToken);

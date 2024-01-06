@@ -29,7 +29,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{D4B5
 		..\.github\dependabot.yml = ..\.github\dependabot.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyNetQ.Management.Client.ApprovalTests", "EasyNetQ.Management.Client.ApprovalTests\EasyNetQ.Management.Client.ApprovalTests.csproj", "{6DA052F6-D896-458B-95B4-898E3E8847BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyNetQ.Management.Client.ApprovalTests", "EasyNetQ.Management.Client.ApprovalTests\EasyNetQ.Management.Client.ApprovalTests.csproj", "{6DA052F6-D896-458B-95B4-898E3E8847BD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyNetQ.Management.Client.ExtensionsGenerator", "EasyNetQ.Management.Client.ExtensionsGenerator\EasyNetQ.Management.Client.ExtensionsGenerator.csproj", "{042B7330-1621-41AA-82EF-954E66FF4935}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{6DA052F6-D896-458B-95B4-898E3E8847BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DA052F6-D896-458B-95B4-898E3E8847BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DA052F6-D896-458B-95B4-898E3E8847BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{042B7330-1621-41AA-82EF-954E66FF4935}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{042B7330-1621-41AA-82EF-954E66FF4935}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{042B7330-1621-41AA-82EF-954E66FF4935}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{042B7330-1621-41AA-82EF-954E66FF4935}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -34,11 +34,11 @@ public class ScenarioTest
         await management.IsAliveAsync(vhost);
 
         // create an exchange
-        await management.CreateExchangeAsync(new ExchangeInfo("my_exchange", "direct"), vhost);
+        await management.CreateExchangeAsync(vhost, new ExchangeInfo("my_exchange", "direct"));
         var exchange = await management.GetExchangeAsync(vhost, "my_exchange");
 
         // create a queue
-        await management.CreateQueueAsync(new QueueInfo("my_queue"), vhost);
+        await management.CreateQueueAsync(vhost, new QueueInfo("my_queue"));
         var queue = await fixture.ManagementClient.GetQueueAsync(vhost, "my_queue");
 
         // bind the exchange to the queue
