@@ -17,12 +17,12 @@ public class ExtensionsGenerator : ISourceGenerator
         var typeNames = new List<string> { typeName, typeExtensionsName };
         var types = typeNames.Select(tn => compilation.GetTypeByMetadataName(tn) ?? throw new KeyNotFoundException(tn));
 
-        Dictionary<QualifiedNameSyntax, CompilationUnitSyntax> compilationUnits = new();
+        Dictionary<string, CompilationUnitSyntax> compilationUnits = new();
 
         var thisParameter = "this IManagementClient client".GetParameterSyntax();
+        QualifiedNameSyntax extensionsClassName = (SyntaxFactory.ParseTypeName(typeExtensionsName) as QualifiedNameSyntax)!;
 
         {
-            QualifiedNameSyntax extensionsClassName = (SyntaxFactory.ParseTypeName($"{typeExtensionsName}AutogenReplacement") as QualifiedNameSyntax)!;
             var fileScopedNamespaceDeclaration = SyntaxFactory.FileScopedNamespaceDeclaration(extensionsClassName.Left)
                 .WithLeadingTrivia(SyntaxFactory.Trivia(SyntaxFactory.NullableDirectiveTrivia(SyntaxFactory.Token(SyntaxKind.EnableKeyword), true)));
 
@@ -87,14 +87,12 @@ public class ExtensionsGenerator : ISourceGenerator
                 .AddMembers(fileScopedNamespaceDeclaration)
                 .NormalizeWhitespace(eol: "\n");
 
-            compilationUnits[extensionsClassName] = compilationUnit;
+            compilationUnits[$"{extensionsClassName.Right}Replacement"] = compilationUnit;
 
             compilation = compilation.AddSyntaxTrees(compilationUnit.SyntaxTree);
-            typeNames.Add(extensionsClassName.ToString());
         }
 
         {
-            QualifiedNameSyntax extensionsClassName = (SyntaxFactory.ParseTypeName($"{typeExtensionsName}AutogenSync") as QualifiedNameSyntax)!;
             var fileScopedNamespaceDeclaration = SyntaxFactory.FileScopedNamespaceDeclaration(extensionsClassName.Left)
                 .WithLeadingTrivia(SyntaxFactory.Trivia(SyntaxFactory.NullableDirectiveTrivia(SyntaxFactory.Token(SyntaxKind.EnableKeyword), true)));
 
@@ -109,12 +107,12 @@ public class ExtensionsGenerator : ISourceGenerator
                 .AddMembers(fileScopedNamespaceDeclaration)
                 .NormalizeWhitespace(eol: "\n");
 
-            compilationUnits[extensionsClassName] = compilationUnit;
+            compilationUnits[$"{extensionsClassName.Right}Sync"] = compilationUnit;
         }
 
         foreach (var kvpair in compilationUnits)
         {
-            context.AddSource($"{kvpair.Key.Right}.cs", kvpair.Value.ToString());
+            context.AddSource($"{kvpair.Key}.g.cs", kvpair.Value.ToString());
         }
     }
 
