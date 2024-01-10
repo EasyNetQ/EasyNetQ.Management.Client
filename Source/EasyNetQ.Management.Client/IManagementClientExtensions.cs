@@ -2,7 +2,7 @@ using EasyNetQ.Management.Client.Model;
 
 namespace EasyNetQ.Management.Client;
 
-public static class IManagementClientExtensions
+public static partial class IManagementClientExtensions
 {
     // Explicitly define extensions for methods with identical parameters.
     // Code generator will produce unwanted extensions, like DeletePermissionAsync(TopicPermission) and DeleteTopicPermissionAsync(Permission).
