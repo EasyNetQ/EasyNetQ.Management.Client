@@ -37,7 +37,7 @@ public record ConsumerDetail(
 );
 
 public record ChannelDetail(
-    string Name,
+    string? Name,
     [property: JsonConverter(typeof(TolerantInt32Converter))]
     int Number,
     string User,
