@@ -436,7 +436,7 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class ChannelDetail : System.IEquatable<EasyNetQ.Management.Client.Model.ChannelDetail>
     {
-        public ChannelDetail(string Name?, int Number, string User, string ConnectionName, int PeerPort, string PeerHost, string? Node) { }
+        public ChannelDetail(string? Name, int Number, string User, string ConnectionName, int PeerPort, string PeerHost, string? Node) { }
         public string ConnectionName { get; init; }
         public string? Name { get; init; }
         public string? Node { get; init; }
