@@ -11,13 +11,14 @@ internal sealed class EmptyArrayAsDefaultConverter<T> : JsonConverter<T>
         var jsonElement = JsonElement.ParseValue(ref reader);
         switch (jsonElement)
         {
-            case { ValueKind: JsonValueKind.Object }:
+            case { ValueKind: JsonValueKind.Object } when jsonElement.EnumerateObject().Any():
                 return jsonElement.Deserialize<T>(options);
-            case { ValueKind: JsonValueKind.Array } when jsonElement.GetArrayLength() > 0:
-                throw new JsonException("Empty array is required");
-            case { ValueKind: JsonValueKind.Array }:
+            case { ValueKind: JsonValueKind.Object }:
+            case { ValueKind: JsonValueKind.Array } when jsonElement.GetArrayLength() == 0:
             case { ValueKind: JsonValueKind.Null }:
                 return default;
+            case { ValueKind: JsonValueKind.Array }:
+                throw new JsonException($"Unexpected value {jsonElement.GetRawText()}");
             default:
                 throw new JsonException($"Unexpected token type {jsonElement.ValueKind}");
         }
