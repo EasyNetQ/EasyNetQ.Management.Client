@@ -41,7 +41,7 @@ public class EmptyArrayAsDefaultConverterTests
     [Fact]
     public void Should_throw_deserialize_string()
     {
-        var action = () => JsonSerializer.Deserialize<ConsumerDetail>("\"consumer_detail\"");
+        var action = () => JsonSerializer.Deserialize<ConsumerDetail>(string.Format(consumerDetailFormat, "\"consumer_detail\""), ManagementClient.SerializerOptions);
         action.Should().ThrowExactly<JsonException>();
     }
 }
