@@ -30,7 +30,7 @@ public interface IManagementClient : IDisposable
     Task<IReadOnlyList<Node>> GetNodesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     The server definitions - exchanges, queues, bindings, users, virtual hosts, permissions.
+    ///     The server definitions - exchanges, queues, bindings, users, virtual hosts, permissions, topic permissions, policies and parameters.
     ///     Everything apart from messages.
     /// </summary>
     /// <param name="cancellationToken"></param>
@@ -411,14 +411,14 @@ public interface IManagementClient : IDisposable
     ///     Remember, an exchange and a exchange can be bound together many times!
     /// </summary>
     /// <param name="vhostName"></param>
-    /// <param name="fromExchangeName"></param>
-    /// <param name="toExchangeName"></param>
+    /// <param name="sourceExchangeName"></param>
+    /// <param name="destinationExchangeName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<IReadOnlyList<Binding>> GetExchangeBindingsAsync(
         string vhostName,
-        string fromExchangeName,
-        string toExchangeName,
+        string sourceExchangeName,
+        string destinationExchangeName,
         CancellationToken cancellationToken = default
     );
 
@@ -442,14 +442,14 @@ public interface IManagementClient : IDisposable
     ///     Delete the given binding
     /// </summary>
     /// <param name="vhostName"></param>
-    /// <param name="fromExchangeName"></param>
     /// <param name="sourceExchangeName"></param>
+    /// <param name="destinationExchangeName"></param>
     /// <param name="propertiesKey"></param>
     /// <param name="cancellationToken"></param>
     Task DeleteExchangeBindingAsync(
         string vhostName,
-        string fromExchangeName,
         string sourceExchangeName,
+        string destinationExchangeName,
         string propertiesKey,
         CancellationToken cancellationToken = default
     );
@@ -562,7 +562,7 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Declares a test queue, then publishes and consumes a message. Intended for use
     ///     by monitoring tools. If everything is working correctly, will return true.
-    ///     Note: the test queue will not be deleted (to to prevent queue churn if this
+    ///     Note: the test queue will not be deleted (to prevent queue churn if this
     ///     is repeatedly pinged).
     /// </summary>
     /// <param name="vhostName"></param>
@@ -697,12 +697,12 @@ public interface IManagementClient : IDisposable
     /// </summary>
     /// <param name="componentName"></param>
     /// <param name="vhostName"></param>
-    /// <param name="name"></param>
+    /// <param name="parameterName"></param>
     /// <param name="cancellationToken"></param>
     Task DeleteParameterAsync(
         string componentName,
         string vhostName,
-        string name,
+        string parameterName,
         CancellationToken cancellationToken = default
     );
 
