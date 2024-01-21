@@ -14,13 +14,13 @@ internal static class LegacyEndpointBuilder
 
         if (ssl)
         {
-            if (hostUrl.Contains("http://")) throw new ArgumentException("hostUrl is illegal");
-            hostUrl = hostUrl.Contains("https://") ? hostUrl : "https://" + hostUrl;
+            if (hostUrl.StartsWith("http://")) throw new ArgumentException("hostUrl is illegal");
+            hostUrl = hostUrl.StartsWith("https://") ? hostUrl : "https://" + hostUrl;
         }
         else
         {
-            if (hostUrl.Contains("https://")) throw new ArgumentException("hostUrl is illegal");
-            hostUrl = hostUrl.Contains("http://") ? hostUrl : "http://" + hostUrl;
+            if (hostUrl.StartsWith("https://")) throw new ArgumentException("hostUrl is illegal");
+            hostUrl = hostUrl.StartsWith("http://") ? hostUrl : "http://" + hostUrl;
         }
 
         if (!UrlRegex.IsMatch(hostUrl)) throw new ArgumentException("hostUrl is illegal");
