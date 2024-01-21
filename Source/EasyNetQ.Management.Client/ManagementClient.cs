@@ -12,7 +12,6 @@ using EasyNetQ.Management.Client.Serialization;
 using HttpHandler = System.Net.Http.SocketsHttpHandler;
 #else
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Reflection;
 
 using HttpHandler = System.Net.Http.HttpClientHandler;
@@ -78,7 +77,8 @@ public class ManagementClient : IManagementClient
     private static bool DisableUriParserLegacyQuirks(string scheme)
     {
         string uriWithEscapedDotsAndSlashes = $"{scheme}://localhost/{Uri.EscapeDataString("/.")}";
-        if (new Uri(uriWithEscapedDotsAndSlashes).ToString() == uriWithEscapedDotsAndSlashes)
+        string uriParsed = new Uri(uriWithEscapedDotsAndSlashes).ToString();
+        if (uriParsed == uriWithEscapedDotsAndSlashes)
         {
             return false;
         }
@@ -100,7 +100,11 @@ public class ManagementClient : IManagementClient
         }
         setUpdatableFlagsMethod.Invoke(uriParser, new object[] { 0 });
 
-        Trace.Assert(new Uri(uriWithEscapedDotsAndSlashes).ToString() == uriWithEscapedDotsAndSlashes, "Uri..ctor() can't preserve slashes and dots escaped");
+        uriParsed = new Uri(uriWithEscapedDotsAndSlashes).ToString();
+        if (uriParsed != uriWithEscapedDotsAndSlashes)
+        {
+            throw new NotImplementedException($"Uri..ctor() can't preserve slashes and dots escaped. Expected={uriWithEscapedDotsAndSlashes}, actual={uriParsed}");
+        }
 
         return true;
     }
