@@ -17,6 +17,11 @@ jobs:
     name: Lint & Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      max-parallel: 2
+      matrix:
+        dotnet: ['4.8', '7.x']
+      fail-fast: true
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -25,7 +30,7 @@ jobs:
     - name: Setup .NET Core 7.x
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '7.x'
+        dotnet-version: ${{ matrix.dotnet }}
     - name: Install dependencies
       run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
     - name: Check formatting
