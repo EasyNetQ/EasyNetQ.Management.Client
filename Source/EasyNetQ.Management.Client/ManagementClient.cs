@@ -11,6 +11,9 @@ using EasyNetQ.Management.Client.Serialization;
 #if NET6_0
 using HttpHandler = System.Net.Http.SocketsHttpHandler;
 #else
+using System.Collections.Concurrent;
+using System.Reflection;
+
 using HttpHandler = System.Net.Http.HttpClientHandler;
 #endif
 
@@ -70,6 +73,49 @@ public class ManagementClient : IManagementClient
         };
     }
 
+#if NETSTANDARD2_0
+    private static bool DisableUriParserLegacyQuirks(string scheme)
+    {
+        string uriWithEscapedDotsAndSlashes = $"{scheme}://localhost/{Uri.EscapeDataString("/.")}";
+        string uriParsed = new Uri(uriWithEscapedDotsAndSlashes).ToString();
+        if (uriParsed == uriWithEscapedDotsAndSlashes)
+        {
+            return false;
+        }
+
+        // https://mikehadlow.blogspot.com/2011/08/how-to-stop-systemuri-un-escaping.html
+        var getSyntaxMethod =
+            typeof(UriParser).GetMethod("GetSyntax", BindingFlags.Static | BindingFlags.NonPublic);
+        if (getSyntaxMethod == null)
+        {
+            throw new MissingMethodException("UriParser", "GetSyntax");
+        }
+        var uriParser = getSyntaxMethod.Invoke(null, new object[] { scheme })!;
+
+        var setUpdatableFlagsMethod =
+            uriParser.GetType().GetMethod("SetUpdatableFlags", BindingFlags.Instance | BindingFlags.NonPublic);
+        if (setUpdatableFlagsMethod == null)
+        {
+            throw new MissingMethodException("UriParser", "SetUpdatableFlags");
+        }
+        setUpdatableFlagsMethod.Invoke(uriParser, new object[] { 0 });
+
+        uriParsed = new Uri(uriWithEscapedDotsAndSlashes).ToString();
+        if (uriParsed != uriWithEscapedDotsAndSlashes)
+        {
+            throw new NotImplementedException($"Uri..ctor() can't preserve slashes and dots escaped. Expected={uriWithEscapedDotsAndSlashes}, actual={uriParsed}");
+        }
+
+        return true;
+    }
+
+    private static ConcurrentDictionary<string, bool> s_fixedSchemes = new ConcurrentDictionary<string, bool>();
+    private static void LeaveDotsAndSlashesEscaped(string scheme)
+    {
+        s_fixedSchemes.GetOrAdd(scheme, DisableUriParserLegacyQuirks);
+    }
+#endif
+
     [Obsolete("Please use another constructor")]
     public ManagementClient(
         string hostUrl,
@@ -109,6 +155,10 @@ public class ManagementClient : IManagementClient
         basicAuthHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
         httpClient = new HttpClient(httpHandler) { Timeout = timeout ?? DefaultTimeout, BaseAddress = endpoint };
         disposeHttpClient = true;
+
+#if NETSTANDARD2_0
+        LeaveDotsAndSlashesEscaped(Endpoint.Scheme);
+#endif
     }
 
     public ManagementClient(HttpClient httpClient, string username, string password)
@@ -123,6 +173,10 @@ public class ManagementClient : IManagementClient
         basicAuthHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
         configureHttpRequestMessage = null;
         disposeHttpClient = false;
+
+#if NETSTANDARD2_0
+        LeaveDotsAndSlashesEscaped(Endpoint.Scheme);
+#endif
     }
 
     public Uri Endpoint => httpClient.BaseAddress!;
@@ -722,7 +776,15 @@ public class ManagementClient : IManagementClient
 
         response.EnsureExpectedStatusCode(statusCode => statusCode == HttpStatusCode.OK);
 
-        return (await response.Content.ReadFromJsonAsync<T>(SerializerOptions, cancellationToken).ConfigureAwait(false))!;
+        try
+        {
+            return (await response.Content.ReadFromJsonAsync<T>(SerializerOptions, cancellationToken).ConfigureAwait(false))!;
+        }
+        catch (Exception e) when (e is ArgumentNullException || e is JsonException)
+        {
+            string stringContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            throw new JsonException($"Response content doesn't conform to the JSON schema: {stringContent}", e);
+        }
     }
 
     private async Task<TResult> PostAsync<TItem, TResult>(
@@ -737,7 +799,15 @@ public class ManagementClient : IManagementClient
 
         response.EnsureExpectedStatusCode(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent);
 
-        return (await response.Content.ReadFromJsonAsync<TResult>(SerializerOptions, cancellationToken).ConfigureAwait(false))!;
+        try
+        {
+            return (await response.Content.ReadFromJsonAsync<TResult>(SerializerOptions, cancellationToken).ConfigureAwait(false))!;
+        }
+        catch (Exception e) when (e is ArgumentNullException || e is JsonException)
+        {
+            string stringContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            throw new JsonException($"Response content doesn't conform to the JSON schema: {stringContent}", e);
+        }
     }
 
     private async Task PostAsync<TItem>(
