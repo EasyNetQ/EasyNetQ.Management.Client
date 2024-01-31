@@ -4,7 +4,6 @@ using EasyNetQ.Management.Client.Serialization;
 namespace EasyNetQ.Management.Client.Model;
 
 public record ExchangeInfo(
-    string Name,
     string Type,
     bool AutoDelete = false,
     bool Durable = true,

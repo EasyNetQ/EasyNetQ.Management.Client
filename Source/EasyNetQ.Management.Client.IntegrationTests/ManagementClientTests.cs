@@ -27,7 +27,7 @@ public class ManagementClientTests
 
     private async Task<Exchange> CreateExchange(string exchangeName)
     {
-        await fixture.ManagementClient.CreateExchangeAsync(Vhost, new ExchangeInfo(exchangeName, "direct"));
+        await fixture.ManagementClient.CreateExchangeAsync(Vhost, exchangeName, new ExchangeInfo("direct"));
         return await fixture.ManagementClient.GetExchangeAsync(Vhost, exchangeName);
     }
 
@@ -46,8 +46,8 @@ public class ManagementClientTests
 
     private async Task<Queue> CreateTestQueueInVhost(string queueName, Vhost vhost)
     {
-        var queueInfo = new QueueInfo(queueName);
-        await fixture.ManagementClient.CreateQueueAsync(vhost, queueInfo);
+        var queueInfo = new QueueInfo();
+        await fixture.ManagementClient.CreateQueueAsync(vhost, queueName, queueInfo);
         return await fixture.ManagementClient.GetQueueAsync(vhost, queueName);
     }
 
@@ -62,8 +62,8 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_change_the_password_of_a_user()
     {
-        var userInfo = UserInfo.ByPassword(TestUser, "topSecret").AddTag(UserTags.Monitoring).AddTag(UserTags.Management);
-        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        var userInfo = UserInfo.ByPassword("topSecret").AddTag(UserTags.Monitoring).AddTag(UserTags.Management);
+        await fixture.ManagementClient.CreateUserAsync(TestUser, userInfo);
 
         var user = await fixture.ManagementClient.GetUserAsync(TestUser);
 
@@ -98,7 +98,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_a_queue()
     {
-        await fixture.ManagementClient.CreateQueueAsync(Vhost, new QueueInfo(TestQueue));
+        await fixture.ManagementClient.CreateQueueAsync(Vhost, TestQueue, new QueueInfo());
         var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueue);
 
         queue.Name.Should().Be(TestQueue);
@@ -109,10 +109,11 @@ public class ManagementClientTests
     {
         const string exchangeName = "test-dead-letter-exchange";
         const string argumentKey = "x-dead-letter-exchange";
-        var queueInfo = new QueueInfo(Name: $"{TestQueue}1", Arguments: new Dictionary<string, object?> { { argumentKey, exchangeName } });
+        var queueName = $"{TestQueue}1";
+        var queueInfo = new QueueInfo(Arguments: new Dictionary<string, object?> { { argumentKey, exchangeName } });
 
-        await fixture.ManagementClient.CreateQueueAsync(Vhost, queueInfo);
-        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, queueInfo.Name);
+        await fixture.ManagementClient.CreateQueueAsync(Vhost, queueName, queueInfo);
+        var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, queueName);
         queue.Arguments[argumentKey].Should().NotBeNull();
         queue.Arguments[argumentKey].Should().Be(exchangeName);
     }
@@ -120,9 +121,9 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_a_queue_with_plus_char_in_the_name()
     {
-        var queueInfo = new QueueInfo(TestQueueWithPlusChar);
+        var queueInfo = new QueueInfo();
 
-        await fixture.ManagementClient.CreateQueueAsync(Vhost, queueInfo);
+        await fixture.ManagementClient.CreateQueueAsync(Vhost, TestQueueWithPlusChar, queueInfo);
         var queue = await fixture.ManagementClient.GetQueueAsync(Vhost, TestQueueWithPlusChar);
 
         queue.Name.Should().Be(TestQueueWithPlusChar);
@@ -165,9 +166,9 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_a_user()
     {
-        var userInfo = UserInfo.ByPassword(TestUser, "topSecret").AddTag(UserTags.Administrator);
+        var userInfo = UserInfo.ByPassword("topSecret").AddTag(UserTags.Administrator);
 
-        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        await fixture.ManagementClient.CreateUserAsync(TestUser, userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(TestUser);
 
         user.Name.Should().Be(TestUser);
@@ -181,9 +182,9 @@ public class ManagementClientTests
         // Hash calculated using RabbitMq hash computing algorithm using Sha256
         // See https://www.rabbitmq.com/passwords.html
         var passwordHash = "Qlp9Dgrqvx1S1VkuYsoWwgUD2XW2gZLuqQwreE+PAsPZETgo"; //"topSecret"
-        var userInfo = UserInfo.ByPasswordHash(testUser, passwordHash).AddTag(UserTags.Administrator);
+        var userInfo = UserInfo.ByPasswordHash(passwordHash).AddTag(UserTags.Administrator);
 
-        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        await fixture.ManagementClient.CreateUserAsync(testUser, userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(testUser);
 
         user.Name.Should().Be(testUser);
@@ -192,9 +193,9 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_a_user_with_the_policymaker_tag()
     {
-        var userInfo = UserInfo.ByPassword(TestUser, "topSecret").AddTag(UserTags.Policymaker);
+        var userInfo = UserInfo.ByPassword("topSecret").AddTag(UserTags.Policymaker);
 
-        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        await fixture.ManagementClient.CreateUserAsync(TestUser, userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(TestUser);
 
         user.Name.Should().Be(TestUser);
@@ -204,9 +205,9 @@ public class ManagementClientTests
     public async Task Should_be_able_to_create_a_user_without_password()
     {
         var testUser = "empty";
-        var userInfo = UserInfo.ByPassword(testUser, "").AddTag(UserTags.Administrator);
+        var userInfo = UserInfo.ByPassword("").AddTag(UserTags.Administrator);
 
-        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        await fixture.ManagementClient.CreateUserAsync(testUser, userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(testUser);
 
         user.Name.Should().Be(testUser);
@@ -312,9 +313,9 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_create_an_exchange_with_plus_char_in_the_name()
     {
-        var exchangeInfo = new ExchangeInfo(TestExchangeTestQueueWithPlusChar, "direct");
+        var exchangeInfo = new ExchangeInfo("direct");
 
-        await fixture.ManagementClient.CreateExchangeAsync(Vhost, exchangeInfo);
+        await fixture.ManagementClient.CreateExchangeAsync(Vhost, TestExchangeTestQueueWithPlusChar, exchangeInfo);
         var exchange = await fixture.ManagementClient.GetExchangeAsync(Vhost, TestExchangeTestQueueWithPlusChar);
 
         exchange.Name.Should().Be(TestExchangeTestQueueWithPlusChar);
@@ -573,8 +574,8 @@ public class ManagementClientTests
         if (vhost == null)
             throw new EasyNetQTestException($"Test vhost: '{TestVHost}' has not been created");
 
-        var permissionInfo = new PermissionInfo(user.Name);
-        await fixture.ManagementClient.CreatePermissionAsync(vhost, permissionInfo);
+        var permissionInfo = new PermissionInfo();
+        await fixture.ManagementClient.CreatePermissionAsync(vhost, user, permissionInfo);
     }
 
     [Fact]
@@ -588,8 +589,8 @@ public class ManagementClientTests
         if (vhost == null)
             throw new EasyNetQTestException($"Default vhost: '{TestVHost}' has not been created");
 
-        var permissionInfo = new PermissionInfo(user.Name);
-        await fixture.ManagementClient.CreatePermissionAsync(vhost, permissionInfo);
+        var permissionInfo = new PermissionInfo();
+        await fixture.ManagementClient.CreatePermissionAsync(vhost, user, permissionInfo);
     }
 
     [Fact]
@@ -678,13 +679,13 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_delete_permissions()
     {
-        var userInfo = UserInfo.ByPassword(TestUser, "topSecret").AddTag(UserTags.Monitoring).AddTag(UserTags.Management);
-        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        var userInfo = UserInfo.ByPassword("topSecret").AddTag(UserTags.Monitoring).AddTag(UserTags.Management);
+        await fixture.ManagementClient.CreateUserAsync(TestUser, userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(TestUser);
         await fixture.ManagementClient.CreateVhostAsync(TestVHost);
         var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
-        var permissionInfo = new PermissionInfo(user.Name);
-        await fixture.ManagementClient.CreatePermissionAsync(vhost, permissionInfo);
+        var permissionInfo = new PermissionInfo();
+        await fixture.ManagementClient.CreatePermissionAsync(vhost, user, permissionInfo);
 
         var permission = (await fixture.ManagementClient.GetPermissionsAsync())
             .SingleOrDefault(x => x.User == TestUser && x.Vhost == TestVHost);
@@ -816,8 +817,8 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_get_a_user_by_name()
     {
-        var userInfo = UserInfo.ByPassword(TestUser, "topSecret");
-        await fixture.ManagementClient.CreateUserAsync(userInfo);
+        var userInfo = UserInfo.ByPassword("topSecret");
+        await fixture.ManagementClient.CreateUserAsync(TestUser, userInfo);
         (await fixture.ManagementClient.GetUserAsync(TestUser)).Name.Should().Be(TestUser);
     }
 
@@ -904,8 +905,8 @@ public class ManagementClientTests
         await fixture.ManagementClient.CreateVhostAsync(TestVHost);
         var vhost = await fixture.ManagementClient.GetVhostAsync(TestVHost);
         var user = (await fixture.ManagementClient.GetUsersAsync()).Single(x => x.Name == fixture.User);
-        var permissionInfo = new PermissionInfo(user.Name);
-        await fixture.ManagementClient.CreatePermissionAsync(vhost, permissionInfo);
+        var permissionInfo = new PermissionInfo();
+        await fixture.ManagementClient.CreatePermissionAsync(vhost, user, permissionInfo);
         (await fixture.ManagementClient.IsAliveAsync(vhost)).Should().BeTrue();
     }
 
@@ -935,14 +936,14 @@ public class ManagementClientTests
         const string destinationExchangeName = "management_api_test_destination_exchange";
 
         var vhost = await fixture.ManagementClient.GetVhostAsync(Vhost.Name);
-        var sourceExchangeInfo = new ExchangeInfo(sourceExchangeName, "direct");
-        var destinationExchangeInfo = new ExchangeInfo(destinationExchangeName, "direct");
+        var sourceExchangeInfo = new ExchangeInfo("direct");
+        var destinationExchangeInfo = new ExchangeInfo("direct");
 
-        await fixture.ManagementClient.CreateExchangeAsync(vhost, sourceExchangeInfo);
-        var sourceExchange = await fixture.ManagementClient.GetExchangeAsync(vhost, sourceExchangeInfo.Name);
+        await fixture.ManagementClient.CreateExchangeAsync(vhost, sourceExchangeName, sourceExchangeInfo);
+        var sourceExchange = await fixture.ManagementClient.GetExchangeAsync(vhost, sourceExchangeName);
 
-        await fixture.ManagementClient.CreateExchangeAsync(vhost, destinationExchangeInfo);
-        var destinationExchange = await fixture.ManagementClient.GetExchangeAsync(vhost, destinationExchangeInfo.Name);
+        await fixture.ManagementClient.CreateExchangeAsync(vhost, destinationExchangeName, destinationExchangeInfo);
+        var destinationExchange = await fixture.ManagementClient.GetExchangeAsync(vhost, destinationExchangeName);
 
         await fixture.ManagementClient.CreateExchangeBindingAsync(sourceExchange, destinationExchange, new BindingInfo(RoutingKey: "#"));
 
@@ -983,14 +984,14 @@ public class ManagementClientTests
         const string destinationExchangeName = "management_api_test_destination_exchange";
 
         var vhost = await fixture.ManagementClient.GetVhostAsync(Vhost.Name);
-        var sourceExchangeInfo = new ExchangeInfo(sourceExchangeName, "direct");
-        var destinationExchangeInfo = new ExchangeInfo(destinationExchangeName, "direct");
+        var sourceExchangeInfo = new ExchangeInfo("direct");
+        var destinationExchangeInfo = new ExchangeInfo("direct");
 
-        await fixture.ManagementClient.CreateExchangeAsync(vhost, sourceExchangeInfo);
-        var sourceExchange = await fixture.ManagementClient.GetExchangeAsync(vhost, sourceExchangeInfo.Name);
+        await fixture.ManagementClient.CreateExchangeAsync(vhost, sourceExchangeName, sourceExchangeInfo);
+        var sourceExchange = await fixture.ManagementClient.GetExchangeAsync(vhost, sourceExchangeName);
 
-        await fixture.ManagementClient.CreateExchangeAsync(vhost, destinationExchangeInfo);
-        var destinationExchange = await fixture.ManagementClient.GetExchangeAsync(vhost, destinationExchangeInfo.Name);
+        await fixture.ManagementClient.CreateExchangeAsync(vhost, destinationExchangeName, destinationExchangeInfo);
+        var destinationExchange = await fixture.ManagementClient.GetExchangeAsync(vhost, destinationExchangeName);
 
         await fixture.ManagementClient.CreateExchangeBindingAsync(sourceExchange, destinationExchange, new BindingInfo(RoutingKey: "#"));
 

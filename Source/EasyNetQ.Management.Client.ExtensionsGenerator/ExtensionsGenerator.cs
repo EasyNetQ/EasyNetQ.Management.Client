@@ -35,24 +35,24 @@ public class ExtensionsGenerator : ISourceGenerator
                 fileScopedNamespaceDeclaration = fileScopedNamespaceDeclaration
                     .AddReplacementExtensionsClass(extensionsClassName, t, thisParameter,
                         ("string vhostName", null, "exchange.Vhost"),
-                        ("string exchangeName", "Exchange exchange", "exchange.Name")
+                        ("string exchangeName", "ExchangeName exchange", "exchange.Name")
                      );
                 fileScopedNamespaceDeclaration = fileScopedNamespaceDeclaration
                     .AddReplacementExtensionsClass(extensionsClassName, t, thisParameter,
                         ("string vhostName", null, "queue.Vhost"),
-                        ("string queueName", "Queue queue", "queue.Name")
+                        ("string queueName", "QueueName queue", "queue.Name")
                      );
                 fileScopedNamespaceDeclaration = fileScopedNamespaceDeclaration
                     .AddReplacementExtensionsClass(extensionsClassName, t, thisParameter,
                         ("string vhostName", null, "exchange.Vhost"),
-                        ("string exchangeName", "Exchange exchange", "exchange.Name"),
-                        ("string queueName", "Queue queue", "queue.Name")
+                        ("string exchangeName", "ExchangeName exchange", "exchange.Name"),
+                        ("string queueName", "QueueName queue", "queue.Name")
                      );
                 fileScopedNamespaceDeclaration = fileScopedNamespaceDeclaration
                     .AddReplacementExtensionsClass(extensionsClassName, t, thisParameter,
                         ("string vhostName", null, "sourceExchange.Vhost"),
-                        ("string sourceExchangeName", "Exchange sourceExchange", "sourceExchange.Name"),
-                        ("string destinationExchangeName", "Exchange destinationExchange", "destinationExchange.Name")
+                        ("string sourceExchangeName", "ExchangeName sourceExchange", "sourceExchange.Name"),
+                        ("string destinationExchangeName", "ExchangeName destinationExchange", "destinationExchange.Name")
                      );
                 fileScopedNamespaceDeclaration = fileScopedNamespaceDeclaration
                     .AddReplacementExtensionsClass(extensionsClassName, t, thisParameter,

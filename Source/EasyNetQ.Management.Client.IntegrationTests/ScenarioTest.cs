@@ -21,11 +21,11 @@ public class ScenarioTest
         var vhost = await fixture.ManagementClient.GetVhostAsync("my_virtual_host");
 
         // next create a user for that virtual host
-        await fixture.ManagementClient.CreateUserAsync(UserInfo.ByPassword("mike", "topSecret").AddTag(UserTags.Administrator));
+        await fixture.ManagementClient.CreateUserAsync("mike", UserInfo.ByPassword("topSecret").AddTag(UserTags.Administrator));
         var user = await fixture.ManagementClient.GetUserAsync("mike");
 
         // give the new user all permissions on the virtual host
-        await fixture.ManagementClient.CreatePermissionAsync(vhost, new PermissionInfo(user.Name));
+        await fixture.ManagementClient.CreatePermissionAsync(vhost, user, new PermissionInfo());
 
         // now log in again as the new user
         using var management = new ManagementClient(fixture.Endpoint, user.Name, "topSecret");
@@ -34,11 +34,11 @@ public class ScenarioTest
         await management.IsAliveAsync(vhost);
 
         // create an exchange
-        await management.CreateExchangeAsync(vhost, new ExchangeInfo("my_exchange", "direct"));
+        await management.CreateExchangeAsync(vhost, "my_exchange", new ExchangeInfo("direct"));
         var exchange = await management.GetExchangeAsync(vhost, "my_exchange");
 
         // create a queue
-        await management.CreateQueueAsync(vhost, new QueueInfo("my_queue"));
+        await management.CreateQueueAsync(vhost, "my_queue", new QueueInfo());
         var queue = await fixture.ManagementClient.GetQueueAsync(vhost, "my_queue");
 
         // bind the exchange to the queue

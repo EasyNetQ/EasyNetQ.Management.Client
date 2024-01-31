@@ -8,19 +8,13 @@ public class TopicPermissionInfoTests
 
     public TopicPermissionInfoTests()
     {
-        topicPermissionInfo = new TopicPermissionInfo("mikey");
+        topicPermissionInfo = new TopicPermissionInfo("topic_exchange");
     }
 
     [Fact]
-    public void Should_return_the_correct_user_name()
+    public void Should_return_the_correct_exchange()
     {
-        topicPermissionInfo.UserName.Should().Be("mikey");
-    }
-
-    [Fact]
-    public void Should_set_default_exchange_to_null()
-    {
-        topicPermissionInfo.Exchange.Should().BeNull();
+        topicPermissionInfo.Exchange.Should().Be("topic_exchange");
     }
 
     [Fact]
