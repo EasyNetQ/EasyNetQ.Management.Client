@@ -84,26 +84,35 @@ public class ManagementClient : IManagementClient
         }
 
         // https://mikehadlow.blogspot.com/2011/08/how-to-stop-systemuri-un-escaping.html
-        var getSyntaxMethod =
-            typeof(UriParser).GetMethod("GetSyntax", BindingFlags.Static | BindingFlags.NonPublic);
+        var getSyntaxMethod = typeof(UriParser).GetMethod("GetSyntax", BindingFlags.Static | BindingFlags.NonPublic);
         if (getSyntaxMethod == null)
         {
-            throw new MissingMethodException("UriParser", "GetSyntax");
+            throw new MissingMethodException(nameof(UriParser), "GetSyntax");
         }
         var uriParser = getSyntaxMethod.Invoke(null, new object[] { scheme })!;
 
-        var setUpdatableFlagsMethod =
-            uriParser.GetType().GetMethod("SetUpdatableFlags", BindingFlags.Instance | BindingFlags.NonPublic);
+        var setUpdatableFlagsMethod = typeof(UriParser).GetMethod("SetUpdatableFlags", BindingFlags.Instance | BindingFlags.NonPublic);
         if (setUpdatableFlagsMethod == null)
         {
-            throw new MissingMethodException("UriParser", "SetUpdatableFlags");
+            throw new MissingMethodException(nameof(UriParser), "SetUpdatableFlags");
         }
         setUpdatableFlagsMethod.Invoke(uriParser, new object[] { 0 });
 
         uriParsed = new Uri(uriWithEscapedDotsAndSlashes).ToString();
         if (uriParsed != uriWithEscapedDotsAndSlashes)
         {
-            throw new NotImplementedException($"Uri..ctor() can't preserve slashes and dots escaped. Expected={uriWithEscapedDotsAndSlashes}, actual={uriParsed}");
+            string? targetFrameworkName = "unknown";
+            var setupInformationProperty = typeof(AppDomain).GetProperty("SetupInformation");
+            if (setupInformationProperty != null)
+            {
+                var setupInformation = setupInformationProperty.GetValue(AppDomain.CurrentDomain);
+                var targetFrameworkNameProperty = setupInformation.GetType().GetProperty("TargetFrameworkName");
+                if (targetFrameworkNameProperty != null)
+                {
+                    targetFrameworkName = targetFrameworkNameProperty.GetValue(setupInformation) as string;
+                }
+            }
+            throw new NotImplementedException($"Preserving slashes and dots escaped in System.Uri is not supported in TargetFramework={targetFrameworkName}. Expected={uriWithEscapedDotsAndSlashes}, actual={uriParsed}.");
         }
 
         return true;
@@ -295,12 +304,13 @@ public class ManagementClient : IManagementClient
 
     public Task CreateExchangeAsync(
         string vhostName,
+        string exchangeName,
         ExchangeInfo exchangeInfo,
         CancellationToken cancellationToken = default
     )
     {
         return PutAsync(
-            Exchanges / vhostName / exchangeInfo.Name,
+            Exchanges / vhostName / exchangeName,
             exchangeInfo,
             cancellationToken
         );
@@ -380,12 +390,13 @@ public class ManagementClient : IManagementClient
 
     public Task CreateQueueAsync(
         string vhostName,
+        string queueName,
         QueueInfo queueInfo,
         CancellationToken cancellationToken = default
     )
     {
         return PutAsync(
-            Queues / vhostName / queueInfo.Name,
+            Queues / vhostName / queueName,
             queueInfo,
             cancellationToken
         );
@@ -569,11 +580,12 @@ public class ManagementClient : IManagementClient
 
     public Task CreatePolicyAsync(
         string vhostName,
+        string policyName,
         PolicyInfo policyInfo,
         CancellationToken cancellationToken = default
     )
     {
-        return PutAsync(Policies / vhostName / policyInfo.Name, policyInfo, cancellationToken);
+        return PutAsync(Policies / vhostName / policyName, policyInfo, cancellationToken);
     }
 
     public Task DeletePolicyAsync(string vhostName, string policyName, CancellationToken cancellationToken = default)
@@ -621,9 +633,9 @@ public class ManagementClient : IManagementClient
         return DeleteAsync(Parameters / componentName / vhostName / parameterName, cancellationToken);
     }
 
-    public Task CreateUserAsync(UserInfo userInfo, CancellationToken cancellationToken = default)
+    public Task CreateUserAsync(string userName, UserInfo userInfo, CancellationToken cancellationToken = default)
     {
-        return PutAsync(Users / userInfo.Name, userInfo, cancellationToken);
+        return PutAsync(Users / userName, userInfo, cancellationToken);
     }
 
     public Task DeleteUserAsync(string userName, CancellationToken cancellationToken = default)
@@ -636,10 +648,10 @@ public class ManagementClient : IManagementClient
         return GetAsync<IReadOnlyList<Permission>>(Permissions, cancellationToken);
     }
 
-    public Task CreatePermissionAsync(string vhostName, PermissionInfo permissionInfo, CancellationToken cancellationToken = default)
+    public Task CreatePermissionAsync(string vhostName, string userName, PermissionInfo permissionInfo, CancellationToken cancellationToken = default)
     {
         return PutAsync(
-            Permissions / vhostName / permissionInfo.UserName,
+            Permissions / vhostName / userName,
             permissionInfo,
             cancellationToken
         );
@@ -657,12 +669,13 @@ public class ManagementClient : IManagementClient
 
     public Task CreateTopicPermissionAsync(
         string vhostName,
+        string userName,
         TopicPermissionInfo topicPermissionInfo,
         CancellationToken cancellationToken = default
     )
     {
         return PutAsync(
-            TopicPermissions / vhostName / topicPermissionInfo.UserName,
+            TopicPermissions / vhostName / userName,
             topicPermissionInfo,
             cancellationToken
         );

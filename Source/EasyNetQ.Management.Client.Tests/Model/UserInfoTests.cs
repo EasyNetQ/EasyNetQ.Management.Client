@@ -10,7 +10,7 @@ public class UserInfoTests
 
     public UserInfoTests()
     {
-        userInfo = UserInfo.ByPassword(userName, password);
+        userInfo = UserInfo.ByPassword(password);
     }
 
     [Fact]

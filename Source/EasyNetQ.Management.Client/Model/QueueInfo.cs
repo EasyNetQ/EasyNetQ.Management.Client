@@ -4,7 +4,6 @@ using EasyNetQ.Management.Client.Serialization;
 namespace EasyNetQ.Management.Client.Model;
 
 public record QueueInfo(
-    string Name,
     bool AutoDelete = false,
     bool Durable = true,
     [property: JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]

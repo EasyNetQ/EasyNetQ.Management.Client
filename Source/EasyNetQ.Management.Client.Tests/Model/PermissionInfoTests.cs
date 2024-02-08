@@ -8,14 +8,9 @@ public class PermissionInfoTests
 
     public PermissionInfoTests()
     {
-        permissionInfo = new PermissionInfo("mikey");
+        permissionInfo = new PermissionInfo();
     }
 
-    [Fact]
-    public void Should_return_the_correct_user_name()
-    {
-        permissionInfo.UserName.Should().Be("mikey");
-    }
 
     [Fact]
     public void Should_set_default_permissions_to_allow_all()

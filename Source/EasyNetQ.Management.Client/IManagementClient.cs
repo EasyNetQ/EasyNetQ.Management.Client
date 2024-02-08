@@ -226,10 +226,12 @@ public interface IManagementClient : IDisposable
     ///     Creates the given exchange
     /// </summary>
     /// <param name="vhostName"></param>
+    /// <param name="exchangeName"></param>
     /// <param name="exchangeInfo"></param>
     /// <param name="cancellationToken"></param>
     Task CreateExchangeAsync(
         string vhostName,
+        string exchangeName,
         ExchangeInfo exchangeInfo,
         CancellationToken cancellationToken = default
     );
@@ -294,10 +296,12 @@ public interface IManagementClient : IDisposable
     ///     Create the given queue
     /// </summary>
     /// <param name="vhostName"></param>
+    /// <param name="queueName"></param>
     /// <param name="queueInfo"></param>
     /// <param name="cancellationToken"></param>
     Task CreateQueueAsync(
         string vhostName,
+        string queueName,
         QueueInfo queueInfo,
         CancellationToken cancellationToken = default
     );
@@ -494,9 +498,11 @@ public interface IManagementClient : IDisposable
     /// <summary>
     ///     Create a new user
     /// </summary>
-    /// <param name="userInfo">The user to create</param>
+    /// <param name="userName">The user name to create</param>
+    /// <param name="userInfo">The user info to create</param>
     /// <param name="cancellationToken"></param>
     Task CreateUserAsync(
+        string userName,
         UserInfo userInfo,
         CancellationToken cancellationToken = default
     );
@@ -515,10 +521,12 @@ public interface IManagementClient : IDisposable
     ///     Create a permission
     /// </summary>
     /// <param name="vhostName"></param>
+    /// <param name="userName"></param>
     /// <param name="permissionInfo"></param>
     /// <param name="cancellationToken"></param>
     Task CreatePermissionAsync(
         string vhostName,
+        string userName,
         PermissionInfo permissionInfo,
         CancellationToken cancellationToken = default
     );
@@ -539,10 +547,12 @@ public interface IManagementClient : IDisposable
     ///     Create a topic permission
     /// </summary>
     /// <param name="vhostName"></param>
+    /// <param name="userName"></param>
     /// <param name="topicPermissionInfo"></param>
     /// <param name="cancellationToken"></param>
     Task CreateTopicPermissionAsync(
         string vhostName,
+        string userName,
         TopicPermissionInfo topicPermissionInfo,
         CancellationToken cancellationToken = default
     );
@@ -636,10 +646,12 @@ public interface IManagementClient : IDisposable
     ///     Creates a policy on the cluster
     /// </summary>
     /// <param name="vhostName"></param>
+    /// <param name="policyName"></param>
     /// <param name="policyInfo"></param>
     /// <param name="cancellationToken"></param>
     Task CreatePolicyAsync(
         string vhostName,
+        string policyName,
         PolicyInfo policyInfo,
         CancellationToken cancellationToken = default
     );

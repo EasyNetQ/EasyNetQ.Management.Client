@@ -63,8 +63,8 @@ public static partial class IManagementClientExtensions
         CancellationToken cancellationToken = default
     ) => client.CreatePolicyAsync(
         policy.Vhost,
+        policy.Name,
         new PolicyInfo(
-            Name: policy.Name,
             ApplyTo: policy.ApplyTo,
             Definition: policy.Definition,
             Priority: policy.Priority,
@@ -89,9 +89,9 @@ public static partial class IManagementClientExtensions
     {
         var user = await client.GetUserAsync(userName, cancellationToken).ConfigureAwait(false);
 
-        var userInfo = new UserInfo(userName, newPassword, null, user.Tags);
+        var userInfo = new UserInfo(newPassword, null, user.Tags);
 
-        await client.CreateUserAsync(userInfo, cancellationToken).ConfigureAwait(false);
+        await client.CreateUserAsync(userName, userInfo, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>

@@ -5,10 +5,10 @@ namespace EasyNetQ.Management.Client.Tests.Model;
 public class ExchangeInfoTests
 {
     [Fact]
-    public void Should_be_able_to_get_name()
+    public void Should_be_able_to_get_type()
     {
-        const string expectedName = "the_name";
-        var exchangeInfo = new ExchangeInfo(expectedName, "direct");
-        exchangeInfo.Name.Should().Be(expectedName);
+        const string expectedType = "direct";
+        var exchangeInfo = new ExchangeInfo("direct");
+        exchangeInfo.Type.Should().Be(expectedType);
     }
 }
