@@ -1215,11 +1215,39 @@ public class ManagementClientTests
     }
 
     [Fact]
-    public async Task Should_get_queues_without_stats()
+    public async Task Should_get_queues_with_stats_criteria()
     {
-        await CreateTestQueue(TestQueue);
-        var queues = await fixture.ManagementClient.GetQueuesWithoutStatsAsync();
-        queues.Should().NotBeNullOrEmpty();
+        var queue = await CreateTestQueue(TestQueue);
+
+        var publishInfo = new PublishInfo(
+            TestQueue,
+            "Hello World",
+            PayloadEncoding.String,
+            new Dictionary<string, object?>
+            {
+                { "app_id", "management-test" }
+            }
+        );
+
+        await fixture.ManagementClient.PublishAsync("/", "amq.default", publishInfo);
+        Queue queueWithStats;
+        do
+        {
+            queueWithStats = (await fixture.ManagementClient.GetQueuesAsync()).Single(q => q.Name == TestQueue);
+        } while (queueWithStats.Messages == 0);
+        queueWithStats.Messages.Should().Be(1);
+        queueWithStats.MessagesDetails.Should().NotBeNull();
+        queueWithStats.MessageStats.Should().NotBeNull();
+
+        var queueWithoutStats = (await fixture.ManagementClient.GetQueuesAsync(StatsCriteria.Disable)).Single(q => q.Name == TestQueue);
+        queueWithoutStats.Messages.Should().Be(0);
+        queueWithoutStats.MessagesDetails.Should().BeNull();
+        queueWithoutStats.MessageStats.Should().BeNull();
+
+        var queueWithTotalsOnly = (await fixture.ManagementClient.GetQueuesAsync(StatsCriteria.QueueTotalsOnly)).Single(q => q.Name == TestQueue);
+        queueWithTotalsOnly.Messages.Should().Be(1);
+        queueWithTotalsOnly.MessagesDetails.Should().BeNull();
+        queueWithTotalsOnly.MessageStats.Should().BeNull();
     }
 
 

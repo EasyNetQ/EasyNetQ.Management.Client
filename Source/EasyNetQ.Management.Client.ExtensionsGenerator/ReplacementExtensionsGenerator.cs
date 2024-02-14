@@ -76,13 +76,14 @@ public static class ReplacementExtensionsGenerator
             SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 SyntaxFactory.IdentifierName(thisParameter.Identifier.Text),
-                SyntaxFactory.IdentifierName(method.Name)
+                method.GetAccessName()
             ),
             SyntaxFactory.ArgumentList(
                 SyntaxFactory.SeparatedList(argumentExpressions.Select(a => SyntaxFactory.Argument(a))))
         );
 
         return SyntaxFactory.MethodDeclaration(method.ReturnType.GetTypeSyntax(), methodName)
+            .WithTypeParameterList(method.GetTypeParameterListSyntax())
             .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword))
             .WithParameterList(SyntaxFactory.ParameterList(parameters))
             .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(expression))
