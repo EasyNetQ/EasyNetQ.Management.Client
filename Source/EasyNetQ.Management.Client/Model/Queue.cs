@@ -7,9 +7,11 @@ namespace EasyNetQ.Management.Client.Model;
 public record Queue(
     string Name,
     string Vhost,
+
     QueueType Type,
     string? Node,
     string? State,
+    [property: JsonConverter(typeof(StringObjectReadOnlyDictionaryConverter))]
     IReadOnlyDictionary<string, object?> Arguments,
     bool Durable,
     bool Exclusive,
@@ -17,7 +19,6 @@ public record Queue(
     long MessagesReady,
     long MessagesUnacknowledged,
     long Messages,
-
     long Memory,
     string? IdleSince,
     string? Policy,
@@ -34,7 +35,7 @@ public record Queue(
     LengthsDetails? MessagesReadyDetails,
     LengthsDetails? MessagesUnacknowledgedDetails,
     MessageStats? MessageStats
-) : QueueWithoutStats(Name, Vhost, Type, Node, State, Arguments, Durable, Exclusive, AutoDelete, MessagesReady, MessagesUnacknowledged, Messages)
+) : QueueName(Name, Vhost)
 {
     [JsonExtensionData()]
     public IDictionary<string, JsonElement>? JsonExtensionData { get; set; }

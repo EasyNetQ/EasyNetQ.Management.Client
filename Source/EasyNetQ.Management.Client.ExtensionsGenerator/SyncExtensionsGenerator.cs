@@ -67,7 +67,7 @@ public static class SyncExtensionsGenerator
             SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 SyntaxFactory.IdentifierName(thisParameter.Identifier.Text),
-                SyntaxFactory.IdentifierName(method.Name)
+                method.GetAccessName()
             ),
             SyntaxFactory.ArgumentList(
                 SyntaxFactory.SeparatedList(argumentExpressions.Select(a => SyntaxFactory.Argument(a))))
@@ -90,6 +90,7 @@ public static class SyncExtensionsGenerator
         method.IsAwaitable(out var awaitableResultType);
 
         return SyntaxFactory.MethodDeclaration(awaitableResultType!.GetTypeSyntax(), methodName)
+            .WithTypeParameterList(method.GetTypeParameterListSyntax())
             .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword))
             .WithParameterList(SyntaxFactory.ParameterList(parameters))
             .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(expression))

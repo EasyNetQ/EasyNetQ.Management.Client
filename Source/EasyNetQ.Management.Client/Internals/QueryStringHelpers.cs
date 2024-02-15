@@ -4,21 +4,19 @@ namespace EasyNetQ.Management.Client.Internals;
 
 internal static class QueryStringHelpers
 {
-    public static string AddQueryString(string uri, IReadOnlyDictionary<string, string>? queryString)
+    public static string AddQueryString(string uri, IEnumerable<KeyValuePair<string, string>>? queryParameters)
     {
-        if (queryString == null || queryString.Count == 0) return uri;
+        if (queryParameters == null) return uri;
 
-        var queryIndex = uri.IndexOf('?');
-        var hasQuery = queryIndex != -1;
-        var sb = new StringBuilder();
-        sb.Append(uri);
-        foreach (var parameter in queryString)
+        var queryParameterSeparator = uri.Contains('?') ? '&' : '?';
+        var sb = new StringBuilder(uri);
+        foreach (var parameter in queryParameters)
         {
-            sb.Append(hasQuery ? '&' : '?');
+            sb.Append(queryParameterSeparator);
             sb.Append(Uri.EscapeDataString(parameter.Key));
             sb.Append('=');
             sb.Append(Uri.EscapeDataString(parameter.Value));
-            hasQuery = true;
+            queryParameterSeparator = '&';
         }
         return sb.ToString();
     }

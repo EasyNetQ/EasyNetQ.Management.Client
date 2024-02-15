@@ -23,4 +23,22 @@ public static class SyntaxExtensions
     {
         return (SyntaxFactory.ParseMemberDeclaration(method.ToDisplayString(MethodDisplayFormat)) as MethodDeclarationSyntax)!.ParameterList.Parameters;
     }
+
+    public static TypeParameterListSyntax? GetTypeParameterListSyntax(this IMethodSymbol method)
+    {
+        return (SyntaxFactory.ParseMemberDeclaration(method.ToDisplayString(MethodDisplayFormat)) as MethodDeclarationSyntax)!.TypeParameterList;
+    }
+
+    public static SimpleNameSyntax GetAccessName(this IMethodSymbol method)
+    {
+        if (method.IsGenericMethod)
+        {
+            var arguments = method.GetTypeParameterListSyntax()!.Parameters.Select(typeParameter => SyntaxFactory.IdentifierName(typeParameter.Identifier));
+            return SyntaxFactory.GenericName(method.Name).WithTypeArgumentList(SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList<TypeSyntax>(arguments)));
+        }
+        else
+        {
+            return SyntaxFactory.IdentifierName(method.Name);
+        }
+    }
 }
