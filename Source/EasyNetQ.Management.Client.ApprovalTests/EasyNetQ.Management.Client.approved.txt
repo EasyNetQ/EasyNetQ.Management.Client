@@ -1304,7 +1304,7 @@ namespace EasyNetQ.Management.Client.Model
         public PublishResult(bool Routed) { }
         public bool Routed { get; init; }
     }
-    public class Queue : EasyNetQ.Management.Client.Model.QueueWithoutStats, System.IEquatable<EasyNetQ.Management.Client.Model.Queue>
+    public class Queue : EasyNetQ.Management.Client.Model.QueueName, System.IEquatable<EasyNetQ.Management.Client.Model.Queue>
     {
         public Queue(
                     string Name,
@@ -1340,10 +1340,15 @@ namespace EasyNetQ.Management.Client.Model
         [System.Text.Json.Serialization.JsonExtensionData]
         public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public long ActiveConsumers { get; init; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments { get; init; }
+        public bool AutoDelete { get; init; }
         public EasyNetQ.Management.Client.Model.BackingQueueStatus? BackingQueueStatus { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails { get; init; }
         public long Consumers { get; init; }
+        public bool Durable { get; init; }
         public string? ExclusiveConsumerTag { get; init; }
+        public bool Exclusive { get; init; }
         public long? HeadMessageTimestamp { get; init; }
         public string? IdleSince { get; init; }
         public long Memory { get; init; }
@@ -1351,10 +1356,16 @@ namespace EasyNetQ.Management.Client.Model
         public EasyNetQ.Management.Client.Model.MessageStats? MessageStats { get; init; }
         public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails { get; init; }
         public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails { get; init; }
+        public long MessagesReady { get; init; }
         public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails { get; init; }
+        public long MessagesUnacknowledged { get; init; }
+        public long Messages { get; init; }
+        public string? Node { get; init; }
         public string? Policy { get; init; }
         public System.Collections.Generic.IReadOnlyList<string>? SlaveNodes { get; init; }
+        public string? State { get; init; }
         public System.Collections.Generic.IReadOnlyList<string>? SynchronisedSlaveNodes { get; init; }
+        public EasyNetQ.Management.Client.Model.QueueType Type { get; init; }
     }
     public class QueueInfo : System.IEquatable<EasyNetQ.Management.Client.Model.QueueInfo>
     {
@@ -1397,21 +1408,6 @@ namespace EasyNetQ.Management.Client.Model
     {
         V1 = 1,
         V2 = 2,
-    }
-    public class QueueWithoutStats : EasyNetQ.Management.Client.Model.QueueName, System.IEquatable<EasyNetQ.Management.Client.Model.QueueWithoutStats>
-    {
-        public QueueWithoutStats(string Name, string Vhost, EasyNetQ.Management.Client.Model.QueueType Type, string? Node, string? State, System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments, bool Durable, bool Exclusive, bool AutoDelete, long MessagesReady, long MessagesUnacknowledged, long Messages) { }
-        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments { get; init; }
-        public bool AutoDelete { get; init; }
-        public bool Durable { get; init; }
-        public bool Exclusive { get; init; }
-        public long MessagesReady { get; init; }
-        public long MessagesUnacknowledged { get; init; }
-        public long Messages { get; init; }
-        public string? Node { get; init; }
-        public string? State { get; init; }
-        public EasyNetQ.Management.Client.Model.QueueType Type { get; init; }
     }
     public class ShovelStatus : System.IEquatable<EasyNetQ.Management.Client.Model.ShovelStatus>
     {
