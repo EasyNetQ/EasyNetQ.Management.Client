@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyNetQ" Version="8.0.0-beta95" />
+    <PackageReference Include="EasyNetQ" Version="8.0.0-beta96" />
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <PackageReference Include="docker.dotnet" Version="3.125.15" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
