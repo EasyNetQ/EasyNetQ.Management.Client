@@ -961,6 +961,32 @@ public static partial class IManagementClientExtensions
     ) => client.GetAsync<IReadOnlyList<Parameter>>(Parameters, cancellationToken);
 
     /// <summary>
+    ///     Get all parameters for a given component on the cluster
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="componentName"></param>
+    /// <param name="cancellationToken"></param>
+    public static Task<IReadOnlyList<Parameter>> GetParametersAsync(
+        this IManagementClient client,
+        string componentName,
+        CancellationToken cancellationToken = default
+    ) => client.GetAsync<IReadOnlyList<Parameter>>(Parameters / componentName, cancellationToken);
+
+    /// <summary>
+    ///     Get all parameters for a given component and virtual host on the cluster
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="componentName"></param>
+    /// <param name="vhostName"></param>
+    /// <param name="cancellationToken"></param>
+    public static Task<IReadOnlyList<Parameter>> GetParametersAsync(
+        this IManagementClient client,
+        string componentName,
+        string vhostName,
+        CancellationToken cancellationToken = default
+    ) => client.GetAsync<IReadOnlyList<Parameter>>(Parameters / componentName / vhostName, cancellationToken);
+
+    /// <summary>
     ///     Creates a parameter on the cluster
     /// </summary>
     /// <param name="client"></param>
