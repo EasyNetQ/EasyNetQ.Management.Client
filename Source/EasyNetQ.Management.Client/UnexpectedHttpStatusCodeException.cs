@@ -1,5 +1,6 @@
 using System.Net;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace EasyNetQ.Management.Client;
 
@@ -13,8 +14,6 @@ public class UnexpectedHttpStatusCodeException : Exception
     //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
     //
 
-    private const string NoRequest = "<null>";
-
     public HttpStatusCode StatusCode { get; private init; }
     public int StatusCodeNumber => (int)StatusCode;
 
@@ -22,14 +21,8 @@ public class UnexpectedHttpStatusCodeException : Exception
     {
     }
 
-    public UnexpectedHttpStatusCodeException(HttpStatusCode statusCode) :
-        base($"Unexpected Status Code: {(int)statusCode} {statusCode}")
-    {
-        StatusCode = statusCode;
-    }
-
     public UnexpectedHttpStatusCodeException(HttpResponseMessage response) :
-        base($"Unexpected Status Code: {(int)response.StatusCode} {response.StatusCode} from request: {response.RequestMessage?.ToString() ?? NoRequest}")
+        base(BuildMessage(response))
     {
         StatusCode = response.StatusCode;
     }
@@ -47,5 +40,43 @@ public class UnexpectedHttpStatusCodeException : Exception
         StreamingContext context
     ) : base(info, context)
     {
+    }
+
+    private static string BuildMessage(HttpResponseMessage response)
+    {
+        var sb = new StringBuilder("Unexpected response: StatusCode: ");
+        sb.Append((int)response.StatusCode);
+        sb.Append(" ");
+        sb.Append(response.StatusCode);
+        sb.Append(", Content: ");
+        if (response.Content != null)
+        {
+            try
+            {
+                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                sb.Append('\'');
+                sb.Append(content);
+                sb.Append('\'');
+            }
+            catch
+            {
+                sb.Append("<not a string>");
+            }
+        }
+        else
+        {
+            sb.Append("<null>");
+        }
+        sb.Append(" from request: ");
+        if (response.RequestMessage != null)
+        {
+            sb.Append(response.RequestMessage);
+        }
+        else
+        {
+            sb.Append("<null>");
+        }
+
+        return sb.ToString();
     }
 }
