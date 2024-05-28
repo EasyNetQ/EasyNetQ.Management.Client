@@ -1,4 +1,5 @@
 using EasyNetQ.Management.Client.Model;
+using FluentAssertions.Extensions;
 using System.Text.Json;
 
 namespace EasyNetQ.Management.Client.IntegrationTests;
@@ -1275,16 +1276,22 @@ public class ManagementClientTests
     public async Task Should_get_queues()
     {
         await CreateTestQueue(TestQueue);
-        while (true)
-        {
-            var queues = await fixture.ManagementClient.GetQueuesAsync();
-            queues.Should().NotBeNullOrEmpty();
-            if (queues[0].State != null)
+        var act = async () =>
             {
-                queues[0].ExtensionData.Should().NotBeNullOrEmpty();
-                break;
-            }
-        }
+                var queues = await fixture.ManagementClient.GetQueuesAsync();
+                queues.Should().NotBeNullOrEmpty()
+                    .And.AllSatisfy(q =>
+                        {
+                            q.State.Should().Be("running");
+                            // Should be not null only because some keys in response aren't mapped to Queue's properties.
+                            // E.g. message_bytes_ready or operator_policy
+                            q.ExtensionData.Should().NotBeNull();
+                        })
+                    .And.ContainEquivalentOf(new QueueName(TestQueue, Vhost.Name))
+                    .And.ContainEquivalentOf(new QueueName("aliveness-test", Vhost.Name));
+            };
+
+        await act.Should().NotThrowAfterAsync(10.Seconds(), TimeSpan.Zero);
     }
 
     [Fact]
