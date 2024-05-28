@@ -4,9 +4,9 @@ namespace EasyNetQ.Management.Client.Internals;
 
 internal static class HttpResponseMessageExtensions
 {
-    public static void EnsureExpectedStatusCode(this HttpResponseMessage response, Func<HttpStatusCode, bool> isExpected)
+    public static async Task EnsureExpectedStatusCodeAsync(this HttpResponseMessage response, Func<HttpStatusCode, bool> isExpected)
     {
         if (!isExpected(response.StatusCode))
-            throw new UnexpectedHttpStatusCodeException(response);
+            throw await UnexpectedHttpStatusCodeException.FromHttpResponseMessageAsync(response).ConfigureAwait(false);
     }
 }

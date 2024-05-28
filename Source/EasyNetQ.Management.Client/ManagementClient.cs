@@ -182,7 +182,7 @@ public class ManagementClient : IManagementClient
         if (response.StatusCode == HttpStatusCode.ServiceUnavailable)
             return false;
 
-        throw new UnexpectedHttpStatusCodeException(response);
+        throw await UnexpectedHttpStatusCodeException.FromHttpResponseMessageAsync(response).ConfigureAwait(false);
     }
 
     public async Task<TResult> GetAsync<TResult>(
@@ -194,7 +194,7 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Get, path, queryParameters);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-        response.EnsureExpectedStatusCode(statusCode => statusCode == HttpStatusCode.OK);
+        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode == HttpStatusCode.OK).ConfigureAwait(false);
 
         try
         {
@@ -217,7 +217,7 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Post, path, null, requestContent);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-        response.EnsureExpectedStatusCode(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent);
+        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent).ConfigureAwait(false);
 
         try
         {
@@ -240,7 +240,7 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Post, path, null, requestContent);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-        response.EnsureExpectedStatusCode(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent);
+        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent).ConfigureAwait(false);
     }
 
     public async Task PostAsync(
@@ -251,7 +251,7 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Post, path);
         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
-        response.EnsureExpectedStatusCode(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent);
+        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent).ConfigureAwait(false);
     }
 
     public async Task DeleteAsync(RelativePath path, CancellationToken cancellationToken = default)
@@ -259,7 +259,7 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Delete, path);
         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
-        response.EnsureExpectedStatusCode(statusCode => statusCode == HttpStatusCode.NoContent);
+        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode == HttpStatusCode.NoContent).ConfigureAwait(false);
     }
 
     public async Task PutAsync<TBody>(
@@ -272,7 +272,7 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Put, path, null, requestContent);
         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
-        response.EnsureExpectedStatusCode(statusCode => statusCode is HttpStatusCode.Created or HttpStatusCode.NoContent);
+        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode is HttpStatusCode.Created or HttpStatusCode.NoContent).ConfigureAwait(false);
     }
 
     public async Task PutAsync(RelativePath path, CancellationToken cancellationToken = default)
@@ -280,7 +280,7 @@ public class ManagementClient : IManagementClient
         using var request = CreateRequest(HttpMethod.Put, path);
         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
-        response.EnsureExpectedStatusCode(statusCode => statusCode is HttpStatusCode.Created or HttpStatusCode.NoContent);
+        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode is HttpStatusCode.Created or HttpStatusCode.NoContent).ConfigureAwait(false);
     }
 
     private HttpRequestMessage CreateRequest(

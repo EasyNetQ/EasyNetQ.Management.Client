@@ -21,12 +21,6 @@ public class UnexpectedHttpStatusCodeException : Exception
     {
     }
 
-    public UnexpectedHttpStatusCodeException(HttpResponseMessage response) :
-        base(BuildMessage(response))
-    {
-        StatusCode = response.StatusCode;
-    }
-
     public UnexpectedHttpStatusCodeException(string message) : base(message)
     {
     }
@@ -42,7 +36,12 @@ public class UnexpectedHttpStatusCodeException : Exception
     {
     }
 
-    private static string BuildMessage(HttpResponseMessage response)
+    protected UnexpectedHttpStatusCodeException(string message, HttpStatusCode statusCode) : base(message)
+    {
+        StatusCode = statusCode;
+    }
+
+    public static async Task<UnexpectedHttpStatusCodeException> FromHttpResponseMessageAsync(HttpResponseMessage response)
     {
         var sb = new StringBuilder("Unexpected response: StatusCode: ");
         sb.Append((int)response.StatusCode);
@@ -53,7 +52,7 @@ public class UnexpectedHttpStatusCodeException : Exception
         {
             try
             {
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 sb.Append('\'');
                 sb.Append(content);
                 sb.Append('\'');
@@ -77,6 +76,6 @@ public class UnexpectedHttpStatusCodeException : Exception
             sb.Append("<null>");
         }
 
-        return sb.ToString();
+        return new UnexpectedHttpStatusCodeException(sb.ToString(), response.StatusCode);
     }
 }

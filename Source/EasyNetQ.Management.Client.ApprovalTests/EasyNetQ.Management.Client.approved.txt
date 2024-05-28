@@ -425,12 +425,13 @@ namespace EasyNetQ.Management.Client
     public class UnexpectedHttpStatusCodeException : System.Exception
     {
         public UnexpectedHttpStatusCodeException() { }
-        public UnexpectedHttpStatusCodeException(System.Net.Http.HttpResponseMessage response) { }
         public UnexpectedHttpStatusCodeException(string message) { }
         protected UnexpectedHttpStatusCodeException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         public UnexpectedHttpStatusCodeException(string message, System.Exception inner) { }
+        protected UnexpectedHttpStatusCodeException(string message, System.Net.HttpStatusCode statusCode) { }
         public System.Net.HttpStatusCode StatusCode { get; }
         public int StatusCodeNumber { get; }
+        public static System.Threading.Tasks.Task<EasyNetQ.Management.Client.UnexpectedHttpStatusCodeException> FromHttpResponseMessageAsync(System.Net.Http.HttpResponseMessage response) { }
     }
 }
 namespace EasyNetQ.Management.Client.Model
