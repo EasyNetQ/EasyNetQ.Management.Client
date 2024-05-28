@@ -431,7 +431,7 @@ namespace EasyNetQ.Management.Client
         protected UnexpectedHttpStatusCodeException(string message, System.Net.HttpStatusCode statusCode) { }
         public System.Net.HttpStatusCode StatusCode { get; }
         public int StatusCodeNumber { get; }
-        public static System.Threading.Tasks.Task<EasyNetQ.Management.Client.UnexpectedHttpStatusCodeException> FromHttpResponseMessageAsync(System.Net.Http.HttpResponseMessage response) { }
+        public static System.Threading.Tasks.Task<EasyNetQ.Management.Client.UnexpectedHttpStatusCodeException> FromHttpResponseMessageAsync(System.Net.Http.HttpResponseMessage response, System.Threading.CancellationToken cancellationToken = default) { }
     }
 }
 namespace EasyNetQ.Management.Client.Model

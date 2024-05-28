@@ -41,7 +41,7 @@ public class UnexpectedHttpStatusCodeException : Exception
         StatusCode = statusCode;
     }
 
-    public static async Task<UnexpectedHttpStatusCodeException> FromHttpResponseMessageAsync(HttpResponseMessage response)
+    public static async Task<UnexpectedHttpStatusCodeException> FromHttpResponseMessageAsync(HttpResponseMessage response, CancellationToken cancellationToken = default)
     {
         var sb = new StringBuilder("Unexpected response: StatusCode: ");
         sb.Append((int)response.StatusCode);
@@ -52,7 +52,11 @@ public class UnexpectedHttpStatusCodeException : Exception
         {
             try
             {
+#if NET5_0_OR_GREATER
+                var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+#else
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+#endif
                 sb.Append('\'');
                 sb.Append(content);
                 sb.Append('\'');
