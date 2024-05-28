@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 using EasyNetQ.Management.Client.Internals;
 using EasyNetQ.Management.Client.Serialization;
 
-#if NET6_0
+#if NET5_0_OR_GREATER
 using HttpHandler = System.Net.Http.SocketsHttpHandler;
 #else
 using System.Collections.Concurrent;
@@ -20,7 +20,11 @@ namespace EasyNetQ.Management.Client;
 
 public class ManagementClient : IManagementClient
 {
+#if NET5_0_OR_GREATER
+    private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new(System.Net.Mime.MediaTypeNames.Application.Json);
+#else
     private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new("application/json");
+#endif
     private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(20);
 
     internal static readonly JsonSerializerOptions SerializerOptions;
@@ -254,9 +258,12 @@ public class ManagementClient : IManagementClient
         await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task DeleteAsync(RelativePath path, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(
+        RelativePath path,
+        IEnumerable<KeyValuePair<string, string>>? queryParameters,
+        CancellationToken cancellationToken = default)
     {
-        using var request = CreateRequest(HttpMethod.Delete, path);
+        using var request = CreateRequest(HttpMethod.Delete, path, queryParameters);
         using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
         await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode == HttpStatusCode.NoContent, cancellationToken).ConfigureAwait(false);

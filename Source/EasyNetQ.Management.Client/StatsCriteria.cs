@@ -3,15 +3,15 @@
 public record StatsCriteria(bool DisableStats, bool EnableQueueTotals)
 {
     public readonly IEnumerable<KeyValuePair<string, string>>? QueryParameters =
-        ((DisableStats, EnableQueueTotals)) switch
+        (DisableStats, EnableQueueTotals) switch
         {
-            (true, false) => new KeyValuePair<string, string>[] {
+            (true, false) => [
                 new KeyValuePair<string, string>("disable_stats", "true")
-            },
-            (true, true) => new KeyValuePair<string, string>[] {
+            ],
+            (true, true) => [
                 new KeyValuePair<string, string>("disable_stats", "true"),
                 new KeyValuePair<string, string>("enable_queue_totals", "true")
-            },
+            ],
             (false, false) => null,
             (false, true) => throw new NotSupportedException()
         };

@@ -1,10 +1,27 @@
 namespace EasyNetQ.Management.Client
 {
+    public class DeleteExchangeCriteria : System.IEquatable<EasyNetQ.Management.Client.DeleteExchangeCriteria>
+    {
+        public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>? QueryParameters;
+        public static readonly EasyNetQ.Management.Client.DeleteExchangeCriteria IfUnused;
+        public DeleteExchangeCriteria(bool _IfUnused) { }
+        public bool @_IfUnused { get; init; }
+    }
+    public class DeleteQueueCriteria : System.IEquatable<EasyNetQ.Management.Client.DeleteQueueCriteria>
+    {
+        public readonly System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>? QueryParameters;
+        public static readonly EasyNetQ.Management.Client.DeleteQueueCriteria IfEmpty;
+        public static readonly EasyNetQ.Management.Client.DeleteQueueCriteria IfUnused;
+        public static readonly EasyNetQ.Management.Client.DeleteQueueCriteria IfUnusedAndEmpty;
+        public DeleteQueueCriteria(bool _IfUnused, bool _IfEmpty) { }
+        public bool @_IfEmpty { get; init; }
+        public bool @_IfUnused { get; init; }
+    }
     public interface IManagementClient : System.IDisposable
     {
         System.Uri Endpoint { get; }
         System.Threading.Tasks.Task<bool> CheckAsync(EasyNetQ.Management.Client.RelativePath path, System.Threading.CancellationToken cancellationToken = default);
-        System.Threading.Tasks.Task DeleteAsync(EasyNetQ.Management.Client.RelativePath path, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task DeleteAsync(EasyNetQ.Management.Client.RelativePath path, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>? queryParameters, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task<TResult> GetAsync<TResult>(EasyNetQ.Management.Client.RelativePath path, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>? queryParameters, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task PostAsync(EasyNetQ.Management.Client.RelativePath path, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task PostAsync<TBody>(EasyNetQ.Management.Client.RelativePath path, TBody item, System.Threading.CancellationToken cancellationToken = default);
@@ -98,14 +115,16 @@ namespace EasyNetQ.Management.Client
         public static System.Threading.Tasks.Task CreateVhostAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task CreateVhostAsync(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, System.Threading.CancellationToken cancellationToken = default) { }
         public static void Delete(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.RelativePath path, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void Delete(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.RelativePath path, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>? queryParameters, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task DeleteAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.RelativePath path, System.Threading.CancellationToken cancellationToken = default) { }
         public static void DeleteBinding(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Binding binding, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task DeleteBindingAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Binding binding, System.Threading.CancellationToken cancellationToken = default) { }
-        public static void DeleteExchange(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.ExchangeName exchange, System.Threading.CancellationToken cancellationToken = default) { }
-        public static void DeleteExchange(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, string exchangeName, System.Threading.CancellationToken cancellationToken = default) { }
-        public static void DeleteExchange(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string exchangeName, System.Threading.CancellationToken cancellationToken = default) { }
-        public static System.Threading.Tasks.Task DeleteExchangeAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.ExchangeName exchange, System.Threading.CancellationToken cancellationToken = default) { }
-        public static System.Threading.Tasks.Task DeleteExchangeAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, string exchangeName, System.Threading.CancellationToken cancellationToken = default) { }
-        public static System.Threading.Tasks.Task DeleteExchangeAsync(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string exchangeName, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void DeleteExchange(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.ExchangeName exchange, EasyNetQ.Management.Client.DeleteExchangeCriteria? deleteExchangeCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void DeleteExchange(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, string exchangeName, EasyNetQ.Management.Client.DeleteExchangeCriteria? deleteExchangeCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void DeleteExchange(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string exchangeName, EasyNetQ.Management.Client.DeleteExchangeCriteria? deleteExchangeCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task DeleteExchangeAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.ExchangeName exchange, EasyNetQ.Management.Client.DeleteExchangeCriteria? deleteExchangeCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task DeleteExchangeAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, string exchangeName, EasyNetQ.Management.Client.DeleteExchangeCriteria? deleteExchangeCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task DeleteExchangeAsync(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string exchangeName, EasyNetQ.Management.Client.DeleteExchangeCriteria? deleteExchangeCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
         public static void DeleteExchangeBinding(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.ExchangeName sourceExchange, EasyNetQ.Management.Client.Model.ExchangeName destinationExchange, string propertiesKey, System.Threading.CancellationToken cancellationToken = default) { }
         public static void DeleteExchangeBinding(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, string sourceExchangeName, string destinationExchangeName, string propertiesKey, System.Threading.CancellationToken cancellationToken = default) { }
         public static void DeleteExchangeBinding(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string sourceExchangeName, string destinationExchangeName, string propertiesKey, System.Threading.CancellationToken cancellationToken = default) { }
@@ -132,12 +151,12 @@ namespace EasyNetQ.Management.Client
         public static void DeletePolicy(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string policyName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task DeletePolicyAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, string policyName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task DeletePolicyAsync(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string policyName, System.Threading.CancellationToken cancellationToken = default) { }
-        public static void DeleteQueue(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.QueueName queue, System.Threading.CancellationToken cancellationToken = default) { }
-        public static void DeleteQueue(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, string queueName, System.Threading.CancellationToken cancellationToken = default) { }
-        public static void DeleteQueue(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string queueName, System.Threading.CancellationToken cancellationToken = default) { }
-        public static System.Threading.Tasks.Task DeleteQueueAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.QueueName queue, System.Threading.CancellationToken cancellationToken = default) { }
-        public static System.Threading.Tasks.Task DeleteQueueAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, string queueName, System.Threading.CancellationToken cancellationToken = default) { }
-        public static System.Threading.Tasks.Task DeleteQueueAsync(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string queueName, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void DeleteQueue(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.QueueName queue, EasyNetQ.Management.Client.DeleteQueueCriteria? deleteQueueCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void DeleteQueue(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, string queueName, EasyNetQ.Management.Client.DeleteQueueCriteria? deleteQueueCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void DeleteQueue(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string queueName, EasyNetQ.Management.Client.DeleteQueueCriteria? deleteQueueCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task DeleteQueueAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.QueueName queue, EasyNetQ.Management.Client.DeleteQueueCriteria? deleteQueueCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task DeleteQueueAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, string queueName, EasyNetQ.Management.Client.DeleteQueueCriteria? deleteQueueCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task DeleteQueueAsync(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, string queueName, EasyNetQ.Management.Client.DeleteQueueCriteria? deleteQueueCriteria = null, System.Threading.CancellationToken cancellationToken = default) { }
         public static void DeleteQueueBinding(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.ExchangeName exchange, EasyNetQ.Management.Client.Model.QueueName queue, string propertiesKey, System.Threading.CancellationToken cancellationToken = default) { }
         public static void DeleteQueueBinding(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.ExchangeName exchange, string queueName, string propertiesKey, System.Threading.CancellationToken cancellationToken = default) { }
         public static void DeleteQueueBinding(this EasyNetQ.Management.Client.IManagementClient client, string exchangeName, EasyNetQ.Management.Client.Model.QueueName queue, string propertiesKey, System.Threading.CancellationToken cancellationToken = default) { }
@@ -380,7 +399,7 @@ namespace EasyNetQ.Management.Client
         public ManagementClient(string hostUrl, string username, string password, int portNumber = 15672, System.TimeSpan? timeout = default, System.Action<System.Net.Http.HttpRequestMessage>? configureHttpRequestMessage = null, bool ssl = false, System.Action<System.Net.Http.SocketsHttpHandler>? configureHttpHandler = null) { }
         public System.Uri Endpoint { get; }
         public System.Threading.Tasks.Task<bool> CheckAsync(EasyNetQ.Management.Client.RelativePath path, System.Threading.CancellationToken cancellationToken = default) { }
-        public System.Threading.Tasks.Task DeleteAsync(EasyNetQ.Management.Client.RelativePath path, System.Threading.CancellationToken cancellationToken = default) { }
+        public System.Threading.Tasks.Task DeleteAsync(EasyNetQ.Management.Client.RelativePath path, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>? queryParameters, System.Threading.CancellationToken cancellationToken = default) { }
         public void Dispose() { }
         public System.Threading.Tasks.Task<TResult> GetAsync<TResult>(EasyNetQ.Management.Client.RelativePath path, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>? queryParameters, System.Threading.CancellationToken cancellationToken = default) { }
         public System.Threading.Tasks.Task PostAsync(EasyNetQ.Management.Client.RelativePath path, System.Threading.CancellationToken cancellationToken = default) { }
