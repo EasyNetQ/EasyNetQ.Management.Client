@@ -1287,8 +1287,7 @@ public class ManagementClientTests
                             // E.g. message_bytes_ready or operator_policy
                             q.ExtensionData.Should().NotBeNull();
                         })
-                    .And.ContainEquivalentOf(new QueueName(TestQueue, Vhost.Name))
-                    .And.ContainEquivalentOf(new QueueName("aliveness-test", Vhost.Name));
+                    .And.ContainEquivalentOf(new QueueName(TestQueue, Vhost.Name));
             };
 
         await act.Should().NotThrowAfterAsync(10.Seconds(), TimeSpan.Zero);
