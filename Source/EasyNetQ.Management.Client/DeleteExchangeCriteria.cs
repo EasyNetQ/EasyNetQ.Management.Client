@@ -1,9 +1,9 @@
 ﻿namespace EasyNetQ.Management.Client;
 
-public record DeleteExchangeCriteria(bool _IfUnused)
+public record DeleteExchangeCriteria(bool ifUnused)
 {
     public IEnumerable<KeyValuePair<string, string>>? QueryParameters =
-        _IfUnused switch
+        ifUnused switch
         {
             false => null,
             true => [
@@ -11,5 +11,5 @@ public record DeleteExchangeCriteria(bool _IfUnused)
             ]
         };
 
-    public static readonly DeleteExchangeCriteria IfUnused = new DeleteExchangeCriteria(_IfUnused: true);
+    public static readonly DeleteExchangeCriteria IfUnused = new DeleteExchangeCriteria(ifUnused: true);
 }

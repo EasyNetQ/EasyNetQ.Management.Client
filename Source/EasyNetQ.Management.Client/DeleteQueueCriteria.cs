@@ -1,9 +1,9 @@
 ﻿namespace EasyNetQ.Management.Client;
 
-public record DeleteQueueCriteria(bool _IfUnused, bool _IfEmpty)
+public record DeleteQueueCriteria(bool ifUnused, bool ifEmpty)
 {
     public readonly IEnumerable<KeyValuePair<string, string>>? QueryParameters =
-        (_IfUnused, _IfEmpty) switch
+        (ifUnused, ifEmpty) switch
         {
             (false, false) => null,
             (false, true) => [
@@ -18,7 +18,7 @@ public record DeleteQueueCriteria(bool _IfUnused, bool _IfEmpty)
             ]
         };
 
-    public static readonly DeleteQueueCriteria IfUnused = new DeleteQueueCriteria(_IfUnused: true, _IfEmpty: false);
-    public static readonly DeleteQueueCriteria IfEmpty = new DeleteQueueCriteria(_IfUnused: false, _IfEmpty: true);
-    public static readonly DeleteQueueCriteria IfUnusedAndEmpty = new DeleteQueueCriteria(_IfUnused: true, _IfEmpty: true);
+    public static readonly DeleteQueueCriteria IfUnused = new DeleteQueueCriteria(ifUnused: true, ifEmpty: false);
+    public static readonly DeleteQueueCriteria IfEmpty = new DeleteQueueCriteria(ifUnused: false, ifEmpty: true);
+    public static readonly DeleteQueueCriteria IfUnusedAndEmpty = new DeleteQueueCriteria(ifUnused: true, ifEmpty: true);
 }
