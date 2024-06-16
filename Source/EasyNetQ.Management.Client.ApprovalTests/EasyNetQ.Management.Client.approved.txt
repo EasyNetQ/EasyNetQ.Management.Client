@@ -4,8 +4,8 @@ namespace EasyNetQ.Management.Client
     {
         public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>? QueryParameters;
         public static readonly EasyNetQ.Management.Client.DeleteExchangeCriteria IfUnused;
-        public DeleteExchangeCriteria(bool _IfUnused) { }
-        public bool @_IfUnused { get; init; }
+        public DeleteExchangeCriteria(bool ifUnused) { }
+        public bool ifUnused { get; init; }
     }
     public class DeleteQueueCriteria : System.IEquatable<EasyNetQ.Management.Client.DeleteQueueCriteria>
     {
@@ -13,9 +13,9 @@ namespace EasyNetQ.Management.Client
         public static readonly EasyNetQ.Management.Client.DeleteQueueCriteria IfEmpty;
         public static readonly EasyNetQ.Management.Client.DeleteQueueCriteria IfUnused;
         public static readonly EasyNetQ.Management.Client.DeleteQueueCriteria IfUnusedAndEmpty;
-        public DeleteQueueCriteria(bool _IfUnused, bool _IfEmpty) { }
-        public bool @_IfEmpty { get; init; }
-        public bool @_IfUnused { get; init; }
+        public DeleteQueueCriteria(bool ifUnused, bool ifEmpty) { }
+        public bool ifEmpty { get; init; }
+        public bool ifUnused { get; init; }
     }
     public interface IManagementClient : System.IDisposable
     {
