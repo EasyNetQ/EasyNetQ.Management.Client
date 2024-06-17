@@ -1,4 +1,5 @@
 using EasyNetQ.Management.Client.Model;
+using FluentAssertions.Extensions;
 using System.Text.Json;
 
 namespace EasyNetQ.Management.Client.IntegrationTests;
@@ -654,6 +655,60 @@ public class ManagementClientTests
     }
 
     [Fact]
+    public async Task Should_not_be_able_to_delete_a_non_empty_queue()
+    {
+        var queue = await CreateTestQueue(TestQueue);
+
+        var publishInfo = new PublishInfo(
+            TestQueue,
+            "Hello World",
+            PayloadEncoding.String,
+            new Dictionary<string, object?>
+            {
+                { "app_id", "management-test" }
+            }
+        );
+
+        await fixture.ManagementClient.PublishAsync("/", "amq.default", publishInfo);
+
+        var expectedMessage = $"*\"reason\":\"queue '{TestQueue}' in vhost '{Vhost.Name}' not empty\"*";
+        {
+            var act = async () => await fixture.ManagementClient.DeleteQueueAsync(queue, DeleteQueueCriteria.IfEmpty);
+            await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>()
+                .Where(e => e.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                .WithMessage(expectedMessage);
+        }
+        {
+            var act = async () => await fixture.ManagementClient.DeleteQueueAsync(queue, DeleteQueueCriteria.IfUnusedAndEmpty);
+            await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>()
+                .Where(e => e.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                .WithMessage(expectedMessage);
+        }
+    }
+
+    [Fact(Skip = "Requires at least a consumer")]
+    public async Task Should_not_be_able_to_delete_a_non_unused_queue()
+    {
+        var queue = await CreateTestQueue(TestQueue);
+
+        // Create consumer
+
+        var expectedMessage = $"*\"reason\":\"queue '{TestQueue}' in vhost '{Vhost.Name}' not empty\"*";
+        {
+            var act = async () => await fixture.ManagementClient.DeleteQueueAsync(queue, DeleteQueueCriteria.IfUnused);
+            await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>()
+                .Where(e => e.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                .WithMessage(expectedMessage);
+        }
+        {
+            var act = async () => await fixture.ManagementClient.DeleteQueueAsync(queue, DeleteQueueCriteria.IfUnusedAndEmpty);
+            await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>()
+                .Where(e => e.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                .WithMessage(expectedMessage);
+        }
+    }
+
+    [Fact]
     public async Task Should_be_able_to_delete_a_user()
     {
         var user = await fixture.ManagementClient.GetUserAsync(TestUser);
@@ -674,6 +729,25 @@ public class ManagementClientTests
     {
         var exchange = await CreateExchange(TestExchangeTestQueueWithPlusChar);
         await fixture.ManagementClient.DeleteExchangeAsync(exchange);
+    }
+
+    [Fact]
+    public async Task Should_not_be_able_to_delete_a_non_unused_exchange()
+    {
+        var queue = await CreateTestQueue(TestQueue);
+        var exchange = await CreateExchange(TestExchange);
+
+        var bindingInfo = new BindingInfo(RoutingKey: TestQueue);
+
+        await fixture.ManagementClient.CreateQueueBindingAsync(exchange, queue, bindingInfo);
+
+        var expectedMessage = $"*\"reason\":\"exchange '{TestExchange}' in vhost '{Vhost.Name}' in use\"*";
+        {
+            var act = async () => await fixture.ManagementClient.DeleteExchangeAsync(exchange, DeleteExchangeCriteria.IfUnused);
+            await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>()
+                .Where(e => e.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                .WithMessage(expectedMessage);
+        }
     }
 
     [Fact]
@@ -1202,16 +1276,21 @@ public class ManagementClientTests
     public async Task Should_get_queues()
     {
         await CreateTestQueue(TestQueue);
-        while (true)
-        {
-            var queues = await fixture.ManagementClient.GetQueuesAsync();
-            queues.Should().NotBeNullOrEmpty();
-            if (queues[0].State != null)
+        var act = async () =>
             {
-                queues[0].ExtensionData.Should().NotBeNullOrEmpty();
-                break;
-            }
-        }
+                var queues = await fixture.ManagementClient.GetQueuesAsync();
+                queues.Should().NotBeNullOrEmpty()
+                    .And.AllSatisfy(q =>
+                        {
+                            q.State.Should().Be("running");
+                            // Should be not null only because some keys in response aren't mapped to Queue's properties.
+                            // E.g. message_bytes_ready or operator_policy
+                            q.ExtensionData.Should().NotBeNull();
+                        })
+                    .And.ContainEquivalentOf(new QueueName(TestQueue, Vhost.Name));
+            };
+
+        await act.Should().NotThrowAfterAsync(10.Seconds(), TimeSpan.Zero);
     }
 
     [Fact]
@@ -1304,14 +1383,10 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_throw_when_trying_to_close_unknown_connection()
     {
-        try
-        {
-            await fixture.ManagementClient.CloseConnectionAsync("unknown");
-        }
-        catch (Exception e)
-        {
-            Assert.IsType<UnexpectedHttpStatusCodeException>(e);
-        }
+        var act = async () => await fixture.ManagementClient.CloseConnectionAsync("unknown");
+
+        await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>()
+            .Where(e => e.StatusCode == System.Net.HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -1368,7 +1443,8 @@ public class ManagementClientTests
                 shovelName
             );
 
-        await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>().Where(e => e.StatusCode == System.Net.HttpStatusCode.NotFound);
+        await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>()
+            .Where(e => e.StatusCode == System.Net.HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -1416,8 +1492,10 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_throw_on_non_existant_shovel()
     {
-        await Assert.ThrowsAsync<UnexpectedHttpStatusCodeException>(async ()
-            => await fixture.ManagementClient.GetShovelAsync(Vhost.Name, "non-existant-shovel"));
+        var act = async () => await fixture.ManagementClient.GetShovelAsync(Vhost.Name, "non-existant-shovel");
+
+        await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>()
+            .Where(e => e.StatusCode == System.Net.HttpStatusCode.NotFound);
     }
 
     [Fact]

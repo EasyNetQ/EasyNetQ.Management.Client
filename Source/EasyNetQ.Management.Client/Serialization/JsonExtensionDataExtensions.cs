@@ -21,12 +21,7 @@ internal static class JsonExtensionDataExtensions
         var jsonExtensionData = new Dictionary<string, JsonElement>(extensionData.Count);
         foreach (var property in extensionData)
         {
-#if NET6_0_OR_GREATER
             jsonExtensionData.Add(property.Key, JsonSerializer.SerializeToElement(property.Value));
-#else
-            var bytes = JsonSerializer.SerializeToUtf8Bytes(property.Value);
-            jsonExtensionData.Add(property.Key, JsonDocument.Parse(bytes).RootElement.Clone());
-#endif
         }
         return jsonExtensionData;
     }

@@ -28,6 +28,7 @@ public interface IManagementClient : IDisposable
 
     Task DeleteAsync(
         RelativePath path,
+        IEnumerable<KeyValuePair<string, string>>? queryParameters,
         CancellationToken cancellationToken = default);
 
     Task<TResult> PostAsync<TBody, TResult>(
@@ -89,7 +90,16 @@ public static partial class IManagementClientExtensions
         CancellationToken cancellationToken = default
     )
     {
-        return client.GetAsync<TResult>(path, null, cancellationToken);
+        return client.GetAsync<TResult>(path, queryParameters: null, cancellationToken);
+    }
+
+    public static Task DeleteAsync(
+        this IManagementClient client,
+        RelativePath path,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return client.DeleteAsync(path, queryParameters: null, cancellationToken);
     }
 
     /// <summary>
@@ -432,13 +442,15 @@ public static partial class IManagementClientExtensions
     /// <param name="client"></param>
     /// <param name="vhostName"></param>
     /// <param name="exchangeName"></param>
+    /// <param name="deleteExchangeCriteria"></param>
     /// <param name="cancellationToken"></param>
     public static Task DeleteExchangeAsync(
         this IManagementClient client,
         string vhostName,
         string exchangeName,
+        DeleteExchangeCriteria? deleteExchangeCriteria = null,
         CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Exchanges / vhostName / exchangeName, cancellationToken);
+    ) => client.DeleteAsync(Exchanges / vhostName / exchangeName, deleteExchangeCriteria?.QueryParameters, cancellationToken);
 
     /// <summary>
     ///     A list of all bindings in which a given exchange is the source.
@@ -512,13 +524,15 @@ public static partial class IManagementClientExtensions
     /// <param name="client"></param>
     /// <param name="vhostName"></param>
     /// <param name="queueName"></param>
+    /// <param name="deleteQueueCriteria"></param>
     /// <param name="cancellationToken"></param>
     public static Task DeleteQueueAsync(
         this IManagementClient client,
         string vhostName,
         string queueName,
+        DeleteQueueCriteria? deleteQueueCriteria = null,
         CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Queues / vhostName / queueName, cancellationToken);
+    ) => client.DeleteAsync(Queues / vhostName / queueName, deleteQueueCriteria?.QueryParameters, cancellationToken);
 
     /// <summary>
     ///     A list of all bindings on a given queue.
