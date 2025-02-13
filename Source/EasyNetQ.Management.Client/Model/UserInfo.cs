@@ -3,7 +3,8 @@
 public record UserInfo(
     string? Password,
     string? PasswordHash,
-    IReadOnlyList<string> Tags
+    IReadOnlyList<string> Tags,
+    HashingAlgorithm? HashingAlgorithm = 
 )
 {
     public static UserInfo ByPassword(string password) => new(password, null, Array.Empty<string>());
