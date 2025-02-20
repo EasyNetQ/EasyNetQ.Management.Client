@@ -29,13 +29,6 @@ public class UnexpectedHttpStatusCodeException : Exception
     {
     }
 
-    protected UnexpectedHttpStatusCodeException(
-        SerializationInfo info,
-        StreamingContext context
-    ) : base(info, context)
-    {
-    }
-
     protected UnexpectedHttpStatusCodeException(string message, HttpStatusCode statusCode) : base(message)
     {
         StatusCode = statusCode;
