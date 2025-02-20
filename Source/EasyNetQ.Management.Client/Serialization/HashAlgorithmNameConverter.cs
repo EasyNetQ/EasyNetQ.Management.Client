@@ -7,7 +7,7 @@ namespace EasyNetQ.Management.Client.Serialization;
 
 internal class HashAlgorithmNameConverter : JsonConverter<HashAlgorithmName>
 {
-    static readonly HashAlgorithmName[] Supported = [ HashAlgorithmName.SHA256, HashAlgorithmName.SHA512, HashAlgorithmName.MD5 ];
+    static readonly HashAlgorithmName[] Supported = [HashAlgorithmName.SHA256, HashAlgorithmName.SHA512, HashAlgorithmName.MD5];
     const string Prefix = "rabbit_password_hashing_";
 
     public override HashAlgorithmName Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
