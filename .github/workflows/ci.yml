@@ -31,6 +31,9 @@ jobs:
     - name: Check formatting
       run: dotnet format --no-restore --verify-no-changes --severity warn ./Source/EasyNetQ.Management.Client.sln || (echo "Run 'dotnet format' to fix issues" && exit 1)
     - name: Build
+      uses: microsoft/setup-msbuild@v1.1
+      with:
+        vs-version: '[17.9, 18.0)'
       run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
     - name: Tests
       run: |
@@ -63,6 +66,9 @@ jobs:
       - name: Install dependencies
         run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
       - name: Build
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          vs-version: '[17.9, 18.0)'
         run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
       - name: Integration Tests
         run: |
@@ -87,6 +93,9 @@ jobs:
       - name: Install dependencies
         run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
       - name: Build
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          vs-version: '[17.9, 18.0)'
         run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
       - name: Pack
         run: dotnet pack ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release --no-build --include-symbols -p:PackageOutputPath="${{ github.workspace }}/Packages"
