@@ -784,15 +784,15 @@ public class ManagementClientTests
             .Where(e => e.StatusCode == System.Net.HttpStatusCode.NotFound);
     }
 
-    async Task AssertUserLimits(string testUser1, string testUser2, UserLimits[] expectedUserLimits)
+    async Task AssertUserLimits(string testUser1, string testUser2, UserLimits?[] expectedUserLimits)
     {
         IReadOnlyList<UserLimits> limits;
         limits = await fixture.ManagementClient.GetUserLimitsAsync(testUser1);
-        limits.Should().Equal(expectedUserLimits.Where(limits => limits != null && limits.User == testUser1));
+        limits.Should().Equal(expectedUserLimits.Where(limits => limits != null && limits.User == testUser1)!);
         limits = await fixture.ManagementClient.GetUserLimitsAsync(testUser2);
-        limits.Should().Equal(expectedUserLimits.Where(limits => limits != null && limits.User == testUser2));
+        limits.Should().Equal(expectedUserLimits.Where(limits => limits != null && limits.User == testUser2)!);
         limits = await fixture.ManagementClient.GetUserLimitsAsync();
-        limits.Should().Equal(expectedUserLimits.Where(limits => limits != null));
+        limits.Should().Equal(expectedUserLimits.Where(limits => limits != null)!);
     }
 
     [Fact]
@@ -804,7 +804,7 @@ public class ManagementClientTests
         var testUser2 = "limits2";
         await fixture.ManagementClient.CreateUserAsync(testUser2, UserInfo.ByPassword("topSecret"));
 
-        UserLimits[] expectedUserLimits = { null, null };
+        UserLimits?[] expectedUserLimits = { null, null };
         await AssertUserLimits(testUser1, testUser2, expectedUserLimits);
 
         expectedUserLimits[0] = new UserLimits(testUser1, new Limits(null, 22));
