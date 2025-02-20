@@ -1562,7 +1562,7 @@ namespace EasyNetQ.Management.Client.Model
     public class UserInfo : System.IEquatable<EasyNetQ.Management.Client.Model.UserInfo>
     {
         public UserInfo(string? Password, string? PasswordHash, System.Collections.Generic.IReadOnlyList<string> Tags, System.Security.Cryptography.HashAlgorithmName? HashingAlgorithm = default) { }
-        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.HashAlgorithmNameConverter?))]
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.HashAlgorithmNameConverter))]
         public System.Security.Cryptography.HashAlgorithmName? HashingAlgorithm { get; init; }
         public string? PasswordHash { get; init; }
         public string? Password { get; init; }
@@ -1570,7 +1570,9 @@ namespace EasyNetQ.Management.Client.Model
         public EasyNetQ.Management.Client.Model.UserInfo AddTag(string tag) { }
         public EasyNetQ.Management.Client.Model.UserInfo WithTags(params string[] tags) { }
         public static EasyNetQ.Management.Client.Model.UserInfo ByPassword(string password) { }
-        public static EasyNetQ.Management.Client.Model.UserInfo ByPasswordHash(string passwordHash, System.Security.Cryptography.HashAlgorithmName? HashAlgorithmName = default) { }
+        public static EasyNetQ.Management.Client.Model.UserInfo ByPasswordAndHashAlgorithm(string password, System.Security.Cryptography.HashAlgorithmName? hashAlgorithmName) { }
+        public static EasyNetQ.Management.Client.Model.UserInfo ByPasswordHash(string passwordHash, System.Security.Cryptography.HashAlgorithmName? hashAlgorithmName = default) { }
+        public static string ComputePasswordHash(string password, System.Security.Cryptography.HashAlgorithmName? hashAlgorithmName = default) { }
     }
     public class UserLimits : System.IEquatable<EasyNetQ.Management.Client.Model.UserLimits>
     {
