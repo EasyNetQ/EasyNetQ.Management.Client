@@ -110,6 +110,14 @@ namespace EasyNetQ.Management.Client
         public static void CreateUser(this EasyNetQ.Management.Client.IManagementClient client, string userName, EasyNetQ.Management.Client.Model.UserInfo userInfo, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task CreateUserAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, EasyNetQ.Management.Client.Model.UserInfo userInfo, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task CreateUserAsync(this EasyNetQ.Management.Client.IManagementClient client, string userName, EasyNetQ.Management.Client.Model.UserInfo userInfo, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void CreateUserMaxChannelsLimit(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, int maxChannels, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void CreateUserMaxChannelsLimit(this EasyNetQ.Management.Client.IManagementClient client, string userName, int maxChannels, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task CreateUserMaxChannelsLimitAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, int maxChannels, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task CreateUserMaxChannelsLimitAsync(this EasyNetQ.Management.Client.IManagementClient client, string userName, int maxChannels, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void CreateUserMaxConnectionsLimit(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, int maxConnections, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void CreateUserMaxConnectionsLimit(this EasyNetQ.Management.Client.IManagementClient client, string userName, int maxConnections, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task CreateUserMaxConnectionsLimitAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, int maxConnections, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task CreateUserMaxConnectionsLimitAsync(this EasyNetQ.Management.Client.IManagementClient client, string userName, int maxConnections, System.Threading.CancellationToken cancellationToken = default) { }
         public static void CreateVhost(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
         public static void CreateVhost(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task CreateVhostAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
@@ -181,6 +189,14 @@ namespace EasyNetQ.Management.Client
         public static void DeleteUser(this EasyNetQ.Management.Client.IManagementClient client, string userName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task DeleteUserAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task DeleteUserAsync(this EasyNetQ.Management.Client.IManagementClient client, string userName, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void DeleteUserMaxChannelsLimit(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void DeleteUserMaxChannelsLimit(this EasyNetQ.Management.Client.IManagementClient client, string userName, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task DeleteUserMaxChannelsLimitAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task DeleteUserMaxChannelsLimitAsync(this EasyNetQ.Management.Client.IManagementClient client, string userName, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void DeleteUserMaxConnectionsLimit(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, System.Threading.CancellationToken cancellationToken = default) { }
+        public static void DeleteUserMaxConnectionsLimit(this EasyNetQ.Management.Client.IManagementClient client, string userName, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task DeleteUserMaxConnectionsLimitAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task DeleteUserMaxConnectionsLimitAsync(this EasyNetQ.Management.Client.IManagementClient client, string userName, System.Threading.CancellationToken cancellationToken = default) { }
         public static void DeleteVhost(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
         public static void DeleteVhost(this EasyNetQ.Management.Client.IManagementClient client, string vhostName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task DeleteVhostAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
@@ -344,6 +360,12 @@ namespace EasyNetQ.Management.Client
         public static EasyNetQ.Management.Client.Model.User GetUser(this EasyNetQ.Management.Client.IManagementClient client, string userName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.User> GetUserAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task<EasyNetQ.Management.Client.Model.User> GetUserAsync(this EasyNetQ.Management.Client.IManagementClient client, string userName, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.UserLimits> GetUserLimits(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.UserLimits> GetUserLimits(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.UserLimits> GetUserLimits(this EasyNetQ.Management.Client.IManagementClient client, string userName, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.UserLimits>> GetUserLimitsAsync(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.UserLimits>> GetUserLimitsAsync(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.User user, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.UserLimits>> GetUserLimitsAsync(this EasyNetQ.Management.Client.IManagementClient client, string userName, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User> GetUsers(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User>> GetUsersAsync(this EasyNetQ.Management.Client.IManagementClient client, System.Threading.CancellationToken cancellationToken = default) { }
         public static EasyNetQ.Management.Client.Model.Vhost GetVhost(this EasyNetQ.Management.Client.IManagementClient client, EasyNetQ.Management.Client.Model.Vhost vhost, System.Threading.CancellationToken cancellationToken = default) { }
@@ -876,6 +898,19 @@ namespace EasyNetQ.Management.Client.Model
         public long Sample { get; init; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.UnixMsDateTimeConverter))]
         public System.DateTime Timestamp { get; init; }
+    }
+    public class LimitInfo : System.IEquatable<EasyNetQ.Management.Client.Model.LimitInfo>
+    {
+        public LimitInfo(int Value) { }
+        public int Value { get; init; }
+    }
+    public class Limits : System.IEquatable<EasyNetQ.Management.Client.Model.Limits>
+    {
+        public Limits(long? MaxChannels, long? MaxConnections) { }
+        [System.Text.Json.Serialization.JsonPropertyName("max-channels")]
+        public long? MaxChannels { get; init; }
+        [System.Text.Json.Serialization.JsonPropertyName("max-connections")]
+        public long? MaxConnections { get; init; }
     }
     public class Listener : System.IEquatable<EasyNetQ.Management.Client.Model.Listener>
     {
@@ -1516,20 +1551,33 @@ namespace EasyNetQ.Management.Client.Model
     }
     public class User : System.IEquatable<EasyNetQ.Management.Client.Model.User>
     {
-        public User(string Name, string PasswordHash, System.Collections.Generic.IReadOnlyList<string> Tags) { }
+        public User(string Name, string PasswordHash, System.Collections.Generic.IReadOnlyList<string> Tags, System.Security.Cryptography.HashAlgorithmName? HashingAlgorithm = default, EasyNetQ.Management.Client.Model.Limits? Limits = null) { }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.HashAlgorithmNameConverter))]
+        public System.Security.Cryptography.HashAlgorithmName? HashingAlgorithm { get; init; }
+        public EasyNetQ.Management.Client.Model.Limits? Limits { get; init; }
         public string Name { get; init; }
         public string PasswordHash { get; init; }
         public System.Collections.Generic.IReadOnlyList<string> Tags { get; init; }
     }
     public class UserInfo : System.IEquatable<EasyNetQ.Management.Client.Model.UserInfo>
     {
-        public UserInfo(string? Password, string? PasswordHash, System.Collections.Generic.IReadOnlyList<string> Tags) { }
+        public UserInfo(string? Password, string? PasswordHash, System.Collections.Generic.IReadOnlyList<string> Tags, System.Security.Cryptography.HashAlgorithmName? HashingAlgorithm = default) { }
+        [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.HashAlgorithmNameConverter?))]
+        public System.Security.Cryptography.HashAlgorithmName? HashingAlgorithm { get; init; }
         public string? PasswordHash { get; init; }
         public string? Password { get; init; }
         public System.Collections.Generic.IReadOnlyList<string> Tags { get; init; }
         public EasyNetQ.Management.Client.Model.UserInfo AddTag(string tag) { }
+        public EasyNetQ.Management.Client.Model.UserInfo WithTags(params string[] tags) { }
         public static EasyNetQ.Management.Client.Model.UserInfo ByPassword(string password) { }
-        public static EasyNetQ.Management.Client.Model.UserInfo ByPasswordHash(string passwordHash) { }
+        public static EasyNetQ.Management.Client.Model.UserInfo ByPasswordHash(string passwordHash, System.Security.Cryptography.HashAlgorithmName? HashAlgorithmName = default) { }
+    }
+    public class UserLimits : System.IEquatable<EasyNetQ.Management.Client.Model.UserLimits>
+    {
+        public UserLimits(string User, EasyNetQ.Management.Client.Model.Limits Limits) { }
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public EasyNetQ.Management.Client.Model.Limits Limits { get; init; }
+        public string User { get; init; }
     }
     public static class UserTags
     {
