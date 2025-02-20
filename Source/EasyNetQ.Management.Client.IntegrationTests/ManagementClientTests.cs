@@ -821,7 +821,7 @@ public class ManagementClientTests
 
 
         var user = await fixture.ManagementClient.GetUserAsync(testUser1);
-        user.Limits.Should().BeEquivalentTo(expectedUserLimits[0].Limits);
+        user.Limits.Should().BeEquivalentTo(expectedUserLimits[0]!.Limits);
 
 
         expectedUserLimits[1] = null;
