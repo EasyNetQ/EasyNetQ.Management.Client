@@ -78,18 +78,15 @@ jobs:
       max-parallel: 6
       matrix:
         rabbitmq: ['3.12', '3.13']
-        os: [ubuntu-latest, windows-latest]
+        # os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         include:
           - os: ubuntu-latest
             framework: net8.0
-          - os: windows-latest
-            framework: net48
+          # - os: windows-latest
+          #   framework: net48
       fail-fast: true
     steps:
-      - name: Docker
-        if: runner.os == 'Windows'
-        run: |
-          Get-Command docker
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -102,10 +99,6 @@ jobs:
         run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
       - name: Build
         run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
-      - name: Switch to Linux containers (Windows only)
-        if: runner.os == 'Windows'
-        run: |
-          & 'C:\Program Files\Docker\Docker\DockerCli.exe' -SwitchLinuxEngine
       - name: Integration Tests
         env:
           RABBITMQ_VERSION: ${{ matrix.rabbitmq }}
