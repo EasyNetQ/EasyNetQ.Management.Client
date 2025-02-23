@@ -42,7 +42,7 @@ jobs:
       - name: Check formatting
         run: dotnet format --no-restore --verify-no-changes --severity warn ./Source/EasyNetQ.Management.Client.sln || (echo "Run 'dotnet format' to fix issues" && exit 1)
       - name: Build
-        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release --framework ${{ matrix.framework }}
+        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
       - name: Tests
         run: |
           cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.Tests
@@ -81,7 +81,7 @@ jobs:
       - name: Install dependencies
         run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
       - name: Build
-        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release --framework ${{ matrix.framework }}
+        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
       - name: Integration Tests
         run: |
           cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.IntegrationTests
