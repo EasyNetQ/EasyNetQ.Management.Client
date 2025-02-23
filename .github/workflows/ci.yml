@@ -98,6 +98,9 @@ jobs:
         run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
       - name: Build
         run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
+      - name: Switch to Linux containers (Windows only)
+        if: runner.os == 'Windows'
+        run: "& 'C:\Program Files\Docker\Docker\DockerCli.exe' -SwitchLinuxEngine"
       - name: Integration Tests
         env:
           RABBITMQ_VERSION: ${{ matrix.rabbitmq }}
