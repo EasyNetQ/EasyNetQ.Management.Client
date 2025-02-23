@@ -53,8 +53,10 @@ jobs:
         include:
           - os: ubuntu-latest
             dotnet: '8.x'
+            framework: net8.0
           - os: windows-latest
             dotnet: '4.8'
+            framework: net48
       fail-fast: true
     steps:
       - name: Checkout
@@ -68,12 +70,12 @@ jobs:
       - name: Install dependencies
         run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
       - name: Build
-        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
+        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release --framework ${{ matrix.framework }}
       - name: Integration Tests
         run: |
           cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.IntegrationTests
           export RABBITMQ_VERSION=${{ matrix.rabbitmq }}
-          dotnet test --configuration Release --no-build
+          dotnet test --configuration Release --framework ${{ matrix.framework }} --no-build
 
   publish-to-nuget:
     name: Publish to NuGet
