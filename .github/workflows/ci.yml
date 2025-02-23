@@ -77,15 +77,14 @@ jobs:
     needs: lint-and-approval-tests
     timeout-minutes: 15
     strategy:
-      max-parallel: 3
+      max-parallel: 6
       matrix:
         rabbitmq: ['3.12', '3.13', '4.0']
+        os: [ubuntu-latest, windows-latest]
         include:
-          - os: ubuntu-latest
-            dotnet: 8.x
+          - dotnet: 8.x
             framework: net8.0
-          - os: windows-latest
-            dotnet: 4.8
+          - dotnet: 4.8
             framework: net48
       fail-fast: true
     steps:
