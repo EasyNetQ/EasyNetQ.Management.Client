@@ -82,9 +82,9 @@ jobs:
         rabbitmq: ['3.12', '3.13', '4.0']
         os: [ubuntu-latest, windows-latest]
         include:
-          - dotnet: 8.x
+          - os: ubuntu-latest
             framework: net8.0
-          - dotnet: 4.8
+          - os: windows-latest
             framework: net48
       fail-fast: true
     steps:
