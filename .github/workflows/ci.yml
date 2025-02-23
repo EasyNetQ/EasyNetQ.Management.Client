@@ -47,10 +47,8 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            dotnet: 8.x
             framework: net8.0
           - os: windows-latest
-            dotnet: 4.8
             framework: net48
       fail-fast: true
     steps:
