@@ -445,7 +445,6 @@ namespace EasyNetQ.Management.Client
     {
         public UnexpectedHttpStatusCodeException() { }
         public UnexpectedHttpStatusCodeException(string message) { }
-        protected UnexpectedHttpStatusCodeException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         public UnexpectedHttpStatusCodeException(string message, System.Exception inner) { }
         protected UnexpectedHttpStatusCodeException(string message, System.Net.HttpStatusCode statusCode) { }
         public System.Net.HttpStatusCode StatusCode { get; }
