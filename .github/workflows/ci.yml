@@ -89,7 +89,7 @@ jobs:
       - name: Docker
         if: runner.os == 'Windows'
         run: |
-          $env:PATH
+          Get-Command docker
       - name: Checkout
         uses: actions/checkout@v4
         with:
