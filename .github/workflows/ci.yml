@@ -15,31 +15,42 @@ permissions:
 jobs:
   lint-and-tests:
     name: Lint & Tests
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
+    strategy:
+      max-parallel: 3
+      matrix:
+        include:
+          - os: ubuntu-latest
+            dotnet: 8.x
+            framework: net8.0
+          - os: windows-latest
+            dotnet: 4.8
+            framework: net48
+      fail-fast: true
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - name: Setup .NET Core 8.x
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.x'
-    - name: Install dependencies
-      run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
-    - name: Check formatting
-      run: dotnet format --no-restore --verify-no-changes --severity warn ./Source/EasyNetQ.Management.Client.sln || (echo "Run 'dotnet format' to fix issues" && exit 1)
-    - name: Build
-      run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
-    - name: Tests
-      run: |
-        cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.Tests
-        dotnet test --configuration Release --no-build
-    - name: Approval Tests
-      run: |
-        cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.ApprovalTests
-        dotnet test --configuration Release --no-build
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup .NET Core 8.x
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x
+      - name: Install dependencies
+        run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
+      - name: Check formatting
+        run: dotnet format --no-restore --verify-no-changes --severity warn ./Source/EasyNetQ.Management.Client.sln || (echo "Run 'dotnet format' to fix issues" && exit 1)
+      - name: Build
+        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release --framework ${{ matrix.framework }}
+      - name: Tests
+        run: |
+          cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.Tests
+          dotnet test --configuration Release --framework ${{ matrix.framework }} --no-build
+      - name: Approval Tests
+        run: |
+          cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.ApprovalTests
+          dotnet test --configuration Release --framework ${{ matrix.framework }} --no-build
 
   integration-tests:
     name: Integrations Tests
@@ -52,10 +63,10 @@ jobs:
         rabbitmq: ['3.12', '3.13', '4.0']
         include:
           - os: ubuntu-latest
-            dotnet: '8.x'
+            dotnet: 8.x
             framework: net8.0
           - os: windows-latest
-            dotnet: '4.8'
+            dotnet: 4.8
             framework: net48
       fail-fast: true
     steps:
@@ -90,7 +101,7 @@ jobs:
       - name: Setup .NET Core 8.x
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: 8.x
       - name: Install dependencies
         run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
       - name: Build
