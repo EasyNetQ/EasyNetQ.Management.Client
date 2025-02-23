@@ -43,13 +43,18 @@ jobs:
 
   integration-tests:
     name: Integrations Tests
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     needs: lint-and-tests
     timeout-minutes: 15
     strategy:
       max-parallel: 3
       matrix:
-        rabbitmq: ['3.10', '3.11', '3.12', '3.13']
+        rabbitmq: ['3.12', '3.13', '4.0']
+        include:
+          - os: ubuntu-latest
+            dotnet: '8.x'
+          - os: windows-latest
+            dotnet: '4.8'
       fail-fast: true
     steps:
       - name: Checkout
