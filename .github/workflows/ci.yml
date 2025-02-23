@@ -86,6 +86,10 @@ jobs:
             framework: net48
       fail-fast: true
     steps:
+      - name: Docker
+        if: runner.os == 'Windows'
+        run: |
+          $env:PATH
       - name: Checkout
         uses: actions/checkout@v4
         with:
