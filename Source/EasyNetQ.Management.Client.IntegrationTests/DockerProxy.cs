@@ -43,10 +43,7 @@ public class DockerProxy : IDisposable
             FromImage = image,
             Tag = tag
         };
-        var progress = new Progress<JSONMessage>(
-            message => {
-                Console.WriteLine(message.ToString());
-            });
+        var progress = new Progress<JSONMessage>(Console.WriteLine);
         await client.Images.CreateImageAsync(createParameters, null, progress, token);
     }
 
