@@ -67,6 +67,7 @@ public static partial class IManagementClientExtensions
     private static readonly RelativePath Health = Api / "health";
     private static readonly RelativePath Rebalance = Api / "rebalance";
     private static readonly RelativePath ShovelStatuses = Api / "shovels";
+    private static readonly RelativePath UserLimits = Api / "user-limits";
 
     private static IEnumerable<KeyValuePair<string, string>>? ConcatNullableQueryParameters(params IEnumerable<KeyValuePair<string, string>>?[] multipleQueryParameters)
     {
@@ -1135,4 +1136,84 @@ public static partial class IManagementClientExtensions
     // /// <param name="cancellationToken"></param>
     // /// <returns></returns>
     // Task<ShovelStatus> GetShovelStatusAsync(string vhostName, string shovelName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of per-user limits for all users.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task<IReadOnlyList<UserLimits>> GetUserLimitsAsync(
+        this IManagementClient client,
+        CancellationToken cancellationToken = default
+    ) => client.GetAsync<IReadOnlyList<UserLimits>>(UserLimits, cancellationToken);
+
+    /// <summary>
+    ///     A list of per-user limits for a specific user.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="userName">The name of the user</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task<IReadOnlyList<UserLimits>> GetUserLimitsAsync(
+        this IManagementClient client,
+        string userName,
+        CancellationToken cancellationToken = default
+    ) => client.GetAsync<IReadOnlyList<UserLimits>>(UserLimits / userName, cancellationToken);
+
+    /// <summary>
+    ///     Sets per-user max connections limit for user.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="userName">The name of the user</param>
+    /// <param name="maxConnections">Connections limit</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task CreateUserMaxConnectionsLimitAsync(
+        this IManagementClient client,
+        string userName,
+        int maxConnections,
+        CancellationToken cancellationToken = default
+    ) => client.PutAsync(UserLimits / userName / "max-connections", new LimitInfo(maxConnections), cancellationToken);
+
+    /// <summary>
+    ///     Sets per-user max channels limit for user.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="userName">The name of the user</param>
+    /// <param name="maxChannels">Connections limit</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task CreateUserMaxChannelsLimitAsync(
+        this IManagementClient client,
+        string userName,
+        int maxChannels,
+        CancellationToken cancellationToken = default
+    ) => client.PutAsync(UserLimits / userName / "max-channels", new LimitInfo(maxChannels), cancellationToken);
+
+    /// <summary>
+    ///     Deletes per-user max connections limit for user.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="userName">The name of the user</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task DeleteUserMaxConnectionsLimitAsync(
+        this IManagementClient client,
+        string userName,
+        CancellationToken cancellationToken = default
+    ) => client.DeleteAsync(UserLimits / userName / "max-connections", cancellationToken);
+
+    /// <summary>
+    ///     Deletes per-user max channels limit for user.
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="userName">The name of the user</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static Task DeleteUserMaxChannelsLimitAsync(
+        this IManagementClient client,
+        string userName,
+        CancellationToken cancellationToken = default
+    ) => client.DeleteAsync(UserLimits / userName / "max-channels", cancellationToken);
 }
