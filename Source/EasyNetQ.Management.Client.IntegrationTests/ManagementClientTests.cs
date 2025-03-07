@@ -1,5 +1,6 @@
 using EasyNetQ.Management.Client.Model;
 using FluentAssertions.Extensions;
+using System.Security.Cryptography;
 using System.Text.Json;
 
 namespace EasyNetQ.Management.Client.IntegrationTests;
@@ -64,15 +65,13 @@ public class ManagementClientTests
     public async Task Should_be_able_to_change_the_password_of_a_user()
     {
         var userInfo = UserInfo.ByPassword("topSecret").AddTag(UserTags.Monitoring).AddTag(UserTags.Management);
+
         await fixture.ManagementClient.CreateUserAsync(TestUser, userInfo);
-
         var user = await fixture.ManagementClient.GetUserAsync(TestUser);
-
         await fixture.ManagementClient.ChangeUserPasswordAsync(TestUser, "newPassword");
-
         var updatedUser = await fixture.ManagementClient.GetUserAsync(TestUser);
-        updatedUser.Name.Should().Be(user.Name);
-        updatedUser.Tags.Should().BeEquivalentTo(user.Tags);
+
+        updatedUser.Should().BeEquivalentTo(user, options => options.Excluding(o => o.PasswordHash));
         updatedUser.PasswordHash.Should().NotBe(user.PasswordHash);
     }
 
@@ -147,8 +146,11 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_check_classic_queues_without_synchronised_mirrors()
     {
-        var result = await fixture.ManagementClient.HaveAnyClassicQueuesWithoutSynchronisedMirrorsAsync();
-        result.Should().BeFalse();
+        if (fixture.RabbitmqVersion < new Version("4.0"))
+        {
+            var result = await fixture.ManagementClient.HaveAnyClassicQueuesWithoutSynchronisedMirrorsAsync();
+            result.Should().BeFalse();
+        }
     }
 
     [Fact]
@@ -165,7 +167,7 @@ public class ManagementClientTests
     }
 
     [Fact]
-    public async Task Should_be_able_to_create_a_user()
+    public async Task Should_be_able_to_create_a_user_with_password()
     {
         var userInfo = UserInfo.ByPassword("topSecret").AddTag(UserTags.Administrator);
 
@@ -173,22 +175,44 @@ public class ManagementClientTests
         var user = await fixture.ManagementClient.GetUserAsync(TestUser);
 
         user.Name.Should().Be(TestUser);
-        user.Tags.Should().Contain(UserTags.Administrator);
+        user.Should().BeEquivalentTo(userInfo with { HashingAlgorithm = HashAlgorithmName.SHA256 },
+            options => options.ExcludingMissingMembers().Excluding(o => o.PasswordHash));
     }
 
     [Fact]
     public async Task Should_be_able_to_create_a_user_with_password_hash()
     {
         var testUser = "hash_user";
-        // Hash calculated using RabbitMq hash computing algorithm using Sha256
-        // See https://www.rabbitmq.com/passwords.html
-        var passwordHash = "Qlp9Dgrqvx1S1VkuYsoWwgUD2XW2gZLuqQwreE+PAsPZETgo"; //"topSecret"
+        var passwordHash = UserInfo.ComputePasswordHash("topSecret");
         var userInfo = UserInfo.ByPasswordHash(passwordHash).AddTag(UserTags.Administrator);
 
         await fixture.ManagementClient.CreateUserAsync(testUser, userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(testUser);
 
         user.Name.Should().Be(testUser);
+        user.Should().BeEquivalentTo(userInfo with { HashingAlgorithm = HashAlgorithmName.SHA256 },
+            options => options.ExcludingMissingMembers());
+
+        // validate authentication
+        var mc = new ManagementClient(fixture.ManagementClient.Endpoint, testUser, "topSecret");
+        await mc.GetUserAsync(testUser);
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_create_a_user_with_password_and_hash_algorithm()
+    {
+        var testUser = "hash_user";
+        var userInfo = UserInfo.ByPasswordAndHashAlgorithm("topSecret", HashAlgorithmName.SHA512).AddTag(UserTags.Administrator);
+
+        await fixture.ManagementClient.CreateUserAsync(testUser, userInfo);
+        var user = await fixture.ManagementClient.GetUserAsync(testUser);
+
+        user.Name.Should().Be(testUser);
+        user.Should().BeEquivalentTo(userInfo, options => options.ExcludingMissingMembers());
+
+        // validate authentication
+        var mc = new ManagementClient(fixture.ManagementClient.Endpoint, testUser, "topSecret");
+        await mc.GetUserAsync(testUser);
     }
 
     [Fact]
@@ -200,18 +224,48 @@ public class ManagementClientTests
         var user = await fixture.ManagementClient.GetUserAsync(TestUser);
 
         user.Name.Should().Be(TestUser);
+        user.Should().BeEquivalentTo(userInfo with { HashingAlgorithm = HashAlgorithmName.SHA256 },
+            options => options.ExcludingMissingMembers().Excluding(o => o.PasswordHash));
     }
 
     [Fact]
-    public async Task Should_be_able_to_create_a_user_without_password()
+    public async Task Should_be_able_to_create_a_user_with_empty_password_hash()
     {
         var testUser = "empty";
-        var userInfo = UserInfo.ByPassword("").AddTag(UserTags.Administrator);
+        var userInfo = UserInfo.ByPasswordHash("").AddTag(UserTags.Administrator);
 
         await fixture.ManagementClient.CreateUserAsync(testUser, userInfo);
         var user = await fixture.ManagementClient.GetUserAsync(testUser);
 
         user.Name.Should().Be(testUser);
+        user.Should().BeEquivalentTo(userInfo with { HashingAlgorithm = HashAlgorithmName.SHA256 },
+            options => options.ExcludingMissingMembers());
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_create_a_user_without_password_and_password_hash()
+    {
+        var testUser = "empty";
+        var userInfo = new UserInfo(null, null, Array.Empty<string>()).AddTag(UserTags.Administrator);
+
+        await fixture.ManagementClient.CreateUserAsync(testUser, userInfo);
+        var user = await fixture.ManagementClient.GetUserAsync(testUser);
+
+        user.Name.Should().Be(testUser);
+        user.Should().BeEquivalentTo(userInfo with { HashingAlgorithm = HashAlgorithmName.SHA256 },
+            options => options.ExcludingMissingMembers().Excluding(o => o.PasswordHash));
+    }
+
+    [Fact]
+    public async Task Should_throw_when_trying_to_create_a_user_with_password_and_password_hash()
+    {
+        var testUser = "empty";
+        var userInfo = new UserInfo("a", "b", Array.Empty<string>()).AddTag(UserTags.Administrator);
+
+        var act = async () => await fixture.ManagementClient.CreateUserAsync(testUser, userInfo);
+
+        await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>()
+            .Where(e => e.StatusCode == System.Net.HttpStatusCode.BadRequest);
     }
 
     [Fact]
@@ -219,10 +273,10 @@ public class ManagementClientTests
     {
         const string policyName = "a-sample-all-definitions-in-a-policy";
         const int priority = 999;
-        const HaMode haMode = HaMode.All;
-        const HaSyncMode haSyncMode = HaSyncMode.Automatic;
-        const HaPromote haPromoteOnFailure = HaPromote.Always;
-        const HaPromote haPromoteOnShutdown = HaPromote.WhenSynced;
+        HaMode? haMode = fixture.RabbitmqVersion < new Version("4.0") ? HaMode.All : null;
+        HaSyncMode? haSyncMode = fixture.RabbitmqVersion < new Version("4.0") ? HaSyncMode.Automatic : null;
+        HaPromote? haPromoteOnFailure = fixture.RabbitmqVersion < new Version("4.0") ? HaPromote.Always : null;
+        HaPromote? haPromoteOnShutdown = fixture.RabbitmqVersion < new Version("4.0") ? HaPromote.WhenSynced : null;
         QueueVersion queueVersion = fixture.RabbitmqVersion >= new Version("3.12") ? QueueVersion.V2 : QueueVersion.V1;
         const QueueLocator queueMasterLocator = QueueLocator.ClientLocal;
         const uint deliveryLimit = 3;
@@ -280,28 +334,16 @@ public class ManagementClientTests
 
         var policies = await fixture.ManagementClient.GetPoliciesAsync();
         policies.Should().ContainEquivalentOf(policy, options => options.Excluding(o => o.Definition.JsonExtensionData));
-    }
 
-    [Fact]
-    public async Task Should_be_able_to_create_alternate_exchange_policy()
-    {
-        const string policyName = "a-sample-alternate-exchange-policy";
-        const string alternateExchange = "a-sample-alternate-exchange";
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    AlternateExchange: alternateExchange
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.AlternateExchange == alternateExchange)
-        );
+        policy = policy with { ApplyTo = ApplyMode.Queues };
+        await fixture.ManagementClient.CreatePolicyAsync(policy);
+        policies = await fixture.ManagementClient.GetPoliciesAsync();
+        policies.Should().ContainEquivalentOf(policy, options => options.Excluding(o => o.Definition.JsonExtensionData));
+
+        policy = policy with { ApplyTo = ApplyMode.Exchanges };
+        await fixture.ManagementClient.CreatePolicyAsync(policy);
+        policies = await fixture.ManagementClient.GetPoliciesAsync();
+        policies.Should().ContainEquivalentOf(policy, options => options.Excluding(o => o.Definition.JsonExtensionData));
     }
 
     [Fact]
@@ -320,218 +362,6 @@ public class ManagementClientTests
         var exchange = await fixture.ManagementClient.GetExchangeAsync(Vhost, TestExchangeTestQueueWithPlusChar);
 
         exchange.Name.Should().Be(TestExchangeTestQueueWithPlusChar);
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_dead_letter_exchange_policy()
-    {
-        const string policyName = "a-sample-dead-letter-exchange";
-        const string deadLetterExchange = "a-sample-dead-letter-exchange";
-        const string deadLetterRoutingKey = "a-sample-dead-letter-exchange-key";
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    DeadLetterExchange: deadLetterExchange,
-                    DeadLetterRoutingKey: deadLetterRoutingKey
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.DeadLetterExchange == deadLetterExchange
-                 && p.Definition.DeadLetterRoutingKey == deadLetterRoutingKey)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_exchanges_only_policies()
-    {
-        const string policyName = "asamplepolicy-exchange-only";
-        const HaMode haMode = HaMode.All;
-        const HaSyncMode haSyncMode = HaSyncMode.Automatic;
-
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                ApplyTo: ApplyMode.Exchanges,
-                Definition: new PolicyDefinition(
-                    HaMode: haMode,
-                    HaSyncMode: haSyncMode
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.ApplyTo == ApplyMode.Exchanges
-                 && p.Definition.HaMode == haMode
-                 && p.Definition.HaSyncMode == haSyncMode)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_expires_policy()
-    {
-        const string policyName = "a-sample-expires";
-        const uint expires = 10000;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    Expires: expires
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.Expires == expires)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_federation_upstream_policy()
-    {
-        const string policyName = "a-sample-federation-upstream-policy";
-
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    FederationUpstream: "my-upstream"
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.FederationUpstream == "my-upstream")
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_federation_upstream_set_policy()
-    {
-        const string policyName = "a-sample-federation-upstream-set-policy";
-
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    FederationUpstreamSet: "my-upstream-set"
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.FederationUpstreamSet == "my-upstream-set")
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_max_length_policy()
-    {
-        const string policyName = "a-sample-max-length";
-        const uint maxLength = 500;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    MaxLength: maxLength
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.MaxLength == maxLength)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_max_length_bytes_policy()
-    {
-        const string policyName = "a-sample-max-length-bytes";
-        const uint maxLengthBytes = 500;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    MaxLengthBytes: maxLengthBytes
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.MaxLengthBytes == maxLengthBytes)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_overflow_policy()
-    {
-        foreach (Overflow overflow in Enum.GetValues(typeof(Overflow)))
-        {
-            const string policyName = "a-sample-overflow";
-            const uint maxLengthBytes = 500;
-            await fixture.ManagementClient.CreatePolicyAsync(
-                new Policy(
-                    Name: policyName,
-                    Pattern: "averyuncommonpattern",
-                    Vhost: Vhost.Name,
-                    Definition: new PolicyDefinition(
-                        MaxLengthBytes: maxLengthBytes,
-                        Overflow: overflow
-                    )
-                )
-            );
-            Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-                p => p.Name == policyName
-                     && p.Vhost == Vhost.Name
-                     && p.Definition.MaxLengthBytes == maxLengthBytes
-                     && p.Definition.Overflow == overflow)
-            );
-        }
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_message_ttl_policy()
-    {
-        const string policyName = "a-sample-message-ttl";
-        const uint messageTtl = 5000;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    MessageTtl: messageTtl
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.MessageTtl == messageTtl)
-        );
     }
 
     [Fact]
@@ -592,59 +422,6 @@ public class ManagementClientTests
 
         var permissionInfo = new PermissionInfo();
         await fixture.ManagementClient.CreatePermissionAsync(vhost, user, permissionInfo);
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_policies()
-    {
-        const string policyName = "asamplepolicy";
-        const HaMode haMode = HaMode.All;
-        const HaSyncMode haSyncMode = HaSyncMode.Automatic;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    HaMode: haMode,
-                    HaSyncMode: haSyncMode
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.ApplyTo == ApplyMode.All
-                 && p.Definition.HaMode == haMode
-                 && p.Definition.HaSyncMode == haSyncMode)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_queues_only_policies()
-    {
-        const string policyName = "asamplepolicy-queue-only";
-        const HaMode haMode = HaMode.All;
-        const HaSyncMode haSyncMode = HaSyncMode.Automatic;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                ApplyTo: ApplyMode.Queues,
-                Definition: new PolicyDefinition(
-                    HaMode: haMode,
-                    HaSyncMode: haSyncMode
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.ApplyTo == ApplyMode.Queues
-                 && p.Definition.HaMode == haMode
-                 && p.Definition.HaSyncMode == haSyncMode)
-        );
     }
 
     [Fact]
@@ -716,6 +493,77 @@ public class ManagementClientTests
     }
 
     [Fact]
+    public async Task Should_throw_when_trying_to_get_non_existant_user()
+    {
+        var act = async () => await fixture.ManagementClient.GetUserAsync("non-existant-user");
+
+        await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>()
+            .Where(e => e.StatusCode == System.Net.HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task Should_throw_when_trying_to_delete_non_existant_user()
+    {
+        var act = async () => await fixture.ManagementClient.DeleteUserAsync("non-existant-user");
+
+        await act.Should().ThrowAsync<UnexpectedHttpStatusCodeException>()
+            .Where(e => e.StatusCode == System.Net.HttpStatusCode.NotFound);
+    }
+
+    async Task AssertUserLimits(string testUser1, string testUser2, UserLimits?[] expectedUserLimits)
+    {
+        IReadOnlyList<UserLimits> limits;
+        limits = await fixture.ManagementClient.GetUserLimitsAsync(testUser1);
+        limits.Should().Equal(expectedUserLimits.Where(limits => limits != null && limits.User == testUser1)!);
+        limits = await fixture.ManagementClient.GetUserLimitsAsync(testUser2);
+        limits.Should().Equal(expectedUserLimits.Where(limits => limits != null && limits.User == testUser2)!);
+        limits = await fixture.ManagementClient.GetUserLimitsAsync();
+        limits.Should().Equal(expectedUserLimits.Where(limits => limits != null)!);
+    }
+
+    [Fact]
+    public async Task Should_be_able_to_create_get_and_delete_a_user_limits()
+    {
+        var testUser1 = "limits1";
+        await fixture.ManagementClient.CreateUserAsync(testUser1, UserInfo.ByPassword("topSecret"));
+
+        var testUser2 = "limits2";
+        await fixture.ManagementClient.CreateUserAsync(testUser2, UserInfo.ByPassword("topSecret"));
+
+        UserLimits?[] expectedUserLimits = { null, null };
+        await AssertUserLimits(testUser1, testUser2, expectedUserLimits);
+
+        expectedUserLimits[0] = new UserLimits(testUser1, new Limits(null, 22));
+        await fixture.ManagementClient.CreateUserMaxConnectionsLimitAsync(testUser1, 22);
+        await AssertUserLimits(testUser1, testUser2, expectedUserLimits);
+
+        expectedUserLimits[0] = new UserLimits(testUser1, new Limits(33, 22));
+        await fixture.ManagementClient.CreateUserMaxChannelsLimitAsync(testUser1, 33);
+        await AssertUserLimits(testUser1, testUser2, expectedUserLimits);
+
+        expectedUserLimits[1] = new UserLimits(testUser2, new Limits(33, null));
+        await fixture.ManagementClient.CreateUserMaxChannelsLimitAsync(testUser2, 33);
+        await AssertUserLimits(testUser1, testUser2, expectedUserLimits);
+
+
+        var user = await fixture.ManagementClient.GetUserAsync(testUser1);
+        user.Limits.Should().BeEquivalentTo(expectedUserLimits[0]!.Limits);
+
+
+        expectedUserLimits[1] = null;
+        await fixture.ManagementClient.DeleteUserMaxChannelsLimitAsync(testUser2);
+        await AssertUserLimits(testUser1, testUser2, expectedUserLimits);
+
+        expectedUserLimits[0] = new UserLimits(testUser1, new Limits(null, 22));
+        await fixture.ManagementClient.DeleteUserMaxChannelsLimitAsync(testUser1);
+        await AssertUserLimits(testUser1, testUser2, expectedUserLimits);
+
+        expectedUserLimits[0] = null;
+        await fixture.ManagementClient.DeleteUserMaxConnectionsLimitAsync(testUser1);
+        await AssertUserLimits(testUser1, testUser2, expectedUserLimits);
+    }
+
+    [Fact]
     public async Task Should_be_able_to_delete_an_exchange()
     {
         const string exchangeName = "delete-xcg";
@@ -780,20 +628,13 @@ public class ManagementClientTests
                 Pattern: "averyuncommonpattern",
                 Vhost: Vhost.Name,
                 Definition: new PolicyDefinition(
-                    HaMode: HaMode.All,
-                    HaSyncMode: HaSyncMode.Automatic
+                    MaxLength: 33333
                 )
             )
         );
-        Assert.Equal(
-            1,
-            (await fixture.ManagementClient.GetPoliciesAsync()).Count(p => p.Name == policyName && p.Vhost == Vhost.Name)
-        );
+        (await fixture.ManagementClient.GetPoliciesAsync()).Should().ContainSingle(p => p.Name == policyName && p.Vhost == Vhost.Name);
         await fixture.ManagementClient.DeletePolicyAsync(Vhost.Name, policyName);
-        Assert.Equal(
-            0,
-            (await fixture.ManagementClient.GetPoliciesAsync()).Count(p => p.Name == policyName && p.Vhost == Vhost.Name)
-        );
+        (await fixture.ManagementClient.GetPoliciesAsync()).Should().NotContain(p => p.Name == policyName && p.Vhost == Vhost.Name);
     }
 
     [Fact]
@@ -892,8 +733,13 @@ public class ManagementClientTests
     public async Task Should_be_able_to_get_a_user_by_name()
     {
         var userInfo = UserInfo.ByPassword("topSecret");
+
         await fixture.ManagementClient.CreateUserAsync(TestUser, userInfo);
-        (await fixture.ManagementClient.GetUserAsync(TestUser)).Name.Should().Be(TestUser);
+        var user = await fixture.ManagementClient.GetUserAsync(TestUser);
+
+        user.Name.Should().Be(TestUser);
+        user.Should().BeEquivalentTo(userInfo with { HashingAlgorithm = HashAlgorithmName.SHA256 },
+            options => options.ExcludingMissingMembers().Excluding(o => o.PasswordHash));
     }
 
     [Fact]
@@ -1198,7 +1044,7 @@ public class ManagementClientTests
     {
         var definitions = await fixture.ManagementClient.GetDefinitionsAsync();
 
-        definitions.RabbitVersion[0].Should().Be('3');
+        definitions.RabbitVersion.Should().Be(fixture.RabbitmqVersion.ToString());
     }
 
     [Fact]
@@ -1490,7 +1336,7 @@ public class ManagementClientTests
     }
 
     [Fact]
-    public async Task Should_be_able_to_throw_on_non_existant_shovel()
+    public async Task Should_throw_when_trying_to_get_non_existant_shovel()
     {
         var act = async () => await fixture.ManagementClient.GetShovelAsync(Vhost.Name, "non-existant-shovel");
 
