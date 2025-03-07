@@ -19,16 +19,18 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
     public RabbitMqFixture()
     {
         dockerProxy = new DockerProxy();
-        tag = $"{Environment.GetEnvironmentVariable("RABBITMQ_VERSION") ?? "3.12"}-management";
+        tag = $"{Environment.GetEnvironmentVariable("RABBITMQ_VERSION") ?? "4.0"}-management";
     }
 
     public Uri Endpoint { get; private set; } = new("http://localhost:15672");
     public string User { get; private set; } = "guest";
     public string Password { get; private set; } = "guest";
 
-    public IManagementClient ManagementClient { get; private set; }
+    private IManagementClient? managementClient;
+    public IManagementClient ManagementClient => managementClient!;
 
-    public Version RabbitmqVersion { get; private set; }
+    private Version? rabbitmqVersion;
+    public Version RabbitmqVersion => rabbitmqVersion!;
 
     public async Task InitializeAsync()
     {
@@ -45,11 +47,11 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
             Endpoint = new Uri($"http://{containerIp}:15672");
         }
 
-        ManagementClient = new ManagementClient(Endpoint, User, Password);
+        managementClient = new ManagementClient(Endpoint, User, Password);
         await WaitForRabbitMqReadyAsync(cts.Token);
 
         var overview = await ManagementClient.GetOverviewAsync();
-        RabbitmqVersion = new Version(overview.RabbitmqVersion);
+        rabbitmqVersion = new Version(overview.RabbitmqVersion);
     }
 
     public async Task DisposeAsync()
