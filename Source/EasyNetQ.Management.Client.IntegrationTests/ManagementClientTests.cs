@@ -147,8 +147,11 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_be_able_to_check_classic_queues_without_synchronised_mirrors()
     {
-        var result = await fixture.ManagementClient.HaveAnyClassicQueuesWithoutSynchronisedMirrorsAsync();
-        result.Should().BeFalse();
+        if (fixture.RabbitmqVersion < new Version("4.0"))
+        {
+            var result = await fixture.ManagementClient.HaveAnyClassicQueuesWithoutSynchronisedMirrorsAsync();
+            result.Should().BeFalse();
+        }
     }
 
     [Fact]
@@ -219,10 +222,10 @@ public class ManagementClientTests
     {
         const string policyName = "a-sample-all-definitions-in-a-policy";
         const int priority = 999;
-        const HaMode haMode = HaMode.All;
-        const HaSyncMode haSyncMode = HaSyncMode.Automatic;
-        const HaPromote haPromoteOnFailure = HaPromote.Always;
-        const HaPromote haPromoteOnShutdown = HaPromote.WhenSynced;
+        HaMode? haMode = fixture.RabbitmqVersion < new Version("4.0") ? HaMode.All : null;
+        HaSyncMode? haSyncMode = fixture.RabbitmqVersion < new Version("4.0") ? HaSyncMode.Automatic : null;
+        HaPromote? haPromoteOnFailure = fixture.RabbitmqVersion < new Version("4.0") ? HaPromote.Always : null;
+        HaPromote? haPromoteOnShutdown = fixture.RabbitmqVersion < new Version("4.0") ? HaPromote.WhenSynced : null;
         QueueVersion queueVersion = fixture.RabbitmqVersion >= new Version("3.12") ? QueueVersion.V2 : QueueVersion.V1;
         const QueueLocator queueMasterLocator = QueueLocator.ClientLocal;
         const uint deliveryLimit = 3;
@@ -280,28 +283,16 @@ public class ManagementClientTests
 
         var policies = await fixture.ManagementClient.GetPoliciesAsync();
         policies.Should().ContainEquivalentOf(policy, options => options.Excluding(o => o.Definition.JsonExtensionData));
-    }
 
-    [Fact]
-    public async Task Should_be_able_to_create_alternate_exchange_policy()
-    {
-        const string policyName = "a-sample-alternate-exchange-policy";
-        const string alternateExchange = "a-sample-alternate-exchange";
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    AlternateExchange: alternateExchange
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.AlternateExchange == alternateExchange)
-        );
+        policy = policy with { ApplyTo = ApplyMode.Queues };
+        await fixture.ManagementClient.CreatePolicyAsync(policy);
+        policies = await fixture.ManagementClient.GetPoliciesAsync();
+        policies.Should().ContainEquivalentOf(policy, options => options.Excluding(o => o.Definition.JsonExtensionData));
+
+        policy = policy with { ApplyTo = ApplyMode.Exchanges };
+        await fixture.ManagementClient.CreatePolicyAsync(policy);
+        policies = await fixture.ManagementClient.GetPoliciesAsync();
+        policies.Should().ContainEquivalentOf(policy, options => options.Excluding(o => o.Definition.JsonExtensionData));
     }
 
     [Fact]
@@ -320,218 +311,6 @@ public class ManagementClientTests
         var exchange = await fixture.ManagementClient.GetExchangeAsync(Vhost, TestExchangeTestQueueWithPlusChar);
 
         exchange.Name.Should().Be(TestExchangeTestQueueWithPlusChar);
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_dead_letter_exchange_policy()
-    {
-        const string policyName = "a-sample-dead-letter-exchange";
-        const string deadLetterExchange = "a-sample-dead-letter-exchange";
-        const string deadLetterRoutingKey = "a-sample-dead-letter-exchange-key";
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    DeadLetterExchange: deadLetterExchange,
-                    DeadLetterRoutingKey: deadLetterRoutingKey
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.DeadLetterExchange == deadLetterExchange
-                 && p.Definition.DeadLetterRoutingKey == deadLetterRoutingKey)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_exchanges_only_policies()
-    {
-        const string policyName = "asamplepolicy-exchange-only";
-        const HaMode haMode = HaMode.All;
-        const HaSyncMode haSyncMode = HaSyncMode.Automatic;
-
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                ApplyTo: ApplyMode.Exchanges,
-                Definition: new PolicyDefinition(
-                    HaMode: haMode,
-                    HaSyncMode: haSyncMode
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.ApplyTo == ApplyMode.Exchanges
-                 && p.Definition.HaMode == haMode
-                 && p.Definition.HaSyncMode == haSyncMode)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_expires_policy()
-    {
-        const string policyName = "a-sample-expires";
-        const uint expires = 10000;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    Expires: expires
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.Expires == expires)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_federation_upstream_policy()
-    {
-        const string policyName = "a-sample-federation-upstream-policy";
-
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    FederationUpstream: "my-upstream"
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.FederationUpstream == "my-upstream")
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_federation_upstream_set_policy()
-    {
-        const string policyName = "a-sample-federation-upstream-set-policy";
-
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    FederationUpstreamSet: "my-upstream-set"
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.FederationUpstreamSet == "my-upstream-set")
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_max_length_policy()
-    {
-        const string policyName = "a-sample-max-length";
-        const uint maxLength = 500;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    MaxLength: maxLength
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.MaxLength == maxLength)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_max_length_bytes_policy()
-    {
-        const string policyName = "a-sample-max-length-bytes";
-        const uint maxLengthBytes = 500;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    MaxLengthBytes: maxLengthBytes
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.MaxLengthBytes == maxLengthBytes)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_overflow_policy()
-    {
-        foreach (Overflow overflow in Enum.GetValues(typeof(Overflow)))
-        {
-            const string policyName = "a-sample-overflow";
-            const uint maxLengthBytes = 500;
-            await fixture.ManagementClient.CreatePolicyAsync(
-                new Policy(
-                    Name: policyName,
-                    Pattern: "averyuncommonpattern",
-                    Vhost: Vhost.Name,
-                    Definition: new PolicyDefinition(
-                        MaxLengthBytes: maxLengthBytes,
-                        Overflow: overflow
-                    )
-                )
-            );
-            Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-                p => p.Name == policyName
-                     && p.Vhost == Vhost.Name
-                     && p.Definition.MaxLengthBytes == maxLengthBytes
-                     && p.Definition.Overflow == overflow)
-            );
-        }
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_message_ttl_policy()
-    {
-        const string policyName = "a-sample-message-ttl";
-        const uint messageTtl = 5000;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    MessageTtl: messageTtl
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.Definition.MessageTtl == messageTtl)
-        );
     }
 
     [Fact]
@@ -592,59 +371,6 @@ public class ManagementClientTests
 
         var permissionInfo = new PermissionInfo();
         await fixture.ManagementClient.CreatePermissionAsync(vhost, user, permissionInfo);
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_policies()
-    {
-        const string policyName = "asamplepolicy";
-        const HaMode haMode = HaMode.All;
-        const HaSyncMode haSyncMode = HaSyncMode.Automatic;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                Definition: new PolicyDefinition(
-                    HaMode: haMode,
-                    HaSyncMode: haSyncMode
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.ApplyTo == ApplyMode.All
-                 && p.Definition.HaMode == haMode
-                 && p.Definition.HaSyncMode == haSyncMode)
-        );
-    }
-
-    [Fact]
-    public async Task Should_be_able_to_create_queues_only_policies()
-    {
-        const string policyName = "asamplepolicy-queue-only";
-        const HaMode haMode = HaMode.All;
-        const HaSyncMode haSyncMode = HaSyncMode.Automatic;
-        await fixture.ManagementClient.CreatePolicyAsync(
-            new Policy(
-                Name: policyName,
-                Pattern: "averyuncommonpattern",
-                Vhost: Vhost.Name,
-                ApplyTo: ApplyMode.Queues,
-                Definition: new PolicyDefinition(
-                    HaMode: haMode,
-                    HaSyncMode: haSyncMode
-                )
-            )
-        );
-        Assert.Equal(1, (await fixture.ManagementClient.GetPoliciesAsync()).Count(
-            p => p.Name == policyName
-                 && p.Vhost == Vhost.Name
-                 && p.ApplyTo == ApplyMode.Queues
-                 && p.Definition.HaMode == haMode
-                 && p.Definition.HaSyncMode == haSyncMode)
-        );
     }
 
     [Fact]
@@ -780,20 +506,13 @@ public class ManagementClientTests
                 Pattern: "averyuncommonpattern",
                 Vhost: Vhost.Name,
                 Definition: new PolicyDefinition(
-                    HaMode: HaMode.All,
-                    HaSyncMode: HaSyncMode.Automatic
+                    MaxLength: 33333
                 )
             )
         );
-        Assert.Equal(
-            1,
-            (await fixture.ManagementClient.GetPoliciesAsync()).Count(p => p.Name == policyName && p.Vhost == Vhost.Name)
-        );
+        (await fixture.ManagementClient.GetPoliciesAsync()).Should().ContainSingle(p => p.Name == policyName && p.Vhost == Vhost.Name);
         await fixture.ManagementClient.DeletePolicyAsync(Vhost.Name, policyName);
-        Assert.Equal(
-            0,
-            (await fixture.ManagementClient.GetPoliciesAsync()).Count(p => p.Name == policyName && p.Vhost == Vhost.Name)
-        );
+        (await fixture.ManagementClient.GetPoliciesAsync()).Should().NotContain(p => p.Name == policyName && p.Vhost == Vhost.Name);
     }
 
     [Fact]
@@ -1198,7 +917,7 @@ public class ManagementClientTests
     {
         var definitions = await fixture.ManagementClient.GetDefinitionsAsync();
 
-        definitions.RabbitVersion[0].Should().Be('3');
+        definitions.RabbitVersion.Should().Be(fixture.RabbitmqVersion.ToString());
     }
 
     [Fact]
@@ -1490,7 +1209,7 @@ public class ManagementClientTests
     }
 
     [Fact]
-    public async Task Should_be_able_to_throw_on_non_existant_shovel()
+    public async Task Should_throw_when_trying_to_get_non_existant_shovel()
     {
         var act = async () => await fixture.ManagementClient.GetShovelAsync(Vhost.Name, "non-existant-shovel");
 
