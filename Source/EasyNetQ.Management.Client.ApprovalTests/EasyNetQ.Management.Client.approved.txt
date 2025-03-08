@@ -435,8 +435,8 @@ namespace EasyNetQ.Management.Client
         public readonly System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> QueryParameters;
         public PageCriteria(int Page, int PageSize, string? Name = null, bool UseRegex = false) { }
         public string? Name { get; init; }
-        public int PageSize { get; init; }
         public int Page { get; init; }
+        public int PageSize { get; init; }
         public bool UseRegex { get; init; }
     }
     public class RatesCriteria : System.IEquatable<EasyNetQ.Management.Client.RatesCriteria>
@@ -541,16 +541,16 @@ namespace EasyNetQ.Management.Client.Model
                     double AvgEgressRate,
                     double AvgAckIngressRate,
                     double AvgAckEgressRate) { }
-        [System.Text.Json.Serialization.JsonIgnore]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public double AvgAckEgressRate { get; init; }
         public double AvgAckIngressRate { get; init; }
         public double AvgEgressRate { get; init; }
         public double AvgIngressRate { get; init; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.ObjectReadOnlyListConverter?))]
         public System.Collections.Generic.IReadOnlyList<object?> Delta { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public int Len { get; init; }
         public string? Mode { get; init; }
         public long NextDeliverSeqId { get; init; }
@@ -572,8 +572,8 @@ namespace EasyNetQ.Management.Client.Model
         public Binding(string Source, string Vhost, string Destination, string DestinationType, string RoutingKey, System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments, string? PropertiesKey) { }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?>? Arguments { get; init; }
-        public string DestinationType { get; init; }
         public string Destination { get; init; }
+        public string DestinationType { get; init; }
         public string? PropertiesKey { get; init; }
         public string RoutingKey { get; init; }
         public string Source { get; init; }
@@ -696,11 +696,11 @@ namespace EasyNetQ.Management.Client.Model
         public long SendCnt { get; init; }
         public long SendOct { get; init; }
         public long SendPend { get; init; }
+        public bool Ssl { get; init; }
         public string? SslCipher { get; init; }
         public string? SslHash { get; init; }
         public string? SslKeyExchange { get; init; }
         public string? SslProtocol { get; init; }
-        public bool Ssl { get; init; }
         public string? State { get; init; }
         public long Timeout { get; init; }
         public string Type { get; init; }
@@ -772,13 +772,13 @@ namespace EasyNetQ.Management.Client.Model
     public class Definitions : System.IEquatable<EasyNetQ.Management.Client.Model.Definitions>
     {
         public Definitions(string RabbitVersion, string RabbitmqVersion, string ProductName, string ProductVersion, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.User> Users, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Vhost> Vhosts, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Permission> Permissions, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.TopicPermission> TopicPermissions, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Parameter> Parameters, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.GlobalParameter> GlobalParameters, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Policy> Policies, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Queue> Queues, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Exchange> Exchanges, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding> Bindings) { }
-        [System.Text.Json.Serialization.JsonIgnore]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Binding> Bindings { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Exchange> Exchanges { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.GlobalParameter> GlobalParameters { get; init; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Parameter> Parameters { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Permission> Permissions { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Policy> Policies { get; init; }
@@ -836,8 +836,8 @@ namespace EasyNetQ.Management.Client.Model
         public EasyNetQ.Management.Client.Model.FederationStatus Status { get; init; }
         public string Timestamp { get; init; }
         public string Type { get; init; }
-        public string UpstreamExchange { get; init; }
         public string Upstream { get; init; }
+        public string UpstreamExchange { get; init; }
         public string Uri { get; init; }
         public string Vhost { get; init; }
     }
@@ -886,8 +886,8 @@ namespace EasyNetQ.Management.Client.Model
     public class LengthsDetails : System.IEquatable<EasyNetQ.Management.Client.Model.LengthsDetails>
     {
         public LengthsDetails(double Rate, double AvgRate, double Avg, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.LengthsSample>? Samples = null) { }
-        public double AvgRate { get; init; }
         public double Avg { get; init; }
+        public double AvgRate { get; init; }
         public double Rate { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.LengthsSample>? Samples { get; init; }
     }
@@ -916,9 +916,9 @@ namespace EasyNetQ.Management.Client.Model
         public Listener(string Node, string Protocol, string IpAddress, int Port, EasyNetQ.Management.Client.Model.SocketOpts? SocketOpts = null) { }
         [System.Text.Json.Serialization.JsonIgnore]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        public string IpAddress { get; init; }
         [System.Text.Json.Serialization.JsonExtensionData]
         public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
-        public string IpAddress { get; init; }
         public string Node { get; init; }
         public int Port { get; init; }
         public string Protocol { get; init; }
@@ -931,9 +931,9 @@ namespace EasyNetQ.Management.Client.Model
         public Message(int PayloadBytes, bool Redelivered, string Exchange, string RoutingKey, int MessageCount, System.Collections.Generic.IReadOnlyDictionary<string, object?> Properties, string Payload, string PayloadEncoding) { }
         public string Exchange { get; init; }
         public int MessageCount { get; init; }
+        public string Payload { get; init; }
         public int PayloadBytes { get; init; }
         public string PayloadEncoding { get; init; }
-        public string Payload { get; init; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?> Properties { get; init; }
         public bool Redelivered { get; init; }
@@ -942,8 +942,8 @@ namespace EasyNetQ.Management.Client.Model
     public class MessageRateDetails : System.IEquatable<EasyNetQ.Management.Client.Model.MessageRateDetails>
     {
         public MessageRateDetails(double Rate, double AvgRate, double Avg, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.MessageRateSample>? Samples) { }
-        public double AvgRate { get; init; }
         public double Avg { get; init; }
+        public double AvgRate { get; init; }
         public double Rate { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.MessageRateSample>? Samples { get; init; }
     }
@@ -981,30 +981,30 @@ namespace EasyNetQ.Management.Client.Model
                     EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverDetails = null,
                     long Confirm = 0,
                     EasyNetQ.Management.Client.Model.MessageRateDetails? ConfirmDetails = null) { }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? AckDetails { get; init; }
         public long Ack { get; init; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? ConfirmDetails { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? AckDetails { get; init; }
         public long Confirm { get; init; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverDetails { get; init; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverGetDetails { get; init; }
-        public long DeliverGet { get; init; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverNoAckDetails { get; init; }
-        public long DeliverNoAck { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? ConfirmDetails { get; init; }
         public long Deliver { get; init; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? GetDetails { get; init; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? GetNoAckDetails { get; init; }
-        public long GetNoAck { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverDetails { get; init; }
+        public long DeliverGet { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverGetDetails { get; init; }
+        public long DeliverNoAck { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? DeliverNoAckDetails { get; init; }
         public long Get { get; init; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? PublishDetails { get; init; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? PublishInDetails { get; init; }
-        public long PublishIn { get; init; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? PublishOutDetails { get; init; }
-        public long PublishOut { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? GetDetails { get; init; }
+        public long GetNoAck { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? GetNoAckDetails { get; init; }
         public long Publish { get; init; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? RedeliverDetails { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? PublishDetails { get; init; }
+        public long PublishIn { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? PublishInDetails { get; init; }
+        public long PublishOut { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? PublishOutDetails { get; init; }
         public long Redeliver { get; init; }
-        public EasyNetQ.Management.Client.Model.MessageRateDetails? ReturnDetails { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? RedeliverDetails { get; init; }
         public long Return { get; init; }
+        public EasyNetQ.Management.Client.Model.MessageRateDetails? ReturnDetails { get; init; }
     }
     public class Node : System.IEquatable<EasyNetQ.Management.Client.Model.Node>
     {
@@ -1041,21 +1041,21 @@ namespace EasyNetQ.Management.Client.Model
                     System.Collections.Generic.IReadOnlyList<string>? Partitions) { }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Application>? Applications { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.AuthMechanism>? AuthMechanisms { get; init; }
+        public long DiskFree { get; init; }
         public bool DiskFreeAlarm { get; init; }
         public long DiskFreeLimit { get; init; }
-        public long DiskFree { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec>? ExchangeTypes { get; init; }
         public long FdTotal { get; init; }
         public long FdUsed { get; init; }
         public bool MemAlarm { get; init; }
-        public long MemAtomUsed { get; init; }
         public long MemAtom { get; init; }
+        public long MemAtomUsed { get; init; }
         public long MemBinary { get; init; }
         public long MemCode { get; init; }
         public long MemEts { get; init; }
         public long MemLimit { get; init; }
-        public long MemProcUsed { get; init; }
         public long MemProc { get; init; }
+        public long MemProcUsed { get; init; }
         public long MemUsed { get; init; }
         public string Name { get; init; }
         public string? OsPid { get; init; }
@@ -1091,13 +1091,13 @@ namespace EasyNetQ.Management.Client.Model
     public class Overview : System.IEquatable<EasyNetQ.Management.Client.Model.Overview>
     {
         public Overview(string ManagementVersion, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec> ExchangeTypes, string RabbitmqVersion, string ErlangVersion, EasyNetQ.Management.Client.Model.MessageStats MessageStats, EasyNetQ.Management.Client.Model.QueueTotals QueueTotals, EasyNetQ.Management.Client.Model.ObjectTotals ObjectTotals, string Node, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Listener> Listeners, System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Context> Contexts) { }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Context> Contexts { get; init; }
+        public string ErlangVersion { get; init; }
+        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec> ExchangeTypes { get; init; }
         [System.Text.Json.Serialization.JsonIgnore]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonExtensionData]
         public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
-        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Context> Contexts { get; init; }
-        public string ErlangVersion { get; init; }
-        public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ExchangeTypeSpec> ExchangeTypes { get; init; }
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.Listener> Listeners { get; init; }
         public string ManagementVersion { get; init; }
         public EasyNetQ.Management.Client.Model.MessageStats MessageStats { get; init; }
@@ -1112,9 +1112,9 @@ namespace EasyNetQ.Management.Client.Model
         public int FilteredCount { get; init; }
         public int ItemCount { get; init; }
         public System.Collections.Generic.IReadOnlyList<T> Items { get; init; }
+        public int Page { get; init; }
         public int PageCount { get; init; }
         public int PageSize { get; init; }
-        public int Page { get; init; }
         public int TotalCount { get; init; }
     }
     public class Parameter : System.IEquatable<EasyNetQ.Management.Client.Model.Parameter>
@@ -1153,10 +1153,6 @@ namespace EasyNetQ.Management.Client.Model
                     bool? DestAddTimestampHeader = default,
                     string? AckMode = null,
                     int? ReconnectDelay = default) { }
-        [System.Text.Json.Serialization.JsonIgnore]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("ack-mode")]
         public string? AckMode { get; init; }
@@ -1167,23 +1163,27 @@ namespace EasyNetQ.Management.Client.Model
         [System.Text.Json.Serialization.JsonPropertyName("dest-add-timestamp-header")]
         public bool? DestAddTimestampHeader { get; init; }
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-        [System.Text.Json.Serialization.JsonPropertyName("dest-exchange-key")]
-        public string? DestExchangeKey { get; init; }
-        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("dest-exchange")]
         public string? DestExchange { get; init; }
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-exchange-key")]
+        public string? DestExchangeKey { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("dest-protocol")]
         public string? DestProtocol { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("dest-queue")]
+        public string? DestQueue { get; init; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("dest-queue-args")]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?>? DestQueueArguments { get; init; }
-        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-        [System.Text.Json.Serialization.JsonPropertyName("dest-queue")]
-        public string? DestQueue { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("dest-uri")]
         public string DestUri { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("reconnect-delay")]
         public int? ReconnectDelay { get; init; }
@@ -1191,24 +1191,24 @@ namespace EasyNetQ.Management.Client.Model
         [System.Text.Json.Serialization.JsonPropertyName("src-delete-after")]
         public string? SrcDeleteAfter { get; init; }
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-        [System.Text.Json.Serialization.JsonPropertyName("src-exchange-key")]
-        public string? SrcExchangeKey { get; init; }
-        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-exchange")]
         public string? SrcExchange { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("src-exchange-key")]
+        public string? SrcExchangeKey { get; init; }
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-prefetch-count")]
         public int? SrcPrefetchCount { get; init; }
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-protocol")]
         public string? SrcProtocol { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [System.Text.Json.Serialization.JsonPropertyName("src-queue")]
+        public string? SrcQueue { get; init; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         [System.Text.Json.Serialization.JsonPropertyName("src-queue-args")]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?>? SrcQueueArguments { get; init; }
-        [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-        [System.Text.Json.Serialization.JsonPropertyName("src-queue")]
-        public string? SrcQueue { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("src-uri")]
         public string SrcUri { get; init; }
     }
@@ -1278,10 +1278,6 @@ namespace EasyNetQ.Management.Client.Model
                     string? FederationUpstream = null,
                     string? FederationUpstreamSet = null,
                     string? QueueMode = null) { }
-        [System.Text.Json.Serialization.JsonIgnore]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("alternate-exchange")]
         public string? AlternateExchange { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("consumer-timeout")]
@@ -1297,10 +1293,12 @@ namespace EasyNetQ.Management.Client.Model
         public uint? DeliveryLimit { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("expires")]
         public uint? Expires { get; init; }
-        [System.Text.Json.Serialization.JsonPropertyName("federation-upstream-set")]
-        public string? FederationUpstreamSet { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("federation-upstream")]
         public string? FederationUpstream { get; init; }
+        [System.Text.Json.Serialization.JsonPropertyName("federation-upstream-set")]
+        public string? FederationUpstreamSet { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("ha-mode")]
         public EasyNetQ.Management.Client.Model.HaMode? HaMode { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("ha-params")]
@@ -1315,12 +1313,14 @@ namespace EasyNetQ.Management.Client.Model
         public int? HaSyncBatchSize { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("ha-sync-mode")]
         public EasyNetQ.Management.Client.Model.HaSyncMode? HaSyncMode { get; init; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("max-age")]
         public string? MaxAge { get; init; }
-        [System.Text.Json.Serialization.JsonPropertyName("max-length-bytes")]
-        public long? MaxLengthBytes { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("max-length")]
         public uint? MaxLength { get; init; }
+        [System.Text.Json.Serialization.JsonPropertyName("max-length-bytes")]
+        public long? MaxLengthBytes { get; init; }
         [System.Text.Json.Serialization.JsonPropertyName("message-ttl")]
         public uint? MessageTtl { get; init; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.JsonStringEnumConverterEx<EasyNetQ.Management.Client.Model.Overflow>?))]
@@ -1352,8 +1352,8 @@ namespace EasyNetQ.Management.Client.Model
     public class PublishInfo : System.IEquatable<EasyNetQ.Management.Client.Model.PublishInfo>
     {
         public PublishInfo(string RoutingKey, string Payload, EasyNetQ.Management.Client.Model.PayloadEncoding PayloadEncoding = 0, System.Collections.Generic.IReadOnlyDictionary<string, object?>? Properties = null) { }
-        public EasyNetQ.Management.Client.Model.PayloadEncoding PayloadEncoding { get; init; }
         public string Payload { get; init; }
+        public EasyNetQ.Management.Client.Model.PayloadEncoding PayloadEncoding { get; init; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter))]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?> Properties { get; init; }
         public string RoutingKey { get; init; }
@@ -1394,10 +1394,6 @@ namespace EasyNetQ.Management.Client.Model
                     EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails,
                     EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails,
                     EasyNetQ.Management.Client.Model.MessageStats? MessageStats) { }
-        [System.Text.Json.Serialization.JsonIgnore]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public long ActiveConsumers { get; init; }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.StringObjectReadOnlyDictionaryConverter?))]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?> Arguments { get; init; }
@@ -1406,19 +1402,23 @@ namespace EasyNetQ.Management.Client.Model
         public System.Collections.Generic.IReadOnlyList<EasyNetQ.Management.Client.Model.ConsumerDetail>? ConsumerDetails { get; init; }
         public long Consumers { get; init; }
         public bool Durable { get; init; }
-        public string? ExclusiveConsumerTag { get; init; }
         public bool Exclusive { get; init; }
+        public string? ExclusiveConsumerTag { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
         public long? HeadMessageTimestamp { get; init; }
         public string? IdleSince { get; init; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         public long Memory { get; init; }
         public long MessageBytes { get; init; }
         public EasyNetQ.Management.Client.Model.MessageStats? MessageStats { get; init; }
-        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails { get; init; }
-        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails { get; init; }
-        public long MessagesReady { get; init; }
-        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails { get; init; }
-        public long MessagesUnacknowledged { get; init; }
         public long Messages { get; init; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails { get; init; }
+        public long MessagesReady { get; init; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails { get; init; }
+        public long MessagesUnacknowledged { get; init; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails { get; init; }
         public string? Node { get; init; }
         public string? Policy { get; init; }
         public System.Collections.Generic.IReadOnlyList<string>? SlaveNodes { get; init; }
@@ -1450,12 +1450,12 @@ namespace EasyNetQ.Management.Client.Model
     public class QueueTotals : System.IEquatable<EasyNetQ.Management.Client.Model.QueueTotals>
     {
         public QueueTotals(long Messages = 0, long MessagesReady = 0, long MessagesUnacknowledged = 0, EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails = null, EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails = null, EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails = null) { }
-        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails { get; init; }
-        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails { get; init; }
-        public long MessagesReady { get; init; }
-        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails { get; init; }
-        public long MessagesUnacknowledged { get; init; }
         public long Messages { get; init; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesDetails { get; init; }
+        public long MessagesReady { get; init; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesReadyDetails { get; init; }
+        public long MessagesUnacknowledged { get; init; }
+        public EasyNetQ.Management.Client.Model.LengthsDetails? MessagesUnacknowledgedDetails { get; init; }
     }
     public enum QueueType
     {
@@ -1489,21 +1489,21 @@ namespace EasyNetQ.Management.Client.Model
                     string? DestExchangeKey = null,
                     string? BlockedStatus = null,
                     string? Reason = null) { }
+        public string? BlockedStatus { get; init; }
+        public string? DestExchange { get; init; }
+        public string? DestExchangeKey { get; init; }
+        public string? DestProtocol { get; init; }
+        public string? DestQueue { get; init; }
+        public string? DestUri { get; init; }
         [System.Text.Json.Serialization.JsonIgnore]
         public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonExtensionData]
         public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
-        public string? BlockedStatus { get; init; }
-        public string? DestExchangeKey { get; init; }
-        public string? DestExchange { get; init; }
-        public string? DestProtocol { get; init; }
-        public string? DestQueue { get; init; }
-        public string? DestUri { get; init; }
         public string Name { get; init; }
         public string Node { get; init; }
         public string? Reason { get; init; }
-        public string? SrcExchangeKey { get; init; }
         public string? SrcExchange { get; init; }
+        public string? SrcExchangeKey { get; init; }
         public string? SrcProtocol { get; init; }
         public string? SrcQueue { get; init; }
         public string? SrcUri { get; init; }
@@ -1516,14 +1516,14 @@ namespace EasyNetQ.Management.Client.Model
     public class SocketOpts : System.IEquatable<EasyNetQ.Management.Client.Model.SocketOpts>
     {
         public SocketOpts(int? Backlog = default, bool? Nodelay = default, bool? ExitOnClose = default) { }
-        [System.Text.Json.Serialization.JsonIgnore]
-        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public int? Backlog { get; init; }
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public bool? ExitOnClose { get; init; }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public System.Collections.Generic.IReadOnlyDictionary<string, object?>? ExtensionData { get; set; }
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, System.Text.Json.JsonElement>? JsonExtensionData { get; set; }
         [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
         public bool? Nodelay { get; init; }
     }
@@ -1563,8 +1563,8 @@ namespace EasyNetQ.Management.Client.Model
         public UserInfo(string? Password, string? PasswordHash, System.Collections.Generic.IReadOnlyList<string> Tags, System.Security.Cryptography.HashAlgorithmName? HashingAlgorithm = default) { }
         [System.Text.Json.Serialization.JsonConverter(typeof(EasyNetQ.Management.Client.Serialization.HashAlgorithmNameConverter))]
         public System.Security.Cryptography.HashAlgorithmName? HashingAlgorithm { get; init; }
-        public string? PasswordHash { get; init; }
         public string? Password { get; init; }
+        public string? PasswordHash { get; init; }
         public System.Collections.Generic.IReadOnlyList<string> Tags { get; init; }
         public EasyNetQ.Management.Client.Model.UserInfo AddTag(string tag) { }
         public EasyNetQ.Management.Client.Model.UserInfo WithTags(params string[] tags) { }
