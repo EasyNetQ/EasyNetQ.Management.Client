@@ -15,8 +15,6 @@ public record Node(
     long MemCode,
     long FdUsed,
     long FdTotal,
-    long SocketsUsed,
-    long SocketsTotal,
     long MemUsed,
     long MemLimit,
     bool MemAlarm,
