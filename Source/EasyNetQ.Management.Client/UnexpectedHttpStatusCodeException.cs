@@ -63,9 +63,20 @@ public class UnexpectedHttpStatusCodeException : Exception
             sb.Append("<null>");
         }
         sb.Append(" from request: ");
-        if (response.RequestMessage != null)
+        var request = response.RequestMessage;
+        if (request != null)
         {
-            sb.Append(response.RequestMessage);
+            sb.Append("Method: ");
+            sb.Append(request.Method.ToString());
+
+            sb.Append(", RequestUri: '");
+            sb.Append(request.RequestUri == null ? "<null>" : request.RequestUri.ToString());
+
+            sb.Append("', Version: ");
+            sb.Append(request.Version.ToString());
+
+            sb.Append(", Content: ");
+            sb.Append(request.Content == null ? "<null>" : request.Content.GetType().ToString());
         }
         else
         {
