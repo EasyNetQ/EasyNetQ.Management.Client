@@ -1022,8 +1022,6 @@ namespace EasyNetQ.Management.Client.Model
                     long MemCode,
                     long FdUsed,
                     long FdTotal,
-                    long SocketsUsed,
-                    long SocketsTotal,
                     long MemUsed,
                     long MemLimit,
                     bool MemAlarm,
@@ -1065,8 +1063,6 @@ namespace EasyNetQ.Management.Client.Model
         public long Processors { get; init; }
         public long RunQueue { get; init; }
         public bool Running { get; init; }
-        public long SocketsTotal { get; init; }
-        public long SocketsUsed { get; init; }
         public string Type { get; init; }
         public long Uptime { get; init; }
     }
