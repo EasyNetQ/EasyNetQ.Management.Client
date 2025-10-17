@@ -32,7 +32,7 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
     private Version? rabbitmqVersion;
     public Version RabbitmqVersion => rabbitmqVersion!;
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         using var cts = new CancellationTokenSource(InitializationTimeout);
         dockerEngineOsPlatform = await dockerProxy.GetDockerEngineOsAsync(cts.Token);
@@ -54,7 +54,7 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
         rabbitmqVersion = new Version(overview.RabbitmqVersion);
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         await DisposeAsync(default);
     }
@@ -97,7 +97,7 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
             $"{Image}:{tag}",
             ContainerName,
             portMappings,
-            dockerNetworkName,
+            null,
             envVars,
             cancellationToken
         );

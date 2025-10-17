@@ -29,11 +29,18 @@ public class DockerProxy : IDisposable
 
     public async Task CreateNetworkAsync(string name, CancellationToken token = default)
     {
-        var networksCreateParameters = new NetworksCreateParameters
+        try
         {
-            Name = name
-        };
-        await client.Networks.CreateNetworkAsync(networksCreateParameters, token);
+            var networksCreateParameters = new NetworksCreateParameters
+            {
+                Name = name
+            };
+            await client.Networks.CreateNetworkAsync(networksCreateParameters, token);
+        }
+        catch (Docker.DotNet.DockerApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+        {
+            // Network already exists, which is fine
+        }
     }
 
     public async Task PullImageAsync(string image, string tag, CancellationToken token = default)
@@ -73,7 +80,14 @@ public class DockerProxy : IDisposable
                     $"{currentDirectory}/rabbitmq_enabled_plugins:/etc/rabbitmq/enabled_plugins"
                 }
             },
-            ExposedPorts = portMappings.ToDictionary(x => x.Key, _ => new EmptyStruct())
+            ExposedPorts = portMappings.ToDictionary(x => x.Key, _ => new EmptyStruct()),
+            NetworkingConfig = networkName != null ? new NetworkingConfig
+            {
+                EndpointsConfig = new Dictionary<string, EndpointSettings>
+                {
+                    { networkName, new EndpointSettings() }
+                }
+            } : null
         };
         var response = await client.Containers.CreateContainerAsync(createParameters, token);
         return response.ID;
@@ -119,6 +133,18 @@ public class DockerProxy : IDisposable
         var ids = await FindNetworkIdsAsync(name);
         var deleteTasks = ids.Select(x => client.Networks.DeleteNetworkAsync(x, token));
         await Task.WhenAll(deleteTasks);
+    }
+
+    public async Task ConnectContainerToNetworkAsync(string containerId, string? networkName, CancellationToken token = default)
+    {
+        if (networkName == null)
+            return;
+
+        var connectParameters = new NetworkConnectParameters
+        {
+            Container = containerId
+        };
+        await client.Networks.ConnectNetworkAsync(networkName, connectParameters, token);
     }
 
     private static IDictionary<string, IList<PortBinding>> PortBindings(
