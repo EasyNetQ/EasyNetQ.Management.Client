@@ -1420,7 +1420,7 @@ public class ManagementClientTests
                         Timestamp: default,
                         Type: "dynamic",
                         State: "starting"),
-                    options => options.Excluding(ss => ss.Timestamp));
+                    options => options.ExcludingMissingMembers().Excluding(ss => ss.Timestamp));
             }
             catch
             {
@@ -1435,7 +1435,7 @@ public class ManagementClientTests
 
                         Reason: "\"needed a restart\""
                     ),
-                    options => options.Excluding(ss => ss.Timestamp));
+                    options => options.ExcludingMissingMembers().Excluding(ss => ss.Timestamp));
                 break;
             }
         }
@@ -1489,7 +1489,7 @@ public class ManagementClientTests
                         Timestamp: default,
                         Type: "dynamic",
                         State: "starting"),
-                    options => options.Excluding(ss => ss.Timestamp));
+                    options => options.ExcludingMissingMembers().Excluding(ss => ss.Timestamp));
             }
             catch
             {
@@ -1514,7 +1514,7 @@ public class ManagementClientTests
                         DestExchangeKey: parameterShovelValue.DestExchangeKey,
                         BlockedStatus: fixture.RabbitmqVersion >= new Version("3.11") ? "running" : null
                     ),
-                    options => options.Excluding(ss => ss.Timestamp));
+                    options => options.ExcludingMissingMembers().Excluding(ss => ss.Timestamp));
                 break;
             }
         }
