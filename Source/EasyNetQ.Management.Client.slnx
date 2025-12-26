@@ -9,7 +9,7 @@
     <File Path="../.github/CODEOWNERS" />
     <File Path="../.github/dependabot.yml" />
   </Folder>
-  <Folder Name="/Solution items/.github/workfows/">
+  <Folder Name="/Solution items/.github/workflows/">
     <File Path="../.github/workflows/ci.yml" />
     <File Path="../.github/workflows/depsreview.yaml" />
   </Folder>
