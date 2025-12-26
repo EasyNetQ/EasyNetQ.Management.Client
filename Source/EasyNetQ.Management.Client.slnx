@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/Solution items/">
+    <File Path="../.editorconfig" />
+    <File Path="../.gitignore" />
+    <File Path="../license.txt" />
+    <File Path="../README.md" />
+  </Folder>
+  <Folder Name="/Solution items/.github/">
+    <File Path="../.github/CODEOWNERS" />
+    <File Path="../.github/dependabot.yml" />
+  </Folder>
+  <Folder Name="/Solution items/.github/workfows/">
+    <File Path="../.github/workflows/ci.yml" />
+    <File Path="../.github/workflows/depsreview.yaml" />
+  </Folder>
+  <Project Path="EasyNetQ.Management.Client.ApprovalTests/EasyNetQ.Management.Client.ApprovalTests.csproj" />
+  <Project Path="EasyNetQ.Management.Client.ExtensionsGenerator/EasyNetQ.Management.Client.ExtensionsGenerator.csproj" />
+  <Project Path="EasyNetQ.Management.Client.IntegrationTests/EasyNetQ.Management.Client.IntegrationTests.csproj" />
+  <Project Path="EasyNetQ.Management.Client.Tests/EasyNetQ.Management.Client.Tests.csproj" />
+  <Project Path="EasyNetQ.Management.Client/EasyNetQ.Management.Client.csproj" />
+</Solution>
