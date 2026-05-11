@@ -22,16 +22,16 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Setup .NET Core 8.x
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.x
+          dotnet-version: 10.x
       - name: Install dependencies
-        run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
+        run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.slnx
       - name: Check formatting
-        run: dotnet format --no-restore --verify-no-changes --severity warn ./Source/EasyNetQ.Management.Client.sln || (echo "Run 'dotnet format' to fix issues" && exit 1)
+        run: dotnet format --no-restore --verify-no-changes --severity warn ./Source/EasyNetQ.Management.Client.slnx || (echo "Run 'dotnet format' to fix issues" && exit 1)
       - name: Build
-        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
+        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.slnx --configuration Release
       - name: Approval Tests
         run: |
           cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.ApprovalTests
@@ -56,14 +56,14 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Setup .NET Core 8.x
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.x
+          dotnet-version: 10.x
       - name: Install dependencies
-        run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
+        run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.slnx
       - name: Build
-        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
+        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.slnx --configuration Release
       - name: Tests
         run: |
           cd ${{ github.workspace }}/Source/EasyNetQ.Management.Client.Tests
@@ -82,7 +82,7 @@ jobs:
         os: [ubuntu-latest]
         include:
           - os: ubuntu-latest
-            framework: net8.0
+            framework: net10.0
           # - os: windows-latest
           #   framework: net48
       fail-fast: true
@@ -91,14 +91,14 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Setup .NET Core 8.x
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.x
+          dotnet-version: 10.x
       - name: Install dependencies
-        run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
+        run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.slnx
       - name: Build
-        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
+        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.slnx --configuration Release
       - name: Integration Tests
         env:
           RABBITMQ_VERSION: ${{ matrix.rabbitmq }}
@@ -116,15 +116,15 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Setup .NET Core 8.x
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.x
+          dotnet-version: 10.x
       - name: Install dependencies
-        run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln
+        run: dotnet restore ${{ github.workspace }}/Source/EasyNetQ.Management.Client.slnx
       - name: Build
-        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release
+        run: dotnet build ${{ github.workspace }}/Source/EasyNetQ.Management.Client.slnx --configuration Release
       - name: Pack
-        run: dotnet pack ${{ github.workspace }}/Source/EasyNetQ.Management.Client.sln --configuration Release --no-build --include-symbols -p:PackageOutputPath="${{ github.workspace }}/Packages"
+        run: dotnet pack ${{ github.workspace }}/Source/EasyNetQ.Management.Client.slnx --configuration Release --no-build --include-symbols -p:PackageOutputPath="${{ github.workspace }}/Packages"
       - name: Publish
         run: dotnet nuget push '${{ github.workspace }}/Packages/*.*' --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_TOKEN }}
