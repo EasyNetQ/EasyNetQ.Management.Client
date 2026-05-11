@@ -1,24 +1,16 @@
 using EasyNetQ.Management.Client.Model;
-using FluentAssertions.Extensions;
 using System.Security.Cryptography;
 using System.Text.Json;
+using AwesomeAssertions.Extensions;
 
 namespace EasyNetQ.Management.Client.IntegrationTests;
 
-using JsonSerializer = System.Text.Json.JsonSerializer;
+using JsonSerializer = JsonSerializer;
 
 [Collection("RabbitMQ")]
-public class ManagementClientTests
+public class ManagementClientTests(RabbitMqFixture fixture, ITestOutputHelper output)
 {
-    private readonly RabbitMqFixture fixture;
-    private readonly ITestOutputHelper output;
     private static readonly Vhost Vhost = new(Name: "/");
-
-    public ManagementClientTests(RabbitMqFixture fixture, ITestOutputHelper output)
-    {
-        this.fixture = fixture;
-        this.output = output;
-    }
 
     private const string TestExchange = "management_api_test_exchange";
     private const string TestExchange2 = "management_api_test_exchange2";
