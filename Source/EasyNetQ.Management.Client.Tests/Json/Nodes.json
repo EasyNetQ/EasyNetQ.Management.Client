@@ -16,8 +16,6 @@
     "mem_code": 18006918,
     "fd_used": 42,
     "fd_total": 1024,
-    "sockets_used": 2,
-    "sockets_total": 829,
     "mem_used": 37360256,
     "mem_limit": 3405386547,
     "mem_alarm": false,
