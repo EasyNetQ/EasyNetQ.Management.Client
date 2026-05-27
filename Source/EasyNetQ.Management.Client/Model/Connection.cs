@@ -13,7 +13,7 @@ public record Connection(
     string? LastBlockedBy,
     string? LastBlockedAge,
     long Channels,
-    string Type,
+    string? Type,
     string Node,
     string Name,
     string? Address,
