@@ -592,4 +592,326 @@ public interface IManagementClient : IDisposable
     /// </summary>
     [Delete("/api/user-limits/{userName}/max-channels")]
     Task DeleteUserMaxChannelsLimitAsync(string userName, CancellationToken cancellationToken = default);
+
+    // Cluster and nodes
+
+    /// <summary>
+    ///     The name identifying this RabbitMQ cluster.
+    /// </summary>
+    [Get("/api/cluster-name")]
+    Task<ClusterName> GetClusterNameAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Renames this RabbitMQ cluster.
+    /// </summary>
+    [Put("/api/cluster-name")]
+    Task SetClusterNameAsync([Body] ClusterName clusterName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     An individual node in the RabbitMQ cluster.
+    /// </summary>
+    [Get("/api/nodes/{nodeName}")]
+    Task<Node> GetNodeAsync(string nodeName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A memory usage breakdown of an individual node in the RabbitMQ cluster.
+    /// </summary>
+    [Get("/api/nodes/{nodeName}/memory")]
+    Task<NodeMemory> GetNodeMemoryAsync(string nodeName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The definitions of a virtual host: exchanges, queues, bindings, policies and parameters.
+    /// </summary>
+    [Get("/api/definitions/{vhostName}")]
+    Task<VhostDefinitions> GetDefinitionsAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Imports server definitions, merging them with the existing ones.
+    /// </summary>
+    [Post("/api/definitions")]
+    Task ImportDefinitionsAsync([Body] Definitions definitions, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Imports the definitions of a virtual host, merging them with the existing ones.
+    /// </summary>
+    [Post("/api/definitions/{vhostName}")]
+    Task ImportDefinitionsAsync(string vhostName, [Body] VhostDefinitions definitions, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The feature flags of the cluster.
+    /// </summary>
+    [Get("/api/feature-flags")]
+    Task<IReadOnlyList<FeatureFlag>> GetFeatureFlagsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The deprecated features of the cluster.
+    /// </summary>
+    [Get("/api/deprecated-features")]
+    Task<IReadOnlyList<DeprecatedFeature>> GetDeprecatedFeaturesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The deprecated features in use in the cluster.
+    /// </summary>
+    [Get("/api/deprecated-features/used")]
+    Task<IReadOnlyList<DeprecatedFeature>> GetUsedDeprecatedFeaturesAsync(CancellationToken cancellationToken = default);
+
+    // Connections, channels and queues
+
+    /// <summary>
+    ///     An individual connection.
+    /// </summary>
+    [Get("/api/connections/{connectionName}")]
+    Task<Connection> GetConnectionAsync(string connectionName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all open connections of a user.
+    /// </summary>
+    [Get("/api/connections/username/{userName}")]
+    Task<IReadOnlyList<Connection>> GetUserConnectionsAsync(string userName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Closes all connections of a user.
+    /// </summary>
+    [Delete("/api/connections/username/{userName}")]
+    Task CloseUserConnectionsAsync(string userName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all open channels in a virtual host.
+    /// </summary>
+    [Get("/api/vhosts/{vhostName}/channels")]
+    Task<IReadOnlyList<Channel>> GetVhostChannelsAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all queues with all their fields. Since RabbitMQ 4.0 <see cref="GetQueuesAsync(StatsCriteria?, CancellationToken)"/> returns fewer fields.
+    /// </summary>
+    [Get("/api/queues/detailed")]
+    Task<IReadOnlyList<Queue>> GetDetailedQueuesAsync(CancellationToken cancellationToken = default);
+
+    // Virtual hosts
+
+    /// <summary>
+    ///     A list of all permissions in a virtual host.
+    /// </summary>
+    [Get("/api/vhosts/{vhostName}/permissions")]
+    Task<IReadOnlyList<Permission>> GetVhostPermissionsAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all topic permissions in a virtual host.
+    /// </summary>
+    [Get("/api/vhosts/{vhostName}/topic-permissions")]
+    Task<IReadOnlyList<TopicPermission>> GetVhostTopicPermissionsAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Protects a virtual host from deletion (RabbitMQ 4.1+).
+    /// </summary>
+    [Post("/api/vhosts/{vhostName}/deletion/protection")]
+    Task EnableVhostDeletionProtectionAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Lets a virtual host be deleted again (RabbitMQ 4.1+).
+    /// </summary>
+    [Delete("/api/vhosts/{vhostName}/deletion/protection")]
+    Task DisableVhostDeletionProtectionAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all per-vhost limits.
+    /// </summary>
+    [Get("/api/vhost-limits")]
+    Task<IReadOnlyList<VhostLimits>> GetVhostLimitsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The limits of a virtual host.
+    /// </summary>
+    [Get("/api/vhost-limits/{vhostName}")]
+    Task<IReadOnlyList<VhostLimits>> GetVhostLimitsAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Sets the max connections limit of a virtual host.
+    /// </summary>
+    [Put("/api/vhost-limits/{vhostName}/max-connections")]
+    Task CreateVhostMaxConnectionsLimitAsync(string vhostName, [Body] LimitInfo limitInfo, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Sets the max queues limit of a virtual host.
+    /// </summary>
+    [Put("/api/vhost-limits/{vhostName}/max-queues")]
+    Task CreateVhostMaxQueuesLimitAsync(string vhostName, [Body] LimitInfo limitInfo, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Deletes the max connections limit of a virtual host.
+    /// </summary>
+    [Delete("/api/vhost-limits/{vhostName}/max-connections")]
+    Task DeleteVhostMaxConnectionsLimitAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Deletes the max queues limit of a virtual host.
+    /// </summary>
+    [Delete("/api/vhost-limits/{vhostName}/max-queues")]
+    Task DeleteVhostMaxQueuesLimitAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Federation links in a virtual host.
+    /// </summary>
+    [Get("/api/federation-links/{vhostName}")]
+    Task<IReadOnlyList<Federation>> GetFederationsAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    // Users and permissions
+
+    /// <summary>
+    ///     The user the client is authenticated as.
+    /// </summary>
+    [Get("/api/whoami")]
+    Task<CurrentUser> GetCurrentUserAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of users without access to any virtual host.
+    /// </summary>
+    [Get("/api/users/without-permissions")]
+    Task<IReadOnlyList<User>> GetUsersWithoutPermissionsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Deletes several users at once.
+    /// </summary>
+    [Post("/api/users/bulk-delete")]
+    Task DeleteUsersAsync([Body] UserNames userNames, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all permissions of a user.
+    /// </summary>
+    [Get("/api/users/{userName}/permissions")]
+    Task<IReadOnlyList<Permission>> GetUserPermissionsAsync(string userName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all topic permissions of a user.
+    /// </summary>
+    [Get("/api/users/{userName}/topic-permissions")]
+    Task<IReadOnlyList<TopicPermission>> GetUserTopicPermissionsAsync(string userName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The permission of a user in a virtual host.
+    /// </summary>
+    [Get("/api/permissions/{vhostName}/{userName}")]
+    Task<Permission> GetPermissionAsync(string vhostName, string userName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The topic permissions of a user in a virtual host, one per exchange.
+    /// </summary>
+    [Get("/api/topic-permissions/{vhostName}/{userName}")]
+    Task<IReadOnlyList<TopicPermission>> GetTopicPermissionsAsync(string vhostName, string userName, CancellationToken cancellationToken = default);
+
+    // Policies and parameters
+
+    /// <summary>
+    ///     The policies of a virtual host.
+    /// </summary>
+    [Get("/api/policies/{vhostName}")]
+    Task<IReadOnlyList<Policy>> GetPoliciesAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     An individual policy.
+    /// </summary>
+    [Get("/api/policies/{vhostName}/{policyName}")]
+    Task<Policy> GetPolicyAsync(string vhostName, string policyName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all operator policies.
+    /// </summary>
+    [Get("/api/operator-policies")]
+    Task<IReadOnlyList<Policy>> GetOperatorPoliciesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The operator policies of a virtual host.
+    /// </summary>
+    [Get("/api/operator-policies/{vhostName}")]
+    Task<IReadOnlyList<Policy>> GetOperatorPoliciesAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     An individual operator policy.
+    /// </summary>
+    [Get("/api/operator-policies/{vhostName}/{policyName}")]
+    Task<Policy> GetOperatorPolicyAsync(string vhostName, string policyName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Creates an operator policy, which overrides the queue arguments and policies it limits.
+    /// </summary>
+    [Put("/api/operator-policies/{vhostName}/{policyName}")]
+    Task CreateOperatorPolicyAsync(
+        string vhostName,
+        string policyName,
+        [Body] PolicyInfo policyInfo,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Deletes an operator policy.
+    /// </summary>
+    [Delete("/api/operator-policies/{vhostName}/{policyName}")]
+    Task DeleteOperatorPolicyAsync(string vhostName, string policyName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     A list of all global parameters.
+    /// </summary>
+    [Get("/api/global-parameters")]
+    Task<IReadOnlyList<GlobalParameter>> GetGlobalParametersAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     An individual global parameter.
+    /// </summary>
+    [Get("/api/global-parameters/{globalParameterName}")]
+    Task<GlobalParameter> GetGlobalParameterAsync(string globalParameterName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Creates a global parameter.
+    /// </summary>
+    [Put("/api/global-parameters/{globalParameterName}")]
+    Task CreateGlobalParameterAsync(string globalParameterName, [Body] ParameterValue parameterValue, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Deletes a global parameter.
+    /// </summary>
+    [Delete("/api/global-parameters/{globalParameterName}")]
+    Task DeleteGlobalParameterAsync(string globalParameterName, CancellationToken cancellationToken = default);
+
+    // Health checks; IManagementClientExtensions reads them as bools.
+
+    /// <summary>
+    ///     The raw certificate expiration health check.
+    /// </summary>
+    [Get("/api/health/checks/certificate-expiration/{within}/{unit}")]
+    Task<IApiResponse> CheckCertificateExpirationAsync(int within, string unit, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The raw port listener health check.
+    /// </summary>
+    [Get("/api/health/checks/port-listener/{port}")]
+    Task<IApiResponse> CheckPortListenerAsync(int port, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The raw protocol listener health check.
+    /// </summary>
+    [Get("/api/health/checks/protocol-listener/{protocol}")]
+    Task<IApiResponse> CheckProtocolListenerAsync(string protocol, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The raw virtual hosts health check.
+    /// </summary>
+    [Get("/api/health/checks/virtual-hosts")]
+    Task<IApiResponse> CheckVirtualHostsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The raw in-service health check (RabbitMQ 4.1+).
+    /// </summary>
+    [Get("/api/health/checks/is-in-service")]
+    Task<IApiResponse> CheckIsInServiceAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The raw node connection limit health check (RabbitMQ 4.1+).
+    /// </summary>
+    [Get("/api/health/checks/below-node-connection-limit")]
+    Task<IApiResponse> CheckBelowNodeConnectionLimitAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     The raw ready-to-serve-clients health check (RabbitMQ 4.1+).
+    /// </summary>
+    [Get("/api/health/checks/ready-to-serve-clients")]
+    Task<IApiResponse> CheckReadyToServeClientsAsync(CancellationToken cancellationToken = default);
 }
