@@ -144,16 +144,6 @@ public class ManagementClientTests
     }
 
     [Fact]
-    public async Task Should_be_able_to_check_classic_queues_without_synchronised_mirrors()
-    {
-        if (fixture.RabbitmqVersion < new Version("4.0"))
-        {
-            var result = await fixture.ManagementClient.HaveAnyClassicQueuesWithoutSynchronisedMirrorsAsync();
-            result.Should().BeFalse();
-        }
-    }
-
-    [Fact]
     public async Task Should_be_able_to_check_quorum_queues_is_critical_state()
     {
         var result = await fixture.ManagementClient.HaveAnyQuorumQueuesInCriticalStateAsync();
@@ -194,7 +184,7 @@ public class ManagementClientTests
             options => options.ExcludingMissingMembers());
 
         // validate authentication
-        var mc = new ManagementClient(fixture.ManagementClient.Endpoint, testUser, "topSecret");
+        var mc = new ManagementClient(fixture.Endpoint, testUser, "topSecret");
         await mc.GetUserAsync(testUser);
     }
 
@@ -211,7 +201,7 @@ public class ManagementClientTests
         user.Should().BeEquivalentTo(userInfo, options => options.ExcludingMissingMembers());
 
         // validate authentication
-        var mc = new ManagementClient(fixture.ManagementClient.Endpoint, testUser, "topSecret");
+        var mc = new ManagementClient(fixture.Endpoint, testUser, "topSecret");
         await mc.GetUserAsync(testUser);
     }
 
@@ -273,10 +263,6 @@ public class ManagementClientTests
     {
         const string policyName = "a-sample-all-definitions-in-a-policy";
         const int priority = 999;
-        HaMode? haMode = fixture.RabbitmqVersion < new Version("4.0") ? HaMode.All : null;
-        HaSyncMode? haSyncMode = fixture.RabbitmqVersion < new Version("4.0") ? HaSyncMode.Automatic : null;
-        HaPromote? haPromoteOnFailure = fixture.RabbitmqVersion < new Version("4.0") ? HaPromote.Always : null;
-        HaPromote? haPromoteOnShutdown = fixture.RabbitmqVersion < new Version("4.0") ? HaPromote.WhenSynced : null;
         QueueVersion queueVersion = fixture.RabbitmqVersion >= new Version("3.12") ? QueueVersion.V2 : QueueVersion.V1;
         const QueueLocator queueMasterLocator = QueueLocator.ClientLocal;
         const uint deliveryLimit = 3;
@@ -301,10 +287,6 @@ public class ManagementClientTests
                 Pattern: "averyuncommonpattern",
                 Vhost: Vhost.Name,
                 Definition: new PolicyDefinition(
-                    HaMode: haMode,
-                    HaSyncMode: haSyncMode,
-                    HaPromoteOnFailure: haPromoteOnFailure,
-                    HaPromoteOnShutdown: haPromoteOnShutdown,
                     QueueVersion: queueVersion,
                     QueueMasterLocator: queueMasterLocator,
 
@@ -1004,7 +986,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_get_channels_per_connection()
     {
-        using var bus = RabbitHutch.CreateBus("host=localhost;publisherConfirms=True");
+        using var bus = RabbitHutch.CreateBus($"{fixture.AmqpConnectionString};publisherConfirms=True");
 
         await Task.Delay(TimeSpan.FromSeconds(10));
 
@@ -1026,7 +1008,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_get_connections()
     {
-        using var bus = RabbitHutch.CreateBus("host=localhost;publisherConfirms=True");
+        using var bus = RabbitHutch.CreateBus($"{fixture.AmqpConnectionString};publisherConfirms=True");
 
         await Task.Delay(TimeSpan.FromSeconds(10));
 
@@ -1083,7 +1065,7 @@ public class ManagementClientTests
     [Fact]
     public async Task Should_get_overview()
     {
-        using var bus = RabbitHutch.CreateBus("host=localhost;publisherConfirms=True");
+        using var bus = RabbitHutch.CreateBus($"{fixture.AmqpConnectionString};publisherConfirms=True");
 
         await Task.Delay(TimeSpan.FromSeconds(10));
 

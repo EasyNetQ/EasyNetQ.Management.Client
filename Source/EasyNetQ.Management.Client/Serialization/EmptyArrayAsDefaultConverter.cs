@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 namespace EasyNetQ.Management.Client.Serialization;
 
@@ -12,7 +13,7 @@ internal sealed class EmptyArrayAsDefaultConverter<T> : JsonConverter<T>
         switch (jsonElement)
         {
             case { ValueKind: JsonValueKind.Object } when jsonElement.EnumerateObject().Any():
-                return jsonElement.Deserialize<T>(options);
+                return jsonElement.Deserialize((JsonTypeInfo<T>)options.GetTypeInfo(typeof(T)));
             case { ValueKind: JsonValueKind.Object }:
             case { ValueKind: JsonValueKind.Array } when jsonElement.GetArrayLength() == 0:
             case { ValueKind: JsonValueKind.Null }:

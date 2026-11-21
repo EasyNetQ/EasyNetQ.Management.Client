@@ -21,8 +21,17 @@ internal static class JsonExtensionDataExtensions
         var jsonExtensionData = new Dictionary<string, JsonElement>(extensionData.Count);
         foreach (var property in extensionData)
         {
-            jsonExtensionData.Add(property.Key, JsonSerializer.SerializeToElement(property.Value));
+            jsonExtensionData.Add(property.Key, ToJsonElement(property.Value));
         }
         return jsonExtensionData;
+    }
+
+    private static JsonElement ToJsonElement(object? value)
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream))
+            writer.WriteObjectValue(value);
+        using var document = JsonDocument.Parse(stream.ToArray());
+        return document.RootElement.Clone();
     }
 }

@@ -4,9 +4,6 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
 
-    <AssemblyOriginatorKeyFile>..\..\Assets\EasyNetQ.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign>false</PublicSign>
   </PropertyGroup>
 
   <ItemGroup>

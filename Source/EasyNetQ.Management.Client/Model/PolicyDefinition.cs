@@ -25,18 +25,6 @@ public record PolicyDefinition
     uint? ConsumerTimeout = null,
 
     // Queues [Classic]
-    [property: JsonPropertyName("ha-mode")]
-    HaMode? HaMode = null,
-    [property: JsonPropertyName("ha-params")]
-    HaParams? HaParams = null,
-    [property: JsonPropertyName("ha-sync-mode")]
-    HaSyncMode? HaSyncMode = null,
-    [property: JsonPropertyName("ha-sync-batch-size")]
-    int? HaSyncBatchSize = null,
-    [property: JsonPropertyName("ha-promote-on-shutdown"), JsonConverter(typeof(JsonStringEnumConverterEx<HaPromote>))]
-    HaPromote? HaPromoteOnShutdown = null,
-    [property: JsonPropertyName("ha-promote-on-failure"), JsonConverter(typeof(JsonStringEnumConverterEx<HaPromote>))]
-    HaPromote? HaPromoteOnFailure = null,
     [property: JsonPropertyName("queue-version"), JsonConverter(typeof(JsonNumberEnumConverter<QueueVersion>))]
     QueueVersion? QueueVersion = null,
     [property: JsonPropertyName("queue-master-locator"), JsonConverter(typeof(JsonStringEnumConverterEx<QueueLocator>))]

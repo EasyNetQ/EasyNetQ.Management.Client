@@ -1,3 +1,7 @@
+#if NET
+using System.Diagnostics.CodeAnalysis;
+#endif
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using System.Text.Json;
@@ -5,33 +9,23 @@ using System.Text.Json;
 namespace EasyNetQ.Management.Client.Serialization;
 
 // https://github.com/dotnet/runtime/issues/31081#issuecomment-848697673
-internal class JsonStringEnumConverterEx<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
+internal class JsonStringEnumConverterEx<
+#if NET
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)]
+#endif
+    TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
 {
     private readonly Dictionary<TEnum, string> _enumToString = new Dictionary<TEnum, string>();
     private readonly Dictionary<string, TEnum> _stringToEnum = new Dictionary<string, TEnum>();
 
     public JsonStringEnumConverterEx()
     {
-        var type = typeof(TEnum);
-        var values = Enum.GetValues(type);
-
-        foreach (TEnum value in values)
+        foreach (var field in typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static))
         {
-            var enumMember = type.GetMember(value.ToString())[0];
-            var attr = enumMember.GetCustomAttributes(typeof(EnumMemberAttribute), false)
-              .Cast<EnumMemberAttribute>()
-              .FirstOrDefault();
-
-            if (attr?.Value != null)
-            {
-                _enumToString.Add(value, attr.Value);
-                _stringToEnum.Add(attr.Value, value);
-            }
-            else
-            {
-                _enumToString.Add(value, value.ToString());
-                _stringToEnum.Add(value.ToString(), value);
-            }
+            var value = (TEnum)field.GetValue(null)!;
+            var name = field.GetCustomAttribute<EnumMemberAttribute>()?.Value ?? field.Name;
+            _enumToString.Add(value, name);
+            _stringToEnum.Add(name, value);
         }
     }
 

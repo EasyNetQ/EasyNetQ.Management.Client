@@ -29,8 +29,6 @@ public record Queue(
     BackingQueueStatus? BackingQueueStatus,
     IReadOnlyList<ConsumerDetail>? ConsumerDetails,
     long? HeadMessageTimestamp,
-    IReadOnlyList<string>? SlaveNodes,
-    IReadOnlyList<string>? SynchronisedSlaveNodes,
     LengthsDetails? MessagesDetails,
     LengthsDetails? MessagesReadyDetails,
     LengthsDetails? MessagesUnacknowledgedDetails,

@@ -1,487 +1,221 @@
 using EasyNetQ.Management.Client.Model;
+using EasyNetQ.Management.Client.Serialization;
+using Refit;
 
 namespace EasyNetQ.Management.Client;
 
+/// <summary>
+///     The RabbitMQ management HTTP API. <see cref="ManagementClient"/> implements it; Refit generates the requests.
+/// </summary>
+[Headers("Authorization: Basic")]
 public interface IManagementClient : IDisposable
 {
     /// <summary>
-    ///     The endpoint that the client is using.
-    /// </summary>
-    Uri Endpoint { get; }
-
-    Task<TResult> GetAsync<TResult>(
-        RelativePath path,
-        IEnumerable<KeyValuePair<string, string>>? queryParameters,
-        CancellationToken cancellationToken = default);
-
-    Task<bool> CheckAsync(
-        RelativePath path,
-        CancellationToken cancellationToken = default);
-
-    Task PutAsync<TBody>(
-        RelativePath path,
-        TBody item,
-        CancellationToken cancellationToken = default);
-    Task PutAsync(
-        RelativePath path,
-        CancellationToken cancellationToken = default);
-
-    Task DeleteAsync(
-        RelativePath path,
-        IEnumerable<KeyValuePair<string, string>>? queryParameters,
-        CancellationToken cancellationToken = default);
-
-    Task<TResult> PostAsync<TBody, TResult>(
-        RelativePath path,
-        TBody item,
-        CancellationToken cancellationToken = default);
-    Task PostAsync<TBody>(
-        RelativePath path,
-        TBody item,
-        CancellationToken cancellationToken = default);
-    Task PostAsync(
-        RelativePath path,
-        CancellationToken cancellationToken = default);
-}
-
-public static partial class IManagementClientExtensions
-{
-    private static readonly RelativePath Api = new("api");
-    private static readonly RelativePath Vhosts = Api / "vhosts";
-    private static readonly RelativePath AlivenessTest = Api / "aliveness-test";
-    private static readonly RelativePath Connections = Api / "connections";
-    private static readonly RelativePath Consumers = Api / "consumers";
-    private static readonly RelativePath Channels = Api / "channels";
-    private static readonly RelativePath Users = Api / "users";
-    private static readonly RelativePath Permissions = Api / "permissions";
-    private static readonly RelativePath Parameters = Api / "parameters";
-    private static readonly RelativePath Bindings = Api / "bindings";
-    private static readonly RelativePath Queues = Api / "queues";
-    private static readonly RelativePath Exchanges = Api / "exchanges";
-    private static readonly RelativePath TopicPermissions = Api / "topic-permissions";
-    private static readonly RelativePath Policies = Api / "policies";
-    private static readonly RelativePath FederationLinks = Api / "federation-links";
-    private static readonly RelativePath Overview = Api / "overview";
-    private static readonly RelativePath Nodes = Api / "nodes";
-    private static readonly RelativePath Definitions = Api / "definitions";
-    private static readonly RelativePath Health = Api / "health";
-    private static readonly RelativePath Rebalance = Api / "rebalance";
-    private static readonly RelativePath ShovelStatuses = Api / "shovels";
-    private static readonly RelativePath UserLimits = Api / "user-limits";
-
-    private static IEnumerable<KeyValuePair<string, string>>? ConcatNullableQueryParameters(params IEnumerable<KeyValuePair<string, string>>?[] multipleQueryParameters)
-    {
-        return multipleQueryParameters.All(qp => qp == null) ? null : ConcatQueryParameters(multipleQueryParameters);
-    }
-
-    private static IEnumerable<KeyValuePair<string, string>> ConcatQueryParameters(params IEnumerable<KeyValuePair<string, string>>?[] multipleQueryParameters)
-    {
-        foreach (var queryParameters in multipleQueryParameters)
-        {
-            if (queryParameters == null)
-                continue;
-            foreach (var queryParameter in queryParameters)
-                yield return queryParameter;
-        }
-    }
-
-    public static Task<TResult> GetAsync<TResult>(
-        this IManagementClient client,
-        RelativePath path,
-        CancellationToken cancellationToken = default
-    )
-    {
-        return client.GetAsync<TResult>(path, queryParameters: null, cancellationToken);
-    }
-
-    public static Task DeleteAsync(
-        this IManagementClient client,
-        RelativePath path,
-        CancellationToken cancellationToken = default
-    )
-    {
-        return client.DeleteAsync(path, queryParameters: null, cancellationToken);
-    }
-
-    /// <summary>
     ///     Various random bits of information that describe the whole system.
     /// </summary>
-    /// <param name="client"></param>
     /// <param name="lengthsCriteria">Criteria for getting samples of queue length data</param>
     /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
     /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<Overview> GetOverviewAsync(
-        this IManagementClient client,
-        LengthsCriteria? lengthsCriteria = null,
-        RatesCriteria? ratesCriteria = null,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var queryParameters =
-            ConcatNullableQueryParameters(lengthsCriteria?.QueryParameters, ratesCriteria?.QueryParameters);
-        return client.GetAsync<Overview>(Overview, queryParameters, cancellationToken);
-    }
+    [Get("/api/overview")]
+    Task<Overview> GetOverviewAsync(
+        [QueryConverter(typeof(CriteriaQueryConverter))] LengthsCriteria? lengthsCriteria = null,
+        [QueryConverter(typeof(CriteriaQueryConverter))] RatesCriteria? ratesCriteria = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of nodes in the RabbitMQ cluster.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Node>> GetNodesAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Node>>(Nodes, cancellationToken);
+    [Get("/api/nodes")]
+    Task<IReadOnlyList<Node>> GetNodesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     The server definitions - exchanges, queues, bindings, users, virtual hosts, permissions, topic permissions, policies and parameters.
     ///     Everything apart from messages.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<Definitions> GetDefinitionsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<Definitions>(Definitions, cancellationToken);
+    [Get("/api/definitions")]
+    Task<Definitions> GetDefinitionsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all open connections.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Connection>> GetConnectionsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Connection>>(Connections, cancellationToken);
+    [Get("/api/connections")]
+    Task<IReadOnlyList<Connection>> GetConnectionsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all open connections on the specified VHost.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Connection>> GetConnectionsAsync(
-        this IManagementClient client,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Connection>>(Vhosts / vhostName / "connections", cancellationToken);
+    [Get("/api/vhosts/{vhostName}/connections")]
+    Task<IReadOnlyList<Connection>> GetConnectionsAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all open channels.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Channel>> GetChannelsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Channel>>(Channels, cancellationToken);
+    [Get("/api/channels")]
+    Task<IReadOnlyList<Channel>> GetChannelsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all open channels for the given connection.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="connectionName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Channel>> GetChannelsAsync(
-        this IManagementClient client,
-        string connectionName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Channel>>(Connections / connectionName / "channels", cancellationToken);
+    [Get("/api/connections/{connectionName}/channels")]
+    Task<IReadOnlyList<Channel>> GetChannelsAsync(string connectionName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets the channel. This returns more detail, including consumers than the GetChannels method.
     /// </summary>
-    /// <returns>The channel.</returns>
-    /// <param name="client"></param>
-    /// <param name="channelName">Channel name.</param>
-    /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
-    /// <param name="cancellationToken"></param>
-    public static Task<Channel> GetChannelAsync(
-        this IManagementClient client,
+    [Get("/api/channels/{channelName}")]
+    Task<Channel> GetChannelAsync(
         string channelName,
-        RatesCriteria? ratesCriteria = null,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<Channel>(Channels / channelName, ratesCriteria?.QueryParameters, cancellationToken);
+        [QueryConverter(typeof(CriteriaQueryConverter))] RatesCriteria? ratesCriteria = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all exchanges.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Exchange>> GetExchangesAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Exchange>>(Exchanges, cancellationToken);
+    [Get("/api/exchanges")]
+    Task<IReadOnlyList<Exchange>> GetExchangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of exchanges for a page.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="pageCriteria"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<PageResult<Exchange>> GetExchangesByPageAsync(
-        this IManagementClient client,
-        PageCriteria pageCriteria,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<PageResult<Exchange>>(Exchanges, pageCriteria.QueryParameters, cancellationToken);
+    [Get("/api/exchanges")]
+    Task<PageResult<Exchange>> GetExchangesByPageAsync(
+        [QueryConverter(typeof(CriteriaQueryConverter))] PageCriteria pageCriteria,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all exchanges for a virtual host.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Exchange>> GetExchangesAsync(
-        this IManagementClient client,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Exchange>>(Exchanges / vhostName, cancellationToken);
+    [Get("/api/exchanges/{vhostName}")]
+    Task<IReadOnlyList<Exchange>> GetExchangesAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of exchanges for a page for a virtual host.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="pageCriteria"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<PageResult<Exchange>> GetExchangesByPageAsync(
-        this IManagementClient client,
+    [Get("/api/exchanges/{vhostName}")]
+    Task<PageResult<Exchange>> GetExchangesByPageAsync(
         string vhostName,
-        PageCriteria pageCriteria,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<PageResult<Exchange>>(Exchanges / vhostName, pageCriteria.QueryParameters, cancellationToken);
+        [QueryConverter(typeof(CriteriaQueryConverter))] PageCriteria pageCriteria,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all queues.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="statsCriteria"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Queue>> GetQueuesAsync(
-        this IManagementClient client,
-        StatsCriteria? statsCriteria = null,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Queue>>(Queues, statsCriteria?.QueryParameters, cancellationToken);
+    [Get("/api/queues")]
+    Task<IReadOnlyList<Queue>> GetQueuesAsync(
+        [QueryConverter(typeof(CriteriaQueryConverter))] StatsCriteria? statsCriteria = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of queues for a page.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="pageCriteria"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<PageResult<Queue>> GetQueuesByPageAsync(
-        this IManagementClient client,
-        PageCriteria pageCriteria,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<PageResult<Queue>>(Queues, pageCriteria.QueryParameters, cancellationToken);
+    [Get("/api/queues")]
+    Task<PageResult<Queue>> GetQueuesByPageAsync(
+        [QueryConverter(typeof(CriteriaQueryConverter))] PageCriteria pageCriteria,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all queues for a virtual host.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="statsCriteria"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Queue>> GetQueuesAsync(
-        this IManagementClient client,
+    [Get("/api/queues/{vhostName}")]
+    Task<IReadOnlyList<Queue>> GetQueuesAsync(
         string vhostName,
-        StatsCriteria? statsCriteria = null,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Queue>>(Queues / vhostName, statsCriteria?.QueryParameters, cancellationToken);
+        [QueryConverter(typeof(CriteriaQueryConverter))] StatsCriteria? statsCriteria = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of queues for a page for a virtual host.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="pageCriteria"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<PageResult<Queue>> GetQueuesByPageAsync(
-        this IManagementClient client,
+    [Get("/api/queues/{vhostName}")]
+    Task<PageResult<Queue>> GetQueuesByPageAsync(
         string vhostName,
-        PageCriteria pageCriteria,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<PageResult<Queue>>(Queues / vhostName, pageCriteria.QueryParameters, cancellationToken);
+        [QueryConverter(typeof(CriteriaQueryConverter))] PageCriteria pageCriteria,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all bindings.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Binding>> GetBindingsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Binding>>(Bindings, cancellationToken);
+    [Get("/api/bindings")]
+    Task<IReadOnlyList<Binding>> GetBindingsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all bindings within the specified VHost.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Binding>> GetBindingsAsync(
-        this IManagementClient client,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Binding>>(Bindings / vhostName, cancellationToken);
+    [Get("/api/bindings/{vhostName}")]
+    Task<IReadOnlyList<Binding>> GetBindingsAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all vhosts.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Vhost>> GetVhostsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Vhost>>(Vhosts, cancellationToken);
+    [Get("/api/vhosts")]
+    Task<IReadOnlyList<Vhost>> GetVhostsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all users.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<User>> GetUsersAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<User>>(Users, cancellationToken);
+    [Get("/api/users")]
+    Task<IReadOnlyList<User>> GetUsersAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all permissions for all users.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Permission>> GetPermissionsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Permission>>(Permissions, cancellationToken);
+    [Get("/api/permissions")]
+    Task<IReadOnlyList<Permission>> GetPermissionsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all topic permissions for all users.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<TopicPermission>> GetTopicPermissionsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<TopicPermission>>(TopicPermissions, cancellationToken);
+    [Get("/api/topic-permissions")]
+    Task<IReadOnlyList<TopicPermission>> GetTopicPermissionsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all consumers.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Consumer>> GetConsumersAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Consumer>>(Consumers, cancellationToken);
+    [Get("/api/consumers")]
+    Task<IReadOnlyList<Consumer>> GetConsumersAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all consumers for the specified VHost.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Consumer>> GetConsumersAsync(
-        this IManagementClient client,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Consumer>>(Consumers / vhostName, cancellationToken);
+    [Get("/api/consumers/{vhostName}")]
+    Task<IReadOnlyList<Consumer>> GetConsumersAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Closes the given connection
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="connectionName"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task CloseConnectionAsync(
-        this IManagementClient client,
-        string connectionName,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Connections / connectionName, cancellationToken);
+    [Delete("/api/connections/{connectionName}")]
+    Task CloseConnectionAsync(string connectionName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Creates the given exchange
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="exchangeName"></param>
-    /// <param name="exchangeInfo"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task CreateExchangeAsync(
-        this IManagementClient client,
+    [Put("/api/exchanges/{vhostName}/{exchangeName}")]
+    Task CreateExchangeAsync(
         string vhostName,
         string exchangeName,
-        ExchangeInfo exchangeInfo,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(Exchanges / vhostName / exchangeName, exchangeInfo, cancellationToken);
+        [Body] ExchangeInfo exchangeInfo,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Delete the given exchange
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="exchangeName"></param>
-    /// <param name="deleteExchangeCriteria"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task DeleteExchangeAsync(
-        this IManagementClient client,
+    [Delete("/api/exchanges/{vhostName}/{exchangeName}")]
+    Task DeleteExchangeAsync(
         string vhostName,
         string exchangeName,
-        DeleteExchangeCriteria? deleteExchangeCriteria = null,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Exchanges / vhostName / exchangeName, deleteExchangeCriteria?.QueryParameters, cancellationToken);
+        [QueryConverter(typeof(CriteriaQueryConverter))] DeleteExchangeCriteria? deleteExchangeCriteria = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all bindings in which a given exchange is the source.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="exchangeName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Binding>> GetBindingsWithSourceAsync(
-        this IManagementClient client,
-        string vhostName,
-        string exchangeName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Binding>>(Exchanges / vhostName / exchangeName / "bindings" / "source", cancellationToken);
+    [Get("/api/exchanges/{vhostName}/{exchangeName}/bindings/source")]
+    Task<IReadOnlyList<Binding>> GetBindingsWithSourceAsync(string vhostName, string exchangeName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all bindings in which a given exchange is the destination.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="exchangeName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Binding>> GetBindingsWithDestinationAsync(
-        this IManagementClient client,
-        string vhostName,
-        string exchangeName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Binding>>(Exchanges / vhostName / exchangeName / "bindings" / "destination", cancellationToken);
+    [Get("/api/exchanges/{vhostName}/{exchangeName}/bindings/destination")]
+    Task<IReadOnlyList<Binding>> GetBindingsWithDestinationAsync(string vhostName, string exchangeName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Publish a message to a given exchange.
@@ -489,79 +223,44 @@ public static partial class IManagementClientExtensions
     ///     test messages, diagnostics etc - they do not implement reliable delivery and so should
     ///     be treated as a sysadmin's tool rather than a general API for messaging.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName">The vhost</param>
-    /// <param name="exchangeName">The exchange</param>
-    /// <param name="publishInfo">The publication parameters</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>A PublishResult, routed == true if the message was sent to at least one queue</returns>
-    public static Task<PublishResult> PublishAsync(
-        this IManagementClient client,
+    [Post("/api/exchanges/{vhostName}/{exchangeName}/publish")]
+    Task<PublishResult> PublishAsync(
         string vhostName,
         string exchangeName,
-        PublishInfo publishInfo,
-        CancellationToken cancellationToken = default
-    ) => client.PostAsync<PublishInfo, PublishResult>(Exchanges / vhostName / exchangeName / "publish", publishInfo, cancellationToken);
+        [Body] PublishInfo publishInfo,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Create the given queue
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="queueName"></param>
-    /// <param name="queueInfo"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task CreateQueueAsync(
-        this IManagementClient client,
+    [Put("/api/queues/{vhostName}/{queueName}")]
+    Task CreateQueueAsync(
         string vhostName,
         string queueName,
-        QueueInfo queueInfo,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(Queues / vhostName / queueName, queueInfo, cancellationToken);
+        [Body] QueueInfo queueInfo,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Delete the given queue
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="queueName"></param>
-    /// <param name="deleteQueueCriteria"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task DeleteQueueAsync(
-        this IManagementClient client,
+    [Delete("/api/queues/{vhostName}/{queueName}")]
+    Task DeleteQueueAsync(
         string vhostName,
         string queueName,
-        DeleteQueueCriteria? deleteQueueCriteria = null,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Queues / vhostName / queueName, deleteQueueCriteria?.QueryParameters, cancellationToken);
+        [QueryConverter(typeof(CriteriaQueryConverter))] DeleteQueueCriteria? deleteQueueCriteria = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all bindings on a given queue.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="queueName"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task<IReadOnlyList<Binding>> GetBindingsForQueueAsync(
-        this IManagementClient client,
-        string vhostName,
-        string queueName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Binding>>(Queues / vhostName / queueName / "bindings", cancellationToken);
+    [Get("/api/queues/{vhostName}/{queueName}/bindings")]
+    Task<IReadOnlyList<Binding>> GetBindingsForQueueAsync(string vhostName, string queueName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Purge a queue of all messages
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="queueName"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task PurgeAsync(
-        this IManagementClient client,
-        string vhostName,
-        string queueName,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Queues / vhostName / queueName / "contents", cancellationToken);
+    [Delete("/api/queues/{vhostName}/{queueName}/contents")]
+    Task PurgeAsync(string vhostName, string queueName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get messages from a queue.
@@ -570,650 +269,327 @@ public static partial class IManagementClientExtensions
     ///     delivery and so should be treated as a sysadmin's tool rather than a
     ///     general API for messaging.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="queueName">The queue to retrieve from</param>
-    /// <param name="getMessagesFromQueueInfo">The criteria for the retrieve</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>Messages</returns>
-    public static Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(
-        this IManagementClient client,
+    [Post("/api/queues/{vhostName}/{queueName}/get")]
+    Task<IReadOnlyList<Message>> GetMessagesFromQueueAsync(
         string vhostName,
         string queueName,
-        GetMessagesFromQueueInfo getMessagesFromQueueInfo,
-        CancellationToken cancellationToken = default
-    ) => client.PostAsync<GetMessagesFromQueueInfo, IReadOnlyList<Message>>(Queues / vhostName / queueName / "get", getMessagesFromQueueInfo, cancellationToken);
+        [Body] GetMessagesFromQueueInfo getMessagesFromQueueInfo,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Create a binding between an exchange and a queue
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName">the vhost</param>
-    /// <param name="exchangeName">the exchange</param>
-    /// <param name="queueName">the queue</param>
-    /// <param name="bindingInfo">properties of the binding</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>The binding that was created</returns>
-    public static Task CreateQueueBindingAsync(
-        this IManagementClient client,
+    [Post("/api/bindings/{vhostName}/e/{exchangeName}/q/{queueName}")]
+    Task CreateQueueBindingAsync(
         string vhostName,
         string exchangeName,
         string queueName,
-        BindingInfo bindingInfo,
-        CancellationToken cancellationToken = default
-    ) => client.PostAsync(Bindings / vhostName / "e" / exchangeName / "q" / queueName, bindingInfo, cancellationToken);
+        [Body] BindingInfo bindingInfo,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Create a binding between an exchange and an exchange
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName">the vhost</param>
-    /// <param name="sourceExchangeName">the source exchange</param>
-    /// <param name="destinationExchangeName">the destination exchange</param>
-    /// <param name="bindingInfo">properties of the binding</param>
-    /// <param name="cancellationToken"></param>
-    public static Task CreateExchangeBindingAsync(
-        this IManagementClient client,
+    [Post("/api/bindings/{vhostName}/e/{sourceExchangeName}/e/{destinationExchangeName}")]
+    Task CreateExchangeBindingAsync(
         string vhostName,
         string sourceExchangeName,
         string destinationExchangeName,
-        BindingInfo bindingInfo,
-        CancellationToken cancellationToken = default
-    ) => client.PostAsync(Bindings / vhostName / "e" / sourceExchangeName / "e" / destinationExchangeName, bindingInfo, cancellationToken);
+        [Body] BindingInfo bindingInfo,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all bindings between an exchange and a queue.
     ///     Remember, an exchange and a queue can be bound together many times!
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="exchangeName"></param>
-    /// <param name="queueName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Binding>> GetQueueBindingsAsync(
-        this IManagementClient client,
+    [Get("/api/bindings/{vhostName}/e/{exchangeName}/q/{queueName}")]
+    Task<IReadOnlyList<Binding>> GetQueueBindingsAsync(
         string vhostName,
         string exchangeName,
         string queueName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Binding>>(Bindings / vhostName / "e" / exchangeName / "q" / queueName, cancellationToken);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all bindings between an exchange and an exchange.
     ///     Remember, an exchange and a exchange can be bound together many times!
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="sourceExchangeName"></param>
-    /// <param name="destinationExchangeName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Binding>> GetExchangeBindingsAsync(
-        this IManagementClient client,
+    [Get("/api/bindings/{vhostName}/e/{sourceExchangeName}/e/{destinationExchangeName}")]
+    Task<IReadOnlyList<Binding>> GetExchangeBindingsAsync(
         string vhostName,
         string sourceExchangeName,
         string destinationExchangeName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Binding>>(Bindings / vhostName / "e" / sourceExchangeName / "e" / destinationExchangeName, cancellationToken);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Delete the given binding
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="exchangeName"></param>
-    /// <param name="queueName"></param>
-    /// <param name="propertiesKey"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task DeleteQueueBindingAsync(
-        this IManagementClient client,
+    [Delete("/api/bindings/{vhostName}/e/{exchangeName}/q/{queueName}/{propertiesKey}")]
+    Task DeleteQueueBindingAsync(
         string vhostName,
         string exchangeName,
         string queueName,
         string propertiesKey,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Bindings / vhostName / "e" / exchangeName / "q" / queueName / propertiesKey, cancellationToken);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Delete the given binding
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="sourceExchangeName"></param>
-    /// <param name="destinationExchangeName"></param>
-    /// <param name="propertiesKey"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task DeleteExchangeBindingAsync(
-        this IManagementClient client,
+    [Delete("/api/bindings/{vhostName}/e/{sourceExchangeName}/e/{destinationExchangeName}/{propertiesKey}")]
+    Task DeleteExchangeBindingAsync(
         string vhostName,
         string sourceExchangeName,
         string destinationExchangeName,
         string propertiesKey,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Bindings / vhostName / "e" / sourceExchangeName / "e" / destinationExchangeName / propertiesKey, cancellationToken);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Create a new virtual host
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName">The name of the new virtual host</param>
-    /// <param name="cancellationToken"></param>
-    public static Task CreateVhostAsync(
-        this IManagementClient client,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(Vhosts / vhostName, cancellationToken);
+    [Put("/api/vhosts/{vhostName}")]
+    Task CreateVhostAsync(string vhostName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Create a new virtual host, or change an existing one's description, tags, default queue type or tracing
+    /// </summary>
+    [Put("/api/vhosts/{vhostName}")]
+    Task CreateVhostAsync(string vhostName, [Body] VhostInfo vhostInfo, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Delete a virtual host
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName">The virtual host to delete</param>
-    /// <param name="cancellationToken"></param>
-    public static Task DeleteVhostAsync(
-        this IManagementClient client,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Vhosts / vhostName, cancellationToken);
-
-    /// <summary>
-    ///     Enable tracing on given virtual host.
-    /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName">The virtual host on which to enable tracing</param>
-    /// <param name="cancellationToken"></param>
-    public static Task EnableTracingAsync(
-        this IManagementClient client,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(Vhosts / vhostName, new { Tracing = true }, cancellationToken);
-
-    /// <summary>
-    ///     Disables tracing on given virtual host.
-    /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName">The virtual host on which to disable tracing</param>
-    /// <param name="cancellationToken"></param>
-    public static Task DisableTracingAsync(
-        this IManagementClient client,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(Vhosts / vhostName, new { Tracing = false }, cancellationToken);
+    [Delete("/api/vhosts/{vhostName}")]
+    Task DeleteVhostAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Create a new user
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="userName">The user name to create</param>
-    /// <param name="userInfo">The user info to create</param>
-    /// <param name="cancellationToken"></param>
-    public static Task CreateUserAsync(
-        this IManagementClient client,
-        string userName,
-        UserInfo userInfo,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(Users / userName, userInfo, cancellationToken);
+    [Put("/api/users/{userName}")]
+    Task CreateUserAsync(string userName, [Body] UserInfo userInfo, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Delete a user
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="userName">The user to delete</param>
-    /// <param name="cancellationToken"></param>
-    public static Task DeleteUserAsync(
-        this IManagementClient client,
-        string userName,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Users / userName, cancellationToken);
+    [Delete("/api/users/{userName}")]
+    Task DeleteUserAsync(string userName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Create a permission
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="userName"></param>
-    /// <param name="permissionInfo"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task CreatePermissionAsync(
-        this IManagementClient client,
+    [Put("/api/permissions/{vhostName}/{userName}")]
+    Task CreatePermissionAsync(
         string vhostName,
         string userName,
-        PermissionInfo permissionInfo,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(Permissions / vhostName / userName, permissionInfo, cancellationToken);
+        [Body] PermissionInfo permissionInfo,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Delete a permission
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="userName"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task DeletePermissionAsync(
-        this IManagementClient client,
-        string vhostName,
-        string userName,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Permissions / vhostName / userName, cancellationToken);
+    [Delete("/api/permissions/{vhostName}/{userName}")]
+    Task DeletePermissionAsync(string vhostName, string userName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Create a topic permission
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="userName"></param>
-    /// <param name="topicPermissionInfo"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task CreateTopicPermissionAsync(
-        this IManagementClient client,
+    [Put("/api/topic-permissions/{vhostName}/{userName}")]
+    Task CreateTopicPermissionAsync(
         string vhostName,
         string userName,
-        TopicPermissionInfo topicPermissionInfo,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(TopicPermissions / vhostName / userName, topicPermissionInfo, cancellationToken);
+        [Body] TopicPermissionInfo topicPermissionInfo,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Delete a topic permission
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="userName"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task DeleteTopicPermissionAsync(
-        this IManagementClient client,
-        string vhostName,
-        string userName,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(TopicPermissions / vhostName / userName, cancellationToken);
+    [Delete("/api/topic-permissions/{vhostName}/{userName}")]
+    Task DeleteTopicPermissionAsync(string vhostName, string userName, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Declares a test queue, then publishes and consumes a message. Intended for use
-    ///     by monitoring tools. If everything is working correctly, will return true.
-    ///     Note: the test queue will not be deleted (to prevent queue churn if this
-    ///     is repeatedly pinged).
+    ///     The raw aliveness test of a virtual host; <see cref="IManagementClientExtensions.IsAliveAsync(IManagementClient, string, CancellationToken)"/> reads it.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task<bool> IsAliveAsync(
-        this IManagementClient client,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.CheckAsync(AlivenessTest / vhostName, cancellationToken);
+    [Get("/api/aliveness-test/{vhostName}")]
+    Task<IApiResponse> CheckAlivenessAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get an individual exchange by name
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName">The virtual host that contains the exchange</param>
-    /// <param name="exchangeName">The name of the exchange</param>
-    /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>The exchange</returns>
-    public static Task<Exchange> GetExchangeAsync(
-        this IManagementClient client,
+    [Get("/api/exchanges/{vhostName}/{exchangeName}")]
+    Task<Exchange> GetExchangeAsync(
         string vhostName,
         string exchangeName,
-        RatesCriteria? ratesCriteria = null,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<Exchange>(Exchanges / vhostName / exchangeName, ratesCriteria?.QueryParameters, cancellationToken);
+        [QueryConverter(typeof(CriteriaQueryConverter))] RatesCriteria? ratesCriteria = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get an individual queue by name
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="queueName">The name of the queue</param>
-    /// <param name="vhostName">The virtual host that contains the queue</param>
-    /// <param name="lengthsCriteria">Criteria for getting samples of queue length data</param>
-    /// <param name="ratesCriteria">Criteria for getting samples of rate data</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>The Queue</returns>
-    public static Task<Queue> GetQueueAsync(
-        this IManagementClient client,
+    [Get("/api/queues/{vhostName}/{queueName}")]
+    Task<Queue> GetQueueAsync(
         string vhostName,
         string queueName,
-        LengthsCriteria? lengthsCriteria = null,
-        RatesCriteria? ratesCriteria = null,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var queryParameters =
-            ConcatNullableQueryParameters(lengthsCriteria?.QueryParameters, ratesCriteria?.QueryParameters);
-        return client.GetAsync<Queue>(Queues / vhostName / queueName, queryParameters, cancellationToken);
-    }
+        [QueryConverter(typeof(CriteriaQueryConverter))] LengthsCriteria? lengthsCriteria = null,
+        [QueryConverter(typeof(CriteriaQueryConverter))] RatesCriteria? ratesCriteria = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get an individual vhost by name
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName">The VHost</param>
-    /// <param name="cancellationToken"></param>
-    public static Task<Vhost> GetVhostAsync(
-        this IManagementClient client,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<Vhost>(Vhosts / vhostName, cancellationToken);
+    [Get("/api/vhosts/{vhostName}")]
+    Task<Vhost> GetVhostAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get a user by name
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="userName">The name of the user</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>The User</returns>
-    public static Task<User> GetUserAsync(
-        this IManagementClient client,
-        string userName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<User>(Users / userName, cancellationToken);
+    [Get("/api/users/{userName}")]
+    Task<User> GetUserAsync(string userName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get collection of Policies on the cluster
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns>Policies</returns>
-    public static Task<IReadOnlyList<Policy>> GetPoliciesAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Policy>>(Policies, cancellationToken);
+    [Get("/api/policies")]
+    Task<IReadOnlyList<Policy>> GetPoliciesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Creates a policy on the cluster
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="policyName"></param>
-    /// <param name="policyInfo"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task CreatePolicyAsync(
-        this IManagementClient client,
+    [Put("/api/policies/{vhostName}/{policyName}")]
+    Task CreatePolicyAsync(
         string vhostName,
         string policyName,
-        PolicyInfo policyInfo,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(Policies / vhostName / policyName, policyInfo, cancellationToken);
+        [Body] PolicyInfo policyInfo,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Delete a policy from the cluster
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName">vhost on which the policy resides</param>
-    /// <param name="policyName">Policy name</param>
-    /// <param name="cancellationToken"></param>
-    public static Task DeletePolicyAsync(
-        this IManagementClient client,
-        string vhostName,
-        string policyName,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Policies / vhostName / policyName, cancellationToken);
+    [Delete("/api/policies/{vhostName}/{policyName}")]
+    Task DeletePolicyAsync(string vhostName, string policyName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get specific parameters on the cluster
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="componentName"></param>
-    /// <param name="parameterName"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task<Parameter> GetParameterAsync(
-        this IManagementClient client,
+    [Get("/api/parameters/{componentName}/{vhostName}/{parameterName}")]
+    Task<Parameter> GetParameterAsync(
         string vhostName,
         string componentName,
         string parameterName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<Parameter>(Parameters / componentName / vhostName / parameterName, cancellationToken);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get all parameters on the cluster
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task<IReadOnlyList<Parameter>> GetParametersAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Parameter>>(Parameters, cancellationToken);
+    [Get("/api/parameters")]
+    Task<IReadOnlyList<Parameter>> GetParametersAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get all parameters for a given component on the cluster
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="componentName"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task<IReadOnlyList<Parameter>> GetParametersAsync(
-        this IManagementClient client,
-        string componentName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Parameter>>(Parameters / componentName, cancellationToken);
+    [Get("/api/parameters/{componentName}")]
+    Task<IReadOnlyList<Parameter>> GetParametersAsync(string componentName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get all parameters for a given component and virtual host on the cluster
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="componentName"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task<IReadOnlyList<Parameter>> GetParametersAsync(
-        this IManagementClient client,
-        string componentName,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Parameter>>(Parameters / componentName / vhostName, cancellationToken);
+    [Get("/api/parameters/{componentName}/{vhostName}")]
+    Task<IReadOnlyList<Parameter>> GetParametersAsync(string componentName, string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Creates a parameter on the cluster
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="componentName"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="parameterName"></param>
-    /// <param name="parameterValue"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task CreateParameterAsync(
-        this IManagementClient client,
+    [Put("/api/parameters/{componentName}/{vhostName}/{parameterName}")]
+    Task CreateParameterAsync(
         string componentName,
         string vhostName,
         string parameterName,
-        object parameterValue,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(Parameters / componentName / vhostName / parameterName, new { Value = parameterValue }, cancellationToken);
+        [Body] ParameterValue parameterValue,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Delete a parameter from the cluster
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="componentName"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="parameterName"></param>
-    /// <param name="cancellationToken"></param>
-    public static Task DeleteParameterAsync(
-        this IManagementClient client,
+    [Delete("/api/parameters/{componentName}/{vhostName}/{parameterName}")]
+    Task DeleteParameterAsync(
         string componentName,
         string vhostName,
         string parameterName,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(Parameters / componentName / vhostName / parameterName, cancellationToken);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Get list of federations
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<Federation>> GetFederationsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<Federation>>(FederationLinks, cancellationToken);
+    [Get("/api/federation-links")]
+    Task<IReadOnlyList<Federation>> GetFederationsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Returns true if there are any alarms in effect in the cluster
+    ///     The raw cluster alarms health check; <see cref="IManagementClientExtensions.HaveAnyClusterAlarmsAsync"/> reads it.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static async Task<bool> HaveAnyClusterAlarmsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => !await client.CheckAsync(Health / "checks" / "alarms", cancellationToken).ConfigureAwait(false);
+    [Get("/api/health/checks/alarms")]
+    Task<IApiResponse> CheckAlarmsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Returns true if there are any alarms in effect in on a target node
+    ///     The raw local alarms health check; <see cref="IManagementClientExtensions.HaveAnyLocalAlarmsAsync"/> reads it.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static async Task<bool> HaveAnyLocalAlarmsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => !await client.CheckAsync(Health / "checks" / "local-alarms", cancellationToken).ConfigureAwait(false);
-
+    [Get("/api/health/checks/local-alarms")]
+    Task<IApiResponse> CheckLocalAlarmsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Returns true if there are classic mirrored queues without synchronised mirrors online (queues that would potentially lose data if the target node is shut down).
+    ///     The raw quorum-critical health check; <see cref="IManagementClientExtensions.HaveAnyQuorumQueuesInCriticalStateAsync"/> reads it.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static async Task<bool> HaveAnyClassicQueuesWithoutSynchronisedMirrorsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => !await client.CheckAsync(Health / "checks" / "node-is-mirror-sync-critical", cancellationToken).ConfigureAwait(false);
+    [Get("/api/health/checks/node-is-quorum-critical")]
+    Task<IApiResponse> CheckQuorumCriticalAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Returns true if there are quorum queues with minimum online quorum (queues that would lose their quorum and availability if the target node is shut down)
+    ///     Rebalances all queues in all vhosts. This operation is asynchronous therefore please check
+    ///     the RabbitMQ log file for messages regarding the success or failure of the operation.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static async Task<bool> HaveAnyQuorumQueuesInCriticalStateAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => !await client.CheckAsync(Health / "checks" / "node-is-quorum-critical", cancellationToken).ConfigureAwait(false);
-
-    /// <summary>
-    ///     Rebalances all queues in all vhosts. This operation is asynchronous therefore please check the RabbitMQ log file for messages regarding the success or failure of the operation.
-    /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task RebalanceQueuesAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.PostAsync(Rebalance / "queues", cancellationToken);
+    [Post("/api/rebalance/queues")]
+    Task RebalanceQueuesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all shovel statuses.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<ShovelStatus>> GetShovelStatusesAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<ShovelStatus>>(ShovelStatuses, cancellationToken);
+    [Get("/api/shovels")]
+    Task<IReadOnlyList<ShovelStatus>> GetShovelStatusesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of all shovel statuses for a virtual host.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="vhostName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<ShovelStatus>> GetShovelStatusesAsync(
-        this IManagementClient client,
-        string vhostName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<ShovelStatus>>(ShovelStatuses / vhostName, cancellationToken);
-
-    // Current implementation in RabbitMQ has a lot of bugs
-    // 
-    // /// <summary>
-    // ///     Get an individual shovel status by name.
-    // /// </summary>
-    // /// <param name="vhostName"></param>
-    // /// <param name="shovelName"></param>
-    // /// <param name="cancellationToken"></param>
-    // /// <returns></returns>
-    // Task<ShovelStatus> GetShovelStatusAsync(string vhostName, string shovelName, CancellationToken cancellationToken = default);
+    [Get("/api/shovels/{vhostName}")]
+    Task<IReadOnlyList<ShovelStatus>> GetShovelStatusesAsync(string vhostName, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     A list of per-user limits for all users.
+    ///     A list of all per-user limits.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<UserLimits>> GetUserLimitsAsync(
-        this IManagementClient client,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<UserLimits>>(UserLimits, cancellationToken);
+    [Get("/api/user-limits")]
+    Task<IReadOnlyList<UserLimits>> GetUserLimitsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     A list of per-user limits for a specific user.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="userName">The name of the user</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task<IReadOnlyList<UserLimits>> GetUserLimitsAsync(
-        this IManagementClient client,
-        string userName,
-        CancellationToken cancellationToken = default
-    ) => client.GetAsync<IReadOnlyList<UserLimits>>(UserLimits / userName, cancellationToken);
+    [Get("/api/user-limits/{userName}")]
+    Task<IReadOnlyList<UserLimits>> GetUserLimitsAsync(string userName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Sets per-user max connections limit for user.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="userName">The name of the user</param>
-    /// <param name="maxConnections">Connections limit</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task CreateUserMaxConnectionsLimitAsync(
-        this IManagementClient client,
-        string userName,
-        int maxConnections,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(UserLimits / userName / "max-connections", new LimitInfo(maxConnections), cancellationToken);
+    [Put("/api/user-limits/{userName}/max-connections")]
+    Task CreateUserMaxConnectionsLimitAsync(string userName, [Body] LimitInfo limitInfo, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Sets per-user max channels limit for user.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="userName">The name of the user</param>
-    /// <param name="maxChannels">Connections limit</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task CreateUserMaxChannelsLimitAsync(
-        this IManagementClient client,
-        string userName,
-        int maxChannels,
-        CancellationToken cancellationToken = default
-    ) => client.PutAsync(UserLimits / userName / "max-channels", new LimitInfo(maxChannels), cancellationToken);
+    [Put("/api/user-limits/{userName}/max-channels")]
+    Task CreateUserMaxChannelsLimitAsync(string userName, [Body] LimitInfo limitInfo, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Deletes per-user max connections limit for user.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="userName">The name of the user</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task DeleteUserMaxConnectionsLimitAsync(
-        this IManagementClient client,
-        string userName,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(UserLimits / userName / "max-connections", cancellationToken);
+    [Delete("/api/user-limits/{userName}/max-connections")]
+    Task DeleteUserMaxConnectionsLimitAsync(string userName, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Deletes per-user max channels limit for user.
     /// </summary>
-    /// <param name="client"></param>
-    /// <param name="userName">The name of the user</param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static Task DeleteUserMaxChannelsLimitAsync(
-        this IManagementClient client,
-        string userName,
-        CancellationToken cancellationToken = default
-    ) => client.DeleteAsync(UserLimits / userName / "max-channels", cancellationToken);
+    [Delete("/api/user-limits/{userName}/max-channels")]
+    Task DeleteUserMaxChannelsLimitAsync(string userName, CancellationToken cancellationToken = default);
 }

@@ -1,13 +1,11 @@
-using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using EasyNetQ.Management.Client.Internals;
+using System.Text.Json.Serialization.Metadata;
 using EasyNetQ.Management.Client.Serialization;
+using Refit;
 
-#if NET5_0_OR_GREATER
+#if NET
 using HttpHandler = System.Net.Http.SocketsHttpHandler;
 #else
 using System.Collections.Concurrent;
@@ -18,38 +16,20 @@ using HttpHandler = System.Net.Http.HttpClientHandler;
 
 namespace EasyNetQ.Management.Client;
 
-public class ManagementClient : IManagementClient
+/// <summary>
+///     A client for the RabbitMQ management HTTP API. Its <see cref="IManagementClient"/> methods are generated.
+/// </summary>
+public partial class ManagementClient : IManagementClient
 {
-#if NET5_0_OR_GREATER
-    private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new(System.Net.Mime.MediaTypeNames.Application.Json);
-#else
-    private static readonly MediaTypeWithQualityHeaderValue JsonMediaTypeHeaderValue = new("application/json");
-#endif
     private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(20);
 
-    internal static readonly JsonSerializerOptions SerializerOptions;
+    internal static readonly JsonSerializerOptions SerializerOptions = CreateSerializerOptions();
 
     private readonly HttpClient httpClient;
-    private readonly Action<HttpRequestMessage>? configureHttpRequestMessage;
     private readonly bool disposeHttpClient;
-    private readonly AuthenticationHeaderValue basicAuthHeader;
+    private readonly IManagementClient api;
 
-    static ManagementClient()
-    {
-        var namingPolicy = new JsonSnakeCaseNamingPolicy();
-        SerializerOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = namingPolicy,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            Converters =
-            {
-                new JsonStringEnumConverter(namingPolicy),
-                new HaParamsConverter()
-            }
-        };
-    }
-
-#if NETSTANDARD2_0
+#if NETFRAMEWORK
     private static bool DisableUriParserLegacyQuirks(string scheme)
     {
         string uriWithEscapedDotsAndSlashes = $"{scheme}://localhost/{Uri.EscapeDataString("/.")}";
@@ -101,27 +81,6 @@ public class ManagementClient : IManagementClient
     }
 #endif
 
-    [Obsolete("Please use another constructor")]
-    public ManagementClient(
-        string hostUrl,
-        string username,
-        string password,
-        int portNumber = 15672,
-        TimeSpan? timeout = null,
-        Action<HttpRequestMessage>? configureHttpRequestMessage = null,
-        bool ssl = false,
-        Action<HttpHandler>? configureHttpHandler = null
-    ) : this(
-        LegacyEndpointBuilder.Build(hostUrl, portNumber, ssl),
-        username,
-        password,
-        timeout,
-        configureHttpRequestMessage,
-        configureHttpHandler
-    )
-    {
-    }
-
     public ManagementClient(
         Uri endpoint,
         string username,
@@ -133,17 +92,14 @@ public class ManagementClient : IManagementClient
     {
         if (!endpoint.IsAbsoluteUri) throw new ArgumentOutOfRangeException(nameof(endpoint), endpoint, "Endpoint should be absolute");
 
-        this.configureHttpRequestMessage = configureHttpRequestMessage;
-
         var httpHandler = new HttpHandler();
         configureHttpHandler?.Invoke(httpHandler);
-        basicAuthHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
-        httpClient = new HttpClient(httpHandler) { Timeout = timeout ?? DefaultTimeout, BaseAddress = endpoint };
+        HttpMessageHandler handler = configureHttpRequestMessage == null
+            ? httpHandler
+            : new ConfiguringHandler(configureHttpRequestMessage, httpHandler);
+        httpClient = new HttpClient(handler) { Timeout = timeout ?? DefaultTimeout, BaseAddress = endpoint };
         disposeHttpClient = true;
-
-#if NETSTANDARD2_0
-        LeaveDotsAndSlashesEscaped(Endpoint.Scheme);
-#endif
+        api = CreateApi(httpClient, username, password);
     }
 
     public ManagementClient(HttpClient httpClient, string username, string password)
@@ -155,15 +111,13 @@ public class ManagementClient : IManagementClient
             throw new ArgumentOutOfRangeException(nameof(httpClient.BaseAddress), httpClient.BaseAddress, "Endpoint should be absolute");
 
         this.httpClient = httpClient;
-        basicAuthHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
-        configureHttpRequestMessage = null;
         disposeHttpClient = false;
-
-#if NETSTANDARD2_0
-        LeaveDotsAndSlashesEscaped(Endpoint.Scheme);
-#endif
+        api = CreateApi(httpClient, username, password);
     }
 
+    /// <summary>
+    ///     The endpoint that the client is using.
+    /// </summary>
     public Uri Endpoint => httpClient.BaseAddress!;
 
     public void Dispose()
@@ -172,135 +126,48 @@ public class ManagementClient : IManagementClient
             httpClient.Dispose();
     }
 
-    public async Task<bool> CheckAsync(
-        RelativePath path,
-        CancellationToken cancellationToken = default
-    )
+    private static IManagementClient CreateApi(HttpClient httpClient, string username, string password)
     {
-        using var request = CreateRequest(HttpMethod.Get, path);
-        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-
-        if (response.StatusCode == HttpStatusCode.OK)
-            return true;
-
-        if (response.StatusCode == HttpStatusCode.ServiceUnavailable)
-            return false;
-
-        throw await UnexpectedHttpStatusCodeException.FromHttpResponseMessageAsync(response, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async Task<TResult> GetAsync<TResult>(
-        RelativePath path,
-        IEnumerable<KeyValuePair<string, string>>? queryParameters,
-        CancellationToken cancellationToken = default
-    )
-    {
-        using var request = CreateRequest(HttpMethod.Get, path, queryParameters);
-        using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
-
-        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode == HttpStatusCode.OK, cancellationToken).ConfigureAwait(false);
-
-        try
+#if NETFRAMEWORK
+        LeaveDotsAndSlashesEscaped(httpClient.BaseAddress!.Scheme);
+#endif
+        var basicAuth = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+        var settings = new RefitSettings(new SystemTextJsonContentSerializer(SerializerOptions))
         {
-            return (await response.Content.ReadFromJsonAsync<TResult>(SerializerOptions, cancellationToken).ConfigureAwait(false))!;
-        }
-        catch (Exception e) when (e is ArgumentNullException || e is JsonException)
+            AuthorizationHeaderValueGetter = (_, _) => new ValueTask<string>(basicAuth),
+            ExceptionFactory = async response => response.IsSuccessStatusCode
+                ? null
+                : await UnexpectedHttpStatusCodeException.FromHttpResponseMessageAsync(response).ConfigureAwait(false),
+            DeserializationExceptionFactory = async (response, exception) =>
+            {
+                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return new JsonException($"Response content doesn't conform to the JSON schema: {content}", exception);
+            },
+            // RabbitMQ needs a Content-Length, not a chunked body.
+            Buffered = true,
+        };
+        return RestService.ForGenerated<IManagementClient>(httpClient, settings);
+    }
+
+    // Reflection serializes values the context does not list, such as a parameter's own type, unless trimmed or Native AOT.
+#if NET
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Only when JsonSerializer.IsReflectionEnabledByDefault, which trimming turns off")]
+    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Only when JsonSerializer.IsReflectionEnabledByDefault, which Native AOT turns off")]
+#endif
+    private static JsonSerializerOptions CreateSerializerOptions() =>
+        new(ManagementJsonContext.Default.Options)
         {
-            string stringContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            throw new JsonException($"Response content doesn't conform to the JSON schema: {stringContent}", e);
-        }
-    }
+            TypeInfoResolver = JsonSerializer.IsReflectionEnabledByDefault
+                ? JsonTypeInfoResolver.Combine(ManagementJsonContext.Default, new DefaultJsonTypeInfoResolver())
+                : ManagementJsonContext.Default
+        };
 
-    public async Task<TResult> PostAsync<TItem, TResult>(
-        RelativePath path,
-        TItem item,
-        CancellationToken cancellationToken = default
-    )
+    private sealed class ConfiguringHandler(Action<HttpRequestMessage> configure, HttpMessageHandler inner) : DelegatingHandler(inner)
     {
-        using var requestContent = JsonContent.Create(item, JsonMediaTypeHeaderValue, SerializerOptions);
-        using var request = CreateRequest(HttpMethod.Post, path, null, requestContent);
-        using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
-
-        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, cancellationToken).ConfigureAwait(false);
-
-        try
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            return (await response.Content.ReadFromJsonAsync<TResult>(SerializerOptions, cancellationToken).ConfigureAwait(false))!;
+            configure(request);
+            return base.SendAsync(request, cancellationToken);
         }
-        catch (Exception e) when (e is ArgumentNullException || e is JsonException)
-        {
-            string stringContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            throw new JsonException($"Response content doesn't conform to the JSON schema: {stringContent}", e);
-        }
-    }
-
-    public async Task PostAsync<TItem>(
-        RelativePath path,
-        TItem item,
-        CancellationToken cancellationToken = default
-    )
-    {
-        using var requestContent = JsonContent.Create(item, JsonMediaTypeHeaderValue, SerializerOptions);
-        using var request = CreateRequest(HttpMethod.Post, path, null, requestContent);
-        using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
-
-        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async Task PostAsync(
-        RelativePath path,
-        CancellationToken cancellationToken = default
-    )
-    {
-        using var request = CreateRequest(HttpMethod.Post, path);
-        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-
-        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode is HttpStatusCode.OK or HttpStatusCode.Created or HttpStatusCode.NoContent, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async Task DeleteAsync(
-        RelativePath path,
-        IEnumerable<KeyValuePair<string, string>>? queryParameters,
-        CancellationToken cancellationToken = default)
-    {
-        using var request = CreateRequest(HttpMethod.Delete, path, queryParameters);
-        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-
-        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode == HttpStatusCode.NoContent, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async Task PutAsync<TBody>(
-        RelativePath path,
-        TBody item,
-        CancellationToken cancellationToken = default
-    )
-    {
-        using var requestContent = JsonContent.Create(item, JsonMediaTypeHeaderValue, SerializerOptions);
-        using var request = CreateRequest(HttpMethod.Put, path, null, requestContent);
-        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-
-        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode is HttpStatusCode.Created or HttpStatusCode.NoContent, cancellationToken).ConfigureAwait(false);
-    }
-
-    public async Task PutAsync(RelativePath path, CancellationToken cancellationToken = default)
-    {
-        using var request = CreateRequest(HttpMethod.Put, path);
-        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-
-        await response.EnsureExpectedStatusCodeAsync(statusCode => statusCode is HttpStatusCode.Created or HttpStatusCode.NoContent, cancellationToken).ConfigureAwait(false);
-    }
-
-    private HttpRequestMessage CreateRequest(
-        HttpMethod httpMethod,
-        in RelativePath path,
-        IEnumerable<KeyValuePair<string, string>>? queryParameters = null,
-        HttpContent? content = null
-    )
-    {
-        var request = new HttpRequestMessage(httpMethod, QueryStringHelpers.AddQueryString(path.Build(), queryParameters));
-        request.Headers.Authorization = basicAuthHeader;
-        request.Content = content;
-        configureHttpRequestMessage?.Invoke(request);
-        return request;
     }
 }
