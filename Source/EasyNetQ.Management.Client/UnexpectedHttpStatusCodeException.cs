@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using Refit;
 
 namespace EasyNetQ.Management.Client;
 
@@ -35,35 +36,34 @@ public class UnexpectedHttpStatusCodeException : Exception
 
     public static async Task<UnexpectedHttpStatusCodeException> FromHttpResponseMessageAsync(HttpResponseMessage response, CancellationToken cancellationToken = default)
     {
-        var sb = new StringBuilder("Unexpected response: StatusCode: ");
-        sb.Append((int)response.StatusCode);
-        sb.Append(" ");
-        sb.Append(response.StatusCode);
-        sb.Append(", Content: ");
-        if (response.Content != null)
+        string content;
+        try
         {
-            try
-            {
-#if NET5_0_OR_GREATER
-                var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+#if NET
+            content = $"'{await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false)}'";
 #else
-                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            content = $"'{await response.Content.ReadAsStringAsync().ConfigureAwait(false)}'";
 #endif
-                sb.Append('\'');
-                sb.Append(content);
-                sb.Append('\'');
-            }
-            catch
-            {
-                sb.Append("<not a string>");
-            }
         }
-        else
+        catch
         {
-            sb.Append("<null>");
+            content = "<not a string>";
         }
+        return Create(response.StatusCode, content, response.RequestMessage);
+    }
+
+    internal static UnexpectedHttpStatusCodeException From(HttpStatusCode statusCode, IApiResponse response) =>
+        Create(statusCode, response.Error is ApiException { Content: { } content } ? $"'{content}'" : "<null>", response.RequestMessage);
+
+    private static UnexpectedHttpStatusCodeException Create(HttpStatusCode statusCode, string content, HttpRequestMessage? request)
+    {
+        var sb = new StringBuilder("Unexpected response: StatusCode: ");
+        sb.Append((int)statusCode);
+        sb.Append(' ');
+        sb.Append(statusCode);
+        sb.Append(", Content: ");
+        sb.Append(content);
         sb.Append(" from request: ");
-        var request = response.RequestMessage;
         if (request != null)
         {
             sb.Append("Method: ");
@@ -83,6 +83,6 @@ public class UnexpectedHttpStatusCodeException : Exception
             sb.Append("<null>");
         }
 
-        return new UnexpectedHttpStatusCodeException(sb.ToString(), response.StatusCode);
+        return new UnexpectedHttpStatusCodeException(sb.ToString(), statusCode);
     }
 }

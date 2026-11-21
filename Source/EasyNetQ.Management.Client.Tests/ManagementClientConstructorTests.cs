@@ -1,5 +1,6 @@
 #if NETFRAMEWORK
 using System;
+using System.Net.Http;
 using System.Reflection;
 #endif
 
@@ -8,48 +9,19 @@ namespace EasyNetQ.Management.Client.Tests;
 public class ManagementClientConstructorTests
 {
     [Fact]
-    public void Host_should_not_be_null()
+    public void Endpoint_should_be_absolute()
     {
-#pragma warning disable CS0618
-        var exception = Assert.Throws<ArgumentException>(() => new ManagementClient(string.Empty, "user", "password"));
-#pragma warning restore CS0618
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new ManagementClient(new Uri("/api", UriKind.Relative), "user", "password"));
 
-        exception.Message.Should().Be("hostUrl is null or empty");
+        exception.ParamName.Should().Be("endpoint");
     }
 
     [Fact]
-    public void Host_should_have_correct_url_for_ssl()
+    public void HttpClient_should_have_a_base_address()
     {
-#pragma warning disable CS0618
-        var exception = Assert.Throws<ArgumentException>(() => new ManagementClient("http://localhost", "user", "password", ssl: true));
-#pragma warning restore CS0618
+        using var httpClient = new HttpClient();
 
-        exception.Message.Should().Be("hostUrl is illegal");
-    }
-
-    [Theory]
-    [InlineData("localhost")]
-    [InlineData("127.0.0.1")]
-    [InlineData("[::1]")]
-    [InlineData("[2001:db8:1111::50]")]
-    public void Host_url_should_be_legal(string url)
-    {
-#pragma warning disable CS0618
-        using var client = new ManagementClient(url, "user", "password");
-#pragma warning restore CS0618
-    }
-
-    [Theory]
-    [InlineData("::1")]
-    [InlineData("2001:db8:1111::50")]
-    [InlineData("[[2001:db8:1111::50]]")]
-    public void Host_url_should_be_illegal(string url)
-    {
-#pragma warning disable CS0618
-        var exception = Assert.Throws<ArgumentException>(() => new ManagementClient(url, "user", "password"));
-#pragma warning restore CS0618
-
-        exception.Message.Should().Be("hostUrl is illegal");
+        Assert.Throws<ArgumentNullException>(() => new ManagementClient(httpClient, "user", "password"));
     }
 
 #if NETFRAMEWORK

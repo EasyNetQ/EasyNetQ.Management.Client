@@ -84,6 +84,14 @@ public class DockerProxy : IDisposable
         await client.Containers.StartContainerAsync(id, new ContainerStartParameters(), token);
     }
 
+    public async Task<IReadOnlyDictionary<string, string>> GetHostPortsAsync(string id, CancellationToken token = default)
+    {
+        var response = await client.Containers.InspectContainerAsync(id, token);
+        return response.NetworkSettings.Ports
+            .Where(x => x.Value is { Count: > 0 })
+            .ToDictionary(x => x.Key.Split('/')[0], x => x.Value[0].HostPort);
+    }
+
     public async Task<string> GetContainerIpAsync(string id, CancellationToken token = default)
     {
         var response = await client.Containers.InspectContainerAsync(id, token);

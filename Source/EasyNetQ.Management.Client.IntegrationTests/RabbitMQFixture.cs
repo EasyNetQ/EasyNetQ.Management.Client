@@ -22,7 +22,11 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
         tag = $"{Environment.GetEnvironmentVariable("RABBITMQ_VERSION") ?? "4.0"}-management";
     }
 
+    private const string AmqpPort = "5672";
+    private const string ManagementPort = "15672";
+
     public Uri Endpoint { get; private set; } = new("http://localhost:15672");
+    public string AmqpConnectionString { get; private set; } = "host=localhost";
     public string User { get; private set; } = "guest";
     public string Password { get; private set; } = "guest";
 
@@ -44,7 +48,14 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
         if (dockerEngineOsPlatform == OSPlatform.Windows)
         {
             var containerIp = await dockerProxy.GetContainerIpAsync(containerId, cts.Token);
-            Endpoint = new Uri($"http://{containerIp}:15672");
+            Endpoint = new Uri($"http://{containerIp}:{ManagementPort}");
+            AmqpConnectionString = $"host={containerIp}";
+        }
+        else
+        {
+            var hostPorts = await dockerProxy.GetHostPortsAsync(containerId, cts.Token);
+            Endpoint = new Uri($"http://localhost:{hostPorts[ManagementPort]}");
+            AmqpConnectionString = $"host=localhost:{hostPorts[AmqpPort]}";
         }
 
         managementClient = new ManagementClient(Endpoint, User, Password);
@@ -85,12 +96,11 @@ public sealed class RabbitMqFixture : IAsyncLifetime, IDisposable
 
     private async Task<string> RunNewContainerAsync(CancellationToken cancellationToken)
     {
+        // An empty host port lets Docker pick a free one, so a broker already on 5672/15672 doesn't clash.
         var portMappings = new Dictionary<string, ISet<string>>
         {
-            { "5671", new HashSet<string> { "5671" } },
-            { "5672", new HashSet<string> { "5672" } },
-            { "15671", new HashSet<string> { "15671" } },
-            { "15672", new HashSet<string> { "15672" } },
+            { AmqpPort, new HashSet<string> { "" } },
+            { ManagementPort, new HashSet<string> { "" } },
         };
         var envVars = new List<string> { "RABBITMQ_DEFAULT_VHOST=/" };
         var containerId = await dockerProxy.CreateContainerAsync(

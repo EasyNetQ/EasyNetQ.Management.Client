@@ -83,36 +83,36 @@ public class ExtensionsGenerator : IIncrementalGenerator
                             ("string componentName", null, "parameter.Component"),
                             ("string vhostName", null, "parameter.Vhost"),
                             ("string parameterName", null, "parameter.Name"),
-                            ("object parameterValue", "Parameter parameter", "parameter.Value")
+                            ("ParameterValue parameterValue", "Parameter parameter", "new ParameterValue(parameter.Value)")
                          );
                 }
 
                 var compilationUnit = SyntaxFactory.CompilationUnit()
-                    .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("EasyNetQ.Management.Client.Model")))
+                    .AddUsings(
+                        SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("EasyNetQ.Management.Client.Model")),
+                        SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Refit")))
                     .AddMembers(fileScopedNamespaceDeclaration)
                     .NormalizeWhitespace(eol: "\n");
 
                 compilationUnits[$"{extensionsClassName.Right}Replacement"] = compilationUnit;
 
-                compilation = compilation.AddSyntaxTrees(compilationUnit.SyntaxTree);
+                // The tree must share the compilation's parse options (features such as Refit's interceptors).
+                compilation = compilation.AddSyntaxTrees(CSharpSyntaxTree.Create(compilationUnit, (CSharpParseOptions)compilation.SyntaxTrees.First().Options));
             }
 
             {
                 var fileScopedNamespaceDeclaration = SyntaxFactory.FileScopedNamespaceDeclaration(extensionsClassName.Left)
-                    .WithLeadingTrivia(SyntaxFactory.Trivia(SyntaxFactory.NullableDirectiveTrivia(SyntaxFactory.Token(SyntaxKind.EnableKeyword), true)));
-
-                foreach (var t in types)
-                {
-                    fileScopedNamespaceDeclaration = fileScopedNamespaceDeclaration
-                        .AddSyncExtensionsClass(extensionsClassName, t, thisParameter);
-                }
+                    .WithLeadingTrivia(SyntaxFactory.Trivia(SyntaxFactory.NullableDirectiveTrivia(SyntaxFactory.Token(SyntaxKind.EnableKeyword), true)))
+                    .AddMembers(ForwardingGenerator.GenerateForwardingClass("ManagementClient", types.First(), "api"));
 
                 var compilationUnit = SyntaxFactory.CompilationUnit()
-                    .AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("EasyNetQ.Management.Client.Model")))
+                    .AddUsings(
+                        SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("EasyNetQ.Management.Client.Model")),
+                        SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Refit")))
                     .AddMembers(fileScopedNamespaceDeclaration)
                     .NormalizeWhitespace(eol: "\n");
 
-                compilationUnits[$"{extensionsClassName.Right}Sync"] = compilationUnit;
+                compilationUnits["ManagementClient"] = compilationUnit;
             }
 
             foreach (var kvpair in compilationUnits)

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net48;net10.0;net11.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
 
@@ -10,9 +10,6 @@
     <AssemblyTitle>EasyNetQ.Management.Client</AssemblyTitle>
     <NeutralLanguage>en</NeutralLanguage>
 
-    <AssemblyOriginatorKeyFile>..\..\Assets\EasyNetQ.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign>false</PublicSign>
 
     <ProjectWeaverXml>FodyWeavers.xml</ProjectWeaverXml>
     <FodyGenerateXsd>false</FodyGenerateXsd>
@@ -26,7 +23,8 @@
     <RepositoryUrl>https://github.com/EasyNetQ/EasyNetQ.Management.Client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageTags>RabbitMQ Management.API .NET C# netstandard</PackageTags>
+    <PackageTags>RabbitMQ Management.API .NET C# Refit AOT</PackageTags>
+    <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">true</IsAotCompatible>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
@@ -38,9 +36,11 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
     <ImplicitUsings>enable</ImplicitUsings>
     <MinVerTagPrefix>v</MinVerTagPrefix>
+    <!-- Refit's generator adds its own -->
+    <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.ModuleInitializerAttribute</PolySharpExcludeGeneratedTypes>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 
-    <EmitCompilerGeneratedFiles Condition="'$(TargetFramework)' == 'netstandard2.0' AND '$(Configuration)' == 'Debug'">true</EmitCompilerGeneratedFiles>
+    <EmitCompilerGeneratedFiles Condition="'$(Configuration)' == 'Debug'">true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -48,17 +48,17 @@
     <None Include="..\..\Assets\EasyNetQ.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
-    <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="System.Net.Http" />
+    <Using Include="System.Net.Http" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
     <PackageReference Include="MinVer" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Refit" Version="17.0.0" />
     <PackageReference Include="NullGuard.Fody" Version="3.1.1" PrivateAssets="All" />
     <PackageReference Include="PolySharp" Version="1.15.0">
       <PrivateAssets>all</PrivateAssets>

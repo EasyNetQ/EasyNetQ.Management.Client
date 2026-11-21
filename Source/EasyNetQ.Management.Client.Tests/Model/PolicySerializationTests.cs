@@ -9,18 +9,18 @@ public class PolicySerializationTests
 
     public PolicySerializationTests()
     {
-        policies = ResourceLoader.LoadObjectFromJson<Policy[]>("Policies_ha.json", ManagementClient.SerializerOptions);
+        policies = ResourceLoader.LoadObjectFromJson<Policy[]>("Policies.json", ManagementClient.SerializerOptions);
     }
 
     [Fact]
     public void Should_read_apply_to_properly()
     {
-        var exactlyPolicies = policies.Where(p => p.Name == "ha-duplicate").ToList();
+        var exactlyPolicies = policies.Where(p => p.Name == "quorum").ToList();
         Assert.Single(exactlyPolicies);
         var policy = exactlyPolicies.First();
         Assert.Equal(ApplyMode.Queues, policy.ApplyTo);
 
-        exactlyPolicies = policies.Where(p => p.Name == "mirror_test").ToList();
+        exactlyPolicies = policies.Where(p => p.Name == "federated").ToList();
         Assert.Single(exactlyPolicies);
         policy = exactlyPolicies.First();
         Assert.Equal(ApplyMode.Exchanges, policy.ApplyTo);
@@ -34,40 +34,24 @@ public class PolicySerializationTests
     [Fact]
     public void Should_read_federation_upstream_properly()
     {
-        var exactlyPolicies = policies.Where(p => p.Name == "mirror_test").ToList();
+        var exactlyPolicies = policies.Where(p => p.Name == "federated").ToList();
         Assert.Single(exactlyPolicies);
         var policy = exactlyPolicies.First();
         Assert.Equal("test", policy.Definition.FederationUpstream);
     }
 
     [Fact]
-    public void Should_read_exactly_ha_properly()
+    public void Should_read_quorum_policy_properly()
     {
         policies.Length.Should().Be(3);
-        var exactlyPolicies = policies.Where(p => p.Name == "ha-duplicate").ToList();
-        Assert.Single(exactlyPolicies);
-        var policy = exactlyPolicies[0];
-        Assert.Equal(HaMode.Exactly, policy.Definition.HaMode);
-        Assert.Equal(HaMode.Exactly, policy.Definition.HaParams.AssociatedHaMode);
-        Assert.Equal(2, policy.Definition.HaParams.ExactlyCount);
-        Assert.Equal("^dup.*", policy.Pattern);
-        Assert.Equal(HaSyncMode.Manual, policy.Definition.HaSyncMode);
+        var policy = policies.Single(p => p.Name == "quorum");
+        Assert.Equal("^q.*", policy.Pattern);
         Assert.Equal(1, policy.Priority);
-    }
-
-    [Fact]
-    public void Should_read_nodes_ha_properly()
-    {
-        policies.Length.Should().Be(3);
-        var mirrorTestPolicies = policies.Where(p => p.Name == "mirror_test").ToList();
-        Assert.Single(mirrorTestPolicies);
-        var policy = mirrorTestPolicies.First();
-        Assert.Equal(HaMode.Nodes, policy.Definition.HaMode);
-        Assert.Equal(HaMode.Nodes, policy.Definition.HaParams.AssociatedHaMode);
-        Assert.Equal(new[] { "rabbit@rab5", "rabbit@rab6" }, policy.Definition.HaParams.Nodes);
-        Assert.Equal("mirror", policy.Pattern);
-        Assert.Equal(HaSyncMode.Automatic, policy.Definition.HaSyncMode);
-        Assert.Equal(0, policy.Priority);
+        Assert.Equal(5u, policy.Definition.DeliveryLimit);
+        Assert.Equal(DeadLetterStrategy.AtLeastOnce, policy.Definition.DeadLetterStrategy);
+        Assert.Equal(QueueLocator.Balanced, policy.Definition.QueueLeaderLocator);
+        Assert.Equal(Overflow.RejectPublish, policy.Definition.Overflow);
+        Assert.Equal("dlx", policy.Definition.DeadLetterExchange);
     }
 
     [Fact]
@@ -124,19 +108,19 @@ public class PolicySerializationTests
     }
 
     [Fact]
-    public void Should_write_all_ha_policy_without_param()
+    public void Should_write_quorum_policy_with_dashed_enum_values()
     {
         var serializedMessage = JsonSerializer.Serialize(
             new Policy(
                 Name: "bob",
                 Pattern: "foo",
-                Definition: new PolicyDefinition { HaMode = HaMode.All }
+                Definition: new PolicyDefinition(DeadLetterStrategy: DeadLetterStrategy.AtLeastOnce, Overflow: Overflow.RejectPublish)
             ),
             ManagementClient.SerializerOptions
         );
 
-        Assert.DoesNotContain("ha-params", serializedMessage);
-        Assert.DoesNotContain("ha-sync-batch-size", serializedMessage);
+        Assert.Contains("\"dead-letter-strategy\":\"at-least-once\"", serializedMessage);
+        Assert.Contains("\"overflow\":\"reject-publish\"", serializedMessage);
         Assert.DoesNotContain("federation-upstream-set", serializedMessage);
     }
 }
