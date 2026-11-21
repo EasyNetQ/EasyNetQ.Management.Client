@@ -187,6 +187,48 @@ public class ManagementClientRequestTests
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
+    [Fact]
+    public async Task Sends_the_certificate_expiration_unit_in_lower_case()
+    {
+        var (client, handler) = Create(statusCode: HttpStatusCode.ServiceUnavailable, content: """{"status":"failed"}""");
+
+        (await client.HaveAnyCertificatesExpiringAsync(3, CertificateExpirationUnit.Weeks)).Should().BeTrue();
+
+        handler.Requests.Single().Uri.Should().Be("http://localhost:15672/api/health/checks/certificate-expiration/3/weeks");
+    }
+
+    [Fact]
+    public async Task Bulk_deletes_users_by_name()
+    {
+        var (client, handler) = Create(statusCode: HttpStatusCode.NoContent, content: "");
+
+        await client.DeleteUsersAsync(["alice", "bob"]);
+
+        handler.Requests.Single().Should().Be(new SentRequest(
+            HttpMethod.Post, "http://localhost:15672/api/users/bulk-delete", "Basic Z3Vlc3Q6c2VjcmV0", """{"users":["alice","bob"]}""", 25));
+    }
+
+    [Fact]
+    public async Task Reads_vhost_limits_with_dashed_names()
+    {
+        var (client, handler) = Create(content: """[{"vhost":"/","value":{"max-connections":10,"max-queues":5}}]""");
+
+        var limits = await client.GetVhostLimitsAsync("/");
+
+        limits.Single().Should().Be(new VhostLimits("/", new VhostLimitValues(MaxConnections: 10, MaxQueues: 5)));
+        handler.Requests.Single().Uri.Should().Be("http://localhost:15672/api/vhost-limits/%2F");
+    }
+
+    [Fact]
+    public async Task Escapes_the_user_of_a_connection_listing()
+    {
+        var (client, handler) = Create(content: "[]");
+
+        await client.GetUserConnectionsAsync("ci/deploy user");
+
+        handler.Requests.Single().Uri.Should().Be("http://localhost:15672/api/connections/username/ci%2Fdeploy%20user");
+    }
+
     // Native AOT serializes only what the context lists.
     [Fact]
     public void Json_context_lists_every_request_and_response_type()

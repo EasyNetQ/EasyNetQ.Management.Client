@@ -245,6 +245,124 @@ public static partial class IManagementClientExtensions
         CancellationToken cancellationToken = default
     ) => !Passed(await client.CheckQuorumCriticalAsync(cancellationToken).ConfigureAwait(false));
 
+    /// <summary>
+    ///     Returns true if any certificate of a listener on the target node expires within the given time
+    /// </summary>
+    public static async Task<bool> HaveAnyCertificatesExpiringAsync(
+        this IManagementClient client,
+        int within,
+        CertificateExpirationUnit unit,
+        CancellationToken cancellationToken = default
+    ) => !Passed(await client.CheckCertificateExpirationAsync(within, unit.ToString().ToLowerInvariant(), cancellationToken).ConfigureAwait(false));
+
+    /// <summary>
+    ///     Returns true if the target node has an active listener on the given port
+    /// </summary>
+    public static async Task<bool> IsListeningOnPortAsync(
+        this IManagementClient client,
+        int port,
+        CancellationToken cancellationToken = default
+    ) => Passed(await client.CheckPortListenerAsync(port, cancellationToken).ConfigureAwait(false));
+
+    /// <summary>
+    ///     Returns true if the target node has an active listener for the given protocol (amqp, amqp/ssl, mqtt, stomp, http, ...)
+    /// </summary>
+    public static async Task<bool> IsListeningOnProtocolAsync(
+        this IManagementClient client,
+        string protocol,
+        CancellationToken cancellationToken = default
+    ) => Passed(await client.CheckProtocolListenerAsync(protocol, cancellationToken).ConfigureAwait(false));
+
+    /// <summary>
+    ///     Returns true if all virtual hosts are running on the target node
+    /// </summary>
+    public static async Task<bool> AreAllVhostsRunningAsync(
+        this IManagementClient client,
+        CancellationToken cancellationToken = default
+    ) => Passed(await client.CheckVirtualHostsAsync(cancellationToken).ConfigureAwait(false));
+
+    /// <summary>
+    ///     Returns true if the target node is booted, running and ready to serve clients (RabbitMQ 4.1+)
+    /// </summary>
+    public static async Task<bool> IsInServiceAsync(
+        this IManagementClient client,
+        CancellationToken cancellationToken = default
+    ) => Passed(await client.CheckIsInServiceAsync(cancellationToken).ConfigureAwait(false));
+
+    /// <summary>
+    ///     Returns true if the target node has fewer connections than its limit (RabbitMQ 4.1+)
+    /// </summary>
+    public static async Task<bool> IsBelowNodeConnectionLimitAsync(
+        this IManagementClient client,
+        CancellationToken cancellationToken = default
+    ) => Passed(await client.CheckBelowNodeConnectionLimitAsync(cancellationToken).ConfigureAwait(false));
+
+    /// <summary>
+    ///     Returns true if the target node is ready to serve clients (RabbitMQ 4.1+)
+    /// </summary>
+    public static async Task<bool> IsReadyToServeClientsAsync(
+        this IManagementClient client,
+        CancellationToken cancellationToken = default
+    ) => Passed(await client.CheckReadyToServeClientsAsync(cancellationToken).ConfigureAwait(false));
+
+    /// <summary>
+    ///     Deletes several users at once.
+    /// </summary>
+    public static Task DeleteUsersAsync(
+        this IManagementClient client,
+        IEnumerable<string> userNames,
+        CancellationToken cancellationToken = default
+    ) => client.DeleteUsersAsync(new UserNames([.. userNames]), cancellationToken);
+
+    /// <summary>
+    ///     Sets the max connections limit of a virtual host.
+    /// </summary>
+    public static Task CreateVhostMaxConnectionsLimitAsync(
+        this IManagementClient client,
+        string vhostName,
+        int maxConnections,
+        CancellationToken cancellationToken = default
+    ) => client.CreateVhostMaxConnectionsLimitAsync(vhostName, new LimitInfo(maxConnections), cancellationToken);
+
+    /// <summary>
+    ///     Sets the max queues limit of a virtual host.
+    /// </summary>
+    public static Task CreateVhostMaxQueuesLimitAsync(
+        this IManagementClient client,
+        string vhostName,
+        int maxQueues,
+        CancellationToken cancellationToken = default
+    ) => client.CreateVhostMaxQueuesLimitAsync(vhostName, new LimitInfo(maxQueues), cancellationToken);
+
+    /// <summary>
+    ///     Creates a global parameter. Under Native AOT the value must be a type the client serializes, see <see cref="ParameterValue"/>.
+    /// </summary>
+    public static Task CreateGlobalParameterAsync(
+        this IManagementClient client,
+        string globalParameterName,
+        object value,
+        CancellationToken cancellationToken = default
+    ) => client.CreateGlobalParameterAsync(globalParameterName, new ParameterValue(value), cancellationToken);
+
+    /// <summary>
+    ///     Creates an operator policy on the cluster
+    /// </summary>
+    public static Task CreateOperatorPolicyAsync(
+        this IManagementClient client,
+        Policy policy,
+        CancellationToken cancellationToken = default
+    ) => client.CreateOperatorPolicyAsync(
+        policy.Vhost,
+        policy.Name,
+        new PolicyInfo(
+            ApplyTo: policy.ApplyTo,
+            Definition: policy.Definition,
+            Priority: policy.Priority,
+            Pattern: policy.Pattern
+        ),
+        cancellationToken
+    );
+
     // A health check answers 200 when it passes and 503 when it fails; anything else is an error.
     private static bool Passed(IApiResponse response)
     {
